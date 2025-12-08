@@ -1,0 +1,172 @@
+/* --- 1. การตั้งค่าเริ่มต้น (Reset/Base) --- */
+:root {
+    --primary-color: #007bff; /* สีหลักของปุ่ม/ไฮไลท์ */
+    --secondary-color: #28a745; /* สีเน้น เช่น ปุ่มเพิ่มสินค้า */
+    --bg-color: #f8f9fa; /* สีพื้นหลังอ่อนๆ */
+    --text-color: #343a40; /* สีข้อความหลัก */
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding-bottom: 80px; /* เว้นที่ว่างให้ Floating Cart */
+}
+
+/* --- 2. ส่วนหัวของแอป (Header) --- */
+.app-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px 15px;
+    text-align: center;
+    box-shadow: var(--shadow-light);
+}
+
+.app-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.app-header p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* --- 3. ส่วนรายการเมนู (Menu Container) --- */
+.menu-container {
+    padding: 20px 15px;
+}
+
+.menu-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-left: 5px solid var(--secondary-color);
+    padding-left: 10px;
+}
+
+/* --- 4. รายการอาหารแต่ละรายการ (Menu Item) --- */
+.menu-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-shadow: var(--shadow-light);
+    overflow: hidden; /* ป้องกันรูปภาพล้น */
+}
+
+.item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover; /* ทำให้รูปภาพพอดีสี่เหลี่ยม */
+    border-radius: 4px;
+    margin-right: 15px;
+    flex-shrink: 0; /* ป้องกันรูปภาพถูกย่อ */
+}
+
+.item-details {
+    flex-grow: 1;
+    min-width: 0; /* จัดการข้อความที่ยาวเกิน */
+}
+
+.item-name {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* ตัดข้อความที่ยาวเกินไป */
+}
+
+.item-description {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.item-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.item-price span {
+    font-size: 1.3rem;
+}
+
+.add-to-cart-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 50px; /* ปุ่มทรงกลม */
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #218838;
+}
+
+/* --- 5. สรุปตะกร้าสินค้าแบบลอยตัว (Floating Cart) --- */
+.floating-cart-summary {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #343a40; /* สีเข้ม */
+    color: white;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* ให้ลอยอยู่เหนือองค์ประกอบอื่นๆ */
+    font-size: 1rem;
+}
+
+.floating-cart-summary .separator {
+    margin: 0 10px;
+    color: #6c757d;
+}
+
+#view-cart-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#view-cart-btn:hover {
+    background-color: #0056b3;
+}
+
+/* --- 6. การปรับขนาดสำหรับหน้าจอที่ใหญ่ขึ้น (ถ้าต้องการ) --- */
+@media (min-width: 600px) {
+    body {
+        max-width: 800px; /* จำกัดความกว้างบนจอใหญ่ */
+        margin: 0 auto;
+    }
+
+    .menu-item {
+        padding: 15px;
+    }
+}
+
+/* --- จบไฟล์ style.css --- */

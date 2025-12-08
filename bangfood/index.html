@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เมนูอาหาร | สั่งง่าย QR Code</title>
+    <link rel="stylesheet" href="style.css">
+    </head>
+<body>
+
+    <header class="app-header">
+        <h1>ร้านอร่อย QR สั่งได้</h1>
+        <p>สแกนสั่งง่าย ไม่ต้องเรียกพนักงาน</p>
+    </header>
+
+    <main class="menu-container">
+        <h2>เมนูยอดนิยม</h2>
+        
+        <div class="menu-item" data-id="1">
+            <img src="placeholder-burger.jpg" alt="เบอร์เกอร์เนื้อ" class="item-image">
+            <div class="item-details">
+                <h3 class="item-name">เบอร์เกอร์เนื้อย่างพรีเมียม</h3>
+                <p class="item-description">เนื้อวากิวย่างหอมๆ พร้อมชีสและผักสด</p>
+                <div class="item-price">
+                    <span>180</span> บาท
+                </div>
+            </div>
+            <button class="add-to-cart-btn" data-name="เบอร์เกอร์เนื้อ" data-price="180">
+                + เพิ่ม
+            </button>
+        </div>
+
+        <div class="menu-item" data-id="2">
+            <img src="placeholder-pasta.jpg" alt="สปาเก็ตตี้" class="item-image">
+            <div class="item-details">
+                <h3 class="item-name">สปาเก็ตตี้คาโบนาร่า</h3>
+                <p class="item-description">ซอสเข้มข้น หอมมันไข่และเบคอน</p>
+                <div class="item-price">
+                    <span>120</span> บาท
+                </div>
+            </div>
+            <button class="add-to-cart-btn" data-name="สปาเก็ตตี้คาโบนาร่า" data-price="120">
+                + เพิ่ม
+            </button>
+        </div>
+
+        </main>
+
+    <div class="floating-cart-summary">
+        <span id="cart-item-count">0</span> รายการ
+        <span class="separator">|</span>
+        <span id="cart-total-price">0.00</span> บาท
+        <button id="view-cart-btn">ดูตะกร้า/สั่งซื้อ</button>
+    </div>
+
+    <script src="script.js"></script>
+    
+</body>
+</html>

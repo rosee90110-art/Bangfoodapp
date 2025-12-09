@@ -1,2 +1,0 @@
-# Bangfoodapp
-food

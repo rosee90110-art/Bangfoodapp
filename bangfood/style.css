@@ -12,9 +12,8 @@
     margin: 0;
     padding: 0;
 }
-
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Prompt', sans-serif, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
@@ -168,5 +167,87 @@ body {
         padding: 15px;
     }
 }
+/* สมมติว่าส่วนหัวของคุณมี class ชื่อ .header */
+.header {
+    /* ใช้สีเขียวสดใสหรือสีอื่นที่เหมาะกับร้านอาหาร */
+    background-color: #4CAF50; 
+    color: white;
+    padding: 20px 0; /* เพิ่มพื้นที่ด้านบนและล่าง */
+    text-align: center;
+    /* เพิ่มเงาเล็กน้อยเพื่อให้ดูมีมิติ */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    /* หากต้องการใช้ Gradient */
+    /* background: linear-gradient(to right, #FF7043, #FF9800); */
+}
 
+/* ปรับปรุงข้อความหลัก */
+.header h1 {
+    font-size: 2em; /* เพิ่มขนาดตัวอักษร */
+    margin: 0;
+    font-weight: bold;
+}
+
+/* ปรับปรุงข้อความรอง */
+.header p {
+    font-size: 1em;
+    opacity: 0.9;
+}
+/* สมมติว่ารายการอาหารแต่ละรายการมี class ชื่อ .menu-item */
+.menu-item {
+    background-color: #ffffff; /* พื้นหลังสีขาว */
+    border: 1px solid #e0e0e0; /* ขอบบางๆ */
+    border-radius: 12px; /* ขอบโค้งมน */
+    margin-bottom: 15px; /* ระยะห่างระหว่างรายการ */
+    padding: 15px;
+    display: flex; /* ใช้ Flexbox เพื่อจัดวางรูปภาพและรายละเอียด */
+    align-items: center; /* จัดให้อยู่ตรงกลางตามแนวตั้ง */
+    transition: transform 0.2s, box-shadow 0.2s; /* เพิ่ม Animation */
+}
+
+/* เมื่อผู้ใช้เอาเมาส์มาวาง (hover) */
+.menu-item:hover {
+    transform: translateY(-3px); /* เลื่อนขึ้นเล็กน้อย */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้เด่นขึ้น */
+    cursor: pointer;
+}
+
+/* รูปภาพอาหาร */
+.menu-item img {
+    width: 80px; /* ปรับขนาดรูปภาพ */
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+}
+
+/* ปุ่ม "+ เพิ่ม" */
+.add-button {
+    background-color: #4CAF50; /* สีเขียว */
+    color: white;
+    border: none;
+    border-radius: 50%; /* ทำให้เป็นปุ่มกลม */
+    width: 35px;
+    height: 35px;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0; /* ไม่ให้ปุ่มย่อขนาดเมื่อเนื้อหายาว */
+    margin-left: auto; /* ดันปุ่มไปอยู่ขวาสุด */
+}
+
+/* ราคา */
+.price {
+    color: #FF5722; /* ใช้สีส้มเพื่อให้ราคาน่าสนใจ */
+    font-weight: bold;
+    font-size: 1.1em;
+}
+/* สมมติว่าหัวข้อหมวดหมู่มี class ชื่อ .section-title */
+.section-title {
+    font-size: 1.5em;
+    color: #333; /* สีเข้ม */
+    border-left: 5px solid #FF5722; /* ใช้ขีดสีส้มด้านซ้ายเพื่อเน้น */
+    padding-left: 10px;
+    margin: 30px 0 15px 0; /* ระยะห่างด้านบนและล่าง */
+    font-weight: bold;
+}
 /* --- จบไฟล์ style.css --- */

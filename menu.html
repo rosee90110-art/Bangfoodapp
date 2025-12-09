@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เมนูอาหาร - BANGFOOD</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+    
+    <div class="app-header">
+        <h1>BANGFOOD</h1>
+        <p>สแกนสั่งงาน ไม่ต้องเรียกพนักงาน</p>
+    </div>
+
+
+    
+    <div class="floating-cart-summary">
+        <div class="cart-info">
+            รายการ: <span id="cart-item-count">0</span>
+        </div>
+        <div class="cart-info">
+            ยอดรวม: <span id="cart-total">0.00</span> บาท
+        </div>
+        <a href="cart.html" id="view-cart-btn" class="checkout-button">
+            ดูตะกร้า/สั่งซื้อ
+        </a>
+    </div>
+
+    <div id="item-detail-modal" class="modal">
+        
+        <div class="modal-content">
+            
+            <div class="item-image-container">
+                <img id="modal-item-image" src="" alt="รูปภาพอาหาร" class="modal-image">
+            </div>
+            
+            <div class="item-info-section">
+                <h2 id="modal-item-name" class="modal-item-name">ชื่ออาหาร</h2>
+                <p id="modal-item-description" class="modal-item-description">คำอธิบายสั้น ๆ ของรายการอาหาร</p>
+                <p class="modal-item-base-price">ราคาเริ่มต้น: <span id="modal-base-price">0.00</span> บาท</p>
+            </div>
+            
+            <form id="item-customization-form" class="customization-form">
+
+                <div class="customization-group">
+                    <h3>🍲 ปริมาณ</h3>
+                    <label class="radio-label">
+                        <input type="radio" name="size" value="standard" data-modifier="0" checked>
+                        ธรรมดา (Normal)
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="size" value="special" data-modifier="20">
+                        พิเศษ (+ 20 บาท)
+                    </label>
+                </div>
+
+                <div class="customization-group">
+                    <h3>🥚 ตัวเลือกเสริม</h3>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="addon" value="egg" data-modifier="15">
+                        เพิ่มไข่ดาว/ไข่เจียว (+ 15 บาท)
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="addon" value="sausage" data-modifier="30">
+                        เพิ่มไส้กรอก (+ 30 บาท)
+                    </label>
+                </div>
+                
+                <div class="customization-group">
+                    <h3>✍️ หมายเหตุ (Optional)</h3>
+                    <textarea id="modal-notes" rows="3" placeholder="ตัวอย่าง: เผ็ดน้อย, ไม่ใส่ผักชี"></textarea>
+                </div>
+
+            </form>
+
+            <div class="modal-footer">
+                <p class="final-price-display">ราคาสุทธิ: <span id="modal-final-price">0.00</span> บาท</p>
+                <button id="add-to-cart-confirm-btn" class="add-confirm-btn">
+                    ยืนยันและเพิ่มลงตะกร้า
+                </button>
+                <button class="close-modal-btn" onclick="closeModal()">ยกเลิก</button>
+            </div>
+            
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

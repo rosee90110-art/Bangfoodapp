@@ -112,3 +112,98 @@ document.getElementById('view-cart-btn').addEventListener('click', async () => {
             alert('✅ สั่งอาหารสำเร็จ! ออเดอร์ถูกบันทึกใน Database แล้ว กรุณารอสักครู่.');
             cart = []; // ล้างตะกร้าเมื่อสั่งสำเร็จ
             update
+            // --- Global Cart State ---
+let cart = []; // เก็บรายการสินค้าในตะกร้า
+let total = 0; // เก็บยอดรวม
+
+// --- 1. ฟังก์ชันเพิ่มสินค้าลงตะกร้า ---
+function addItemToCart(itemName, itemPrice) {
+    // ตรวจสอบว่าสินค้านี้มีในตะกร้าแล้วหรือไม่
+    const existingItem = cart.find(item => item.name === itemName);
+
+    if (existingItem) {
+        // ถ้ามีอยู่แล้ว: เพิ่มจำนวน
+        existingItem.quantity++;
+    } else {
+        // ถ้ายังไม่มี: เพิ่มรายการใหม่
+        cart.push({
+            name: itemName,
+            price: itemPrice,
+            quantity: 1
+        });
+    }
+
+    // คำนวณยอดรวมใหม่
+    updateCartSummary();
+
+    // *แจ้งเตือนผู้ใช้ว่าเพิ่มสินค้าแล้ว (Optional)*
+    console.log(`${itemName} ถูกเพิ่มลงในตะกร้าแล้ว!`);
+}
+
+// --- 2. ฟังก์ชันคำนวณและอัปเดตยอดรวม ---
+function updateCartSummary() {
+    total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // อัปเดตแถบ Floating Cart Summary ที่ด้านล่างของหน้าเมนู
+    const itemEl = document.getElementById('cart-item-count');
+    const totalEl = document.getElementById('cart-total');
+
+    // ตรวจสอบ Element ว่ามีอยู่ในหน้าหรือไม่
+    if (itemEl && totalEl) {
+        const totalItems = cart.reduce((count, item) => count + item.quantity, 0);
+        itemEl.textContent = `รายการ: ${totalItems}`;
+        totalEl.textContent = `${total.toFixed(2)} บาท`;
+    }
+
+    // อัปเดตหน้าตะกร้า (ถ้ามีการเรียกฟังก์ชันนี้จากหน้าตะกร้า)
+    renderCartItems(); 
+}
+
+// --- 3. ฟังก์ชันแสดงรายการในหน้าตะกร้า (Cart Page) ---
+function renderCartItems() {
+    const cartItemsContainer = document.getElementById('cart-items-list');
+    const cartTotalDisplay = document.getElementById('cart-page-total');
+
+    // ตรวจสอบว่าเราอยู่บนหน้าตะกร้าหรือไม่
+    if (!cartItemsContainer || !cartTotalDisplay) return;
+
+    cartItemsContainer.innerHTML = ''; // ล้างรายการเดิม
+
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p style="color: #A0A0A0; text-align: center;">ตะกร้าของคุณว่างเปล่า</p>';
+    } else {
+        cart.forEach((item, index) => {
+            const itemElement = document.createElement('div');
+            itemElement.classList.add('cart-item-detail');
+            itemElement.innerHTML = `
+                <div class="item-name-qty">
+                    ${item.name} (${item.quantity} ชิ้น)
+                </div>
+                <div class="item-price-total">
+                    ${(item.price * item.quantity).toFixed(2)} บาท
+                </div>
+                <button class="remove-btn" onclick="removeItemFromCart(${index})">
+                    ลบ
+                </button>
+            `;
+            cartItemsContainer.appendChild(itemElement);
+        });
+    }
+
+    cartTotalDisplay.textContent = `ยอดรวมทั้งหมด: ${total.toFixed(2)} บาท`;
+}
+
+// --- 4. ฟังก์ชันลบสินค้าออกจากตะกร้า ---
+function removeItemFromCart(index) {
+    const item = cart[index];
+    
+    // ลดจำนวน ถ้าจำนวนมากกว่า 1
+    if (item.quantity > 1) {
+        item.quantity--;
+    } else {
+        // ถ้าเหลือ 1 ชิ้น ให้ลบรายการนั้นออกจาก Array
+        cart.splice(index, 1);
+    }
+    
+    updateCartSummary();
+}

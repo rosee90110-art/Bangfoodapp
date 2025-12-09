@@ -17,6 +17,7 @@
         <h2>เมนูยอดนิยม</h2>
         
         <div class="menu-item" data-id="1">
+            
             <img src="placeholder-burger.jpg" alt="เบอร์เกอร์เนื้อ" class="item-image">
             <div class="item-details">
                 <h3 class="item-name">เบอร์เกอร์เนื้อย่างพรีเมียม</h3>
@@ -25,9 +26,9 @@
                     <span>180</span> บาท
                 </div>
             </div>
-            <button class="add-to-cart-btn" data-name="เบอร์เกอร์เนื้อ" data-price="180">
+          <a href="menu.html" class="add-to-cart-btn" data-name="สปาเก็ตตี้คาโบนาร่า" data-price="120" >
                 + เพิ่ม
-            </button>
+            </a>
         </div>
 
         <div class="menu-item" data-id="2">
@@ -39,9 +40,9 @@
                     <span>120</span> บาท
                 </div>
             </div>
-            <button class="add-to-cart-btn" data-name="สปาเก็ตตี้คาโบนาร่า" data-price="120">
+            <a href="menu.html" class="add-to-cart-btn" data-name="สปาเก็ตตี้คาโบนาร่า" data-price="120" >
                 + เพิ่ม
-            </button>
+            </a>
         </div>
 
         </main>
@@ -50,7 +51,10 @@
         <span id="cart-item-count">0</span> รายการ
         <span class="separator">|</span>
         <span id="cart-total-price">0.00</span> บาท
-        <button id="view-cart-btn">ดูตะกร้า/สั่งซื้อ</button>
+
+        <a href="cart.html" id="view-cart-btn" class="checkout-button">
+    🍽️
+</a>
     </div>
 
     <script src="script.js"></script>

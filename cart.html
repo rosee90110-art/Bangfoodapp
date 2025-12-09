@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า - BANGFOOD</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body onload="renderCartItems()">
+    
+    <div class="app-header">
+        <h1>ตะกร้าสินค้า</h1>
+        <a href="index.html" class="back-link">
+            &lt; กลับไปหน้าเมนู
+        </a>
+    </div>
+
+    <div class="cart-container">
+        <div id="cart-items-list" class="cart-items-list">
+            </div>
+
+        <div class="cart-total-summary">
+            <h3 id="cart-page-total">ยอดรวมทั้งหมด: 0.00 บาท</h3>
+        </div>
+
+        <button id="checkout-btn" class="checkout-btn-large">
+            ยืนยันคำสั่งซื้อ (ชำระเงิน)
+        </button>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        // เรียกใช้ฟังก์ชัน renderCartItems เมื่อโหลดหน้า
+        // (ถูกเรียกใน onload="" ของ body แล้ว)
+        // renderCartItems(); 
+    </script>
+</body>
+</html>

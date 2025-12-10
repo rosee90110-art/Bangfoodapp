@@ -243,3 +243,172 @@ body {
 
 
 
+/* --- ในส่วนของ .item-info-section ใน style.css --- */
+
+.item-info-section {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    /* เพิ่ม: จัดข้อความในส่วนนี้ให้อยู่กึ่งกลาง */
+    text-align: center; 
+}
+/* หมายเหตุ: ไม่ต้องแก้ไข .modal-item-name และ .modal-item-description เพิ่มเติม */
+/* --- ในส่วนของ .customization-group h3 ใน style.css --- */
+
+.customization-group h3 {
+    font-size: 1.1em;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #333333;
+    /* เพิ่ม: จัดหัวข้อกลุ่มตัวเลือกให้อยู่กึ่งกลาง */
+    text-align: center; 
+}
+/* --- ในส่วนของ .item-image-container ใน style.css --- */
+
+.item-image-container {
+    width: 100%;
+    max-height: 220px;
+    overflow: hidden;
+    /* เพิ่ม: จัดรูปภาพให้อยู่กึ่งกลาง */
+    text-align: center;
+}
+/* --- ในส่วนของ .modal-footer ใน style.css --- */
+
+.modal-footer {
+    /* นี่คือคำสั่งหลักที่จัดปุ่มและราคาสุทธิให้อยู่กึ่งกลาง */
+    text-align: center;
+    padding-top: 15px;
+    padding-bottom: 20px;
+    border-top: 1px solid #333;
+}
+
+
+/* --- ในส่วนของ Modal CSS (ส่วนที่ 4 ใน style.css) --- */
+
+/* สไตล์สำหรับ Dropdown Menu เลือกโต๊ะ */
+.table-selection-group {
+    display: flex;
+    justify-content: center; /* จัดให้อยู่ตรงกลางแนวนอน */
+    padding: 10px 0;
+}
+
+#modal-table-number {
+    width: 80%;
+    max-width: 300px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color-main);
+    color: var(--text-color-main);
+    font-size: 1em;
+    /* เน้นสีเมื่อ focus */
+    outline-color: var(--primary-color);
+}
+
+/* --- CSS สำหรับกล่องกลุ่มตัวเลือกทั้งหมด (ปริมาณ, ตัวเลือกเสริม, หมายเหตุ, โต๊ะที่สั่ง) --- */
+.customization-group {
+    border: 1px solid var(--border-color); /* #333333 - เส้นขอบที่เห็นได้ชัด */
+    border-radius: 10px; /* ขอบมน */
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: var(--bg-color-card); /* #1F1F1F - สีพื้นหลังที่แตกต่างจากพื้นหลังหลัก #121212 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* เพิ่มเงาเล็กน้อย */
+}
+
+/* จัดหัวข้อให้อยู่กึ่งกลางและมีสีเน้น */
+.customization-group h3 {
+    font-size: 1.2em;
+    color: var(--secondary-color); /* #03DAC6 */
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #333333;
+    text-align: center; /* จัดให้อยู่กึ่งกลาง */
+}
+
+/* --- สไตล์สำหรับตัวเลือกย่อย (Radio/Checkbox Labels) --- */
+.radio-label, .checkbox-label {
+    display: flex;
+    align-items: center;
+    padding: 12px; /* เพิ่ม padding ให้แต่ละตัวเลือกดูมีพื้นที่ */
+    margin: 5px 0; /* เพิ่มระยะห่างระหว่างตัวเลือก */
+    cursor: pointer;
+    font-size: 1em;
+    color: var(--text-color-main);
+    transition: background-color 0.15s;
+    border-radius: 5px; 
+}
+
+.radio-label:hover, .checkbox-label:hover {
+    background-color: #292929; /* เปลี่ยนสีพื้นหลังเมื่อ Hover */
+}
+
+/* จัดสไตล์ Radio/Checkbox Input */
+.radio-label input[type="radio"], .checkbox-label input[type="checkbox"] {
+    margin-right: 15px;
+    accent-color: var(--primary-color); 
+    transform: scale(1.1);
+}
+
+/* จัดสไตล์ Textarea สำหรับหมายเหตุ */
+#modal-notes {
+    /* ใช้ width: 100% ภายใน customization-group ที่มี padding 15px แล้ว */
+    width: 100%;
+    box-sizing: border-box; /* สำคัญ: ให้ padding ไม่ทำให้ความกว้างเกิน 100% */
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background-color: #292929;
+    color: var(--text-color-main);
+    resize: vertical;
+}
+/* --- ปุ่มยืนยัน (Add Confirm Button) --- */
+.add-confirm-btn {
+    width: 100%;
+    /* ใช้สี Secondary (ฟ้า-เขียว) เพื่อเน้นการสั่งซื้อ */
+    background-color: var(--secondary-color); /* #03DAC6 */
+    color: var(--bg-color-main); /* #121212 */
+    border: none;
+    padding: 16px; /* เพิ่มขนาด padding ให้อลังการขึ้น */
+    font-size: 1.2em;
+    font-weight: bold;
+    border-radius: 10px; /* ขอบมนสวยงาม */
+    margin-bottom: 12px;
+    cursor: pointer;
+    /* เพิ่ม Shadow ให้ปุ่มดูนูนขึ้นมา */
+    box-shadow: 0 4px 15px rgba(3, 218, 198, 0.4); 
+    transition: all 0.2s ease-in-out;
+    letter-spacing: 0.5px; /* เพิ่มระยะห่างตัวอักษรเล็กน้อย */
+}
+
+/* เอฟเฟกต์เมื่อวางเมาส์หรือกด */
+.add-confirm-btn:hover {
+    background-color: #00BFA5; /* เข้มขึ้นเล็กน้อย */
+    transform: translateY(-2px); /* ยกปุ่มขึ้นเล็กน้อย */
+    box-shadow: 0 6px 20px rgba(3, 218, 198, 0.6);
+}
+
+.add-confirm-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(3, 218, 198, 0.3);
+}
+
+/* --- (โค้ดสำหรับ .close-modal-btn ยังคงเดิม หรือใช้โค้ดด้านล่างเพื่อความสมบูรณ์) --- */
+.close-modal-btn {
+    background: none;
+    color: var(--text-color-secondary);
+    border: 2px solid var(--text-color-secondary);
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: all 0.2s;
+    width: 60%;
+    max-width: 200px;
+}
+
+.close-modal-btn:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}

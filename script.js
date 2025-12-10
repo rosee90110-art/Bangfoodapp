@@ -207,3 +207,53 @@ function removeItemFromCart(index) {
     
     updateCartSummary();
 }
+
+
+// --- 7.2 Confirmation: เมื่อกดปุ่ม "ยืนยันและเพิ่มลงตะกร้า" (แก้ไขใหม่) ---
+if (addToCartConfirmBtn) {
+    addToCartConfirmBtn.addEventListener('click', () => {
+        
+        // 1. ตรวจสอบหมายเลขโต๊ะก่อน
+        const tableNumber = document.getElementById('modal-table-number').value;
+        if (!tableNumber) {
+            alert("กรุณาเลือกหมายเลขโต๊ะที่ต้องการสั่งอาหารก่อน!");
+            // หยุดการทำงานถ้ายังไม่ได้เลือกโต๊ะ
+            return; 
+        }
+
+        // 2. ดึงข้อมูลและคำนวณราคาสุดท้าย
+        const finalPrice = calculateFinalPrice(); 
+        const notes = document.getElementById('modal-notes').value.trim();
+        const sizeOptionEl = modalForm.querySelector('input[name="size"]:checked');
+        const sizeOption = sizeOptionEl ? sizeOptionEl.value : 'standard';
+
+        const addons = Array.from(modalForm.querySelectorAll('input[name="addon"]:checked'))
+                            .map(cb => cb.value);
+
+        // 3. สร้างชื่อสินค้าที่รวม Option เข้าไปด้วย
+        let itemNameWithOption = currentItem.name;
+        if (sizeOption === 'special') {
+            itemNameWithOption += ' (พิเศษ)';
+        }
+        if (addons.length > 0) {
+            itemNameWithOption += ' + (' + addons.join(', ') + ')';
+        }
+        if (notes) {
+             itemNameWithOption += ` [โน้ต: ${notes}]`;
+        }
+        
+        // 4. เพิ่มข้อมูลโต๊ะลงในตะกร้า (ถ้ายังไม่มี)
+        if (!cart.table) {
+            cart.table = tableNumber;
+        } else if (cart.table !== tableNumber) {
+            // ถ้ามีการพยายามสั่งสินค้าโต๊ะอื่น ให้เตือน (โดยทั่วไประบบสั่งต่อครั้งจะเป็นโต๊ะเดียว)
+            alert(`คำเตือน: ในตะกร้ามีรายการสำหรับโต๊ะ ${cart.table} อยู่แล้ว รายการนี้จะถูกเพิ่มเข้าไปในโต๊ะเดียวกัน`);
+        }
+
+        // 5. เพิ่มสินค้าลงตะกร้า
+        addItemToCart(itemNameWithOption, finalPrice); 
+
+        // 6. ปิด Modal
+        closeModal();
+    });
+}

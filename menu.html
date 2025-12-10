@@ -10,7 +10,7 @@
     
     <div class="app-header">
         <h1>BANGFOOD</h1>
-        <p>สแกนสั่งงาน ไม่ต้องเรียกพนักงาน</p>
+        <p>ตัวเลือกเพิ่มเติม</p>
     </div>
 
 
@@ -35,12 +35,22 @@
                 <img id="modal-item-image" src="" alt="รูปภาพอาหาร" class="modal-image">
             </div>
             
-            <div class="item-info-section">
-                <h2 id="modal-item-name" class="modal-item-name">ชื่ออาหาร</h2>
-                <p id="modal-item-description" class="modal-item-description">คำอธิบายสั้น ๆ ของรายการอาหาร</p>
-                <p class="modal-item-base-price">ราคาเริ่มต้น: <span id="modal-base-price">0.00</span> บาท</p>
-            </div>
-            
+    
+            <div class="customization-group">
+    <h3>📌 โต๊ะที่สั่ง (บังคับเลือก)</h3>
+    <div class="table-selection-group">
+        
+        <select id="modal-table-number" name="table_number" required>
+            <option value="">-- กรุณาเลือกโต๊ะ --</option>
+            <option value="T1">โต๊ะ 1</option>
+            <option value="T2">โต๊ะ 2</option>
+            <option value="T3">โต๊ะ 3</option>
+            <option value="T4">โต๊ะ 4</option>
+            <option value="T5">โต๊ะ 5</option>
+            </select>
+
+    </div>
+</div>
             <form id="item-customization-form" class="customization-form">
 
                 <div class="customization-group">
@@ -79,7 +89,9 @@
                 <button id="add-to-cart-confirm-btn" class="add-confirm-btn">
                     ยืนยันและเพิ่มลงตะกร้า
                 </button>
-                <button class="close-modal-btn" onclick="closeModal()">ยกเลิก</button>
+                <a href="index.html" class="close-modal-btn" onclick="closeModal()">
+    ยกเลิก
+</a>
             </div>
             
         </div>

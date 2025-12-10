@@ -16,23 +16,23 @@
     </div>
 
     <div class="cart-container">
+        <h3 id="table-display-info"></h3>
+        
         <div id="cart-items-list" class="cart-items-list">
             </div>
 
         <div class="cart-total-summary">
-            <h3 id="cart-page-total">ยอดรวมทั้งหมด: 0.00 บาท</h3>
+            <h3>ยอดรวมทั้งหมด: <span id="final-total-amount">0.00</span> บาท</h3>
         </div>
 
-        <button id="checkout-btn" class="checkout-btn-large">
+        <button 
+            id="checkout-btn" 
+            class="checkout-btn-large" 
+            onclick="alert('ทำการสั่งซื้อเสร็จสมบูรณ์แล้ว! (ยอดชำระ: ' + document.getElementById('final-total-amount').textContent + ' บาท)'); clearCart(); window.location.href='index.html';">
             ยืนยันคำสั่งซื้อ (ชำระเงิน)
         </button>
     </div>
     
     <script src="script.js"></script>
-    <script>
-        // เรียกใช้ฟังก์ชัน renderCartItems เมื่อโหลดหน้า
-        // (ถูกเรียกใน onload="" ของ body แล้ว)
-        // renderCartItems(); 
-    </script>
 </body>
 </html>

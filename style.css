@@ -257,9 +257,29 @@ body {
 /* หมายเหตุ: ไม่ต้องแก้ไข .modal-item-name และ .modal-item-description เพิ่มเติม */
 /* --- ในส่วนของ .customization-group h3 ใน style.css --- */
 
+
+
+/* --- 6. Modal / Menu.html Card Structure (ต่อเนื่องจากโค้ดที่คุณส่งมา) --- */
+
+/* CSS สำหรับกล่องกลุ่มตัวเลือกทั้งหมด (ปริมาณ, ตัวเลือกเสริม, หมายเหตุ, โต๊ะที่สั่ง) */
+.customization-group {
+    /* **จุดที่ต้องแก้ไข:** ลบ width: 800px ออก! */
+    width: 100%; /* ใช้ความกว้างเต็มที่ของคอนเทนเนอร์หลัก */
+    max-width: 600px; /* **เพิ่ม:** จำกัดความกว้างสูงสุดบน PC (ถ้าจำเป็น) */
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: var(--bg-color-card);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
 .customization-group h3 {
-    font-size: 1.1em;
+    font-size: 1.2em;
     color: var(--secondary-color);
+    margin-top: 0;
     margin-bottom: 10px;
     padding-bottom: 5px;
     border-bottom: 1px solid #333333;

@@ -176,7 +176,7 @@ body {
 
 .cart-items-list {
     margin-bottom: 25px;
-    border: 1px solid #333;
+    border: 3px solid #333;
     border-radius: 8px;
     padding: 10px;
     background-color: var(--bg-color-card);
@@ -196,8 +196,11 @@ body {
 
 .item-name-qty {
     font-weight: 500;
-    flex-grow: 1;
+    flex-grow: 1; /* **สำคัญ:** ให้มันขยายเพื่อดันส่วนราคาไปขวา */
     color: var(--text-color-main);
+    /* **เพิ่ม/ปรับ:** ตรวจสอบให้แน่ใจว่าไม่มี margin/padding ที่ดันไปทางขวา */
+    text-align: left ; /* ตรวจสอบให้แน่ใจว่าข้อความชิดซ้าย */
+    padding-right: 10px; /* เว้นระยะห่างเล็กน้อยจากส่วนราคา */
 }
 
 .item-price-total {
@@ -415,3 +418,4 @@ body {
     color: var(--primary-color);
     border-color: var(--primary-color);
 }
+

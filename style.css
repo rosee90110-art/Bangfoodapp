@@ -33,8 +33,13 @@ body {
     box-shadow: var(--shadow-dark);
 }
 
-.app-header h1 { color: var(--primary-color); font-size: 1.8rem; margin-bottom: 5px; }
-.app-header p { color: var(--text-color-secondary); font-size: 0.9rem; opacity: 0.8; }
+.app-header h1 { 
+    color: var(--primary-color); 
+    font-size: 1.8rem; margin-bottom: 5px; 
+}
+.app-header p { 
+    color: var(--text-color-secondary); 
+    font-size: 0.9rem; opacity: 0.8; }
 
 /* --- 3. ส่วนรายการเมนู (Menu Container & Title) --- */
 .menu-container { padding: 20px 15px; }
@@ -311,30 +316,24 @@ body {
     /* เน้นสีเมื่อ focus */
     outline-color: var(--primary-color);
 }
+@media (min-width: 650px) {
+    /* จำกัดความกว้างของเนื้อหาหลัก */
+    .menu-container,
+    .customization-group {
+        max-width: 800px; /* จำกัดความกว้างสูงสุด */
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 
-/* --- CSS สำหรับกล่องกลุ่มตัวเลือกทั้งหมด (ปริมาณ, ตัวเลือกเสริม, หมายเหตุ, โต๊ะที่สั่ง) --- */
-.customization-group {
-    width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid var(--border-color); /* #333333 - เส้นขอบที่เห็นได้ชัด */
-    border-radius: 10px; /* ขอบมน */
-    padding: 20px;
-    margin-bottom: 20px;
-    background-color: var(--bg-color-card); /* #1F1F1F - สีพื้นหลังที่แตกต่างจากพื้นหลังหลัก #121212 */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* เพิ่มเงาเล็กน้อย */
+    /* ปรับขนาดส่วนหัวบนจอใหญ่ */
+    .customization-group h1 {
+        font-size: 2.2rem;
+    }
+    /* ... โค้ด Mobile อื่นๆ ... */
 }
 
-/* จัดหัวข้อให้อยู่กึ่งกลางและมีสีเน้น */
-.customization-group h3 {
-    font-size: 1.2em;
-    color: var(--secondary-color); /* #03DAC6 */
-    margin-top: 0;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #333333;
-    text-align: center; /* จัดให้อยู่กึ่งกลาง */
-}
 
 /* --- สไตล์สำหรับตัวเลือกย่อย (Radio/Checkbox Labels) --- */
 .radio-label, .checkbox-label {

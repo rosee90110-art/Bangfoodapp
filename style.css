@@ -307,9 +307,12 @@ body {
 
 /* --- CSS สำหรับกล่องกลุ่มตัวเลือกทั้งหมด (ปริมาณ, ตัวเลือกเสริม, หมายเหตุ, โต๊ะที่สั่ง) --- */
 .customization-group {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
     border: 1px solid var(--border-color); /* #333333 - เส้นขอบที่เห็นได้ชัด */
     border-radius: 10px; /* ขอบมน */
-    padding: 15px;
+    padding: 20px;
     margin-bottom: 20px;
     background-color: var(--bg-color-card); /* #1F1F1F - สีพื้นหลังที่แตกต่างจากพื้นหลังหลัก #121212 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* เพิ่มเงาเล็กน้อย */

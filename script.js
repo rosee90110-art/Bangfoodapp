@@ -50,11 +50,22 @@ function updateCartSummary() {
         cartTotalElement.textContent = totalPrice.toFixed(2);
     }
     
-    // ซ่อน/แสดง Floating Cart
+    // ซ่อน/แสดง Floating Cart (ลบเงื่อนไขการซ่อน/แสดงออกไป)
     const floatingCart = document.querySelector('.floating-cart-summary');
-    if (floatingCart) {
-        floatingCart.style.display = totalItems > 0 ? 'flex' : 'none';
-    }
+    // **ส่วนนี้ถูกลบออกไป เพื่อให้แถบแสดงผลตลอดเวลา**
+    // if (floatingCart) {
+    //     floatingCart.style.display = totalItems > 0 ? 'flex' : 'none';
+    // }
+    
+    // **ถ้าต้องการให้แสดงตลอดเวลา แต่ซ่อนปุ่ม "ดูตะกร้า" เมื่อว่างเปล่า**
+    if (floatingCart) {
+        floatingCart.style.display = 'flex'; // บังคับให้แสดงตลอด
+        const viewCartBtn = document.getElementById('view-cart-btn');
+        if (viewCartBtn) {
+            // ซ่อนปุ่ม "ดูตะกร้า" เมื่อตะกร้าว่างเปล่า เพื่อไม่ให้ผู้ใช้คลิกไปหน้าว่าง
+            viewCartBtn.style.display = totalItems > 0 ? 'block' : 'none'; 
+        }
+    }
 }
 
 // **แก้ไข:** เพิ่ม quantity: 1 เข้าไปใน item object

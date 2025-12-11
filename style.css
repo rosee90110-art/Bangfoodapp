@@ -261,6 +261,42 @@ body {
 }
 /* หมายเหตุ: ไม่ต้องแก้ไข .modal-item-name และ .modal-item-description เพิ่มเติม */
 /* --- ในส่วนของ .customization-group h3 ใน style.css --- */
+/* --- สไตล์หลักสำหรับรูปภาพใน Modal (ใช้ได้ดีบน Mobile และเป็นค่าเริ่มต้น) --- */
+
+.modal-image {
+    /* ใช้ ID แทน class ถ้าคุณใช้ ID ใน HTML */
+    width: 100%; 
+    max-width: 300px; /* จำกัดขนาดสูงสุดเพื่อให้ดูดีบนหน้าจอแคบ */
+    height: auto;
+    max-height: 200px; 
+    
+    /* *สำคัญ:* รักษาสัดส่วนรูปภาพไม่ให้บิดเบี้ยว */
+    object-fit: cover; 
+    
+    border-radius: 8px;
+    margin-bottom: 15px;
+    
+    /* จัดให้อยู่ตรงกลางเสมอ */
+    display: block; 
+    margin-left: auto;
+    margin-right: auto;
+    
+    border: 2px solid var(--secondary-color);
+}
+
+
+/* --- Media Query สำหรับ PC/Tablet (หน้าจอกว้าง 650px ขึ้นไป) --- */
+
+@media (min-width: 650px) {
+    .modal-image {
+        /* ปรับขนาดรูปภาพให้ใหญ่ขึ้นเล็กน้อยบน PC */
+        max-width: 400px; 
+        max-height: 250px; 
+        
+        /* เพิ่มขอบที่หนาขึ้นเล็กน้อยเพื่อเน้น */
+        border-width: 3px; 
+    }
+}
 
 .customization-group {
     /* ***แก้ไขจุดนี้: ลบ width: 800px ออก และใช้ 100% แทน*** */
@@ -411,7 +447,7 @@ body {
     background-color: #B00020; /* สีแดงเข้ม (Deep Red) */
     color: #000000; /* สีขาว (สำหรับตัวอักษร) */
     border: none;
-    padding: 16px; /* เพิ่มขนาด padding ให้อลังการขึ้น */
+    padding: 15px; /* เพิ่มขนาด padding ให้อลังการขึ้น */
     font-size: 1.2em;
     font-weight: bold;
     border-radius: 10px; /* ขอบมนสวยงาม */
@@ -476,3 +512,14 @@ body {
 }
 /* --- ปุ่มยกเลิกการสั่งซื้อ (อยู่ใน Modal Footer) --- */
 
+/* เพิ่มใน style.css */
+.addon-category {
+    padding-left: 5px; /* เว้นช่องว่างทางซ้ายเล็กน้อย */
+    padding-bottom: 10px;
+}
+
+.customization-group h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: var(--secondary-color); /* เน้นสีหัวข้อกลุ่มย่อย */
+}

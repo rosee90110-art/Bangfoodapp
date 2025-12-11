@@ -373,13 +373,14 @@ body {
 }
 /* --- ปุ่มยืนยัน (Add Confirm Button) --- */
 .add-confirm-btn {
-    width: 26%;
+    width: 50%;
     max-width: none; 
     margin-left: auto;
     margin-right: auto;
     /* ใช้สี Secondary (ฟ้า-เขียว) เพื่อเน้นการสั่งซื้อ */
     background-color: #00bf2d;
     color: #000000; /* สีขาว (สำหรับตัวอักษร) */
+    text-decoration: none;
     border: none;
     padding: 16px; /* เพิ่มขนาด padding ให้อลังการขึ้น */
     font-size: 1.2em;
@@ -405,10 +406,7 @@ body {
     box-shadow: 0 2px 10px rgba(3, 218, 198, 0.3);
 }
 .add-confirm-btnm {
-    width: 26%;
-    max-width: none; 
-    margin-left: auto;
-    margin-right: auto;
+    width: 50%;
     /* ใช้สี Secondary (ฟ้า-เขียว) เพื่อเน้นการสั่งซื้อ */
     background-color: #B00020; /* สีแดงเข้ม (Deep Red) */
     color: #000000; /* สีขาว (สำหรับตัวอักษร) */
@@ -448,7 +446,7 @@ body {
     font-size: 0.9em;
     font-weight: 500;
     transition: all 0.2s;
-    width: 60%;
+    width: 100%;
     max-width: 200px;
 }
 
@@ -456,4 +454,25 @@ body {
     color: var(--primary-color);
     border-color: var(--primary-color);
 }
+/* --- ปุ่มยกเลิกการสั่งซื้อ (อยู่ใน Modal Footer) --- */
+/* --- (โค้ดสำหรับ .close-modal-btn ยังคงเดิม หรือใช้โค้ดด้านล่างเพื่อความสมบูรณ์) --- */
+.close-modal-btnm {
+    background: none;
+    color: #c70000; /* สีแดงเข้ม (Deep Red) */
+    border: #6c0000; /* สีแดงเข้ม (Deep Red) */
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: all 0.2s;
+    width: 100%;
+    max-width: 200px;
+}
+
+.close-modal-btnm:hover {
+    color: #df0000; /* สีแดงเข้ม (Deep Red) */
+    border-color: var(--primary-color);
+}
+/* --- ปุ่มยกเลิกการสั่งซื้อ (อยู่ใน Modal Footer) --- */
 

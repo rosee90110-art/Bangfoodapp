@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าจอแอดมิน - คำสั่งซื้อใหม่</title>
+    <link rel="stylesheet" href="style.css"> <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script>
+        // *** สำคัญ: แทนที่ด้วยค่า Firebase Config จริงของคุณ ***
+        const firebaseConfig = {
+        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+        authDomain: "bangfood-cb30f.firebaseapp.com",
+        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bangfood-cb30f",
+        storageBucket: "bangfood-cb30f.firebasestorage.app",
+        messagingSenderId: "390955623784",
+        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd",
+        measurementId: "G-6M6W033GFG"
+    
+    };// Initialize Firebaseconst app = initializeApp(firebaseConfig);const analytics = getAnalytics(app
+   
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database(); 
+    </script>
+</head>
+<body>
+    <div class="app-header">
+        <h1>🔔 คำสั่งซื้อใหม่ที่รอดำเนินการ</h1>
+    </div>
+
+    <div class="admin-container">
+        <div class="filter-controls">
+            <p>จำนวนคำสั่งซื้อรวม: <span id="order-count">0</span> รายการ</p>
+        </div>
+        
+        <div id="orders-list-container" class="orders-grid">
+            <p id="loading-message">กำลังโหลดคำสั่งซื้อ...</p>
+        </div>
+    </div>
+    
+    <script src="admin.js"></script>
+</body>
+</html>

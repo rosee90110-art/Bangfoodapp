@@ -241,19 +241,27 @@ if (addToCartConfirmBtn) {
         } 
         
         // เพิ่มสินค้าลงตะกร้า (ส่ง notes ไปด้วยเพื่อให้แสดงใน cart.html ได้ง่าย)
+        // ... โค้ดส่วนบนของฟังก์ชัน ...
+// เพิ่มสินค้าลงตะกร้า
         cart.items.push({
-            name: currentItem.name, // ชื่อหลัก
-            options: optionString, // ตัวเลือกที่เลือก (สำหรับแสดงในรายละเอียด)
-            notes: notes, // หมายเหตุ
-            finalPrice: finalPrice,
-            quantity: 1,
-        });
+            name: currentItem.name, // ชื่อหลัก
+            options: optionString, // ตัวเลือกที่เลือก (สำหรับแสดงในรายละเอียด)
+            notes: notes, // หมายเหตุ
+            finalPrice: finalPrice,
+            quantity: 1,
+            // *** สำคัญ: ต้องมีบรรทัดนี้ ***
+            imgUrl: currentItem.imageSrc || 'placeholder.png', 
+        });
 
         saveCart(); 
-        closeModal('cart.html'); // เด้งไปหน้า cart.html
+        closeModal('cart.html'); 
     });
 }
 
+
+// ----------------------------------------------------
+// --- 5. Cart Page Functions (ใช้ใน cart.html) ---
+// ----------------------------------------------------
 
 // ----------------------------------------------------
 // --- 5. Cart Page Functions (ใช้ใน cart.html) ---
@@ -268,33 +276,46 @@ function renderCartItems() {
 
     // 1. แสดงหมายเลขโต๊ะ
     if (tableInfoEl) {
-         tableInfoEl.textContent = cart.table ? `คำสั่งซื้อสำหรับ โต๊ะ ${cart.table}` : 'ไม่มีรายการในตะกร้า';
+        tableInfoEl.textContent = cart.table ? `คำสั่งซื้อสำหรับ โต๊ะ ${cart.table}` : 'ไม่มีรายการในตะกร้า';
     }
 
     cartItemsContainer.innerHTML = ''; 
 
-    // 2. แสดงรายการสินค้า (และเพิ่มปุ่มลบ)
+    // 2. แสดงรายการสินค้า (พร้อมรูปภาพและชื่อ)
     if (cart.items.length === 0) {
-        cartItemsContainer.innerHTML = '<p class="empty-cart-message">คุณยังไม่ได้เลือกรายการอาหาร</p>';
+        cartItemsContainer.innerHTML = '<p class="empty-cart-message" style="text-align: center;">คุณยังไม่ได้เลือกรายการอาหาร</p>';
     } else {
-        cart.items.forEach((item, index) => { // **เพิ่ม index**
+        cart.items.forEach((item, index) => { 
             const itemElement = document.createElement('div');
-            itemElement.classList.add('cart-item-detail');
+            // ใช้คลาส 'cart-item' เพื่อจัดเรียงรูปภาพและรายละเอียด
+            itemElement.classList.add('cart-item'); 
             
-                let detailsHtml = item.options ? `<br><small style="color: var(--text-color-secondary);">${item.options}</small>` : '';
-                if (item.notes) {
-                    detailsHtml += `<br><small style="color: var(--text-color-secondary); font-style: italic;">(โน้ต: ${item.notes})</small>`;
-                }
+            // โครงสร้างสำหรับตัวเลือกเสริมและโน้ต
+            let detailsHtml = '';
+            if (item.options) {
+                detailsHtml += `<small class="item-modifiers">${item.options}</small>`;
+            }
+            if (item.notes) {
+                detailsHtml += `<small class="item-modifiers item-notes">(โน้ต: ${item.notes})</small>`;
+            }
+            // ถ้าไม่มีตัวเลือกเลย ให้แสดงคำว่า 'มาตรฐาน' หรือ 'ไม่มีตัวเลือก'
+            if (!detailsHtml) {
+                 detailsHtml = '<small class="item-modifiers">ไม่มีตัวเลือกเสริม</small>';
+            }
+
 
             itemElement.innerHTML = `
-                <div class="item-name-qty">
-                    ${item.name}
+                <img src="${item.imgUrl || 'placeholder.png'}" alt="${item.name || 'รายการสินค้า'}" class="cart-item-image">
+
+                <div class="item-details-cart">
+                    <p class="item-name-cart">${item.name || 'รายการที่ไม่ได้ระบุชื่อ'}</p> 
                     ${detailsHtml}
-                </div>
-                <div style="display: flex; align-items: center;">
-                    <span class="item-price-total">${item.finalPrice.toFixed(2)} บาท</span>
-                    <button class="remove-btn" onclick="removeItem(${index})">ลบ</button>
                 </div>
+
+                <div class="item-quantity-control">
+                                        <span class="item-price-total">${item.finalPrice.toFixed(2)} บาท</span>
+                    <button class="remove-btn" onclick="removeItem(${index})">ลบ</button>
+                </div>
             `;
             cartItemsContainer.appendChild(itemElement);
         });
@@ -321,4 +342,49 @@ if (pagePath.includes('menu.html')) {
     updateCartSummary();
 } else {
     updateCartSummary();
+}
+
+// ในไฟล์ script.js: เพิ่ม/แก้ไขฟังก์ชัน placeOrder()
+
+// ในไฟล์ script.js: เพิ่มฟังก์ชัน placeOrder() นี้
+
+function placeOrder() {
+    // ตรวจสอบว่ามีรายการในตะกร้าหรือไม่
+    if (cart.items.length === 0) {
+        alert("ไม่พบรายการในตะกร้าสินค้า กรุณาเพิ่มรายการอาหารก่อน!");
+        window.location.href='index.html';
+        return;
+    }
+
+    // ดึงข้อมูลคำสั่งซื้อและยอดรวม
+    const finalTotal = parseFloat(document.getElementById('final-total-amount').textContent);
+
+    const orderData = {
+        table: cart.table,
+        items: cart.items,
+        total: finalTotal,
+        timestamp: new Date().toLocaleString('th-TH'), 
+        status: 'รอดำเนินการ' // สถานะเริ่มต้น
+    };
+
+    // ยืนยันคำสั่งซื้อกับผู้ใช้
+    const confirmation = confirm(`ยืนยันการสั่งซื้อ โต๊ะ ${orderData.table} ยอดรวม ${orderData.total.toFixed(2)} บาท ใช่หรือไม่?`);
+
+    if (confirmation) {
+
+        // 1. ส่งข้อมูลไปยัง Firebase Realtime Database
+        // db คือตัวแปรที่ถูกกำหนดไว้ใน cart.html แล้ว
+        db.ref('orders').push(orderData) // ส่งข้อมูลไปที่โหนด 'orders'
+            .then(() => {
+                // 2. เมื่อส่งสำเร็จ: แจ้งเตือน ล้างตะกร้า และเปลี่ยนหน้า
+                alert(`ทำการสั่งซื้อเสร็จสมบูรณ์แล้ว! (หมายเลขโต๊ะ: ${orderData.table} ยอดชำระ: ${orderData.total.toFixed(2)} บาท)\nระบบจะดำเนินการตามคำสั่งซื้อของท่าน`);
+
+                clearCart(); // ล้างข้อมูลใน Session Storage
+                window.location.href='index.html'; 
+            })
+            .catch((error) => {
+                console.error("Error submitting order to Firebase:", error);
+                alert("เกิดข้อผิดพลาดในการส่งคำสั่งซื้อ กรุณาลองใหม่อีกครั้ง");
+            });
+    }
 }

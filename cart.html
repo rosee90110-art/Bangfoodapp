@@ -1,37 +1,63 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตะกร้าสินค้า - BANGFOOD</title>
-    <link rel="stylesheet" href="style.css"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า - BANGFOOD</title>
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body onload="renderCartItems()">
-    
-    <div class="app-header">
-        <h1>ตะกร้าสินค้า</h1>
-        <a href="index.html" class="back-link">
-            &lt; กลับไปหน้าเมนู
-        </a>
-    </div>
+    
+    <div class="app-header">
+        <h1>ตะกร้าสินค้า</h1>
+        <a href="index.html" class="back-link">
+            &lt; กลับไปหน้าเมนู
+        </a>
+    </div>
 
-    <div class="cart-container">
-        <h3 id="table-display-info"></h3>
+    <div class="cart-container">
+        <h3 id="table-display-info"></h3>
+
+        <div id="cart-items-list" class="cart-items-list">
+            </div>
+
+        <div class="cart-total-summary">
+            <h3>ยอดรวมทั้งหมด: <span id="final-total-amount">0.00</span> บาท</h3>
+        </div>
+
+        <button
+            id="checkout-btn" 
+            class="checkout-btn-large" 
+                        onclick="placeOrder()">
+            ยืนยันคำสั่งซื้อ (ชำระเงิน)
+        </button>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // *** โค้ดกำหนดค่า Firebase ที่ถูกต้อง 100% สำหรับโปรเจกต์ bangfood-cb30f ***
+        const firebaseConfig = {
+            // ใช้ API Key จริงของคุณ (ที่คุณคัดลอกมา)
+            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", // *** แทนที่ด้วยค่าจริงของคุณ *** // ใช้ Project ID จริง
+            authDomain: "bangfood-cb30f.firebaseapp.com",
+            
+            // ใช้ Database URL จริง (รูปแบบใหม่ของ Firebase)
+            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
+            
+            // ใช้ Project ID จริง
+            projectId: "bangfood-cb30f", 
+            
+            storageBucket: "bangfood-cb30f.firebasestorage.app",
+            messagingSenderId: "390955623784",
+            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd",
+            measurementId: "G-6M6W033GFG"
+        };
         
-        <div id="cart-items-list" class="cart-items-list">
-            </div>
-
-        <div class="cart-total-summary">
-            <h3>ยอดรวมทั้งหมด: <span id="final-total-amount">0.00</span> บาท</h3>
-        </div>
-
-        <button
-            id="checkout-btn" 
-            class="checkout-btn-large" 
-            onclick="alert('ทำการสั่งซื้อเสร็จสมบูรณ์แล้ว! (ยอดชำระ: ' + document.getElementById('final-total-amount').textContent + ' บาท)'); clearCart(); window.location.href='index.html';">
-            ยืนยันคำสั่งซื้อ (ชำระเงิน)
-        </button>
-    </div>
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database(); // ตัวแปรสำหรับเรียกใช้ Realtime Database
+    </script>
     
     <script src="script.js"></script>
 </body>

@@ -198,6 +198,78 @@ body {
 .cart-item-detail:last-child {
     border-bottom: none;
 }
+.cart-item-image {
+    /* *** ปรับขนาดรูปภาพที่นี่ *** */
+    width: 60px; 
+    height: 60px;
+    
+    object-fit: cover; /* ทำให้รูปภาพไม่ยืดหรือบิดเบี้ยว */
+    border-radius: 6px; /* ขอบโค้งมน */
+    margin-right: 15px; /* เว้นระยะห่างจากชื่อสินค้า */
+    flex-shrink: 0; /* ป้องกันไม่ให้รูปภาพถูกย่อเมื่อจอเล็ก */
+    border: 1px solid #333; /* ถ้าต้องการขอบ */
+}
+/* --- สไตล์สำหรับรายการสินค้าในตะกร้า (cart.html) --- */
+
+.cart-item {
+    /* 1. เปิดใช้งาน Flexbox เพื่อจัดเรียงลูกหลาน (รูปภาพ, รายละเอียด, ปุ่มลบ) ในแนวนอน */
+    display: flex; 
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    justify-content: space-between; /* กระจายองค์ประกอบให้เต็มพื้นที่ (ถ้าจำเป็น) */
+
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-color-card);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-light);
+}
+
+.item-details-cart {
+    /* 2. ส่วนนี้ขยายเต็มพื้นที่ตรงกลางระหว่างรูปภาพและปุ่ม */
+    flex-grow: 1; 
+    min-width: 0; /* ป้องกันการล้นเมื่อข้อความยาว */
+    padding-right: 10px; /* เว้นระยะห่างจากส่วนควบคุมจำนวน/ราคา */
+}
+
+.item-name-cart {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 0 0 4px 0;
+    /* ... */
+}
+
+.item-modifiers {
+    font-size: 0.9em;
+    color: var(--text-color-secondary);
+    margin: 0;
+    display: block; /* ให้ตัวเลือกเสริมอยู่บรรทัดถัดจากชื่อ */
+}
+
+.item-quantity-control {
+    /* 3. ส่วนควบคุมจำนวน/ราคา/ปุ่มลบ ให้อยู่ทางขวา */
+    display: flex;
+    flex-direction: column; /* จัดราคาและปุ่มลบให้อยู่แนวตั้ง */
+    align-items: flex-end;
+    flex-shrink: 0; /* ป้องกันไม่ให้ส่วนนี้ถูกบีบ */
+    text-align: right;
+}
+
+.item-price-total {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* สไตล์สำหรับปุ่มลบ */
+.remove-btn {
+    background-color: #c0392b; /* สีแดง */
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
 
 .item-name-qty {
     font-weight: 500;
@@ -522,4 +594,118 @@ body {
     margin-top: 20px;
     margin-bottom: 10px;
     color: var(--secondary-color); /* เน้นสีหัวข้อกลุ่มย่อย */
+}
+/* --- สไตล์สำหรับหน้าจอแอดมิน --- */
+
+.admin-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+.orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* จัดเรียงเป็นคอลัมน์อัตโนมัติ */
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.order-card {
+    background-color: #2c3e50; /* Darker background */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+    border-left: 5px solid transparent;
+}
+
+.order-table {
+    font-size: 1.8em;
+    color: #e74c3c; /* สีแดงสำหรับโต๊ะ */
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.order-status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+
+/* สถานะสี */
+.status-pending {
+    background-color: #f1c40f; /* เหลือง */
+    color: #333;
+}
+.status-processing {
+    background-color: #3498db; /* ฟ้า */
+    color: white;
+}
+.status-completed {
+    background-color: #27ae60; /* เขียว */
+    color: white;
+}
+
+.order-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.order-item-detail {
+    border-top: 1px dashed #444;
+    padding: 5px 0;
+    font-size: 0.95em;
+}
+
+.item-name-admin {
+    font-weight: bold;
+    color: #ecf0f1;
+}
+
+.item-option-admin, .item-note-admin {
+    display: block;
+    color: #bdc3c7;
+    margin-left: 10px;
+    font-size: 0.9em;
+}
+
+.order-total {
+    font-size: 1.5em;
+    color: #2ecc71; /* สีเขียวสำหรับยอดรวม */
+    border-top: 2px solid #444;
+    padding-top: 10px;
+}
+
+.action-buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-start {
+    background-color: #e67e22; /* ส้ม */
+}
+
+.btn-complete {
+    background-color: #27ae60; /* เขียว */
+}
+/* --- สไตล์สำหรับปุ่มยกเลิกในหน้าแอดมิน --- */
+
+.btn-cancel {
+    background-color: #c0392b; /* สีแดงเข้ม */
+    color: white;
 }

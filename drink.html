@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตัวเลือกอาหาร - BANGFOOD</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body onload="initializeMenuPage()">
+    <header class="app-header">
+        <h1>BANGFOOD</h1>
+        <p>คุณสั่งได้เลย ไม่ต้องเรียกพนักงาน</p>
+    </header>
+    
+    <div id="item-detail-modal" class="modal" style="display: block;">
+        <div class="modal-content">
+            
+            <div class="item-info-section">
+                <img id="modal-item-image" src="" alt="รูปภาพอาหาร" class="modal-image">
+                <h2 id="modal-item-name" class="modal-item-name"></h2>
+                <p class="modal-item-base-price">ราคาเริ่มต้น: <span id="modal-base-price">0.00</span> บาท</p>
+            </div>
+
+            <div class="customization-group">
+                <h3>📌 โต๊ะที่สั่ง (บังคับเลือก)</h3>
+                <div class="table-selection-group">
+                    <select id="modal-table-number" name="table_number" required>
+                        <option value="">-- กรุณาเลือกโต๊ะ --</option>
+                        <option value="T1">โต๊ะ 1</option>
+                        <option value="T2">โต๊ะ 2</option>
+                        <option value="T3">โต๊ะ 3</option>
+                        <option value="T4">โต๊ะ 4</option>
+                        <option value="T5">โต๊ะ 5</option>
+                    </select>
+                </div>
+            </div>
+
+            <form id="item-customization-form" class="customization-form">
+                <div class="customization-group">
+                    <h3> ขนาดแก้ว </h3>
+                    <label class="radio-label">
+                        <input type="radio" name="size" value="standard" data-modifier="0" checked>
+                        S (ขนาดปกติ)
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="size" value="special" data-modifier="5">
+                        M (+ 5 บาท)
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="size" value="special" data-modifier="10">
+                        L (+ 10 บาท)
+                    </label>
+                </div>
+                <div class="customization-group">
+            
+                    <h3> ตัวเลือกเพิ่มเติม </h3>
+                    <div class="addon-category">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="addon" value="ไข่ดาว" data-modifier="5">
+                            เพิ่มไข่มุก (+ 5 บาท)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="addon" value="ไข่เจียว" data-modifier="5">
+                            เพิ่มวิบครีม (+ 5 บาท)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="addon" value="ไข่ข้น" data-modifier="5">
+                            เพิ่มเย้นลี้ (+ 5 บาท)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="customization-group">
+                    <h3>✍️ หมายเหตุ (Optional)</h3>
+                    <textarea id="modal-notes" rows="3" placeholder="ตัวอย่าง: เผ็ดน้อย, ไม่ใส่ผักชี"></textarea>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <p class="final-price-display">ราคาสุทธิ: <span id="modal-final-price">0.00</span> บาท</p>
+                <button id="add-to-cart-confirm-btn" class="add-confirm-btn">
+                    ยืนยันการสั่งซื้อ
+                </button>
+                <a href="index.html" id="add-to-cart-confirm-btn" class="add-confirm-btnm">
+                    ยกเลิกการสั่งซื่อ                
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

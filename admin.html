@@ -7,24 +7,57 @@
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
+    
     <div class="app-header">
-        <h1>🔔 คำสั่งซื้อใหม่ที่รอดำเนินการ</h1>
+        <h1>🔔 ศูนย์ควบคุมคำสั่งซื้อ BANGFOOD</h1>
+        <button onclick="logoutAdmin()" class="btn-logout">ออกจากระบบ</button>
     </div>
 
     <div class="admin-container">
+        
         <div class="filter-controls">
-            <p>จำนวนคำสั่งซื้อรวม: <span id="order-count">0</span> รายการ</p>
+            
+            <input type="text" id="table-filter" placeholder="กรองตามโต๊ะ (เช่น T1)" onkeyup="filterOrders()">
+            
+            <p>ยอดรวมคำสั่งซื้อทั้งหมด: <span id="order-count">0</span> รายการ</p>
+            <h3 class="total-revenue">ยอดรวมรายได้วันนี้: <span id="daily-revenue">0.00</span> บาท</h3>
         </div>
         
+        <h2>📝 คำสั่งซื้อที่รอดำเนินการ / กำลังทำ</h2>
         <div id="orders-list-container" class="orders-grid">
             <p id="loading-message">กำลังโหลดคำสั่งซื้อ...</p>
         </div>
+        
+        <h2 style="margin-top: 30px;">✅ คำสั่งซื้อที่เสร็จสมบูรณ์แล้ว</h2>
+        <div id="completed-orders-container" class="orders-grid">
+            <p>ยังไม่มีคำสั่งซื้อที่เสร็จสมบูรณ์ในระบบ</p>
+        </div>
+        
     </div>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
+        
+    const ADMIN_PASSWORD = "bang"; // *** ตรวจสอบว่ารหัสผ่านถูกกำหนดไว้ที่นี่ ***
+    
+    function checkAdminAccess() {
+        // ใช้ setTimeout เพื่อให้แน่ใจว่า DOM element อื่นๆ โหลดแล้ว (ป้องกันปัญหาในบางเบราว์เซอร์)
+        setTimeout(() => {
+            const password = prompt("กรุณาป้อนรหัสผ่านผู้ดูแลระบบ:");
+            
+            if (password !== ADMIN_PASSWORD) {
+                alert("รหัสผ่านไม่ถูกต้อง! ระบบจะนำท่านกลับไปหน้าหลัก");
+                window.location.href = "start.html"; 
+            }
+        }, 50); // หน่วงเวลาเล็กน้อย
+    }
+    
+    // เรียกใช้ฟังก์ชันทันทีที่หน้าจอเริ่มโหลด
+    checkAdminAccess();
+
+        // ... (โค้ด firebaseConfig ที่คุณให้มา) ...
         const firebaseConfig = {
             apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
             authDomain: "bangfood-cb30f.firebaseapp.com",
@@ -38,6 +71,13 @@
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database(); 
+        
+        // ฟังก์ชัน Logout (นำกลับไปหน้าเริ่มต้น)
+        function logoutAdmin() {
+            if (confirm("คุณต้องการออกจากระบบผู้ดูแลหรือไม่?")) {
+                window.location.href = "start.html";
+            }
+        }
     </script>
     
     <script src="admin.js"></script>

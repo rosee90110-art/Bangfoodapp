@@ -1,4 +1,6 @@
+
 /* --- 1. การตั้งค่าเริ่มต้น (Reset/Base) --- */
+
 :root {
     /* Dark Mode Palette */
     --primary-color: #BB86FC; /* สีม่วงอ่อนสำหรับไฮไลท์/ปุ่มหลักใน Dark Mode */
@@ -21,21 +23,38 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color-main); /* ใช้ Dark Mode Background */
     color: var(--text-color-main); /* ใช้ Dark Mode Text */
-    line-height: 1.6;
+    line-height: 1.3;
     padding-bottom: 80px; /* เว้นที่ว่างให้ Floating Cart */
+    margin: 0; 
+    padding-top: 0;
 }
 /* --- 2. ส่วนหัวของแอป (Header) --- */
 .app-header {
     background-color: var(--bg-color-card);
     color: white;
-    padding: 20px 15px;
-    text-align: center;
+    padding: 15px 15px;
     box-shadow: var(--shadow-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .app-header h1 { 
     color: var(--primary-color); 
-    font-size: 1.8rem; margin-bottom: 5px; 
+    font-size: 1.8rem; 
+    margin: 5px;
+    padding: 5px;
+    text-align: left; 
+}
+.app-header .back-link {
+    flex-shrink: 0; /* ไม่ให้ถูกบีบ */
+    margin-left: 15px;
+    font-size: 1em; /* เพิ่มขนาดให้อ่านง่ายขึ้น */
+}
+
+/* สำหรับหน้า Admin: (ใช้โค้ดเดิมที่คุณมี) */
+.app-header .btn-logout {
+    flex-shrink: 0;
 }
 .app-header p { 
     color: var(--text-color-secondary); 
@@ -172,11 +191,22 @@ body {
     margin-top: 5px;
     display: block;
 }
+body {
+    /* ... (โค้ดอื่นๆ) ... */
+    margin-top: 0; /* ตรวจสอบให้แน่ใจว่าไม่มี margin บน */
+    padding-top: 0; /* ตรวจสอบให้แน่ใจว่าไม่มี padding บน */
+}
 
 .cart-container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px 15px;
+    
+    max-width: 800px; 
+    margin: 0 auto; /* ติดขอบด้านบน */
+    padding: 10px 15px;
+}
+#table-display-info {
+    margin-top: 8px;
+    margin-bottom: 15px; /* เว้นระยะห่างจาก Header เล็กน้อย */
+    /* ... */
 }
 
 .cart-items-list {
@@ -224,6 +254,7 @@ body {
     margin-bottom: 10px;
     box-shadow: var(--shadow-light);
 }
+
 
 .item-details-cart {
     /* 2. ส่วนนี้ขยายเต็มพื้นที่ตรงกลางระหว่างรูปภาพและปุ่ม */
@@ -765,6 +796,7 @@ body {
 /* === MEDIA QUERY สำหรับหน้าจอขนาดใหญ่ (PC / Tablet) === */
 @media (min-width: 600px) {
     
+    
     /* 1. ปรับขนาดฟอนต์ให้ใหญ่ขึ้นเล็กน้อยบน PC */
     .app-header h1 {
         font-size: 2.5em;
@@ -799,3 +831,183 @@ body {
         margin-top: 5px;
     }
 }
+/* ในไฟล์ style.css */
+
+/* --- FOOTER และปุ่ม ADMIN --- */
+
+.app-footer {
+    padding: 20px 10px;
+    text-align: center;
+}
+
+.admin-button {
+    /* จัดรูปแบบให้เป็นปุ่มลิงก์ที่ดูเป็นทางการน้อยกว่าปุ่มสั่งซื้อ */
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: transparent; 
+    border: 1px solid var(--color-accent-dark, #555); /* ใช้สีเข้มเพื่อให้ไม่เด่นเกินไป */
+    color: var(--text-color-light, #999); 
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.8em;
+    transition: background-color 0.3s;
+}
+
+.admin-button:hover {
+    background-color: var(--color-accent-dark, #333);
+    color: var(--text-color-main);
+}
+/* ในไฟล์ style.css */
+
+/* --- ADMIN LAYOUT และ Controls --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.btn-logout {
+    background-color: #f44336; /* สีแดง */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #2b2b2b; /* พื้นหลังสีเข้มสำหรับ controls */
+    border-radius: 8px;
+}
+
+#table-filter {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background: #333;
+    color: white;
+    width: 150px;
+}
+
+.total-revenue {
+    color: #4CAF50; /* สีเขียวสำหรับยอดรวม */
+    font-weight: bold;
+    margin-left: auto; /* ผลักไปขวาบนจอใหญ่ */
+}
+
+/* ปรับปรุง Grid ให้ดูดีบนมือถือและ PC */
+.orders-grid {
+    display: flex;
+    flex-wrap: wrap; /* ให้การ์ดหลายอันต่อแถวบน PC */
+    gap: 20px;
+    padding-top: 10px;
+}
+
+.order-card {
+    /* บนมือถือ: เต็มความกว้าง */
+    width: 100%; 
+    max-width: 450px; /* จำกัดความกว้างสูงสุด */
+    /* ... (CSS การ์ดคำสั่งซื้ออื่นๆ) ... */
+}
+
+@media (min-width: 768px) {
+    .order-card {
+        width: calc(50% - 10px); /* 2 คอลัมน์บน Tablet/PC */
+    }
+}
+
+@media (min-width: 1200px) {
+    .order-card {
+        width: calc(33.333% - 14px); /* 3 คอลัมน์บน PC ขนาดใหญ่ */
+    }
+}
+
+.data-card {
+    width: 30%; /* กว้าง 90% ของพื้นที่ที่มี */
+    max-width: 55px; /* แต่ไม่เกิน 400px */
+    background-color: var(--bg-color-card); /* ใช้สีพื้นหลังของการ์ด */
+    border-radius: 12px;
+    padding: 5px;
+    margin: 15px auto;
+    margin-left: auto;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+    transition: transform 0.3s;
+}
+
+.data-card:hover {
+    transform: translateY(-5px); /* เลื่อนขึ้นเล็กน้อยเมื่อวางเมาส์ */
+}
+
+.cart-items-list {
+    align-items: center;
+    margin-bottom: 25px;
+    border: none; /* เปลี่ยนเป็น none */
+    padding: 0; /* เปลี่ยนเป็น 0 */
+    box-shadow: var(--shadow-dark); /* เพิ่มเงาให้ดูมีมิติ */
+    background-color: transparent; /* เปลี่ยนเป็น transparent */
+    border-radius: 8px; /* ขอบโค้งมน */
+    border-bottom: none;
+    justify-content: space-between;
+}
+/* --- *** CSS สำหรับการจัดวางหัวข้อและปุ่มให้อยู่บรรทัดเดียวกัน *** --- */
+
+.cart-header-row {
+    display: flex; 
+    justify-content: space-between; /* ถูกต้อง: ผลักองค์ประกอบไปคนละฝั่ง */
+    align-items: center; 
+    margin-top: 15px; 
+    margin-bottom: 20px; 
+    padding: 0 10px; 
+    /* ลบ margin-left: auto; ออกจากที่นี่ถ้ามีอยู่ */
+}
+/* จัดรูปแบบหัวข้อ (ลบ margin เดิมที่อาจทำให้มีช่องว่าง) */
+#table-display-info {
+    /* *** สำคัญ: จัดข้อความภายในกล่องให้อยู่ชิดขวา *** */
+    text-align: right; /* ✅ แก้จาก left เป็น right */
+    
+    /* *** สำคัญ: กำหนดให้หัวข้อมาก่อนปุ่ม (อยู่ซ้าย) *** */
+    order: 1; 
+    
+    margin-top: 9px; 
+    padding: 0;
+    flex-shrink: 1; 
+}
+
+/* จัดรูปแบบปุ่ม "กลับไปหน้าเมนู" */
+/* --- สไตล์สำหรับปุ่ม MENU/กลับไปหน้าเมนู (รวมการจัดวางชิดขวา) --- */
+
+.back-link-in-cart {
+    margin-top: 1px; 
+    margin-bottom: 1px;
+    /* 1. การจัดวาง (สำคัญที่สุด: ทำให้ชิดขวา) */
+    /* *** คำสั่งที่ผลักปุ่มไปชิดขวา *** */
+    margin-left: 0; 
+    margin-right: 0; /* เว้นระยะห่างจากขอบด้านขวาเล็กน้อย */
+    
+     
+    
+    /* 2. การตกแต่ง (ตามที่คุณพอใจแล้ว) */
+    text-decoration: none; 
+    text-transform: uppercase;
+    font-size: 0.4em; 
+    font-weight: bold; 
+    background-color: #140015; 
+    color: var(--primary-color); 
+    border: 2px solid var(--bg-color); 
+    padding: 10px 20px; 
+    border-radius: 25px; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 2px 5px rgba(74, 74, 74, 0.3); 
+    flex-shrink: 0;
+    text-align: left; /* จัดข้อความให้อยู่ตรงกลางภายในปุ่ม */
+}
+
+/* ... โค้ด :hover ยังคงเดิม ... */

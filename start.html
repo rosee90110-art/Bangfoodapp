@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ยินดีต้อนรับสู่ BANGFOOD</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* CSS สำหรับหน้านี้โดยเฉพาะ อาจรวมใน style.css ก็ได้ */
+        .landing-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+        .landing-btn-group {
+            display: flex;
+            flex-direction: column; /* เรียงปุ่มแนวตั้งบนมือถือ */
+            gap: 20px;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 30px;
+        }
+        .landing-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            font-weight: bold;
+        }
+        #customer-btn {
+            background-color: #9c27b0; /* สีม่วงหลัก */
+        }
+        #admin-btn {
+            background-color: #4CAF50; /* สีเขียวสำหรับแอดมิน */
+        }
+        .landing-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        /* สำหรับหน้าจอ PC ให้ปุ่มอยู่แนวนอน */
+        @media (min-width: 600px) {
+            .landing-btn-group {
+                flex-direction: row; /* เรียงปุ่มแนวนอนบน PC */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="landing-container">
+    <h1 class="app-header-title" style="font-size: 3em;">BANGFOOD</h1>
+    <p style="font-size: 1.1em; margin-top: 10px;">กรุณาเลือกโหมดการใช้งาน:</p>
+
+    <div class="landing-btn-group">
+        <a href="index.html" id="customer-btn" class="landing-button">
+            ลูกค้า (สแกนสั่งอาหาร)
+        </a>
+        <a href="admin.html" id="admin-btn" class="landing-button">
+            ผู้ดูแลระบบ (Admin)
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

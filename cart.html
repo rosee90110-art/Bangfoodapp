@@ -1,38 +1,32 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตะกร้าสินค้า - BANGFOOD</title>
-    <link rel="stylesheet" href="style.css"> 
+    <header class="app-header">
+    <h1>ตะกร้าสินค้า</h1>
+    <p>เมนู ที่เลือกไว้</p>
+    </header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า - BANGFOOD</title>
+    <link rel="stylesheet" href="style.css"> 
 </head>
+
 <body onload="renderCartItems()">
-    
-    <div class="app-header">
-        <h1>ตะกร้าสินค้า</h1>
-        <a href="index.html" class="back-link">
-            &lt; กลับไปหน้าเมนู
-        </a>
-    </div>
+    <div class="cart-container">
+        <div class="cart-header-row">
+        <a href="index.html" class="back-link-in-cart"> MENU </a>
+        <h3  id="table-display-info"></h3> 
+        </div>
+        <div id="cart-items-list" class="cart-items-list">
+        </div>
+         <div class="cart-total-summary">
+            <h3>ยอดรวมทั้งหมด: <span id="final-total-amount">0.00</span> บาท</h3>
+        </div>
 
-    <div class="cart-container">
-        <h3 id="table-display-info"></h3>
+        <button id="checkout-btn" class="checkout-btn-large" onclick="placeOrder()"> ยืนยันคำสั่งซื้อ (ชำระเงิน)
+        </button>
+    </div>
 
-        <div id="cart-items-list" class="cart-items-list">
-            </div>
-
-        <div class="cart-total-summary">
-            <h3>ยอดรวมทั้งหมด: <span id="final-total-amount">0.00</span> บาท</h3>
-        </div>
-
-        <button
-            id="checkout-btn" 
-            class="checkout-btn-large" 
-                        onclick="placeOrder()">
-            ยืนยันคำสั่งซื้อ (ชำระเงิน)
-        </button>
-    </div>
-    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 

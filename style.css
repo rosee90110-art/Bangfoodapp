@@ -638,7 +638,7 @@ body {
 
 /* สถานะสี */
 .status-pending {
-    background-color: #f1c40f; /* เหลือง */
+    background-color: #222222; /* เหลือง */
     color: #333;
 }
 .status-processing {
@@ -708,4 +708,94 @@ body {
 .btn-cancel {
     background-color: #c0392b; /* สีแดงเข้ม */
     color: white;
+}
+/* style.css */
+
+* {
+    box-sizing: border-box; /* สำคัญมากสำหรับ Responsive Design */
+    margin: 0;
+    padding: 0;
+    /* ตั้งค่า font-family และสีพื้นหลังหลักที่นี่ */
+}
+
+body {
+    background-color: var(--bg-color-main); 
+    color: var(--text-color-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-bottom: 80px; /* เว้นที่ว่างด้านล่างสำหรับเมนู/ปุ่ม */
+}
+
+/* ทำให้ Container หลักกว้าง 100% แต่จำกัดความกว้างสูงสุดสำหรับ PC */
+.app-container, .menu-container, .modal-content, .admin-container {
+    max-width: 800px; /* จำกัดความกว้างสูงสุดสำหรับ PC/Tablet */
+    margin: 0 auto; /* จัดกึ่งกลางบน PC */
+    padding: 10px;
+}
+/* style.css */
+
+/* สำหรับรายการอาหาร */
+.menu-item-card {
+    display: flex; /* ใช้ Flexbox เพื่อจัดเรียงรูปภาพและรายละเอียด */
+    align-items: center;
+    border: 1px solid var(--color-border);
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: var(--bg-color-card);
+    width: 100%; /* ให้เต็มความกว้างเสมอ */
+}
+
+.item-image {
+    width: 80px; /* ขนาดรูปภาพคงที่ */
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.item-details {
+    flex-grow: 1; /* ให้รายละเอียดขยายเต็มพื้นที่ */
+}
+/* style.css */
+
+/* === MOBILE FIRST DESIGN (ค่าเริ่มต้นคือมือถือ) === */
+
+/* ... (โค้ด CSS ทั่วไปด้านบน) ... */
+
+/* === MEDIA QUERY สำหรับหน้าจอขนาดใหญ่ (PC / Tablet) === */
+@media (min-width: 600px) {
+    
+    /* 1. ปรับขนาดฟอนต์ให้ใหญ่ขึ้นเล็กน้อยบน PC */
+    .app-header h1 {
+        font-size: 2.5em;
+    }
+    
+    /* 2. จัดระเบียบหน้าแอดมินบน PC */
+    .admin-container {
+        display: grid;
+        /* แบ่งเป็น 2 คอลัมน์สำหรับแสดงสถานะ (หรือใช้แค่คอลัมน์เดียวตามที่คุณต้องการ) */
+        /* หรือแค่ให้ order-card กว้างไม่เกิน 400px ต่ออัน */
+    }
+
+    .order-card {
+        max-width: 450px; /* จำกัดความกว้างการ์ดคำสั่งซื้อบน PC */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* 3. ทำให้ Modal กว้างขึ้นบน PC */
+    .modal-content {
+        width: 90%;
+        max-width: 600px; /* จำกัดความกว้าง Modal */
+    }
+}
+
+/* === MEDIA QUERY สำหรับหน้าจอที่แคบมาก (มือถือแนวนอน) === */
+/* ถ้าคุณมีปุ่ม Action ติดกันหลายปุ่ม อาจต้องจัดเรียงใหม่ */
+@media (max-width: 400px) {
+    .action-buttons button {
+        /* ทำให้ปุ่มแอคชั่นในหน้าแอดมินอยู่คนละบรรทัดบนจอแคบมาก */
+        width: 100%;
+        margin-top: 5px;
+    }
 }

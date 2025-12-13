@@ -197,65 +197,63 @@ function closeModal(redirectUrl = null) {
 // ----------------------------------------------------
 
 // Listener สำหรับปุ่ม "ยืนยันและเพิ่มลงตะกร้า" (ใน menu.html)
+// ในไฟล์ script.js (ใน Listener ของปุ่ม #add-to-cart-confirm-btn)
+
 if (addToCartConfirmBtn) {
-    addToCartConfirmBtn.addEventListener('click', () => {
-        const tableNumber = document.getElementById('modal-table-number').value;
-        
-        if (!tableNumber) {
-            alert("กรุณาเลือกหมายเลขโต๊ะที่ต้องการสั่งอาหารก่อน!");
-            return; 
-        }
-
-        const finalPrice = calculateFinalPrice(); 
-        const notes = document.getElementById('modal-notes').value.trim();
-        const sizeOptionEl = document.querySelector('#item-customization-form input[name="size"]:checked');
-        const sizeOptionValue = sizeOptionEl ? sizeOptionEl.value : 'standard';
-
-        const addons = Array.from(document.querySelectorAll('#item-customization-form input[name="addon"]:checked'))
-                             .map(cb => cb.value);
-
-        // สร้างชื่อสินค้าที่มีรายละเอียดตัวเลือก
-        let itemNameWithOption = currentItem.name;
-        // รวมตัวเลือกทั้งหมดในสตริงเดียว
-        let optionString = '';
-
-        if (sizeOptionValue === 'special') {
-            optionString += 'พิเศษ';
-        } else {
-            optionString += 'ธรรมดา';
-        }
+    addToCartConfirmBtn.addEventListener('click', () => {
+        const tableNumber = document.getElementById('modal-table-number').value;
         
-        if (addons.length > 0) {
-            optionString += ', ' + addons.join(', ');
-        }
-        
-        // แสดงรายละเอียดทั้งหมดรวมกัน
-        if (optionString) {
-            itemNameWithOption += ` (${optionString})`;
+        if (!tableNumber) {
+            alert("กรุณาเลือกหมายเลขโต๊ะที่ต้องการสั่งอาหารก่อน!");
+            return; 
         }
 
+        const finalPrice = calculateFinalPrice(); 
+        const notes = document.getElementById('modal-notes').value.trim();
+        
+        // *********************************************************************
+        // ** 1. ดึงค่าขนาด (S, M, L) และตัวเลือกเสริม (Addons) **
+        // *********************************************************************
+        
+        // ดึงขนาด (S, M, L)
+        const sizeOptionEl = document.querySelector('#item-customization-form input[name="size"]:checked');
+        const sizeOptionValue = sizeOptionEl ? sizeOptionEl.value : 'S'; // ใช้ 'S' เป็นค่าเริ่มต้น
+        
+        // ดึงตัวเลือกเสริมทั้งหมด
+        const addons = Array.from(document.querySelectorAll('#item-customization-form input[name="addon"]:checked'))
+                             .map(cb => cb.value); // [ 'เพิ่มไข่มุก', 'เพิ่มวิบครีม' ]
 
-        // ตั้งค่าหมายเลขโต๊ะ (ถ้ายังไม่เคยตั้ง)
-        if (!cart.table) {
-            cart.table = tableNumber;
-        } 
-        
-        // เพิ่มสินค้าลงตะกร้า (ส่ง notes ไปด้วยเพื่อให้แสดงใน cart.html ได้ง่าย)
-        // ... โค้ดส่วนบนของฟังก์ชัน ...
-// เพิ่มสินค้าลงตะกร้า
-        cart.items.push({
-            name: currentItem.name, // ชื่อหลัก
-            options: optionString, // ตัวเลือกที่เลือก (สำหรับแสดงในรายละเอียด)
-            notes: notes, // หมายเหตุ
-            finalPrice: finalPrice,
-            quantity: 1,
-            // *** สำคัญ: ต้องมีบรรทัดนี้ ***
-            imgUrl: currentItem.imageSrc || 'placeholder.png', 
-        });
+        // *********************************************************************
+        // ** 2. สร้างสตริงตัวเลือก (optionString) สำหรับบันทึกใน Firebase **
+        // *********************************************************************
+        
+        let optionString = sizeOptionValue; // เริ่มต้นด้วย 'S', 'M', หรือ 'L'
 
-        saveCart(); 
-        closeModal('cart.html'); 
-    });
+        if (addons.length > 0) {
+            // หากมีตัวเลือกเสริม ให้ต่อท้ายด้วยคอมม่า
+            optionString += ', ' + addons.join(', ');
+        }
+        
+        // *********************************************************************
+        // ** 3. บันทึกเข้าตะกร้า (Cart) **
+        // *********************************************************************
+        
+        if (!cart.table) {
+            cart.table = tableNumber;
+        } 
+        
+        cart.items.push({
+            name: currentItem.name, // ชื่อหลัก (แก้ไขแล้ว)
+            options: optionString,  // <--- ค่านี้จะถูกบันทึกใน Firebase (เช่น 'S, เพิ่มไข่มุก')
+            notes: notes, 
+            finalPrice: finalPrice,
+            quantity: 1,
+            imgUrl: currentItem.imageSrc || 'placeholder.png', 
+        });
+
+        saveCart(); 
+        closeModal('cart.html'); 
+    });
 }
 
 
@@ -388,3 +386,4 @@ function placeOrder() {
             });
     }
 }
+

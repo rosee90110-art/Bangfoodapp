@@ -1,3 +1,4 @@
+
 // File: admin.js - โค้ดที่รองรับการแสดงผล 2 ส่วน, คำนวณยอด และกรอง
 
 if (typeof db !== 'undefined') {
@@ -23,30 +24,41 @@ if (typeof db !== 'undefined') {
     }
     
     // NEW: ฟังก์ชันสร้าง HTML สำหรับคำสั่งซื้อแต่ละรายการ
-    function createOrderCard(orderId, order, statusClass, itemsHtml, displayTime) {
-        const status = order.status || 'รอดำเนินการ';
-        
-        return `
-            <div class="order-card ${statusClass}" data-table="${order.table || 'N/A'}">
-                <h3 class="order-table">โต๊ะ: ${order.table || 'N/A'}</h3>
-                <p class="order-time">${displayTime}</p>
-                <div class="order-status ${statusClass}">${status}</div>
-
-                <ul class="order-items-list">
-                    ${itemsHtml}
-                </ul>
+    // ใน admin.js: ฟังก์ชัน createOrderCard
+function createOrderCard(orderId, order, statusClass, itemsHtml, displayTime) {
+    const tableNum = order.tableNumber || order.table || 'N/A';
+    // *** สำคัญ: ต้องกำหนดตัวแปร status ที่นี่ ***
+    const status = order.status || 'รอดำเนินการ'; 
+    const total = parseFloat(order.total || 0).toFixed(2);
+    // ...
+    return `
+        <div class="order-card ${statusClass}" data-table="${tableNum}">
+        <h4 class="order-total">ยอดรวม: ${total} บาท</h4>
+            <h3 class="order-table">โต๊ะ: ${tableNum}</h3> 
+            <p class="order-time">${displayTime}</p>
+            <div class="order-status ${statusClass}">${status}</div>
+            
+            <ul class="order-items-list">
+                ${itemsHtml}
+            </ul>
+            
+            <h4 class="order-total">ยอดรวม: ${parseFloat(order.total || 0).toFixed(2)} บาท</h4>
+            
+            <div class="action-buttons">
+            ${status === 'รอดำเนินการ' ? 
+                    `<button class="btn-action btn-start" onclick="updateOrderStatus('${orderId}', 'กำลังทำ')">เริ่มทำ</button>` 
+                : ''}
+                ${status === 'กำลังทำ' ? 
+                    `<button class="btn-action btn-complete" onclick="updateOrderStatus('${orderId}', 'เสร็จสมบูรณ์')">เสร็จ</button>` 
+                : ''}
+                ${status !== 'เสร็จสมบูรณ์' ? 
+                    `<button class="btn-action btn-cancel" onclick="cancelOrder('${orderId}')">ลบ/ยกเลิก</button>` 
+                : ''}
                 
-                <h4 class="order-total">ยอดรวม: ${parseFloat(order.total || 0).toFixed(2)} บาท</h4>
-                
-                <div class="action-buttons">
-                    ${status !== 'กำลังทำ' ? `<button class="btn-action btn-start" onclick="updateOrderStatus('${orderId}', 'กำลังทำ')">เริ่มทำ</button>` : ''}
-                    ${status !== 'เสร็จสมบูรณ์' ? `<button class="btn-action btn-complete" onclick="updateOrderStatus('${orderId}', 'เสร็จสมบูรณ์')">เสร็จ</button>` : ''}
-                    <button class="btn-action btn-cancel" onclick="cancelOrder('${orderId}')">ลบ/ยกเลิก</button>
-                </div>
             </div>
-        `;
-    }
-
+        </div>
+    `;
+}
     // NEW: ฟังก์ชันกรองคำสั่งซื้อตามหมายเลขโต๊ะ
     window.filterOrders = function() {
         const filterText = tableFilterInput.value.trim().toUpperCase();
@@ -160,3 +172,69 @@ if (typeof db !== 'undefined') {
 } else {
     console.error("Firebase SDK (db variable) is not ready. Check your admin.html configuration.");
 }
+// ใน admin.js: ฟังก์ชันสำหรับอัปเดตสถานะคำสั่งซื้อใน Firebase
+function updateOrderStatus(orderId, newStatus) {
+    // ตรวจสอบการเชื่อมต่อ Firebase (สมมติว่า 'db' คือ Firebase Database)
+    if (typeof db === 'undefined' || !db) {
+        console.error("Firebase DB object 'db' is undefined or null. Cannot update status.");
+        return;
+    }
+
+    // สร้าง Path อ้างอิงไปยังคำสั่งซื้อที่ต้องการอัปเดต
+    const orderRef = db.ref('orders/' + orderId);
+
+    // ทำการอัปเดต Field 'status'
+    orderRef.update({
+        status: newStatus 
+        // newStatus จะเป็น 'กำลังทำ' หรือ 'เสร็จสมบูรณ์' ตามปุ่มที่กด
+    })
+    .then(() => {
+        console.log(`Order ${orderId} status updated to ${newStatus}`);
+        
+        // *** หมายเหตุ: เมื่ออัปเดตสำเร็จ Real-time Listener ใน admin.js 
+        // จะรับข้อมูลใหม่และทำการ Refresh Order Card เองโดยอัตโนมัติ ***
+    })
+    .catch(error => {
+        console.error("Error updating status:", error);
+        alert("เกิดข้อผิดพลาดในการอัปเดตสถานะ");
+    });
+}
+// ใน admin.js: โค้ดสำหรับดึงและแสดงคำสั่งซื้อแบบ Real-time
+window.loadOrdersRealtime = function() {
+    if (typeof db === 'undefined' || !db) {
+        return console.error("Firebase DB not initialized.");
+    }
+    
+    const ordersRef = db.ref('orders');
+
+    // ใช้ on('value') เพื่อให้มีการอัปเดตทุกครั้งที่ข้อมูลเปลี่ยน
+    ordersRef.on('value', (snapshot) => {
+        // ล้างรายการเดิมก่อนแสดงผลใหม่ทุกครั้ง
+        document.getElementById('orders-list-pending').innerHTML = '';
+        document.getElementById('orders-list-processing').innerHTML = '';
+        document.getElementById('orders-list-completed').innerHTML = '';
+        document.getElementById('orders-list-cancelled').innerHTML = '';
+
+        snapshot.forEach(childSnapshot => {
+            const orderId = childSnapshot.key;
+            const order = childSnapshot.val();
+
+            // เรียกใช้ฟังก์ชันสร้าง Card (ที่คุณมีอยู่แล้ว)
+            const orderCard = createOrderCard(orderId, order, order.status); 
+
+            // จัดประเภทและเพิ่ม Card เข้าไปในคอลัมน์ที่เหมาะสม
+            if (order.status === 'รอดำเนินการ') {
+                document.getElementById('orders-list-pending').insertAdjacentHTML('afterbegin', orderCard);
+            } else if (order.status === 'กำลังทำ') {
+                document.getElementById('orders-list-processing').insertAdjacentHTML('afterbegin', orderCard);
+            } else if (order.status === 'เสร็จสมบูรณ์') {
+                document.getElementById('orders-list-completed').insertAdjacentHTML('afterbegin', orderCard);
+            } else if (order.status === 'ยกเลิก') {
+                document.getElementById('orders-list-cancelled').insertAdjacentHTML('afterbegin', orderCard);
+            }
+        });
+    }, (error) => {
+        console.error("Error loading orders:", error);
+    });
+};
+

@@ -6,24 +6,24 @@
     <title>หน้าจอแอดมิน - คำสั่งซื้อใหม่</title>
     <link rel="stylesheet" href="style.css"> 
 </head>
-<body>
+<body onload="loadOrdersRealtime()">
     
     <div class="app-header">
-        <h1>🔔 ศูนย์ควบคุมคำสั่งซื้อ BANGFOOD</h1>
+        <h1>🔔 BANGFOOD</h1>
         <button onclick="logoutAdmin()" class="btn-logout">ออกจากระบบ</button>
     </div>
 
-    <div class="admin-container">
+    <div class="admin-container">  
         
         <div class="filter-controls">
             
             <input type="text" id="table-filter" placeholder="กรองตามโต๊ะ (เช่น T1)" onkeyup="filterOrders()">
             
-            <p>ยอดรวมคำสั่งซื้อทั้งหมด: <span id="order-count">0</span> รายการ</p>
+            <h4 class="total-revenue1">ยอดรวมคำสั่งซื้อทั้งหมด: <span id="order-count">0</span> รายการ</h4>
             <h3 class="total-revenue">ยอดรวมรายได้วันนี้: <span id="daily-revenue">0.00</span> บาท</h3>
         </div>
         
-        <h2>📝 คำสั่งซื้อที่รอดำเนินการ / กำลังทำ</h2>
+        <a class="total-revenue2">📝 คำสั่งซื้อที่รอดำเนินการ / กำลังทำ</a>
         <div id="orders-list-container" class="orders-grid">
             <p id="loading-message">กำลังโหลดคำสั่งซื้อ...</p>
         </div>

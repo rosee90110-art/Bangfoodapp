@@ -890,18 +890,36 @@ body {
 
 #table-filter {
     padding: 8px;
-    border-radius: 4px;
+    border-radius: 40px;
+    margin-left: auto;         
+    margin-right: auto;         
+    padding-left: 20px;         
+    padding-right: 20px;
     border: 1px solid #555;
     background: #333;
     color: white;
     width: 150px;
 }
 
-.total-revenue {
+.total-revenue {  
+    margin-right: auto;             
     color: #4CAF50; /* สีเขียวสำหรับยอดรวม */
     font-weight: bold;
     margin-left: auto; /* ผลักไปขวาบนจอใหญ่ */
 }
+.total-revenue1 {  
+    margin-right: auto;             
+    color: #adffb0; /* สีเขียวสำหรับยอดรวม */
+    font-weight: bold;
+    margin-left: auto; /* ผลักไปขวาบนจอใหญ่ */
+}
+.total-revenue2 {  
+    margin-right: auto;             
+    color: #43ecff; /* สีเขียวสำหรับยอดรวม */
+    font-weight: bold;
+    margin-left: auto; /* ผลักไปขวาบนจอใหญ่ */
+}
+
 
 /* ปรับปรุง Grid ให้ดูดีบนมือถือและ PC */
 .orders-grid {
@@ -1009,5 +1027,308 @@ body {
     flex-shrink: 0;
     text-align: left; /* จัดข้อความให้อยู่ตรงกลางภายในปุ่ม */
 }
+/* ==================================== */
+/* === STYLES FOR TRACKING PAGE (track.html) === */
+/* ==================================== */
 
-/* ... โค้ด :hover ยังคงเดิม ... */
+/* Container หลักของหน้าติดตามสถานะ */
+.tracking-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 25px;
+    background-color: #1a1a1a; /* พื้นหลังเข้ม */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    color: #f0f0f0; 
+}
+
+/* ส่วนหัวแสดงหมายเลขโต๊ะ (ใช้สำหรับจัดให้อยู่ตรงกลาง) */
+.app-header {
+    text-align: center; /* *** เพิ่มเติม: จัดข้อความทั้งหมดใน Header ให้อยู่กึ่งกลาง *** */
+}
+
+/* กล่องแสดงสถานะปัจจุบัน */
+.status-box {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
+    max-width: 800px; /* จำกัดความกว้างสูงสุด */         
+    margin-left: auto;         
+    margin-right: auto;         
+    padding-left: 20px;         
+    padding-right: 20px;
+}
+
+/* === สีตามสถานะ (Status Colors) === */
+.status-pending { color: #ffcc00; }
+.status-box .status-pending { background-color: #38311a; border: 1px solid #ffcc00; }
+
+.status-processing { color: #4CAF50; }
+.status-box .status-processing { background-color: #1c361e; border: 1px solid #4CAF50; }
+
+.status-completed { color: #2196F3; }
+.status-box .status-completed { background-color: #1a2a38; border: 1px solid #2196F3; }
+
+
+/* === รายการสินค้า (Items List) - กล่องสี่เหลี่ยม === */
+
+.items-list-container {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+.item-list {
+    text-align: center;
+    padding: 1px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    max-width: 820px; /* จำกัดความกว้างสูงสุด */         
+    margin-left: auto;         
+    margin-right: auto;         
+    padding-left: 20px;         
+    padding-right: 20px;
+}
+
+/* กล่องสี่เหลี่ยมสำหรับรายการสินค้าแต่ละชิ้น */
+.track-item-card { 
+    background-color: #2a2a2a; /* สีพื้นหลังของกล่อง */
+    border: 1px solid #444; /* ขอบกล่อง */
+    border-radius: 8px;
+    margin-bottom: 12px; /* เว้นระยะห่างระหว่างกล่อง */
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.track-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* จัดให้เนื้อหาอยู่ด้านบน */
+}
+
+.track-item-info {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.track-item-name {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 3px;
+}
+
+.track-item-option {
+    font-size: 0.85em;
+    color: #999;
+    display: block;
+}
+
+.track-item-price {
+    font-weight: 600;
+    color: #ff9900;
+    min-width: 80px;
+    text-align: right;
+    font-size: 1.1em;
+}
+
+/* === สรุปยอดรวม === */
+.total-summary-track {
+    text-align: right;
+    padding-top: 20px;
+    border-top: 2px solid #333;
+    margin-top: 20px;
+}
+
+.total-summary-track h3 {
+    font-size: 1.6em;
+    color: #fff;
+    margin: 0;
+}
+
+#total-amount-display {
+    color: #ff9900;
+    font-weight: bold;
+}
+
+
+/* สำหรับหน้าจอเล็ก */
+@media (max-width: 600px) {
+    .tracking-container {
+        padding: 15px;
+        margin: 10px;
+    }
+    /* ปรับขนาดหัวข้อหลัก */
+    .app-header h1 {
+    font-size: 1.8em;
+    text-align: center; /* *** สำคัญ: จัดข้อความ H1 ให้อยู่กึ่งกลาง *** */
+    margin: 0;
+    padding: 0;
+}
+    .track-item-row {
+        /* ไม่ต้องใช้ flex-direction: column เพราะต้องการให้ราคายังอยู่ด้านขวา */
+    }
+    .track-item-price {
+        font-size: 1em;
+    }
+}
+/* ==================================== */
+/* === STYLES FOR TRACKING PAGE (track.html) === */
+/* ==================================== */
+
+/* 1. จัดกึ่งกลางข้อความภายใน Container หลัก */
+.container {
+    max-width: 1000px; /* ปรับขนาดตามที่คุณต้องการ */
+    margin: 0 auto; /* จัดกึ่งกลาง Container เอง */
+    padding: 20px;
+    text-align: center; /* *** สำคัญ: จัดให้เนื้อหาทั้งหมดอยู่กึ่งกลาง *** */
+}
+
+/* 2. สไตล์สำหรับ H2 ที่เป็นหัวข้อ Tracking */
+#tracking-table-header {
+    font-size: 1em;
+    color: #ffc36a; /* สีส้มตามธีม */
+    margin-top: 0;
+    margin-bottom: 3px;
+    margin-left: auto;         
+    /* ไม่ต้องใช้ text-align: center; ซ้ำ เพราะ parent ได้กำหนดไว้แล้ว */
+}
+
+/* 3. จัดการกับ Header/Back Link (ถ้ามี) */
+/* ถ้าคุณมี <header> อื่นอยู่ด้านบน กรุณาตรวจสอบ CSS ของมันด้วย */
+.block-track {
+    /* คุณสมบัติจัดกึ่งกลางและเงาเดิม */
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 800px; 
+    margin-left: auto; 
+    margin-right: auto; 
+    
+    /* *** การจัดเรียงรายการและราคาให้แยกกัน *** */
+    display: flex; /* เปิดใช้งาน Flexbox */
+    justify-content: space-between; /* *** สำคัญ: ตัวนี้ทำให้ item ชิดซ้ายและราคาชิดขวา *** */
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    
+    /* สไตล์เพิ่มเติมสำหรับส่วนหัว */
+    font-weight: bold;
+    font-size: 1.2em;
+    border-bottom: 1px solid #444; /* เพิ่มเส้นแบ่งส่วนหัวกับรายการ */
+}
+
+/* สไตล์สำหรับส่วนของรายการสินค้า (ชิดซ้าย) */
+.track-item-name-header {
+    text-align: left;
+}
+
+/* สไตล์สำหรับส่วนของราคา (ชิดขวา) */
+.track-price-header {
+    text-align: right;
+    color: #ff9900; /* อาจจะเน้นสีหน่อย */
+}
+/* === สรุปยอดรวม (Fixed Footer) === */
+
+.total-summary-track {
+    /* *** คุณสมบัติสำหรับทำให้ลอยอยู่ด้านล่างสุด *** */
+    position: fixed; /* ทำให้ลอยอยู่เหนือเนื้อหาอื่น */
+    bottom: 0;      /* จัดตำแหน่งให้อยู่ด้านล่างสุด */
+    left: 0;        /* ชิดซ้ายสุด */
+    width: 100%;    /* เต็มความกว้างหน้าจอ */
+    z-index: 1000;  /* ให้อยู่ด้านบนสุดขององค์ประกอบอื่น */
+    
+    /* สไตล์การแสดงผล */
+    text-align: left;
+    padding: 15px 25px; /* เพิ่ม Padding ด้านบน/ล่าง และซ้าย/ขวา */
+    background-color: #333; /* สีพื้นหลังเข้มกว่าปกติเล็กน้อย */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* เงาด้านบนให้ดูเหมือนลอย */
+    
+    /* ลบขอบ/เส้นแบ่งที่เคยใช้ในเวอร์ชันที่ไม่ลอย */
+    border-top: none !important;
+    margin-top: 0 !important;
+}
+
+.total-summary-track h3 {
+    font-size: 1em; /* อาจลดขนาดเล็กน้อยเพื่อให้เหมาะกับมือถือ */
+    color: #fff;
+    margin: 0;
+}
+
+#total-amount-display {
+    color: #ff9900;
+    font-weight: bold;
+    font-size: 1.2em; /* เน้นยอดรวม */
+}
+
+/* 2. การแก้ไข Body Padding (สำคัญมาก!) */
+/* เนื่องจาก Footer ลอยอยู่ เราต้องดันเนื้อหา Body ให้สูงขึ้น 
+   เพื่อไม่ให้รายการสินค้าถูกบังอยู่ใต้แถบ Footer */
+body {
+    padding-bottom: 70px; /* ควรมากกว่าความสูงของ .total-summary-track เล็กน้อย (15px + 15px + ความสูงข้อความ) */
+}
+
+/* ปรับปรุงบนมือถือ (ถ้าใช้ Media Query) */
+@media (max-width: 600px) {
+    .total-summary-track {
+        padding: 12px 15px;
+    }
+    body {
+        padding-bottom: 60px; /* ปรับลด padding สำหรับจอเล็ก */
+    }
+}
+/* === สรุปยอดรวม (Fixed Footer) === */
+
+.total-summary-track {
+    /* คุณสมบัติ Fixed Footer เดิม */
+    position: fixed; 
+    bottom: 0;      
+    left: 0;        
+    width: 100%;    
+    z-index: 1000;  
+    background-color: #333; 
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); 
+    
+    /* *** การจัดเรียงด้วย Flexbox (สำคัญมาก) *** */
+    display: flex; /* เปิดใช้งาน Flexbox */
+    justify-content: space-between; /* *** ดันองค์ประกอบแรกไปซ้ายสุด องค์ประกอบที่สองไปขวาสุด *** */
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    
+    padding: 15px 25px; 
+}
+
+/* สไตล์สำหรับยอดรวม (ชิดซ้ายโดย Flexbox) */
+.total-summary-track h3.total-amount {
+    margin: 0;
+    font-size: 1.4em;
+    color: #fff;
+}
+
+#total-amount-display {
+    color: #ff9900;
+    font-weight: bold;
+    font-size: 1.1em; 
+}
+
+/* *** สไตล์สำหรับปุ่ม/ลิงก์ 'ชำระเงิน' *** */
+.total-summary-track .payment-button {
+    /* กำหนดสไตล์ให้ดูเหมือนปุ่ม */
+    background-color: #ff9900; /* สีส้มตามธีม */
+    color: #1a1a1a;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none; /* สำหรับกรณีที่คุณเปลี่ยนเป็นลิงก์ <a> */
+    transition: background-color 0.2s;
+}
+
+.total-summary-track .payment-button:hover {
+    background-color: #ffb84d; 
+}
+
+/* 2. การแก้ไข Body Padding (ป้องกันเนื้อหาถูกบัง) */
+body {
+    padding-bottom: 70px; 
+}

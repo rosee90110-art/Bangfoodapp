@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ติดตามสถานะคำสั่งซื้อ - BANGFOOD</title>
+    <link rel="stylesheet" href="style.css"> 
+    
+    </head>
+
+<body onload="startTrackingSystem()"> 
+    
+    <header class="app-header">
+        <h1>ติดตามสถานะ</h1>
+        <h2 id="tracking-table-header">กำลังโหลดข้อมูล...</h2>
+    </header>
+
+    <div class="container">
+        
+        
+        <div id="status-display" class="status-box">
+            <p class="status-text">กำลังเชื่อมต่อข้อมูล...</p>
+        </div>
+
+        <div id="order-details-display" class="order-details">
+           <div class="block-track">
+                <span class="track-item-name-header">รายการสินค้า</span>
+
+                <span class="track-price-header">ราคา</span>
+            </div>
+            <ul id="items-list-container" class="item-list">
+                </ul>
+           <div class="total-summary-track">
+    <h3 class="total-amount">ยอดรวม: <span id="total-amount-display">0.00 บาท</span></h3>
+    
+    <button type="button" class="payment-button" onclick="placeOrder()">
+        ชำระเงิน
+    </button>
+</div>
+
+        <div id="no-order-message" style="display: none;">
+            <p>ไม่พบคำสั่งซื้อที่กำลังดำเนินการสำหรับโต๊ะนี้</p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+            authDomain: "bangfood-cb30f.firebaseapp.com",
+            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "bangfood-cb30f",
+            storageBucket: "bangfood-cb30f.firebasestorage.app",
+            messagingSenderId: "390955623784",
+            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd",
+            measurementId: "G-6M6W033GFG"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database(); 
+    </script>
+    
+    <script src="script.js"></script>
+</body>
+</html>

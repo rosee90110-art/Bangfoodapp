@@ -5,18 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ติดตามสถานะคำสั่งซื้อ - BANGFOOD</title>
     <link rel="stylesheet" href="style.css"> 
-    
-    </head>
+</head>
 
-<body onload="startTrackingSystem()"> 
+<body> 
     
     <header class="app-header">
+        <a href="cart.html" class="back-to-menu-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            กลับไปเมนูหลัก
+        </a>
         <h1>ติดตามสถานะ</h1>
         <h2 id="tracking-table-header">กำลังโหลดข้อมูล...</h2>
     </header>
 
     <div class="container">
-        
         
         <div id="status-display" class="status-box">
             <p class="status-text">กำลังเชื่อมต่อข้อมูล...</p>
@@ -25,18 +30,18 @@
         <div id="order-details-display" class="order-details">
            <div class="block-track">
                 <span class="track-item-name-header">รายการสินค้า</span>
-
                 <span class="track-price-header">ราคา</span>
             </div>
             <ul id="items-list-container" class="item-list">
-                </ul>
+            </ul>
            <div class="total-summary-track">
-    <h3 class="total-amount">ยอดรวม: <span id="total-amount-display">0.00 บาท</span></h3>
-    
-    <button type="button" class="payment-button" onclick="placeOrder()">
-        ชำระเงิน
-    </button>
-</div>
+                <h3 class="total-amount">ยอดรวม: <span id="total-amount-display">0.00 บาท</span></h3>
+                
+                <button id="pay-button" class="payment-button">
+                    ชำระเงิน
+                </button>
+            </div>
+        </div>
 
         <div id="no-order-message" style="display: none;">
             <p>ไม่พบคำสั่งซื้อที่กำลังดำเนินการสำหรับโต๊ะนี้</p>
@@ -62,6 +67,9 @@
         const db = firebase.database(); 
     </script>
     
+    
+   <body onload="startTrackingSystem()"> 
     <script src="script.js"></script>
+</body>
 </body>
 </html>

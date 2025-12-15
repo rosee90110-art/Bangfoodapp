@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <header class="app-header">
-    <h1>ตะกร้าสินค้า</h1>
-    <p>เมนู ที่เลือกไว้</p>
-    </header>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตะกร้าสินค้า - BANGFOOD</title>
@@ -12,37 +8,45 @@
 </head>
 
 <body onload="renderCartItems()">
+    <header class="app-header">
+        <h1>ตะกร้าสินค้า</h1>
+        <p>เมนู ที่เลือกไว้</p>
+    </header>
+
     <div class="cart-container">
         <div class="cart-header-row">
-        <a href="index.html" class="back-link-in-cart"> MENU </a>
-        <h3  id="table-display-info"></h3> 
+            <a href="index.html" class="back-link-in-cart"> MENU </a>
+            <h3 id="table-display-info"></h3> 
         </div>
+
         <div id="cart-items-list" class="cart-items-list">
-        </div>
-         <div class="cart-total-summary">
+            </div>
+
+        <div class="cart-total-summary">
             <h3>ยอดรวมทั้งหมด: <span id="final-total-amount">0.00</span> บาท</h3>
         </div>
 
-        <button id="checkout-btn" class="checkout-btn-large" onclick="placeOrder()"> ยืนยันคำสั่งซื้อ (ชำระเงิน)
-        </button>
-    </div>
+        <div id="order-action-area" style="padding-bottom: 20px;">
+            
+            <p id="order-confirmed-message" style="display: none; color: #4CAF50; font-weight: bold; font-size: 1.2em; text-align: center; padding: 15px 0;">
+                </p>
+
+            <button id="checkout-btn" class="checkout-btn-large" onclick="placeOrder()"> 
+                ยืนยันคำสั่งซื้อ (ชำระเงิน)
+            </button>
+        </div>
+        </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // *** โค้ดกำหนดค่า Firebase ที่ถูกต้อง 100% สำหรับโปรเจกต์ bangfood-cb30f ***
+        // *** โค้ดกำหนดค่า Firebase ***
         const firebaseConfig = {
-            // ใช้ API Key จริงของคุณ (ที่คุณคัดลอกมา)
-            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", // *** แทนที่ด้วยค่าจริงของคุณ *** // ใช้ Project ID จริง
+            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
             authDomain: "bangfood-cb30f.firebaseapp.com",
-            
-            // ใช้ Database URL จริง (รูปแบบใหม่ของ Firebase)
             databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
-            
-            // ใช้ Project ID จริง
             projectId: "bangfood-cb30f", 
-            
             storageBucket: "bangfood-cb30f.firebasestorage.app",
             messagingSenderId: "390955623784",
             appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd",
@@ -50,7 +54,90 @@
         };
         
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database(); // ตัวแปรสำหรับเรียกใช้ Realtime Database
+        const db = firebase.database(); 
+    </script>
+    
+    <script>
+        // ** (จำเป็นต้องมีเพื่อให้หน้าจอแสดงรายการ) **
+        // นี่คือฟังก์ชันจำลอง ถ้าโค้ดจริงอยู่ใน script.js ก็ไม่จำเป็นต้องมีในนี้
+        function renderCartItems() {
+             // โค้ดเดิมของคุณที่ดึงข้อมูลจาก sessionStorage และวาดรายการสินค้าลงใน #cart-items-list
+             // ...
+             // ตัวอย่าง: document.getElementById('cart-items-list').innerHTML = '...รายการ...';
+        }
+
+
+        // *** ฟังก์ชัน placeOrder ที่ถูกปรับปรุงแล้ว ***
+        window.placeOrder = function() {
+            // 1. โหลดตะกร้าจาก Session Storage
+            const cartData = sessionStorage.getItem('bangfood_cart');
+            const currentCart = cartData ? JSON.parse(cartData) : { items: [], table: null };
+
+            if (typeof db === 'undefined' || !db) {
+                console.error("Firebase DB object 'db' is undefined or null. Cannot place order.");
+                alert("ระบบฐานข้อมูลยังไม่พร้อมใช้งาน");
+                return;
+            }
+
+            if (currentCart.items.length === 0) {
+                alert("ไม่พบรายการในตะกร้าสินค้า กรุณาเพิ่มรายการอาหารก่อน!");
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // 3. เตรียมข้อมูล
+            const tableNumber = currentCart.table || 'N/A'; 
+            const finalTotal = currentCart.items.reduce((sum, item) => sum + (item.finalPrice || 0), 0); 
+
+            const itemsWithStatus = currentCart.items.map(item => ({
+                ...item, 
+                status: item.status || 'รอดำเนินการ' 
+            }));
+            
+            const orderData = {
+                tableNumber: tableNumber,
+                items: itemsWithStatus,
+                total: finalTotal,
+                status: 'รอดำเนินการ', 
+                timestamp: firebase.database.ServerValue.TIMESTAMP 
+            };
+
+            // 5. ส่งคำสั่งซื้อไปยัง Firebase
+            db.ref('orders').push(orderData)
+                .then(() => {
+                    console.log("Order placed successfully for table:", tableNumber);
+                    
+                    // =================================================================
+                    // 6. จัดการสถานะหน้าจอ (ตามความต้องการของผู้ใช้)
+                    // =================================================================
+                    
+                    // A. ล้างตะกร้าสินค้าใน Session Storage 
+                    sessionStorage.removeItem('bangfood_cart');
+                    
+                    // B. ซ่อนปุ่ม "ยืนยันคำสั่งซื้อ"
+                    const placeOrderBtn = document.getElementById('checkout-btn');
+                    if (placeOrderBtn) placeOrderBtn.style.display = 'none';
+                    // *หากคุณมีปุ่ม "ล้างตะกร้า" ให้เพิ่มโค้ดซ่อนปุ่มนั้นที่นี่*
+
+                    // C. แสดงข้อความยืนยัน
+                    const confirmationMessage = document.getElementById('order-confirmed-message');
+                    if (confirmationMessage) {
+                        confirmationMessage.textContent = `✅ คำสั่งซื้อนี้ถูกยืนยันแล้ว (โต๊ะ ${tableNumber})`;
+                        confirmationMessage.style.display = 'block';
+                    }
+                    
+                    // D. แจ้งเตือนและนำไปหน้าติดตามสถานะ
+                    alert(`ยืนยันคำสั่งซื้อสำเร็จ! โต๊ะ ${tableNumber} ระบบจะนำท่านไปหน้าติดตามสถานะ`);
+                    
+                    // *** นำผู้ใช้ไปยังหน้าติดตามสถานะ (Tracking Page) ***
+                    window.location.href = `track.html?table=${tableNumber}`;
+                    
+                })
+                .catch(error => {
+                    console.error("Error placing order:", error);
+                    alert("เกิดข้อผิดพลาดในการสั่งซื้อ กรุณาลองใหม่อีกครั้ง");
+                });
+        };
     </script>
     
     <script src="script.js"></script>

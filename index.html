@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เมนูอาหาร | สั่งง่าย QR Code</title>
     <link rel="stylesheet" href="style.css">
-</head>
+    
+    </head>
 <body>
 
     <header class="app-header">
@@ -14,159 +15,164 @@
     </header>
 
     <main class="menu-container">
-    <h2>อาหาร</h2>
-    
-    <div class="menu-item" data-id="1">
-        <img src="menu/kpad.jpg" alt="ข้าวผัด" class="item-image">
-        <div class="item-details">
-            <h3 class="item-name">ข้าวผัด</h3>
-            <p class="item-description">ข้าวผัดธรรมดา</p>
-            <div class="item-price">
-                <span>50</span> บาท
-            </div>
+        <div class="menu-tabs">
+            <a href="#" class="menu-tab active" data-category="อาหาร" onclick="switchCategory('อาหาร', event)">
+                อาหาร
+            </a>
+            <a href="#" class="menu-tab" data-category="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม', event)">
+                เครื่องดื่ม
+            </a>
         </div>
-        <a href="menu.html?name=ข้าวผัด&price=50&img=menu/kpad.jpg" 
-            class="add-to-cart-btn"> + เพิ่ม </a>
+        <div id="food-container" class="menu-category-content">
+            
+            <div class="menu-item" data-id="1">
+                <img src="menu/kpad.jpg" alt="ข้าวผัด" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ข้าวผัด</h3>
+                    <p class="item-description">ข้าวผัดธรรมดา</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="menu.html?name=ข้าวผัด&price=50&img=menu/kpad.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>
+            </div>
+
+            <div class="menu-item" data-id="2">
+                <img src="menu/kpadkai.jpg" alt="ข้าวผัดไข่" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ข้าวผัดไข่</h3>
+                    <p class="item-description">ข้าวผัดไข่ หอมนุ่ม</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="menu.html?name=ข้าวผัดไข่&price=50&img=menu/kpad.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a> 
+            </div>
+
+            <div class="menu-item" data-id="3">
+                <img src="menu/kpadner.jpg" alt="ข้าวผัดเนื้อ" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ข้าวผัดเนื้อ</h3>
+                    <p class="item-description">ข้าวผัดเนื้อ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="menu.html?name=ข้าวผัดเนื้อ&price=50&img=menu/kpadner.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+
+            <div class="menu-item" data-id="4">
+                <img src="menu/kpadpu.jpg" alt="ข้าวผัดปู" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ข้าวผัดปู</h3>
+                    <p class="item-description">ข้าวผัดปู เนื้อแน่นๆ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="menu.html?name=ข้าวผัดปู&price=50&img=menu/kpadpu.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a> 
+            </div>
+
+            <div class="menu-item" data-id="5">
+                <img src="menu/kpadtale.jpg" alt="ข้าวทะเล" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ข้าวผัดทะเล</h3>
+                    <p class="item-description">ข้าวทะเล ได้รสชาตทะเลเต็มๆ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="menu.html?name=ข้าวผัดทะเล&price=50&img=menu/kpadtale.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+
+            <div class="menu-item" data-id="6">
+                <img src="menu/kpadtom.jpg" alt="ข้าวต้มยำ" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ข้าวผัดต้มยำ</h3>
+                    <p class="item-description">ข้าวผัดต้มยำ ได้รสชาตถึงใจ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="menu.html?name=ข้าวผัดต้มยำ&price=50&img=menu/kpadtom.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+            
+        </div>
+        <div id="drink-container" class="menu-category-content" style="display: none;">
+            
+            <div class="menu-item" data-id="1">
+                <img src="dring/chatai.png" alt="ชาไทย" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ชาไทย</h3>
+                    <p class="item-description">ชื่อไทย สูตรวงตระกูล</p>
+                    <div class="item-price">
+                        <span>25</span> บาท
+                    </div>
+                </div>
+                <a href="drink.html?name=ชาไทย&price=25&img=dring/chatai.png" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+
+            <div class="menu-item" data-id="2">
+                <img src="dring/chagreen.png" alt="ชาเขียว" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ชาเขียว</h3>
+                    <p class="item-description">ชื่อเขียว สูตรวงตระกูล</p>
+                    <div class="item-price">
+                        <span>25</span> บาท
+                    </div>
+                </div>
+                <a href="drink.html?name=ชาเขียว&price=25&img=dring/chagreen.png" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+
+            <div class="menu-item" data-id="3">
+                <img src="dring/gogopan.png" alt="โกโก้ปั่น" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">โกโก้ปั่น</h3>
+                    <p class="item-description">โกโก้ปั่น สูตรวงตระกูล</p>
+                    <div class="item-price">
+                        <span>30</span> บาท
+                    </div>
+                </div>
+                <a href="drink.html?name=โกโก้ปั่น&price=30&img=dring/gogopan.png" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+
+            <div class="menu-item" data-id="4">
+                <img src="dring/oriopan.png" alt="โอริโอ้ปั่น" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">โอริโอ้ปั่น</h3>
+                    <p class="item-description">โอริโอ้ปั่น สูตรวงตระกูล</p>
+                    <div class="item-price">
+                        <span>30</span> บาท
+                    </div>
+                </div>
+                <a href="drink.html?name=โอริโอ้ปั่น&price=30&img=dring/oriopan.png" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+            
+        </div>
+        </main>
+
+    <div class="floating-cart-summary-container">
+        <div class="floating-cart-summary">
+            <span id="cart-item-count">0</span> รายการ
+            <span class="separator">|</span>
+            <span id="cart-total">0.00</span> บาท 
+        
+        
+            <a href="cart.html" id="view-cart-btn" class="checkout-button">
+                🍽️
+            </a>
+        </div>
     </div>
-
-        <div class="menu-item" data-id="2">
-            <img src="menu/kpadkai.jpg" alt="ข้าวผัดไข่" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">ข้าวผัดไข่</h3>
-                <p class="item-description">ข้าวผัดไข่ หอมนุ่ม</p>
-                <div class="item-price">
-                    <span>50</span> บาท
-                </div>
-            </div>
-            <a href="menu.html?name=ข้าวผัดไข่&price=50&img=menu/kpad.jpg" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 
-        </div>
-        <div class="menu-item" data-id="3">
-            <img src="menu/kpadner.jpg" alt="ข้าวผัดเนื้อ" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">ข้าวผัดเนื้อ</h3>
-                <p class="item-description">ข้าวผัดเนื้อ</p>
-                <div class="item-price">
-                    <span>50</span> บาท
-                </div>
-            </div>
-            <a href="menu.html?name=ข้าวผัดเนื้อ&price=50&img=menu/kpadner.jpg" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 	
-        </div>
-
-        <div class="menu-item" data-id="4">
-            <img src="menu/kpadpu.jpg" alt="ข้าวผัดปู" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">ข้าวผัดปู</h3>
-                <p class="item-description">ข้าวผัดปู เนื้อแน่นๆ</p>
-                <div class="item-price">
-                    <span>50</span> บาท
-                </div>
-            </div>
-            <a href="menu.html?name=ข้าวผัดปู&price=50&img=menu/kpadpu.jpg" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 
-        </div>
-
-        <div class="menu-item" data-id="5">
-            <img src="menu/kpadtale.jpg" alt="ข้าวทะเล" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">ข้าวผัดทะเล</h3>
-                <p class="item-description">ข้าวทะเล ได้รสชาตทะเลเต็มๆ</p>
-                <div class="item-price">
-                    <span>50</span> บาท
-                </div>
-            </div>
-            <a href="menu.html?name=ข้าวผัดทะเล&price=50&img=menu/kpadtale.jpg" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 	
-        </div>
-
-        <div class="menu-item" data-id="5">
-            <img src="menu/kpadtom.jpg" alt="ข้าวต้มยำ" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">ข้าวผัดต้มยำ</h3>
-                <p class="item-description">ข้าวผัดต้มยำ ได้รสชาตถึงใจ</p>
-                <div class="item-price">
-                    <span>50</span> บาท
-                </div>
-            </div>
-            <a href="menu.html?name=ข้าวผัดต้มยำ&price=50&img=menu/kpadtom.jpg" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 	
-        </div>
-
-        </main>
-        <main class="menu-container">
-        <h2>เครื่องดื่ม</h2>
-
-        <div class="menu-item" data-id="1">
-            
-            <img src="dring/chatai.png" alt="ชาไทย" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">ชาไทย</h3>
-                <p class="item-description">ชื่อไทย สูตรวงตระกูล</p>
-                <div class="item-price">
-                    <span>25</span> บาท
-                </div>
-            </div>
-            <a href="drink.html?name=ชาไทย&price=25&img=dring/chatai.png" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 	
-        </div>
-
-        <div class="menu-item" data-id="2">
-            
-            <img src="dring/chagreen.png" alt="ชาเขียว" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">ชาเขียว</h3>
-                <p class="item-description">ชื่อเขียว สูตรวงตระกูล</p>
-                <div class="item-price">
-                    <span>25</span> บาท
-                </div>
-            </div>
-            <a href="drink.html?name=ชาเขียว&price=25&img=dring/chagreen.png" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 	
-        </div>
-
-        <div class="menu-item" data-id="3">
-            
-            <img src="dring/gogopan.png" alt="โกโก้ปั่น" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">โกโก้ปั่น</h3>
-                <p class="item-description">โกโก้ปั่น สูตรวงตระกูล</p>
-                <div class="item-price">
-                    <span>30</span> บาท
-                </div>
-            </div>
-            <a href="drink.html?name=โกโก้ปั่น&price=30&img=dring/gogopan.png" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 	
-        </div>
-
-        <div class="menu-item" data-id="4">
-            
-            <img src="dring/oriopan.png" alt="โอริโอ้ปั่น" class="item-image">
-            <div class="item-details">
-                <h3 class="item-name">โอริโอ้ปั่น</h3>
-                <p class="item-description">โอริโอ้ปั่น สูตรวงตระกูล</p>
-                <div class="item-price">
-                    <span>30</span> บาท
-                </div>
-            </div>
-            <a href="drink.html?name=โอริโอ้ปั่น&price=30&img=dring/oriopan.png" 
-               class="add-to-cart-btn"> + เพิ่ม </a> 	
-        </div>
-
-        </main>
-
-<div class="floating-cart-summary-container">
-    <div class="floating-cart-summary">
-        <span id="cart-item-count">0</span> รายการ
-        <span class="separator">|</span>
-        <span id="cart-total">0.00</span> บาท 
-    
-    
-    <a href="cart.html" id="view-cart-btn" class="checkout-button">
-        🍽️
-    </a>
-    
-</div>
 
 <script src="script.js"></script>
     

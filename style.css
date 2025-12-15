@@ -341,8 +341,9 @@ body {
 
 .checkout-btn-large {
     width: 100%;
-    background-color: var(--primary-color);
-    color: var(--bg-color-main);
+    background-color: #ff9900;
+    color: #000000;
+    text-align: center;
     border: none;
     padding: 15px 20px;
     font-size: 1.2em;
@@ -968,7 +969,7 @@ body {
     align-items: center;
     margin-bottom: 25px;
     border: none; /* เปลี่ยนเป็น none */
-    padding: 0; /* เปลี่ยนเป็น 0 */
+    padding: 100; /* เปลี่ยนเป็น 0 */
     box-shadow: var(--shadow-dark); /* เพิ่มเงาให้ดูมีมิติ */
     background-color: transparent; /* เปลี่ยนเป็น transparent */
     border-radius: 8px; /* ขอบโค้งมน */
@@ -1049,11 +1050,12 @@ body {
 
 /* กล่องแสดงสถานะปัจจุบัน */
 .status-box {
+    color: #000000;
     text-align: center;
     padding: 20px;
     margin-bottom: 30px;
     border-radius: 8px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 10px rgb(0, 0, 0);
     transition: background-color 0.3s ease;
     max-width: 800px; /* จำกัดความกว้างสูงสุด */         
     margin-left: auto;         
@@ -1063,8 +1065,8 @@ body {
 }
 
 /* === สีตามสถานะ (Status Colors) === */
-.status-pending { color: #ffcc00; }
-.status-box .status-pending { background-color: #38311a; border: 1px solid #ffcc00; }
+.status-pending { color: #000000; }
+.status-box .status-pending { background-color: #38311a; border: 1px solid #ff1b1b; }
 
 .status-processing { color: #4CAF50; }
 .status-box .status-processing { background-color: #1c361e; border: 1px solid #4CAF50; }
@@ -1118,6 +1120,7 @@ body {
     font-weight: 500;
     color: #fff;
     margin-bottom: 3px;
+    text-align: left;        
 }
 
 .track-item-option {
@@ -1331,4 +1334,91 @@ body {
 /* 2. การแก้ไข Body Padding (ป้องกันเนื้อหาถูกบัง) */
 body {
     padding-bottom: 70px; 
+}
+/*อาหารและเครื่อมดื่ม
+/* ส่วนสำหรับ Tabs (อาหาร / เครื่องดื่ม) */
+.menu-tabs {
+    display: flex;
+    justify-content: flex-start; /* จัดเรียงชิดซ้าย */
+    margin-bottom: 20px;
+    border-bottom: 2px solid #555;
+}
+
+.menu-tab {
+    text-decoration: none;
+    color: #999; /* สีข้อความปกติ */
+    font-size: 1.4em;
+    font-weight: 500;
+    padding: 10px 20px 8px 0;
+    margin-right: 20px;
+    cursor: pointer;
+    transition: color 0.2s, border-bottom 0.2s;
+    border-bottom: 3px solid transparent; /* เส้นใสรองรับ Active */
+}
+
+.menu-tab:hover {
+    color: #fff;
+}
+
+/* Tab ที่ถูกเลือกอยู่ (Active) */
+.menu-tab.active {
+    color: #ff9900; /* สีส้มตามธีม */
+    border-bottom: 3px solid #ff9900; /* ขีดเส้นใต้เมื่อ Active */
+}
+
+/* ส่วนสำหรับ Menu Items */
+.menu-item-card {
+    display: flex; /* เพื่อให้รายการสินค้าแสดงได้ตามปกติ */
+    /* ... (สไตล์เดิมของ item card) ... */
+}
+
+/* ใน style.css: สไตล์สำหรับปุ่ม/ลิงก์ย้อนกลับ */
+.back-to-menu-btn {
+    position: absolute; /* กำหนดตำแหน่งสัมพัทธ์กับ Header */
+    left: 15px;
+    top: 50%; /* จัดให้อยู่กึ่งกลางในแนวตั้ง */
+    transform: translateY(-50%);
+    
+    /* สไตล์ข้อความและสี */
+    color: #fff; /* สีข้อความ */
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: bold;
+    display: flex; /* จัดเรียงไอคอนและข้อความ */
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.back-to-menu-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* สไตล์สำหรับไอคอน */
+.back-to-menu-btn svg {
+    margin-right: 5px;
+    width: 18px;
+    height: 18px;
+}
+
+/* ปรับ Header ให้รองรับปุ่มซ้ายและขวา (ถ้าจำเป็น) */
+.app-header {
+    position: relative; /* สำคัญ: เพื่อให้ position: absolute ในปุ่มทำงาน */
+    /* ... (สไตล์ Header อื่นๆ) ... */
+}
+.status-box.status-pending {
+    background-color: #ff5757; /* เหลือง */
+}
+.status-box.status-preparing {
+    background-color: #ff9046; /* น้ำเงิน */
+}
+.status-box.status-ready {
+    background-color: #fff649; /* เขียว */
+}
+.track-item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dotted #444;
 }

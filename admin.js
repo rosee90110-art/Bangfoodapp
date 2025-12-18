@@ -27,13 +27,12 @@ if (typeof db !== 'undefined') {
     // ใน admin.js: ฟังก์ชัน createOrderCard
 function createOrderCard(orderId, order, statusClass, itemsHtml, displayTime) {
     const tableNum = order.tableNumber || order.table || 'N/A';
-    // *** สำคัญ: ต้องกำหนดตัวแปร status ที่นี่ ***
     const status = order.status || 'รอดำเนินการ'; 
     const total = parseFloat(order.total || 0).toFixed(2);
-    // ...
+
     return `
         <div class="order-card ${statusClass}" data-table="${tableNum}">
-        <h4 class="order-total">ยอดรวม: ${total} บาท</h4>
+            <h4 class="order-total">ยอดรวม: ${total} บาท</h4>
             <h3 class="order-table">โต๊ะ: ${tableNum}</h3> 
             <p class="order-time">${displayTime}</p>
             <div class="order-status ${statusClass}">${status}</div>
@@ -42,24 +41,19 @@ function createOrderCard(orderId, order, statusClass, itemsHtml, displayTime) {
                 ${itemsHtml}
             </ul>
             
-            <h4 class="order-total">ยอดรวม: ${parseFloat(order.total || 0).toFixed(2)} บาท</h4>
-            
-            <div class="action-buttons">
-            ${status === 'รอดำเนินการ' ? 
-                    `<button class="btn-action btn-start" onclick="updateOrderStatus('${orderId}', 'กำลังทำ')">เริ่มทำ</button>` 
-                : ''}
-                ${status === 'กำลังทำ' ? 
-                    `<button class="btn-action btn-complete" onclick="updateOrderStatus('${orderId}', 'เสร็จสมบูรณ์')">เสร็จ</button>` 
-                : ''}
-                ${status !== 'เสร็จสมบูรณ์' ? 
-                    `<button class="btn-action btn-cancel" onclick="cancelOrder('${orderId}')">ลบ/ยกเลิก</button>` 
-                : ''}
-                
+           <div class="action-buttons">
+            ${status === 'รอดำเนินการ' ? `<button class="btn-action btn-start" onclick="updateOrderStatus('${orderId}', 'กำลังทำ')">เริ่มทำ</button>` : ''}
+            ${status === 'กำลังทำ' ? `<button class="btn-action btn-complete" onclick="updateOrderStatus('${orderId}', 'เสร็จสมบูรณ์')">เสร็จ</button>` : ''}
+    
+            ${status === 'ชำระเงินแล้ว' ? 
+            `<button class="btn-action btn-save" style="background-color: #4CAF50; color: white;" onclick="archiveOrder('${orderId}')">บันทึกรายการ</button>` : 
+            `<button class="btn-action btn-cancel" onclick="cancelOrder('${orderId}')">ลบ/ยกเลิก</button>`
+    }
             </div>
         </div>
     `;
 }
-    // NEW: ฟังก์ชันกรองคำสั่งซื้อตามหมายเลขโต๊ะ
+// NEW: ฟังก์ชันกรองคำสั่งซื้อตามหมายเลขโต๊ะ
     window.filterOrders = function() {
         const filterText = tableFilterInput.value.trim().toUpperCase();
         
@@ -91,9 +85,10 @@ function createOrderCard(orderId, order, statusClass, itemsHtml, displayTime) {
                 totalOrders++;
 
                 const status = order.status || 'รอดำเนินการ';
-                let statusClass = (status === 'รอดำเนินการ') ? 'status-pending' : 
-                                 (status === 'กำลังทำ') ? 'status-processing' : 
-                                 'status-completed';
+                // เพิ่มบรรทัดนี้ในฟังก์ชัน createOrderCard
+let statusClass = (status === 'รอดำเนินการ') ? 'status-pending' : 
+                 (status === 'กำลังทำ') ? 'status-processing' : 
+                 (status === 'ชำระเงินแล้ว') ? 'status-paid' : 'status-completed';
 
                 // โค้ดการสร้างรายการสินค้า (เหมือนเดิมที่มีการแปลง 'S' เป็น 'ธรรมดา')
                 let itemsHtml = '<li class="order-item-detail">ไม่พบรายละเอียดรายการสินค้า</li>';
@@ -136,7 +131,7 @@ function createOrderCard(orderId, order, statusClass, itemsHtml, displayTime) {
                 const orderCardHtml = createOrderCard(orderId, order, statusClass, itemsHtml, displayTime);
                 
                 // NEW: แยกคำสั่งซื้อตามสถานะ
-                if (status === 'เสร็จสมบูรณ์') {
+                if (status === 'เสร็จสมบูรณ์' || status === 'ชำระเงินแล้ว') {
                     ordersCompletedContainer.innerHTML += orderCardHtml;
                     totalRevenue += parseFloat(order.total || 0); // คำนวณยอด
                 } else {
@@ -237,4 +232,107 @@ window.loadOrdersRealtime = function() {
         console.error("Error loading orders:", error);
     });
 };
+// ฟังก์ชันสำหรับหน้า admin.html
+function updateAdminDashboard() {
+    let totalRevenue = 0;
+    let totalOrders = 0;
 
+    // 1. ดึงยอดจากออเดอร์ที่ยังไม่ได้จ่ายเงิน (orders)
+    // ตัวอย่าง Logic ใน admin.js
+db.ref('orders').on('value', (snapshot) => {
+    const pendingContainer = document.getElementById('orders-list-container'); // ช่องรอดำเนินการ
+    const completedContainer = document.getElementById('completed-orders-container'); // ช่องที่เสร็จ/ชำระแล้ว
+    
+    // ล้างข้อมูลเก่าก่อนวาดใหม่
+    pendingContainer.innerHTML = '';
+    if(completedContainer) completedContainer.innerHTML = '';
+
+    snapshot.forEach((child) => {
+        const order = child.val();
+        const orderId = child.key;
+        const orderCard = createOrderCard(orderId, order); // ฟังก์ชันสร้างการ์ดของคุณ
+
+        // แยกช่องแสดงผลตามสถานะ
+        if (order.status === 'ชำระเงินแล้ว' || order.status === 'เสร็จสมบูรณ์') {
+            // ถ้าจ่ายแล้ว หรือ ทำเสร็จแล้ว ให้ไปอยู่ช่องล่าง (Completed)
+            if(completedContainer) {
+                completedContainer.insertAdjacentHTML('beforeend', orderCard);
+            }
+        } else {
+            // ถ้ายังไม่เสร็จ (รอดำเนินการ/กำลังทำ) ให้ไปอยู่ช่องบน (Pending)
+            pendingContainer.insertAdjacentHTML('beforeend', orderCard);
+        }
+    });
+});
+}
+// ในไฟล์ admin.js
+function loadOrdersRealtime() {
+    const ordersRef = db.ref('orders');
+    const pendingContainer = document.getElementById('orders-list-container');
+    const completedContainer = document.getElementById('completed-orders-container');
+
+    ordersRef.on('value', (snapshot) => {
+        // ล้างข้อมูลเก่าออกก่อนวาดใหม่
+        pendingContainer.innerHTML = '';
+        completedContainer.innerHTML = '';
+
+        if (!snapshot.exists()) {
+            pendingContainer.innerHTML = '<p>ไม่มีคำสั่งซื้อใหม่</p>';
+            completedContainer.innerHTML = '<p>ไม่มีรายการที่ชำระเงินแล้ว</p>';
+            return;
+        }
+
+        snapshot.forEach((child) => {
+            const orderId = child.key;
+            const order = child.val();
+            
+            // ใช้ฟังก์ชันสร้างการ์ดที่มีอยู่เดิมของคุณ
+            const orderCard = createOrderCard(orderId, order); 
+
+            // --- จุดสำคัญ: แยกสถานะ ---
+            if (order.status === 'ชำระเงินแล้ว' || order.status === 'เสร็จสมบูรณ์') {
+                // ถ้าสถานะเป็น "ชำระเงินแล้ว" หรือ "เสร็จสมบูรณ์" ให้ย้ายมาช่องล่าง
+                completedContainer.insertAdjacentHTML('beforeend', orderCard);
+            } else {
+                // ถ้าสถานะอื่นๆ (รอดำเนินการ, กำลังทำ) ให้ไว้ช่องบน
+                pendingContainer.insertAdjacentHTML('beforeend', orderCard);
+            }
+        });
+        
+        // อัปเดตตัวเลขจำนวนรายการและรายได้ (ถ้ามีฟังก์ชันนี้อยู่)
+        if (typeof updateAdminDashboard === 'function') {
+            updateAdminDashboard();
+        }
+    });
+}
+// ตรวจสอบให้แน่ใจว่าฟังก์ชันนี้อยู่นอกสุดของไฟล์ admin.js หรืออยู่ในขอบเขตที่ HTML เรียกถึงได้
+window.archiveOrder = function(orderId) {
+    if (confirm("คุณต้องการบันทึกรายการนี้ไปยังประวัติการขายใช่หรือไม่?")) {
+        const orderRef = db.ref('orders/' + orderId);
+        const historyRef = db.ref('history');
+
+        // 1. ดึงข้อมูลออเดอร์ทั้งหมด
+        orderRef.once('value').then((snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // 2. เตรียมข้อมูลบันทึกประวัติ (ดึงรายการอาหารและราคาทั้งหมดมาด้วย)
+                const historyEntry = {
+                    ...data,
+                    archivedAt: firebase.database.ServerValue.TIMESTAMP, // บันทึกเวลาที่กดปุ่ม
+                    status: 'เสร็จสิ้น'
+                };
+
+                // 3. บันทึกเข้า Node 'history'
+                return historyRef.push(historyEntry).then(() => {
+                    // 4. เมื่อบันทึกสำเร็จ ให้ลบออกจากหน้าหลัก
+                    return orderRef.remove();
+                });
+            }
+        }).then(() => {
+            alert("✅ บันทึกข้อมูลสำเร็จ!");
+        }).catch((error) => {
+            console.error("Archive Error:", error);
+            alert("เกิดข้อผิดพลาดในการบันทึก");
+        });
+    }
+};

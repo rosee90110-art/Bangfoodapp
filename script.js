@@ -77,26 +77,28 @@ function clearCart() {
 }
 
 // **ฟังก์ชันใหม่: สำหรับลบรายการสินค้าใน cart.html**
+// ฟังก์ชันสำหรับลบรายการสินค้าในตะกร้า
+// ฟังก์ชันสำหรับลบรายการสินค้าในตะกร้า (ฉบับแก้ไขให้ล้างเลขโต๊ะ)
 window.removeItem = function(index) {
-    if (confirm("คุณต้องการลบรายการนี้ออกจากตะกร้าใช่หรือไม่?")) {
-        // ลบรายการออกจาก array โดยใช้ index
-        cart.items.splice(index, 1);
-        
-        // ถ้าตะกร้าว่างเปล่า ให้ล้างหมายเลขโต๊ะด้วย
-        if (cart.items.length === 0) {
-            cart.table = null;
-        }
+    const cartData = sessionStorage.getItem('bangfood_cart');
+    
+    if (cartData) {
+        let currentCart = JSON.parse(cartData);
+        
+        // ลบเฉพาะรายการที่เลือก
+        currentCart.items.splice(index, 1); 
 
-        saveCart(); // บันทึกและอัปเดตสรุปตะกร้า
-        
-        // แสดงรายการตะกร้าใหม่ใน cart.html
-        if (window.location.pathname.includes('cart.html')) {
-            renderCartItems();
-        }
-    }
-}
-
-
+        // บันทึกกลับลง Session โดยที่ table ยังคงเดิม
+        sessionStorage.setItem('bangfood_cart', JSON.stringify(currentCart));
+        
+        // ✅ สำคัญ: อัปเดต Global Variable 'cart' ด้วย เพื่อให้ Floating Summary (แถบด้านล่าง) อัปเดตตามทันที
+        cart = currentCart; 
+        
+        // วาดหน้าจอใหม่ และอัปเดตแถบสรุปด้านล่าง
+        renderCartItems(); 
+        updateCartSummary(); 
+    }
+};
 // ----------------------------------------------------
 // --- 3. Modal Functions (ใช้ใน menu.html) ---
 // ----------------------------------------------------
@@ -259,122 +261,96 @@ if (addToCartConfirmBtn) {
 function renderCartItems() {
     // 0. โหลดตะกร้าจาก Session Storage
     const cartData = sessionStorage.getItem('bangfood_cart');
-    // cart.orderId จะถูกใช้เพื่อกำหนดว่าจะแสดงปุ่ม 'ตรวจสอบสถานะ' หรือไม่
     const cart = cartData ? JSON.parse(cartData) : { items: [], table: null, orderId: null }; 
 
     const cartItemsContainer = document.getElementById('cart-items-list');
     const tableInfoEl = document.getElementById('table-display-info');
     const cartTotalDisplay = document.getElementById('final-total-amount'); 
     
-    // --- DOM elements สำหรับควบคุมสถานะปุ่ม ---
     const actionArea = document.getElementById('order-action-area');
     const checkoutBtn = document.getElementById('checkout-btn');
     const confirmationMessage = document.getElementById('order-confirmed-message');
 
     if (!cartItemsContainer || !cartTotalDisplay || !actionArea || !checkoutBtn || !confirmationMessage) return;
 
-    // 1. แสดงหมายเลขโต๊ะ
+    // ✅ 1. แก้ไขส่วนแสดงหมายเลขโต๊ะ: ซ่อนเลขโต๊ะเมื่อไม่มีสินค้าในตะกร้า
     if (tableInfoEl) {
-        tableInfoEl.textContent = cart.table ? `คำสั่งซื้อสำหรับ โต๊ะ ${cart.table}` : 'ไม่มีรายการในตะกร้า';
+        if (cart.items.length > 0 && cart.table) {
+            tableInfoEl.textContent = `คำสั่งซื้อสำหรับ โต๊ะ ${cart.table}`;
+        } else {
+            // เมื่อตะกร้าว่าง ให้ล้างข้อความทิ้ง หรือใช้คำว่า "ไม่มีรายการ"
+            tableInfoEl.textContent = 'ไม่มีรายการในตะกร้า'; 
+        }
     }
 
     cartItemsContainer.innerHTML = ''; 
     
-    // 2. แสดงรายการสินค้า (พร้อมรูปภาพและชื่อ)
+    // 2. แสดงรายการสินค้า
     if (cart.items.length === 0) {
-        // หากไม่มีรายการสินค้า แต่มี Order ID (คือสั่งไปแล้ว) ให้แสดงข้อความยืนยัน
         if (cart.orderId) {
              cartItemsContainer.innerHTML = `<p class="empty-cart-message" style="text-align: center;">คุณได้สั่งซื้อชุดล่าสุดไปแล้ว</p>`;
         } else {
              cartItemsContainer.innerHTML = '<p class="empty-cart-message" style="text-align: center;">คุณยังไม่ได้เลือกรายการอาหาร</p>';
         }
     } else {
-        // ... (โค้ดแสดงรายการสินค้าเดิม) ...
         cart.items.forEach((item, index) => { 
             const itemElement = document.createElement('div');
             itemElement.classList.add('cart-item'); 
             
             let detailsHtml = '';
-            if (item.options) {
-                detailsHtml += `<small class="item-modifiers">${item.options}</small>`;
-            }
-            if (item.notes) {
-                detailsHtml += `<small class="item-modifiers item-notes">(โน้ต: ${item.notes})</small>`;
-            }
-            if (!detailsHtml) {
-                detailsHtml = '<small class="item-modifiers">ไม่มีตัวเลือกเสริม</small>';
-            }
+            if (item.options) detailsHtml += `<small class="item-modifiers">${item.options}</small>`;
+            if (item.notes) detailsHtml += `<small class="item-modifiers item-notes">(โน้ต: ${item.notes})</small>`;
+            if (!detailsHtml) detailsHtml = '<small class="item-modifiers">ไม่มีตัวเลือกเสริม</small>';
             
-            // ปุ่มลบรายการ (ยังอนุญาตให้ลบได้)
-            const removeButtonHtml = `<button class="remove-btn" onclick="removeItem(${index})">ลบ</button>`;
-
             itemElement.innerHTML = `
                 <img src="${item.imgUrl || 'placeholder.png'}" alt="${item.name || 'รายการสินค้า'}" class="cart-item-image">
-
                 <div class="item-details-cart">
                     <p class="item-name-cart">${item.name || 'รายการที่ไม่ได้ระบุชื่อ'}</p> 
                     ${detailsHtml}
                 </div>
-
                 <div class="item-quantity-control">
                     <span class="item-price-total">${item.finalPrice.toFixed(2)} บาท</span>
-                    ${removeButtonHtml}
+                    <button class="remove-btn" onclick="removeItem(${index})">ลบ</button>
                 </div>
             `;
             cartItemsContainer.appendChild(itemElement);
         });
     }
 
-    // 3. แสดงยอดรวมที่ต้องชำระ
+    // 3. แสดงยอดรวม
     const total = cart.items.reduce((sum, item) => sum + (item.finalPrice || 0), 0);
     cartTotalDisplay.textContent = total.toFixed(2);
     
-    
-    // ***************************************************************
-    // 4. ตรวจสอบสถานะ OrderID และรายการสินค้าเพื่อจัดการปุ่ม
-    // ***************************************************************
+    // 4. จัดการสถานะปุ่ม (เหมือนเดิม)
     const trackBtnClass = 'track-status-btn';
     let trackBtn = document.querySelector(`.${trackBtnClass}`);
     
-    // A. ถ้ามีรายการสินค้า (Order 2) ให้แสดงปุ่มยืนยัน
     if (cart.items.length > 0) {
         checkoutBtn.style.display = 'block';
         confirmationMessage.style.display = 'none';
         if (trackBtn) trackBtn.style.display = 'none';
-
     } 
-    // B. ถ้าไม่มีรายการสินค้า แต่มี Order ID (Order 1 ถูกส่งแล้ว) ให้แสดงปุ่มตรวจสอบสถานะ
     else if (cart.orderId && cart.table) {
-        const tableNumber = cart.table;
-        const trackUrl = `track.html?table=${tableNumber}`;
-        
         checkoutBtn.style.display = 'none';
-
-        // ข้อความยืนยันสำหรับรายการที่ถูกส่งไปแล้ว
-        confirmationMessage.textContent = `✅ คำสั่งซื้อล่าสุดถูกส่งแล้ว! (โต๊ะ ${tableNumber})`;
+        confirmationMessage.textContent = `✅ คำสั่งซื้อล่าสุดถูกส่งแล้ว! (โต๊ะ ${cart.table})`;
         confirmationMessage.style.display = 'block';
 
         if (!trackBtn) {
-            // สร้างปุ่มตรวจสอบสถานะหากยังไม่มี
             trackBtn = document.createElement('a');
             trackBtn.className = `checkout-btn-large ${trackBtnClass}`;
             trackBtn.textContent = 'ตรวจสอบสถานะคำสั่งซื้อ';
             trackBtn.style.marginTop = '15px';
             actionArea.appendChild(trackBtn);
         }
-        // อัปเดต href และแสดงปุ่ม
-        trackBtn.href = trackUrl;
+        trackBtn.href = `track.html?table=${cart.table}`;
         trackBtn.style.display = 'block';
-
     } 
-    // C. กรณีอื่นๆ (ว่างเปล่าและไม่มี Order ID)
     else {
         checkoutBtn.style.display = 'none';
         confirmationMessage.style.display = 'none';
         if (trackBtn) trackBtn.style.display = 'none';
     }
 }
-
 // ----------------------------------------------------
 // --- 6. Initial Load ---
 // ----------------------------------------------------
@@ -396,13 +372,14 @@ if (pagePath.includes('menu.html')) {
 // --- 7. Order Placement Function (ใช้ใน cart.html) ---
 // ----------------------------------------------------
 
+// ----------------------------------------------------
+// --- 7. Order Placement Function (ฉบับแก้ไข: ป้องกันข้อมูล N/A) ---
+// ----------------------------------------------------
+
 window.placeOrder = function() {
-    // 1. โหลดตะกร้าจาก Session Storage
     const cartData = sessionStorage.getItem('bangfood_cart');
     const currentCart = cartData ? JSON.parse(cartData) : { items: [], table: null };
-    // ... (ส่วนตรวจสอบ DB และ items/tableNumber เดิม) ...
 
-    // 2. เตรียมข้อมูล
     const tableNumber = currentCart.table; 
     const finalTotal = currentCart.items.reduce((sum, item) => sum + (item.finalPrice || 0), 0); 
     const itemsWithStatus = currentCart.items.map(item => ({
@@ -418,74 +395,85 @@ window.placeOrder = function() {
         timestamp: firebase.database.ServerValue.TIMESTAMP 
     };
 
-    // 3. ยืนยันก่อนส่ง
     if (!confirm(`ยืนยันการสั่งซื้อ โต๊ะ ${tableNumber} ยอดรวม ${finalTotal.toFixed(2)} บาท ใช่หรือไม่?`)) {
         return; 
     }
     
-    // 4. ส่งคำสั่งซื้อไปยัง Firebase
     db.ref('orders').push(orderData)
-        .then((snapshot) => { // ******* ต้องรับ snapshot ด้วย *******
-            const newOrderId = snapshot.key; // ดึง Order ID ที่สร้างใหม่
-            console.log("Order placed successfully for table:", tableNumber);
+        .then((snapshot) => {
+            const newOrderId = snapshot.key;
             
-            // ***************************************************************
-            // 5. จัดการตะกร้า (ลบรายการสินค้า แต่เก็บหมายเลขโต๊ะ และบันทึก Order ID)
-            // ***************************************************************
+            // ✅ 1. ล็อกเลขโต๊ะนี้ไว้ในความจำแยก (สำหรับหน้า Track โดยเฉพาะ)
+            // เพื่อให้หน้า Track ดึงค่านี้ไปใช้เสมอ ไม่ว่าตะกร้าจะเปลี่ยนเป็นโต๊ะไหนก็ตาม
+            localStorage.setItem('confirmed_table_for_track', tableNumber); 
+            
+            // ✅ 2. เก็บไว้ใน last_table_number ตามเดิมของคุณ
+            localStorage.setItem('last_table_number', tableNumber); 
+            
+            // 3. เคลียร์รายการในตะกร้า (แต่ยังเก็บเลขโต๊ะในตะกร้าไว้เผื่อเขาสั่งเพิ่มโต๊ะเดิม)
             let cartAfterOrder = {
-                table: currentCart.table,   // เก็บหมายเลขโต๊ะไว้
-                items: [],                  // ล้างรายการสินค้าออก (เพื่อให้พร้อมสั่ง Order 2)
-                orderId: newOrderId         // บันทึก Order ID ล่าสุด
+                table: currentCart.table,
+                items: [],
+                orderId: newOrderId 
             };
             sessionStorage.setItem('bangfood_cart', JSON.stringify(cartAfterOrder));
             
-            // ***************************************************************
-            // 6. นำผู้ใช้ไปยังหน้า TRACK.HTML
-            // ***************************************************************
-            const trackUrl = `track.html?table=${tableNumber}`; 
-            alert(`✅ คำสั่งซื้อ โต๊ะ ${tableNumber} ถูกส่งแล้ว! ระบบกำลังนำท่านไปยังหน้าติดตามสถานะ`);
-            window.location.href = trackUrl; 
-            
+            // 4. ไปหน้าติดตามสถานะ โดยส่งเลขโต๊ะที่เพิ่งสั่งไป
+            window.location.href = `track.html?table=${tableNumber}`; 
         })
         .catch(error => {
             console.error("Error placing order:", error);
             alert("เกิดข้อผิดพลาดในการสั่งซื้อ กรุณาลองใหม่อีกครั้ง");
         });
-};
-
+};  
 
 // ----------------------------------------------------
-// --- 8. Tracking Functions (ใช้ใน track.html) ---
+// --- 8. Status Tracking Function (ใช้ใน track.html) ---
 // ----------------------------------------------------
 
 window.startTrackingSystem = function() {
     console.log("Tracking system initialized.");
     
-    // 1. ดึงหมายเลขโต๊ะจาก URL
+    // 1. ดึงค่าจากแหล่งต่างๆ
     const urlParams = new URLSearchParams(window.location.search);
-    const tableNumber = urlParams.get('table');
+    let tableFromUrl = urlParams.get('table');
+    let confirmedTable = localStorage.getItem('confirmed_table_for_track'); // โต๊ะที่สั่งจริง
+    let lastTable = localStorage.getItem('last_table_number');
 
-    if (!tableNumber) {
-        // ... (โค้ดจัดการเมื่อไม่พบโต๊ะเดิม) ...
+    // ✅ หัวใจสำคัญ: ลำดับการเลือกเลขโต๊ะใหม่
+    // เราจะเชื่อ "โต๊ะที่สั่งสำเร็จแล้ว" (confirmedTable) มากกว่า URL หรือ Session
+    let tableNumber;
+    
+    if (confirmedTable && confirmedTable !== 'null') {
+        tableNumber = confirmedTable; // ถ้าเคยสั่งออเดอร์แล้ว ให้ล็อกโต๊ะนี้ไว้เลย
+    } else if (tableFromUrl && tableFromUrl !== 'N/A') {
+        tableNumber = tableFromUrl; // ถ้ายังไม่เคยสั่ง ให้ดูตาม URL
+    } else {
+        tableNumber = lastTable; // สุดท้ายค่อยดูจากประวัติล่าสุด
+    }
+
+    if (!tableNumber || tableNumber === 'null') {
         document.getElementById('tracking-table-header').textContent = "ไม่พบหมายเลขโต๊ะ";
-        document.getElementById('status-display').querySelector('.status-text').textContent = "กรุณาเข้าผ่าน QR Code"; 
-        document.getElementById('order-details-display').style.display = 'none';
         return;
     }
 
-    document.getElementById('tracking-table-header').textContent = `คำสั่งซื้อ โต๊ะ ${tableNumber}`;
-    document.getElementById('status-display').querySelector('.status-text').textContent = "กำลังรอข้อมูลสถานะ...";
-    document.getElementById('order-details-display').style.display = 'block';
+    // แก้ไข URL บนแถบ Address ให้ล็อกตามเลขโต๊ะที่สั่งจริง
+    if (window.location.search.includes('table=N/A') || !window.location.search.includes('table=')) {
+        window.history.replaceState(null, '', `?table=${tableNumber}`);
+    }
 
-    // 2. เริ่มติดตามคำสั่งซื้อทั้งหมดของโต๊ะนี้จาก Firebase
-    const ordersRef = db.ref('orders')
-                         .orderByChild('tableNumber')
-                         .equalTo(tableNumber);
+    // แสดงผลหัวข้อ (ตอนนี้มันจะไม่เปลี่ยนตามหน้า cart แล้ว)
+    document.getElementById('tracking-table-header').textContent = `คำสั่งซื้อ โต๊ะ ${tableNumber}`;
+
+    // 2. ดึงข้อมูลจาก Firebase (ใช้ tableNumber ที่ล็อกไว้)
+    const ordersRef = db.ref('orders').orderByChild('tableNumber').equalTo(tableNumber);
     
     ordersRef.on('value', (snapshot) => {
+        const itemsContainer = document.getElementById('items-list-container');
+        const statusDisplay = document.getElementById('status-display');
+        const statusText = statusDisplay.querySelector('.status-text');
+
         if (snapshot.exists()) {
-            
-            // 🚨 แก้ไข: เปลี่ยนจากการหา latestOrder เป็นการเก็บ activeOrders
             let activeOrders = []; 
             let hasActiveOrder = false;
 
@@ -493,36 +481,30 @@ window.startTrackingSystem = function() {
                 const order = childSnapshot.val();
                 order.key = childSnapshot.key;
                 
-                // เราจะพิจารณา Order ที่สถานะยังไม่เสร็จสิ้น ('รอดำเนินการ', 'กำลังทำ', 'พร้อมเสิร์ฟ')
-                // สมมติว่า 'ชำระเงินแล้ว' หรือ 'เสร็จสิ้น' คือสถานะสุดท้าย
-                if (order.status !== 'ชำระเงินแล้ว' && order.status !== 'เสร็จสิ้น') { 
+                // ติดตามเฉพาะออเดอร์ที่ยังไม่จ่ายเงิน
+                if (order.status !== 'ชำระเงินแล้ว') { 
                     activeOrders.push(order);
                     hasActiveOrder = true;
                 }
             });
 
-            // 3. แสดงรายละเอียดรายการสินค้าและสถานะ
             if (hasActiveOrder) {
-                // ส่งรายการ Order ที่ Active ทั้งหมดไปแสดงผลรวมกัน
-                displayAllActiveOrders(activeOrders); 
+                if (typeof displayAllActiveOrders === 'function') {
+                    displayAllActiveOrders(activeOrders);
+                }
                 document.getElementById('no-order-message').style.display = 'none';
-
+                document.getElementById('order-details-display').style.display = 'block';
             } else {
-                // เมื่อทุก Order เสร็จสิ้นแล้ว
+                // ✅ เมื่อจ่ายเงินแล้ว ล้างหน้าจอและ "ปลดล็อก" โต๊ะ
+                if (itemsContainer) itemsContainer.innerHTML = '';
                 document.getElementById('no-order-message').style.display = 'block';
-                document.getElementById('no-order-message').textContent = "คำสั่งซื้อทั้งหมดของโต๊ะนี้ได้ถูกดำเนินการเสร็จสิ้นแล้ว";
+                statusText.textContent = "ชำระเงินเรียบร้อยแล้ว";
                 document.getElementById('order-details-display').style.display = 'none';
-                document.getElementById('status-display').querySelector('.status-text').textContent = "เสร็จสิ้น";
+                
+                // สำคัญ: ล้างค่าเมื่อจบการสั่งซื้อ เพื่อให้สั่งโต๊ะอื่นได้ในครั้งหน้า
+                localStorage.removeItem('confirmed_table_for_track');
             }
-
-        } else {
-            document.getElementById('no-order-message').style.display = 'block';
-            document.getElementById('order-details-display').style.display = 'none';
-            document.getElementById('status-display').querySelector('.status-text').textContent = "ไม่พบคำสั่งซื้อสำหรับโต๊ะนี้";
         }
-    }, (error) => {
-        console.error("Firebase read failed: " + error.code);
-        document.getElementById('status-display').querySelector('.status-text').textContent = "เกิดข้อผิดพลาดในการโหลดข้อมูล";
     });
 };
 // ----------------------------------------------------
@@ -773,3 +755,63 @@ function loadMenuFromFirebase() {
     // หากโค้ดนี้ถูกใช้งาน ต้องมั่นใจว่ามีการเรียกใช้
     // db.ref('menu').on('value', (snapshot) => { ... }) ที่ถูกต้อง
 }
+// ฟังก์ชันสำหรับจัดการการชำระเงินและย้ายข้อมูลไปหน้าประวัติ
+// ฟังก์ชัน handlePayment ใน track.html (ส่วนที่ปรับปรุงการเรียกจบงาน)
+function handlePayment() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableNo = urlParams.get('table');
+
+    if (!tableNo) return;
+
+    if (confirm(`ยืนยันการชำระเงินโต๊ะ ${tableNo}?\n(รายการในหน้าแอดมินจะไม่หายไป แต่จะเปลี่ยนสถานะเป็น 'ชำระเงินแล้ว')`)) {
+        const ordersRef = db.ref('orders');
+        const historyRef = db.ref('history');
+
+        ordersRef.orderByChild('tableNumber').equalTo(tableNo).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                let promises = [];
+                let foundItems = false;
+
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    // ตรวจสอบสถานะก่อนย้าย (หรือจะเอาเงื่อนไข if ออกถ้าต้องการจ่ายทุกรายการ)
+                    if (data.status === 'เสร็จสมบูรณ์' || data.status === 'พร้อมเสิร์ฟ' || data.status === 'กำลังทำ') {
+                        foundItems = true;
+                        
+                        // 1. ส่งสำเนาไปที่ history
+                        const historyData = {
+                            ...data,
+                            status: 'ชำระเงินแล้ว',
+                            paidAt: firebase.database.ServerValue.TIMESTAMP 
+                        };
+                        promises.push(historyRef.push(historyData));
+
+                        // 2. อัปเดตสถานะในหน้า Admin (ใช้ .update แทน .remove)
+                        // แก้ตรงนี้: ข้อมูลใน Node 'orders' จะไม่ถูกลบ แต่จะเปลี่ยนคำว่า status
+                        promises.push(child.ref.update({
+                            status: 'ชำระเงินแล้ว'
+                        }));
+                    }
+                });
+
+                if (foundItems) {
+                    Promise.all(promises).then(() => {
+                        alert("✅ ชำระเงินสำเร็จ!\nรายการในหน้าแอดมินเปลี่ยนเป็น 'ชำระเงินแล้ว' และบันทึกประวัติแล้ว");
+                        window.location.reload(); 
+                    }).catch((error) => {
+                        console.error("Error:", error);
+                        alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+                    });
+                } else {
+                    alert("ไม่มีรายการที่พร้อมชำระเงิน");
+                }
+            } else {
+                alert("ไม่พบข้อมูลการสั่งซื้อของโต๊ะนี้");
+            }
+        });
+    }
+}
+// ----------------------------------------------------
+// --- 9. ฟังก์ชันชำระเงิน (อัปเดตสถานะและเคลียร์รายการ) ---
+// ----------------------------------------------------
+

@@ -134,8 +134,8 @@ body {
 }
 
 .floating-cart-summary .cart-info { font-weight: 600; }
-
-#view-cart-btn {
+.checkout-button {
+    display: block;
     background-color: var(--primary-color);
     color: var(--bg-color-main); /* ใช้สีตัวอักษรสีเข้ม */
     border: none;
@@ -144,6 +144,18 @@ body {
     font-weight: bold;
     transition: background-color 0.2s;
 }
+
+#view-cart-btn {
+    display: block;
+    background-color: var(--primary-color);
+    color: var(--bg-color-main); /* ใช้สีตัวอักษรสีเข้ม */
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
 
 #view-cart-btn:hover { background-color: #9C27B0; }
 /* --- 6. การปรับขนาดสำหรับหน้าจอที่ใหญ่ขึ้น (PC/Tablet) --- */
@@ -868,15 +880,41 @@ body {
     padding: 15px 20px;
 }
 
+/* จัดกลุ่มปุ่มให้เรียงเป็นแนวตั้ง */
+/* ส่วนที่ใช้ควบคุมการเรียงของปุ่ม */
+.header-buttons {
+    display: flex;
+    flex-direction: column; /* เปลี่ยนจากแนวนอนเป็นแนวตั้ง */
+    gap: 8px;               /* ระยะห่างระหว่างปุ่มบน-ล่าง */
+    align-items: flex-end;  /* ให้ปุ่มชิดขวาสุด */
+}
+
+/* ปรับปุ่มสีแดง (ออกจากระบบ) */
 .btn-logout {
-    background-color: #f44336; /* สีแดง */
+    background-color: #8a0900;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;       /* ปรับขนาดตัวอักษรให้พอดี */
+    width: 130px;           /* กำหนดความกว้างให้คงที่ */
+    order: 1;               /* สั่งให้อยู่อันดับที่ 1 (บน) */
+}
+
+/* ปรับปุ่มสีเขียว (ประวัติการขาย) */
+.btn-logout1 {
+    background-color: #00780a;
     color: white;
     border: none;
     padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.9em;
+    width: 130px;           /* ความกว้างเท่ากับปุ่มบนเพื่อให้ดูเป็นระเบียบ */
+    order: 2;               /* สั่งให้อยู่อันดับที่ 2 (ล่าง) */
 }
+
 
 .filter-controls {
     display: flex;
@@ -1421,4 +1459,217 @@ body {
     justify-content: space-between;
     padding: 8px 0;
     border-bottom: 1px dotted #444;
+}
+/* history.css */
+
+/* จัดการ Layout หลัก */
+.history-app-container {
+    padding: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+}
+
+.history-header {
+    margin-bottom: 25px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.history-header h1 {
+    font-size: 1.5rem;
+    color: #ffcf4d; /* สีทองให้ความรู้สึกพรีเมียม */
+    margin: 0;
+}
+
+.btn-back-admin {
+    background: #333;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    border: 1px solid #444;
+}
+
+.btn-back-admin:hover {
+    background: #444;
+    border-color: #666;
+}
+
+/* Dashboard สรุปยอดรายได้ */
+.summary-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    border: 1px solid #333;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.stat-card.highlighted {
+    border: 1px solid #4CAF50;
+    background: linear-gradient(145deg, #1e1e1e, #142515); /* ไล่สีเขียวเหนี่ยวทรัพย์ */
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'monospace', sans-serif;
+}
+
+.currency {
+    font-size: 0.9rem;
+    margin-left: 5px;
+    color: #4CAF50;
+}
+
+/* การ์ดรายการประวัติ (History Card) */
+.history-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.history-card {
+    background: #252525;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #333;
+    transition: transform 0.2s;
+}
+
+.history-card:hover {
+    transform: translateY(-3px);
+    border-color: #444;
+}
+
+.card-header-info {
+    background: #2d2d2d;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #383838;
+}
+
+.table-label {
+    color: #ffcf4d;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.date-time {
+    color: #888;
+    font-size: 0.8rem;
+}
+
+/* รายการสินค้าภายในบิล */
+.card-item-list {
+    padding: 15px;
+}
+
+.history-item-detail {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #ddd;
+}
+
+.item-name-qty {
+    flex: 1;
+}
+
+.item-price-each {
+    font-weight: 500;
+    color: #bbb;
+}
+
+/* ส่วนท้ายสรุปยอดบิล */
+.card-summary-footer {
+    background: #2d2d2d;
+    padding: 12px 15px;
+    border-top: 1px dashed #444;
+}
+
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-line strong {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.bill-amount {
+    color: #4CAF50;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+/* สถานะโหลดข้อมูล */
+.status-msg {
+    text-align: center;
+    padding: 50px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Responsive สำหรับมือถือ */
+@media (max-width: 480px) {
+    .summary-dashboard {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
+    }
+    
+    .history-header h1 {
+        font-size: 1rem;
+    }
+}
+/* เพิ่มใน style.css */
+.header-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.btn-history button {
+    background-color: #2e7d32; /* สีเขียวเข้ม */
+    transition: 0.3s;
+}
+
+.btn-history button:hover {
+    background-color: #4CAF50; /* สีเขียวสว่างขึ้นเมื่อเอาเมาส์วาง */
+    transform: scale(1.05);
 }

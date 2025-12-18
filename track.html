@@ -37,10 +37,7 @@
            <div class="total-summary-track">
                 <h3 class="total-amount">ยอดรวม: <span id="total-amount-display">0.00 บาท</span></h3>
                 
-                <button id="pay-button" class="payment-button">
-                    ชำระเงิน
-                </button>
-            </div>
+                <button class="pay-btn" onclick="handlePayment()">ชำระเงิน</button>
         </div>
 
         <div id="no-order-message" style="display: none;">
@@ -50,6 +47,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
 
     <script>
         const firebaseConfig = {
@@ -65,11 +63,95 @@
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database(); 
-    </script>
+
+    // ฟังก์ชันสำหรับ "ชำระเงิน" (กดจากหน้าติดตามสถานะ)
+    window.handlePayment = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tableNumber = urlParams.get('table') || localStorage.getItem('last_table_number');
+
+        if (!tableNumber) return alert("ไม่พบหมายเลขโต๊ะ");
+        if (!confirm(`ยืนยันการชำระเงินสำหรับ โต๊ะ ${tableNumber}?`)) return;
+
+        const ordersRef = db.ref('orders');
+        const historyRef = db.ref('history');
+
+        // 1. ค้นหาออเดอร์ของโต๊ะนี้
+        ordersRef.orderByChild('tableNumber').equalTo(tableNumber).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                let promises = [];
+
+                snapshot.forEach((child) => {
+                    const orderData = child.val();
+                    
+                    // --- แก้ไขจุดนี้: ใช้ .update แทน .remove ---
+                    // เพื่อให้ข้อมูลในหน้า Admin (Node orders) ไม่หายไป
+                    const updateTask = child.ref.update({
+                        status: 'ชำระเงินแล้ว'
+                    });
+                    promises.push(updateTask);
+
+                    // --- ส่งสำเนาไปที่หน้า History เพื่อรวมยอดเงิน ---
+                    const historyData = {
+                        ...orderData,
+                        status: 'ชำระเงินแล้ว',
+                        paymentTimestamp: firebase.database.ServerValue.TIMESTAMP 
+                    };
+                    promises.push(historyRef.push(historyData));
+                });
+
+                Promise.all(promises).then(() => {
+                    alert("✅ ชำระเงินเรียบร้อย! รายการในหน้าแอดมินเปลี่ยนเป็น 'ชำระเงินแล้ว'");
+                    window.location.href = 'history.html'; // ไปหน้าประวัติ
+                }).catch(err => {
+                    console.error(err);
+                    alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+                });
+            } else {
+                alert("ไม่พบรายการที่ต้องชำระเงิน");
+            }
+        });
+    };
+
+    // ฟังก์ชันดึงสถานะมาโชว์ที่หน้า Track (เพื่อให้ลูกค้าเห็นว่าจ่ายแล้ว)
+    function startTracking() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tableNumber = urlParams.get('table') || localStorage.getItem('last_table_number');
+        
+        if (tableNumber) {
+            document.getElementById('tracking-table-header').textContent = "โต๊ะ " + tableNumber;
+            
+            db.ref('orders').orderByChild('tableNumber').equalTo(tableNumber).on('value', (snapshot) => {
+                const listContainer = document.getElementById('items-list-container');
+                const totalDisplay = document.getElementById('total-amount-display');
+                const statusText = document.querySelector('.status-text');
+                
+                if (snapshot.exists()) {
+                    let html = '';
+                    let total = 0;
+                    let lastStatus = '';
+
+                    snapshot.forEach(child => {
+                        const order = child.val();
+                        lastStatus = order.status;
+                        total += parseFloat(order.total || 0);
+                        order.items.forEach(item => {
+                            html += `<li class="track-item" style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #333;">
+                                <span>${item.name} x${item.quantity || 1}</span>
+                                <span>${parseFloat(item.finalPrice).toFixed(2)} ฿</span>
+                            </li>`;
+                        });
+                    });
+                    listContainer.innerHTML = html;
+                    totalDisplay.textContent = total.toFixed(2) + " บาท";
+                    statusText.textContent = "สถานะ: " + lastStatus;
+                }
+            });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', startTracking);
+</script>
     
-    
-   <body onload="startTrackingSystem()"> 
-    <script src="script.js"></script>
-</body>
+   <script src="script.js"></script>
+<body onload="startTrackingSystem()">
 </body>
 </html>

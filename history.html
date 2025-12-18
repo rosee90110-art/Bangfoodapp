@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการขาย - BANGFOOD</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        
+        /* CSS เพิ่มเติมเฉพาะหน้า History */
+        body { background-color: #121212; color: #fff; font-family: 'Kanit', sans-serif; }
+        .history-app-container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .btn-back-admin { background: #444; color: #fff; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.9em; }
+        
+        /* Dashboard สรุปยอด */
+        .summary-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #1e1e1e; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #333; }
+        .stat-card.highlighted { border-color: #4CAF50; background: linear-gradient(145deg, #1e1e1e, #1a2e1b); }
+        .stat-label { display: block; font-size: 0.85em; color: #aaa; margin-bottom: 5px; }
+        .stat-value { font-size: 1.5em; font-weight: bold; color: #fff; }
+        .currency { font-size: 0.6em; margin-left: 5px; color: #4CAF50; }
+
+        /* รายการประวัติ */
+        .history-grid { display: flex; flex-direction: column; gap: 15px; }
+        .status-msg { text-align: center; color: #888; margin-top: 50px; }
+        
+        /* ปรับแต่ง Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="history-app-container">
+        <header class="history-header">
+            <h1>📜 ประวัติการขาย</h1>
+            <a href="admin.html" class="btn-back-admin">⬅ กลับหน้าแอดมิน</a>
+        </header>
+
+        <main>
+            <div class="summary-dashboard">
+ <div class="stat-card">
+        <span class="stat-label">จำนวนบิล</span>
+        <span id="total-bills" class="stat-value">0</span>
+    </div>
+    <div class="stat-card highlighted">
+        <span class="stat-label">รายได้รวมวันนี้</span>
+        <span id="total-revenue" class="stat-value">0.00</span>
+        <span class="currency">บาท</span>
+    </div>
+</div>
+
+            <div id="history-list" class="history-grid">
+                <p class="status-msg">กำลังเชื่อมต่อฐานข้อมูล...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <script src="history.js"></script>
+
+</body>
+</html>

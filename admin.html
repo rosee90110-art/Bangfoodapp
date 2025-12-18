@@ -8,10 +8,19 @@
 </head>
 <body onload="loadOrdersRealtime()">
     
-    <div class="app-header">
-        <h1>🔔 BANGFOOD</h1>
-        <button onclick="logoutAdmin()" class="btn-logout">ออกจากระบบ</button>
+    <header class="app-header">
+    <div class="logo-section">
+        <img  class="app-logo"> <h1>BANGFOOD</h1>
     </div>
+    
+    <div class="header-buttons">
+        <a href="history.html"style="text-decoration: none;">
+             <button class="btn-logout1">ประวัติการขาย</button>
+        </a>
+        
+        <button onclick="logout()" class="btn-logout">ออกจากระบบ</button>
+    </div>
+</header>
 
     <div class="admin-container">  
         
@@ -28,7 +37,7 @@
             <p id="loading-message">กำลังโหลดคำสั่งซื้อ...</p>
         </div>
         
-        <h2 style="margin-top: 30px;">✅ คำสั่งซื้อที่เสร็จสมบูรณ์แล้ว</h2>
+        <h2 style="margin-top: 30px;">✅ รายการที่เสร็จสมบูรณ์ / ชำระเงินแล้ว</h2>
         <div id="completed-orders-container" class="orders-grid">
             <p>ยังไม่มีคำสั่งซื้อที่เสร็จสมบูรณ์ในระบบ</p>
         </div>

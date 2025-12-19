@@ -39,6 +39,20 @@
         </header>
 
         <main>
+            <div class="search-filter-container" style="margin: 20px 0; display: flex; gap: 10px; justify-content: center; align-items: center;">
+    <div style="background: #2c2c2c; padding: 10px; border-radius: 8px; border: 1px solid #41ff51;">
+        <span style="color: #41ff51; font-weight: bold; margin-right: 10px;">📅 เลือกวันที่:</span>
+        <input type="date" id="search-date" style="padding: 5px; border-radius: 4px; border: none; outline: none; background: #fff; color: #333;">
+        
+        <button onclick="filterHistoryByDate()" style="background: #41ff51; color: black; border: none; padding: 5px 15px; margin-left: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            🔍 ค้นหา
+        </button>
+        
+        <button onclick="resetHistoryFilter()" style="background: #f44336; color: white; border: none; padding: 5px 15px; margin-left: 5px; border-radius: 4px; cursor: pointer;">
+            ล้างค่า
+        </button>
+    </div>
+</div>
             <div class="summary-dashboard">
  <div class="stat-card">
         <span class="stat-label">จำนวนบิล</span>

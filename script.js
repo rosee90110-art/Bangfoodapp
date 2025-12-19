@@ -1,3 +1,16 @@
+window.addEventListener('scroll', function() {
+    const tabs = document.querySelector('.menu-tabs');
+    const header = document.querySelector('.app-header');
+    
+    // ถ้าเลื่อนลงมากกว่า 50 พิกเซล
+    if (window.scrollY > 50) {
+        tabs.classList.add('shrunk');
+        // ถ้าต้องการให้ Header ย่อด้วย สามารถเพิ่มตรงนี้ได้
+        // header.classList.add('header-shrunk');
+    } else {
+        tabs.classList.remove('shrunk');
+    }
+});
 // File: script.js (ฉบับแก้ไข: ลบโค้ดซ้ำซ้อนและโค้ดลอยอยู่)
 
 // ----------------------------------------------------
@@ -54,10 +67,6 @@ function updateCartSummary() {
     if (floatingCart) {
         floatingCart.style.display = 'flex'; // บังคับให้แสดงตลอด
         const viewCartBtn = document.getElementById('view-cart-btn');
-        if (viewCartBtn) {
-            // ซ่อนปุ่ม "ดูตะกร้า" เมื่อตะกร้าว่างเปล่า เพื่อไม่ให้ผู้ใช้คลิกไปหน้าว่าง
-            viewCartBtn.style.display = totalItems > 0 ? 'block' : 'none'; 
-        }
     }
 }
 
@@ -79,26 +88,7 @@ function clearCart() {
 // **ฟังก์ชันใหม่: สำหรับลบรายการสินค้าใน cart.html**
 // ฟังก์ชันสำหรับลบรายการสินค้าในตะกร้า
 // ฟังก์ชันสำหรับลบรายการสินค้าในตะกร้า (ฉบับแก้ไขให้ล้างเลขโต๊ะ)
-window.removeItem = function(index) {
-    const cartData = sessionStorage.getItem('bangfood_cart');
-    
-    if (cartData) {
-        let currentCart = JSON.parse(cartData);
-        
-        // ลบเฉพาะรายการที่เลือก
-        currentCart.items.splice(index, 1); 
 
-        // บันทึกกลับลง Session โดยที่ table ยังคงเดิม
-        sessionStorage.setItem('bangfood_cart', JSON.stringify(currentCart));
-        
-        // ✅ สำคัญ: อัปเดต Global Variable 'cart' ด้วย เพื่อให้ Floating Summary (แถบด้านล่าง) อัปเดตตามทันที
-        cart = currentCart; 
-        
-        // วาดหน้าจอใหม่ และอัปเดตแถบสรุปด้านล่าง
-        renderCartItems(); 
-        updateCartSummary(); 
-    }
-};
 // ----------------------------------------------------
 // --- 3. Modal Functions (ใช้ใน menu.html) ---
 // ----------------------------------------------------
@@ -453,7 +443,7 @@ window.startTrackingSystem = function() {
     }
 
     if (!tableNumber || tableNumber === 'null') {
-        document.getElementById('tracking-table-header').textContent = "ไม่พบหมายเลขโต๊ะ";
+        document.getElementById('tracking-table-header').textContent = "........";
         return;
     }
 
@@ -463,7 +453,7 @@ window.startTrackingSystem = function() {
     }
 
     // แสดงผลหัวข้อ (ตอนนี้มันจะไม่เปลี่ยนตามหน้า cart แล้ว)
-    document.getElementById('tracking-table-header').textContent = `คำสั่งซื้อ โต๊ะ ${tableNumber}`;
+    document.getElementById('tracking-table-header').textContent = `โต๊ะ ${tableNumber}`;
 
     // 2. ดึงข้อมูลจาก Firebase (ใช้ tableNumber ที่ล็อกไว้)
     const ordersRef = db.ref('orders').orderByChild('tableNumber').equalTo(tableNumber);
@@ -712,34 +702,32 @@ function updateOverallStatus(status) {
 // --- 9. Menu Category Functions (ใช้ใน menu.html) ---
 // ----------------------------------------------------
 
-let allMenuItems = []; // ตัวแปรสำหรับเก็บรายการเมนูทั้งหมดที่โหลดมาจาก Firebase
-let currentCategory = 'อาหาร'; // กำหนดหมวดหมู่เริ่มต้น
-
 window.switchCategory = function(category, event) {
-    if (event) {
-        event.preventDefault(); // ป้องกันการเปลี่ยนหน้าเมื่อกดลิงก์ <a>
-    }
-    // 1. จัดการ Class 'active' บน Tabs
-    document.querySelectorAll('.menu-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    document.querySelector(`.menu-tab[data-category="${category}"]`).classList.add('active');
+    if (event) event.preventDefault();
 
-    // 2. ซ่อน/แสดง Container เนื้อหาตาม Category
-    const foodContainer = document.getElementById('food-container');
-    const drinkContainer = document.getElementById('drink-container');
-    
-    if (!foodContainer || !drinkContainer) {
-        console.error("Menu container IDs (food-container or drink-container) not found in HTML.");
-        return;
-    }
-    if (category === 'อาหาร') {
-        foodContainer.style.display = 'grid'; 
-        drinkContainer.style.display = 'none';
-    } else if (category === 'เครื่องดื่ม') {
-        foodContainer.style.display = 'none';
-        drinkContainer.style.display = 'grid'; 
-    }
+    // 1. จัดการปุ่ม Tab
+    document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
+    const targetTab = document.querySelector(`.menu-tab[data-category="${category}"]`);
+    if (targetTab) targetTab.classList.add('active');
+
+    // 2. จัดการการแสดงผล (วิธีที่สั้นกว่า)
+    const containers = {
+        'อาหาร': 'food-container',
+        'ก๋วยเตี๋ยว': 'noodle-container',
+        'เครื่องดื่ม': 'drink-container'
+        
+    };
+
+    // วนลูปซ่อนทุกอันที่มีในลิสต์
+    Object.values(containers).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    // แสดงเฉพาะอันที่เลือก
+    const activeId = containers[category];
+    const activeEl = document.getElementById(activeId);
+    if (activeEl) activeEl.style.display = 'grid';
 };
 
 // ฟังก์ชันนี้ไม่สมบูรณ์เพราะไม่มี createItemCardHtml() และ db.ref('menu').on() 

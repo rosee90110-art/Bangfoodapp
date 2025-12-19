@@ -9,13 +9,20 @@
 
 <body onload="renderCartItems()">
     <header class="app-header">
-        <h1>ตะกร้าสินค้า</h1>
-        <p>เมนู ที่เลือกไว้</p>
-    </header>
+    <a href="index.html" class="back-link">
+        <i class="fas fa-chevron-left"></i> 
+        <span>กลับ</span>
+    </a>
+    </a>
+    <h1 class="bangfood">BANGFOOD</h1>
+    <p class="menu-label">หน้า MENU</p>
+   </header>
 
     <div class="cart-container">
         <div class="cart-header-row">
-            <a href="index.html" class="back-link-in-cart"> MENU </a>
+            <button id="track-status-btn" class="status-btn-secondary" onclick="goToTracking()" >
+                สถานะอาหาร
+            </button>
             <h3 id="table-display-info"></h3> 
         </div>
 
@@ -33,9 +40,6 @@
                 ยืนยันคำสั่งซื้อ (ชำระเงิน)
             </button>
 
-            <button id="track-status-btn" class="status-btn-secondary" onclick="goToTracking()" style="width: 100%; margin-top: 15px; background: none; border: 2px solid var(--secondary-color); color: var(--secondary-color); padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">
-                🔍 ตรวจสอบสถานะอาหาร / ประวัติการสั่งซื้อ
-            </button>
         </div>
     </div>
 

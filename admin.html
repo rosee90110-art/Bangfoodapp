@@ -22,27 +22,24 @@
     </div>
 </header>
 
-    <div class="admin-container">  
-        
-        <div class="filter-controls">
-            
-            <input type="text" id="table-filter" placeholder="กรองตามโต๊ะ (เช่น T1)" onkeyup="filterOrders()">
-            
-            <h4 class="total-revenue1">ยอดรวมคำสั่งซื้อทั้งหมด: <span id="order-count">0</span> รายการ</h4>
-            <h3 class="total-revenue">ยอดรวมรายได้วันนี้: <span id="daily-revenue">0.00</span> บาท</h3>
-        </div>
-        
-        <a class="total-revenue2">📝 คำสั่งซื้อที่รอดำเนินการ / กำลังทำ</a>
-        <div id="orders-list-container" class="orders-grid">
-            <p id="loading-message">กำลังโหลดคำสั่งซื้อ...</p>
-        </div>
-        
-        <h2 style="margin-top: 30px;">✅ รายการที่เสร็จสมบูรณ์ / ชำระเงินแล้ว</h2>
-        <div id="completed-orders-container" class="orders-grid">
-            <p>ยังไม่มีคำสั่งซื้อที่เสร็จสมบูรณ์ในระบบ</p>
-        </div>
-        
-    </div>
+    <<div class="admin-tabs-container">
+    <button id="tab-pending" class="btn-tab active" onclick="switchTab('pending')">
+        📝 <br> รอดำเนินการ
+    </button>
+    <button id="tab-completed" class="btn-tab" onclick="switchTab('completed')">
+        ✅ <br> ชำระเงินแล้ว
+    </button>
+</div>
+
+<div id="pending-section" class="tab-content">
+    <div class="section-title">📌 คำสั่งซื้อที่กำลังทำ</div>
+    <div id="orders-list-container"></div>
+</div>
+
+<div id="completed-section" class="tab-content" style="display: none;">
+    <div class="section-title">✅ รายการที่พร้อมเสิร์ฟ/จ่ายแล้ว</div>
+    <div id="completed-orders-container"></div>
+</div>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>

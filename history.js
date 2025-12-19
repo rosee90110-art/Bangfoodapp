@@ -71,3 +71,51 @@ db.ref('history').on('value', (snapshot) => {
     totalBillsEl.textContent = totalBills;
     totalRevenueEl.textContent = totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 });
 });
+// ฟังก์ชันค้นหาตามวันที่
+function filterHistoryByDate() {
+    const searchDate = document.getElementById('search-date').value; // จะได้ค่าเป็น YYYY-MM-DD
+    const historyContainer = document.getElementById('history-list-container');
+    
+    if (!searchDate) {
+        alert("กรุณาเลือกวันที่ก่อนกดค้นหา");
+        return;
+    }
+
+    db.ref('history').once('value', (snapshot) => {
+        const historyData = snapshot.val();
+        historyContainer.innerHTML = ''; // ล้างรายการเก่า
+        
+        let totalRevenue = 0;
+        let billCount = 0;
+
+        if (historyData) {
+            Object.keys(historyData).reverse().forEach(id => {
+                const entry = historyData[id];
+                // แปลง Timestamp จาก Firebase เป็นวันที่ YYYY-MM-DD
+                const entryDateObj = new Date(entry.archivedAt || entry.timestamp);
+                const entryDate = entryDateObj.toISOString().split('T')[0];
+
+                if (entryDate === searchDate) {
+                    renderHistoryItem(id, entry); // ใช้ฟังก์ชันวาด Card เดิมที่คุณมี
+                    totalRevenue += parseFloat(entry.total || 0);
+                    billCount++;
+                }
+            });
+        }
+
+        // อัปเดตตัวเลขสรุปบนหน้าจอ
+        document.getElementById('total-bills').textContent = billCount;
+        document.getElementById('total-revenue').textContent = totalRevenue.toFixed(2);
+
+        if (billCount === 0) {
+            historyContainer.innerHTML = `<p style="text-align:center; color:#aaa; margin-top:20px;">❌ ไม่พบข้อมูลการขายของวันที่ ${searchDate}</p>`;
+        }
+    });
+}
+
+// ฟังก์ชันล้างการกรองเพื่อแสดงทั้งหมด
+function resetHistoryFilter() {
+    document.getElementById('search-date').value = '';
+    // เรียกฟังก์ชันโหลดประวัติเริ่มต้นของคุณ (เช่น loadHistory() หรือ loadFullHistory())
+    location.reload(); 
+}

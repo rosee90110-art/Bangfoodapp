@@ -8,24 +8,20 @@
     
     </head>
 <body>
-
-    <header class="app-header">
-        <h1>BANGFOOD</h1>
-        <p>หน้า MENU </p>
-    </header>
-
+   <header class="app-header">
+    <a href="start.html" class="back-link">
+        <i class="fas fa-chevron-left"></i> 
+        <span>กลับ</span>
+    </a>
+    <h1 class="bangfood">BANGFOOD</h1>
+    <p class="menu-label">หน้า MENU</p>
+   </header>
+   
     <main class="menu-container">
-        <div class="menu-tabs">
-            <a href="#" class="menu-tab active" data-category="อาหาร" onclick="switchCategory('อาหาร', event)">
-                อาหาร
-            </a>
-            <a href="#" class="menu-tab" data-category="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม', event)">
-                เครื่องดื่ม
-            </a>
-            <a href="cart.html" class="menu-tab">
-                เครื่องดื่ม
-            </a>
-        </div>
+        <div class="menu-tabs"> <a href="#" class="menu-tab active" data-category="อาหาร" onclick="switchCategory('อาหาร', event)">อาหาร</a>
+        <a href="#" class="menu-tab" data-category="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว', event)">ก๋วยเตี๋ยว</a>
+        <a href="#" class="menu-tab" data-category="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม', event)">เครื่องดื่ม</a>
+    </div>
         <div id="food-container" class="menu-category-content">
             
             <div class="menu-item" data-id="1">
@@ -105,8 +101,84 @@
                 <a href="menu.html?name=ข้าวผัดต้มยำ&price=50&img=menu/kpadtom.jpg" 
                     class="add-to-cart-btn"> + เพิ่ม </a>      
             </div>
-            
         </div>
+        
+        <div id="noodle-container" class="menu-category-content" style="display: none;">
+
+            <div class="menu-item" data-id="1">
+                <img src="noodle/noodlerea.jpg" alt="ก๋วยเตี๋ยวเรือ" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ก๋วยเตี๋ยวเรือ</h3>
+                    <p class="item-description">ก๋วยเตี๋ยวเรือ ได้รสชาตถึงใจ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="noodle.html?name=ก๋วยเตี๋ยวเรือ&price=50&img=noodle/noodlerea.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+            <div class="menu-item" data-id="2">
+                <img src="noodle/noodlenea.jpg" alt="ก๋วยเตี๋ยวเนื้อ" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ก๋วยเตี๋ยวเนื้อ</h3>
+                    <p class="item-description">ก๋วยเตี๋ยวเนื้อ ได้รสชาตถึงใจ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="noodle.html?name=ก๋วยเตี๋ยวเนื้อ&price=50&img=noodle/noodlenea.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+            <div class="menu-item" data-id="3">
+                <img src="noodle/noodlekai.jpg" alt="ก๋วยเตี๋ยวไก่" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ก๋วยเตี๋ยวไก่</h3>
+                    <p class="item-description">ก๋วยเตี๋ยวไก่ ได้รสชาตถึงใจ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="noodle.html?name=ก๋วยเตี๋ยวไก่&price=50&img=noodle/noodlekai.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+            <div class="menu-item" data-id="4">
+                <img src="noodle/noodleped.jpg" alt="ก๋วยเตี๋ยวเป็ด" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ก๋วยเตี๋ยวเป็ด</h3>
+                    <p class="item-description">ก๋วยเตี๋ยวเป็ด ได้รสชาตถึงใจ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="noodle.html?name=ก๋วยเตี๋ยวเป็ด&price=50&img=noodle/noodleped.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+            <div class="menu-item" data-id="5">
+                <img src="noodle/noodleice.jpg" alt="ก๋วยเตี๋ยวเย็นตาโฟ" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">ก๋วยเตี๋ยวเย็นตาโฟ</h3>
+                    <p class="item-description">ก๋วยเตี๋ยวเย็นตาโฟ ได้รสชาตถึงใจ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="noodle.html?name=ก๋วยเตี๋ยวเย็นตาโฟ&price=50&img=noodle/noodleice.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+            <div class="menu-item" data-id="6">
+                <img src="noodle/noodle.jpg" alt="กวยจั๊บ" class="item-image">
+                <div class="item-details">
+                    <h3 class="item-name">กวยจั๊บ</h3>
+                    <p class="item-description">กวยจั๊บ ได้รสชาตถึงใจ</p>
+                    <div class="item-price">
+                        <span>50</span> บาท
+                    </div>
+                </div>
+                <a href="noodle.html?name=กวยจั๊บ&price=50&img=noodle/noodle.jpg" 
+                    class="add-to-cart-btn"> + เพิ่ม </a>      
+            </div>
+        </div>
+
         <div id="drink-container" class="menu-category-content" style="display: none;">
             
             <div class="menu-item" data-id="1">
@@ -171,7 +243,7 @@
             <span id="cart-total">0.00</span> บาท 
         
         
-            <a href="cart.html" id="view-cart-btn" class="checkout-button">
+            <a href="cart.html" id="cart-label" class="checkout-button">
                 🍽️
             </a>
         </div>

@@ -336,3 +336,40 @@ window.archiveOrder = function(orderId) {
         });
     }
 };
+// ฟังก์ชันสำหรับสลับ Tab
+window.switchTab = function(tabName) {
+    const pendingSection = document.getElementById('pending-section');
+    const completedSection = document.getElementById('completed-section');
+    const btnPending = document.getElementById('tab-pending');
+    const btnCompleted = document.getElementById('tab-completed');
+
+    if (tabName === 'pending') {
+        // แสดงส่วนรอดำเนินการ
+        pendingSection.style.display = 'block';
+        completedSection.style.display = 'none';
+        
+        // ปรับสีปุ่ม
+        btnPending.style.background = '#41ffd0ff';
+        btnPending.style.color = 'black';
+        btnCompleted.style.background = '#333';
+        btnCompleted.style.color = 'white';
+    } else {
+        // แสดงส่วนที่เสร็จแล้ว
+        pendingSection.style.display = 'none';
+        completedSection.style.display = 'block';
+        
+        // ปรับสีปุ่ม
+        btnCompleted.style.background = '#41ff7aff';
+        btnCompleted.style.color = 'black';
+        btnPending.style.background = '#333';
+        btnPending.style.color = 'white';
+    }
+};
+
+// ปรับปรุงฟังก์ชัน Render เดิมของคุณ (ให้แน่ใจว่าเรียกใช้ ID container ให้ถูกต้อง)
+// ตัวอย่างเช่นใน Firebase listener:
+ordersRef.on('value', (snapshot) => {
+    const orders = snapshot.val();
+    // ... โค้ดคำนวณยอดรวมและคัดแยกสถานะของคุณ ...
+    // แสดงผลลงใน orders-list-container และ completed-orders-container ตามเดิม
+});

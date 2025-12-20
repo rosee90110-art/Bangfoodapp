@@ -138,10 +138,10 @@ body {
 .item-details { flex-grow: 1; min-width: 0; }
 .item-name { color: var(--text-color-main); font-size: 1.1rem; }
 .item-description { color: var(--text-color-secondary); font-size: 0.85rem; }
-.item-price { color: var(--price-color); font-size: 1.2rem; font-weight: bold; }
+.item-price { color:#fff237; font-size: 1.2rem; font-weight: bold; }
 
 .add-to-cart-btn {
-    background-color: #e4e400;
+    background-color: #ffa601;
     color: #000000; /* ใช้สีตัวอักษรเป็นสีพื้นหลังหลักเพื่อให้ตัดกัน */
     border: none;
     border-radius: 50px;
@@ -159,7 +159,7 @@ body {
     left: 0;
     width: 100%;
     background-color: #000000; /* สีดำสนิท */
-    color: white;
+    color: rgb(255, 255, 255);
     padding: 12px 15px;
     display: flex;
     justify-content: space-between;
@@ -173,7 +173,7 @@ body {
 .checkout-button {
     display: block;
     background-color: #ff7700;
-    color: #301905;/* ใช้สีตัวอักษรสีเข้ม */
+    color: #f36500;/* ใช้สีตัวอักษรสีเข้ม */
     border: none;
     padding: 10px 15px;
     border-radius: 8px;
@@ -233,7 +233,7 @@ body {
 /* --- CSS สำหรับหน้าตะกร้าสินค้า (cart.html) --- */
 
 .back-link {
-    color: #ff7300;
+    color: #a0a0a0;
     text-decoration: none;
     font-size: 0.9em;
     margin-top: 5px;
@@ -433,7 +433,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     
-    border: 2px solid var(--secondary-color);
+    border: 2px solid var(--bg-color-card)
 }
 
 
@@ -476,9 +476,16 @@ body {
 
 .modal-footer {
     /* นี่คือคำสั่งหลักที่จัดปุ่มและราคาสุทธิให้อยู่กึ่งกลาง */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #121212;
+    align-items: center;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.5);
     text-align: center;
     padding-top: 15px;
-    padding-bottom: 20px;
+    padding-bottom: 7px;
     border-top: 1px solid #333;
 }
 
@@ -566,7 +573,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     /* ใช้สี Secondary (ฟ้า-เขียว) เพื่อเน้นการสั่งซื้อ */
-    background-color: #00bf2d;
+    background-color: #ff5100;
     color: #000000; /* สีขาว (สำหรับตัวอักษร) */
     text-decoration: none;
     border: none;
@@ -577,16 +584,16 @@ body {
     margin-bottom: 12px;
     cursor: pointer;
     /* เพิ่ม Shadow ให้ปุ่มดูนูนขึ้นมา */
-    box-shadow: 0 4px 15px rgba(50, 218, 3, 0.4); 
+    box-shadow: 0 4px 15px rgba(255, 94, 0, 0.641); 
     transition: all 0.2s ease-in-out;
     letter-spacing: 0.5px; /* เพิ่มระยะห่างตัวอักษรเล็กน้อย */
 }
 
 /* เอฟเฟกต์เมื่อวางเมาส์หรือกด */
 .add-confirm-btn:hover {
-    background-color: #00bf2d; /* เข้มขึ้นเล็กน้อย */
+    background-color: #de4301; /* เข้มขึ้นเล็กน้อย */
     transform: translateY(-2px); /* ยกปุ่มขึ้นเล็กน้อย */
-    box-shadow: 0 6px 20px rgba(3, 218, 71, 0.6);
+    box-shadow: 0 6px 20px rgba(162, 51, 0, 0.6);
 }
 
 .add-confirm-btn:active {
@@ -595,18 +602,22 @@ body {
 }
 .add-confirm-btnm {
     width: 50%;
+    max-width: none; 
+    margin-left: auto;
+    margin-right: auto;
     /* ใช้สี Secondary (ฟ้า-เขียว) เพื่อเน้นการสั่งซื้อ */
-    background-color: #B00020; /* สีแดงเข้ม (Deep Red) */
+    background-color: #ff1900;
     color: #000000; /* สีขาว (สำหรับตัวอักษร) */
+    text-decoration: none;
     border: none;
-    padding: 15px; /* เพิ่มขนาด padding ให้อลังการขึ้น */
+    padding: 16px; /* เพิ่มขนาด padding ให้อลังการขึ้น */
     font-size: 1.2em;
     font-weight: bold;
     border-radius: 10px; /* ขอบมนสวยงาม */
     margin-bottom: 12px;
     cursor: pointer;
     /* เพิ่ม Shadow ให้ปุ่มดูนูนขึ้นมา */
-    box-shadow: 0 4px 15px rgba(218, 3, 3, 0.4); 
+    box-shadow: 0 4px 15px rgba(255, 34, 0, 0.641); 
     transition: all 0.2s ease-in-out;
     letter-spacing: 0.5px; /* เพิ่มระยะห่างตัวอักษรเล็กน้อย */
 }
@@ -673,7 +684,7 @@ body {
 .customization-group h3 {
     margin-top: 20px;
     margin-bottom: 10px;
-    color: var(--secondary-color); /* เน้นสีหัวข้อกลุ่มย่อย */
+    color:#ef985e; /* เน้นสีหัวข้อกลุ่มย่อย */
 }
 /* --- สไตล์สำหรับหน้าจอแอดมิน --- */
 
@@ -699,11 +710,17 @@ body {
     border-left: 5px solid transparent;
 }
 
-.order-table {
+.order-table{
     font-size: 1.8em;
-    color: #e74c3c; /* สีแดงสำหรับโต๊ะ */
+    color: #ffa3a3; /* สีแดงสำหรับโต๊ะ */
     margin-top: 0;
     margin-bottom: 5px;
+}
+.order-time{
+    color: #555555;
+}
+.item-price-admin{
+    color: #555555;
 }
 
 .order-status {
@@ -722,11 +739,11 @@ body {
     color: #333;
 }
 .status-processing {
-    background-color: #3498db; /* ฟ้า */
+    background-color: #222222; /* ฟ้า */
     color: white;
 }
 .status-completed {
-    background-color: #27ae60; /* เขียว */
+    background-color: #222222; /* เขียว */
     color: white;
 }
 
@@ -756,7 +773,7 @@ body {
 
 .order-total {
     font-size: 1.5em;
-    color: #2ecc71; /* สีเขียวสำหรับยอดรวม */
+    color: #acffcf; /* สีเขียวสำหรับยอดรวม */
     border-top: 2px solid #444;
     padding-top: 10px;
 }
@@ -797,10 +814,15 @@ body {
     padding: 0;
     /* ตั้งค่า font-family และสีพื้นหลังหลักที่นี่ */
 }
-
+/*ชื่ออาหารหหน้า menu*/
+.modal-item-base-price { 
+    color: #d0d0d0;/
+}
+.modal-item-name {
+    color: #fb7548;
+}
 body {
     background-color: var(--bg-color-main); 
-    color: var(--text-color-main);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding-bottom: 80px; /* เว้นที่ว่างด้านล่างสำหรับเมนู/ปุ่ม */
 }
@@ -926,7 +948,7 @@ body {
 /* ส่วนของปุ่มและชื่อร้านคงเดิมตามที่จัดไว้ */
 .back-button {
     text-decoration: none;
-    color: #ff8000;
+    color: #808080;
     font-size: 0.95rem;
     display: flex;
     align-items: center;
@@ -948,7 +970,17 @@ body {
 .bangfoodindex {
     position: absolute;       /* ใช้ตำแหน่งอิสระ */
     left: 50%;       
-    color: #ffae00;         /* ขยับมาที่กึ่งกลางหน้าจอ */
+    color: #d03100;         /* ขยับมาที่กึ่งกลางหน้าจอ */
+    transform: translateX(-50%); /* ถอยหลังกลับครึ่งตัวเพื่อให้กลางพอดี */
+    margin: 0;
+    font-size: 1.5rem;        /* ปรับขนาดให้พอดีกับจอ iPhone */
+    text-align: center;
+    white-space: nowrap;      /* ห้ามขึ้นบรรทัดใหม่ */
+}
+.bangfoodmenu {
+    position: absolute;       /* ใช้ตำแหน่งอิสระ */
+    left: 50%;       
+    color: #d03100;         /* ขยับมาที่กึ่งกลางหน้าจอ */
     transform: translateX(-50%); /* ถอยหลังกลับครึ่งตัวเพื่อให้กลางพอดี */
     margin: 0;
     font-size: 1.5rem;        /* ปรับขนาดให้พอดีกับจอ iPhone */
@@ -1194,10 +1226,10 @@ body {
 
 /* กล่องแสดงสถานะปัจจุบัน */
 .status-box {
-    color: #000000;
+    color: #ffffff;
     text-align: center;
     padding: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     border-radius: 8px;
     box-shadow: inset 0 0 10px rgb(0, 0, 0);
     transition: background-color 0.3s ease;
@@ -1209,14 +1241,7 @@ body {
 }
 
 /* === สีตามสถานะ (Status Colors) === */
-.status-pending { color: #000000; }
-.status-box .status-pending { background-color: #38311a; border: 1px solid #ff1b1b; }
 
-.status-processing { color: #4CAF50; }
-.status-box .status-processing { background-color: #1c361e; border: 1px solid #4CAF50; }
-
-.status-completed { color: #2196F3; }
-.status-box .status-completed { background-color: #1a2a38; border: 1px solid #2196F3; }
 
 
 /* === รายการสินค้า (Items List) - กล่องสี่เหลี่ยม === */
@@ -1506,8 +1531,8 @@ body {
 
 /* Tab ที่ถูกเลือกอยู่ (Active) */
 .menu-tab.active {
-    color: #ff9900; /* สีส้มตามธีม */
-    border-bottom: 3px solid #ff9900; /* ขีดเส้นใต้เมื่อ Active */
+    color: #ff7b00; /* สีส้มตามธีม */
+    border-bottom: 3px solid #ff5900; /* ขีดเส้นใต้เมื่อ Active */
 }
 
 /* ส่วนสำหรับ Menu Items */
@@ -1546,16 +1571,6 @@ body {
     height: 18px;
 }
 
-/* ปรับ Header ให้รองรับปุ่มซ้ายและขวา (ถ้าจำเป็น) */
-.status-box.status-pending {
-    background-color: #ff5757; /* เหลือง */
-}
-.status-box.status-preparing {
-    background-color: #ff9046; /* น้ำเงิน */
-}
-.status-box.status-ready {
-    background-color: #fff649; /* เขียว */
-}
 .track-item-row {
     display: flex;
     justify-content: space-between;
@@ -1838,7 +1853,8 @@ body {
     width: 90% !important;    /* ให้ Card กว้าง 90% ของจอ iPhone */
     max-width: 350px;         /* แต่ไม่เกิน 350px เพื่อความสวยงาม */
     margin-left: auto;
-    margin-right: auto;       /* บังคับ Margin ซ้ายขวาให้เท่ากัน (จัดกลาง) */
+    margin-right: auto;  
+    margin: 0 auto 20px auto;
 }
 
 /* ตัวเลขแจ้งเตือน (Badge) เล็กๆ บนปุ่ม (ถ้ามี) */
@@ -1899,4 +1915,67 @@ body {
     font-size: 1rem;        /* ปรับขนาดให้พอดีกับจอ iPhone */
     text-align: center;
     white-space: nowrap;      /* ห้ามขึ้นบรรทัดใหม่ */
+}
+/* จัดการระยะห่างของรายการในหน้า Track */
+.item-list-container {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* เว้นระยะห่างระหว่างกลุ่มรายการ */
+}
+
+/* หัวข้อกลุ่มคำสั่งซื้อ (ที่ต้องการให้เด่น) */
+.order-group-header {
+    background-color: #2c322d;
+    color: #ffffff;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    text-align: center;
+    border: 1px solid #444;
+}
+
+/* แถวรายการสินค้าแต่ละชิ้น */
+.track-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 5px;
+    border-bottom: 1px solid #222;
+}
+
+/* การจัดการสีแยกตามสถานะ (ใช้กับ Group Header หรือ Card) */
+.status-pending-card {
+    border-left: 5px solid #ff4757 !important; /* แดง */
+    background: rgba(255, 71, 87, 0.05);
+}
+
+.status-processing-card {
+    border-left: 5px solid #ffa502 !important; /* เหลือง */
+    background: rgba(255, 165, 2, 0.05);
+}
+
+.status-paid-card {
+    border-left: 5px solid #2ed573 !important; /* เขียว */
+    background: rgba(46, 213, 115, 0.05);
+}
+
+/* ส่วนรายละเอียดเสริม (ตัวเลือก/โน้ต) */
+.track-item-name-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.track-item-option {
+    color: #888;
+    font-size: 0.8rem;
+    padding-left: 10px;
+}
+
+.item-notes {
+    color: #ff9f43; /* สีโน้ตให้ดูต่างออกไป */
 }

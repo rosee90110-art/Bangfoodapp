@@ -543,159 +543,77 @@ window.processPayment = async function(orderKeys) {
 };
 // ฟังก์ชันใหม่: เพื่อรวมรายการสินค้าจากหลาย Order ที่ยัง Active
 function displayAllActiveOrders(orders) {
-    
-    // เรียง Order ตามเวลาที่สั่ง (ล่าสุดอยู่ล่าง)
-    orders.sort((a, b) => a.timestamp - b.timestamp);
-    
+    // 1. เตรียม Container
     const itemsListContainer = document.getElementById('items-list-container');
     const totalAmountDisplay = document.getElementById('total-amount-display');
+    const payButton = document.getElementById('pay-button');
     
+    if (!itemsListContainer) return;
+
     itemsListContainer.innerHTML = '';
     let combinedTotal = 0;
-    let overallStatus = 'พร้อมเสิร์ฟ'; // สถานะเริ่มต้นที่สูงที่สุด
+    let overallStatus = 'พร้อมเสิร์ฟ';
 
-    // 1. ดึง Order Keys ทั้งหมดที่ยัง Active
-    const orderKeys = orders.map(o => o.key);
-    
-    // 2. วนลูปแสดงแต่ละ Order
+    // 2. เรียงลำดับตามเวลา
+    orders.sort((a, b) => a.timestamp - b.timestamp);
+
+    // 3. วนลูปสร้างรายการ
     orders.forEach((order, index) => {
-        
-        // 2.1 สร้างหัวข้อแบ่งกลุ่ม
+        // --- 🟢 ส่วนสำคัญ: แยกสีตามสถานะ ---
+        let statusClass = '';
+        if (order.status === 'รอดำเนินการ') statusClass = 'status-pending-card';
+        else if (order.status === 'กำลังทำ') statusClass = 'status-processing-card';
+        else if (order.status === 'เสร็จสมบูรณ์') statusClass = 'status-paid-card';
+
+        // 3.1 สร้าง Header ของกลุ่ม (ชุดคำสั่งซื้อ)
         const header = document.createElement('li');
-        header.classList.add('order-group-header');
-        header.textContent = `--- ชุดคำสั่งซื้อที่ ${index + 1} (สถานะ: ${order.status}) ---`;
+        header.className = `order-group-header ${statusClass}`;
+        header.textContent = `ชุดที่ ${index + 1} (${order.status})`;
         itemsListContainer.appendChild(header);
-        
-        // 2.2 วนลูปแสดงรายการสินค้าใน Order นั้นๆ
+
+        // 3.2 แสดงรายการสินค้าภายในกลุ่มนั้น
         if (order.items) {
             order.items.forEach(item => {
-                const listItem = document.createElement('li');
-                listItem.classList.add('track-item-row');
-                
                 const price = item.finalPrice || (item.price * item.quantity);
-                combinedTotal += price; // รวมยอดรวมทั้งหมด
+                combinedTotal += price;
 
                 const options = item.options ? `<small class="track-item-option">${item.options}</small>` : '';
-                const notes = item.notes ? `<small class="track-item-option item-notes">(โน้ต: ${item.notes})</small>` : '';
-                const detailsHtml = options + notes;
+                const notes = item.notes ? `<small class="track-item-option item-notes">โน้ต: ${item.notes}</small>` : '';
 
+                const listItem = document.createElement('li');
+                listItem.className = 'track-item-row';
                 listItem.innerHTML = `
                     <div class="track-item-name-group">
                         <div class="track-item-name">
-                            <span class="item-quantity">${item.quantity}x</span>
-                            ${item.name} 
+                            <span style="color:#41ff51; font-weight:bold;">${item.quantity}x</span> ${item.name}
                         </div>
-                        ${detailsHtml}
+                        ${options}
+                        ${notes}
                     </div>
-                    <span class="track-item-price">${price.toFixed(2)} บาท</span>
+                    <span class="track-item-price">${price.toFixed(2)} ฿</span>
                 `;
                 itemsListContainer.appendChild(listItem);
             });
         }
-        
-        // 2.3 อัปเดตสถานะรวม
-        // หาก Order มีสถานะที่ต่ำกว่า ให้ลดสถานะรวมลง
-        if (order.status === 'รอดำเนินการ') overallStatus = 'รอดำเนินการ';
-        else if (order.status === 'กำลังทำ' && overallStatus !== 'รอดำเนินการ') overallStatus = 'กำลังทำ';
     });
-    
-    // 3. แสดงยอดรวมทั้งหมดและสถานะรวม
-    totalAmountDisplay.textContent = `${combinedTotal.toFixed(2)} บาท`; 
-    updateOverallStatus(overallStatus); // ต้องเรียกใช้ updateOverallStatus ที่เป็นฟังก์ชัน Global
 
-    // ***************************************************************
-    // 4. จัดการปุ่มชำระเงิน (ผูก Event Listener กับ Order Keys ทั้งหมด)
-    // ***************************************************************
-    const payButton = document.getElementById('pay-button'); 
+    // 4. อัปเดตยอดรวมและปุ่มชำระเงิน
+    totalAmountDisplay.textContent = `${combinedTotal.toFixed(2)} บาท`;
     
     if (payButton) {
-        // ดึง Order Keys ทั้งหมดที่ยัง Active
-        const orderKeys = orders.map(o => o.key);
-        
-        // ผูก Event Listener กับปุ่มชำระเงิน โดยส่ง Order Keys ทั้งหมดไป
-        payButton.onclick = () => window.processPayment(orderKeys);
-        
-        // ถ้ามี Order ที่ Active ให้แสดงปุ่ม
         if (orders.length > 0) {
             payButton.style.display = 'block';
+            const orderKeys = orders.map(o => o.key);
+            payButton.onclick = () => window.processPayment(orderKeys);
         } else {
             payButton.style.display = 'none';
         }
     }
 }
-// หมายเหตุ: ฟังก์ชัน displayOrderDetails() เดิมจะไม่ถูกใช้แล้ว แต่ตรรกะการวาดรายการถูกนำไปรวมใน displayAllActiveOrders
-// อย่างไรก็ตาม ให้คุณคง updateOverallStatus(status) ไว้ตามเดิม
-
-// ฟังก์ชันสำหรับวาดรายการสินค้าและยอดรวม
-// ใน script.js (ส่วนที่ 8: Tracking Functions)
-
-function displayOrderDetails(order) {
-    const itemsListContainer = document.getElementById('items-list-container');
-    const totalAmountDisplay = document.getElementById('total-amount-display');
-
-    if (!itemsListContainer) return;
-
-    itemsListContainer.innerHTML = ''; 
-    let total = 0;
-
-    if (order.items) {
-        order.items.forEach(item => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('track-item-row');
-            
-            const price = item.finalPrice || (item.price * item.quantity);
-            total += price;
-
-            // --- 🚨 ส่วนที่แก้ไข: เพิ่ม detailsHtml เข้ามา ---
-            
-            // เตรียมตัวเลือกเสริม (options) และโน้ต (notes)
-            const options = item.options ? `<small class="track-item-option">${item.options}</small>` : '';
-            const notes = item.notes ? `<small class="track-item-option item-notes">(โน้ต: ${item.notes})</small>` : '';
-            
-            // รวมเป็น Details HTML
-            const detailsHtml = options + notes;
-
-            listItem.innerHTML = `
-                <div class="track-item-name-group">
-                    <div class="track-item-name">
-                        <span class="item-quantity">${item.quantity}x</span>
-                        ${item.name} 
-                       
-                    </div>
-                    ${detailsHtml}
-                </div>
-                <span class="track-item-price">${price.toFixed(2)} บาท</span>
-            `;
-            // --- 🚨 สิ้นสุดส่วนที่แก้ไข ---
-            
-            itemsListContainer.appendChild(listItem);
-        });
-    }
-
-    totalAmountDisplay.textContent = `${(order.total || total).toFixed(2)} บาท`; 
-}
 
 // ฟังก์ชัน updateOverallStatus() และ startTrackingSystem() อื่น ๆ คงเดิม
 
-// ฟังก์ชันสำหรับอัปเดตข้อความสถานะรวม
-function updateOverallStatus(status) {
-    const statusBox = document.getElementById('status-display');
-    const statusText = statusBox.querySelector('.status-text');
 
-    statusText.textContent = `สถานะ: ${status}`;
-    
-    // อัปเดตสี (ต้องมี CSS class ใน style.css)
-    statusBox.className = 'status-box';
-    if (status.includes('รอดำเนินการ')) {
-        statusBox.classList.add('status-pending');
-    } else if (status.includes('กำลังทำ')) {
-        statusBox.classList.add('status-preparing');
-    } else if (status.includes('พร้อมเสิร์ฟ') || status.includes('เสร็จสิ้น')) {
-        statusBox.classList.add('status-ready');
-    } else if (status.includes('ชำระเงินแล้ว')) {
-        statusBox.classList.add('status-paid');
-    }
-}
 
 
 // ----------------------------------------------------

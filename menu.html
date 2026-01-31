@@ -120,6 +120,28 @@
             </div>
         </div>
     </div>
+    <script>
+    
+
+    // 2. ตั้งค่า Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+        authDomain: "bangfood-cb30f.firebaseapp.com",
+        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bangfood-cb30f",
+        storageBucket: "bangfood-cb30f.appspot.com",
+        messagingSenderId: "390955623784",
+        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    
+    // ใช้ var หรือ window.db เพื่อให้ไฟล์ script.js มองเห็นแน่นอน
+    window.db = firebase.database(); 
+</script>
+
     
     <script src="script.js"></script>
 </body>

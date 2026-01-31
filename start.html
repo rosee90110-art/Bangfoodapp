@@ -58,15 +58,42 @@
     <h1 class="app-header-title" style="font-size: 3em;">BANGFOOD</h1>
     <p style="font-size: 1.1em; margin-top: 10px;">กรุณาเลือกโหมดการใช้งาน:</p>
 
-    <div class="landing-btn-group">
-        <a href="index.html" id="customer-btn" class="landing-button">
-            ลูกค้า (สแกนสั่งอาหาร)
-        </a>
-        <a href="admin.html" id="admin-btn" class="landing-button">
-            ผู้ดูแลระบบ (Admin)
-        </a>
-    </div>
+   <div class="landing-btn-group">
+    <button onclick="customerStart()" class="landing-button" id="customer-btn" style="border: none; cursor: pointer; width: 100%;">
+        ลูกค้า (สแกนสั่งอาหาร)
+    </button>
+    
+    <a href="admin.html" id="admin-btn" class="landing-button">
+        ผู้ดูแลระบบ (Admin)
+    </a>
 </div>
+</div>
+<script>
+function customerStart() {
+    // 1. ดึงค่า Parameters จาก URL ที่สแกนมา (เช่น ?table=5)
+    const urlParams = new URLSearchParams(window.location.search);
+    const table = urlParams.get('table');
+
+    if (table) {
+        // 2. ถ้าเจอเลขโต๊ะ ให้บันทึกลงเครื่องและพ่วงไปกับ URL ใหม่
+        localStorage.setItem('selectedTable', table);
+        window.location.href = `index.html?table=${table}`;
+    } else {
+        // 3. ถ้าไม่มีเลขโต๊ะ (เช่น พิมพ์เข้าเว็บเอง) ให้ไปหน้า index ปกติ
+        window.location.href = `index.html`;
+    }
+}
+
+// ตรวจสอบทันทีที่เข้าหน้า start.html ว่ามีเลขโต๊ะมาไหม
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const table = urlParams.get('table');
+    if (table) {
+        localStorage.setItem('selectedTable', table);
+        console.log("บันทึกเลขโต๊ะเตรียมไว้แล้ว: " + table);
+    }
+}
+</script>
 
 </body>
 </html>

@@ -15,6 +15,9 @@
     </a>
     <h1 class="bangfoodindex">BANGFOOD</h1>
     <p class="menu-label">หน้า MENU</p>
+    <div id="table-status-bar" style="text-align: center; color: #ff6347; font-weight: bold; margin-bottom: 10px;">
+    กำลังตรวจสอบเลขโต๊ะ...
+</div>
    </header>
    
     <main class="menu-container">
@@ -50,25 +53,46 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // 2. ตั้งค่าการเชื่อมต่อ (เอามาจากภาพ image_b1996d.png ของคุณ)
-        const firebaseConfig = {
-            apiKey: "AIza...", // ใส่ค่าจริงของคุณที่นี่
-            authDomain: "bangfood-cb30f.firebaseapp.com",
-            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "bangfood-cb30f",
-            storageBucket: "bangfood-cb30f.appspot.com",
-            messagingSenderId: "390955623784",
-            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-        };
+    // 1. ดึงค่าโต๊ะจาก URL และแสดงผล
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableNo = urlParams.get('table');
+    const tableDisplay = document.getElementById('table-status-bar');
 
-        // 3. เริ่มต้น Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+    if (tableNo) {
+        localStorage.setItem('selectedTable', tableNo);
+        if (tableDisplay) {
+            tableDisplay.innerText = "📍 โต๊ะที่: " + tableNo;
+            tableDisplay.style.color = "#4CAF50"; // เปลี่ยนเป็นสีเขียวเมื่อเจอโต๊ะ
         }
-        
-        // 4. ประกาศตัวแปร db ให้ script.js รู้จัก
-        var db = firebase.database(); 
-    </script>
+    } else {
+        // กรณีเข้าผ่านลิงก์ตรงไม่มีเลขโต๊ะ ให้ดึงจากที่เคยจำไว้
+        const savedTable = localStorage.getItem('selectedTable');
+        if (savedTable && tableDisplay) {
+            tableDisplay.innerText = "📍 โต๊ะที่: " + savedTable + " (เดิม)";
+        } else if (tableDisplay) {
+            tableDisplay.innerText = "❌ กรุณาสแกน QR Code ที่โต๊ะ";
+            tableDisplay.style.color = "#ff4444";
+        }
+    }
+
+    // 2. ตั้งค่า Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+        authDomain: "bangfood-cb30f.firebaseapp.com",
+        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bangfood-cb30f",
+        storageBucket: "bangfood-cb30f.appspot.com",
+        messagingSenderId: "390955623784",
+        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    
+    // ใช้ var หรือ window.db เพื่อให้ไฟล์ script.js มองเห็นแน่นอน
+    window.db = firebase.database(); 
+</script>
 
     <script src="script.js"></script>
 </body>

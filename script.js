@@ -786,3 +786,16 @@ window.onload = function() {
         window.location.href = "start.html"; // ส่งกลับไปหน้าเริ่มถ้าไม่มีเลขโต๊ะ
     }
 };
+window.addEventListener('DOMContentLoaded', (event) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const table = urlParams.get('table');
+    const display = document.getElementById('table-status-bar');
+
+    if (table) {
+        display.innerText = "📍 กำลังสั่งอาหารจาก: โต๊ะ " + table;
+        localStorage.setItem('selectedTable', table); // บันทึกเก็บไว้ใช้หน้าอื่นด้วย
+    } else {
+        display.innerText = "❌ กรุณาสแกน QR Code ประจำโต๊ะ";
+        display.style.color = "red";
+    }
+});

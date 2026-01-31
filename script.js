@@ -656,11 +656,7 @@ function renderMenuItems(items, filterCategory) {
     // ... (logic) ...
 }
 
-function loadMenuFromFirebase() {
-    // ... (logic) ...
-    // หากโค้ดนี้ถูกใช้งาน ต้องมั่นใจว่ามีการเรียกใช้
-    // db.ref('menu').on('value', (snapshot) => { ... }) ที่ถูกต้อง
-}
+
 // ฟังก์ชันสำหรับจัดการการชำระเงินและย้ายข้อมูลไปหน้าประวัติ
 // ฟังก์ชัน handlePayment ใน track.html (ส่วนที่ปรับปรุงการเรียกจบงาน)
 function handlePayment() {
@@ -721,3 +717,72 @@ function handlePayment() {
 // --- 9. ฟังก์ชันชำระเงิน (อัปเดตสถานะและเคลียร์รายการ) ---
 // ----------------------------------------------------
 
+// ฟังก์ชันสำหรับดึงเมนูจาก Firebase มาแสดงผล
+function loadMenuFromFirebase() {
+    // 1. อ้างอิงไปที่ Node 'products' ใน Firebase (คุณต้องไปสร้าง Node นี้ใน Firebase Console ด้วยนะ)
+    const productsRef = db.ref('products'); 
+    
+    productsRef.on('value', (snapshot) => {
+        const products = snapshot.val();
+        
+        // เคลียร์ข้อมูลเก่าในกล่องออกก่อนเพื่อป้องกันข้อมูลซ้ำซ้อน
+        document.getElementById('food-container').innerHTML = '';
+        document.getElementById('noodle-container').innerHTML = '';
+        document.getElementById('drink-container').innerHTML = '';
+
+        if (!products) {
+            console.log("ยังไม่มีข้อมูลสินค้าใน Firebase");
+            return;
+        }
+
+        for (let id in products) {
+            const p = products[id];
+            const isOut = p.status === 'out_of_stock'; // เช็กสถานะว่าของหมดหรือไม่
+
+            // สร้างโครงสร้าง HTML สำหรับแต่ละเมนู
+            const productHTML = `
+                <div class="menu-item ${isOut ? 'item-disabled' : ''}" style="${isOut ? 'opacity: 0.6;' : ''}">
+                    <img src="${p.img}" alt="${p.name}" class="item-image" style="${isOut ? 'filter: grayscale(1);' : ''}">
+                    <div class="item-details">
+                        <h3 class="item-name">${p.name} ${isOut ? '<span style="color:red;">(หมด)</span>' : ''}</h3>
+                        <p class="item-description">${p.description || ''}</p>
+                        <div class="item-price"><span>${p.price}</span> บาท</div>
+                    </div>
+                    ${isOut 
+                        ? `<button class="add-to-cart-btn" disabled style="background:#888;">สินค้าหมด</button>` 
+                        : `<a href="${p.category === 'เครื่องดื่ม' ? 'drink.html' : 'menu.html'}?name=${encodeURIComponent(p.name)}&price=${p.price}&img=${p.img}" class="add-to-cart-btn"> + เพิ่ม </a>`
+                    }
+                </div>
+            `;
+
+            // ตรวจสอบ Category แล้วนำไปวางใน Container ที่ถูกต้อง
+            if (p.category === 'อาหาร') {
+                document.getElementById('food-container').innerHTML += productHTML;
+            } else if (p.category === 'ก๋วยเตี๋ยว') {
+                document.getElementById('noodle-container').innerHTML += productHTML;
+            } else if (p.category === 'เครื่องดื่ม') {
+                document.getElementById('drink-container').innerHTML += productHTML;
+            }
+        }
+    });
+}
+
+// สั่งให้ทำงานทันทีเมื่อหน้าเว็บโหลดเสร็จ
+document.addEventListener('DOMContentLoaded', loadMenuFromFirebase);
+window.onload = function() {
+    // ดึงเลขโต๊ะที่บันทึกไว้จากหน้าแรก
+    const savedTable = localStorage.getItem('selectedTable');
+    const displayEl = document.getElementById('display-table');
+    
+    if (savedTable) {
+        displayEl.innerText = savedTable; // แสดงเลขโต๊ะที่สแกนมา
+        
+        // ถ้าคุณมีตัวแปรเดิมที่ใช้เก็บค่าโต๊ะเพื่อส่งเข้า Firebase
+        // ให้กำหนดค่าให้มันทันที เช่น:
+        window.currentSelectedTable = savedTable; 
+    } else {
+        displayEl.innerText = "ไม่ได้สแกนผ่าน QR โต๊ะ";
+        alert("กรุณาสแกน QR Code ประจำโต๊ะเพื่อเริ่มสั่งอาหาร");
+        window.location.href = "start.html"; // ส่งกลับไปหน้าเริ่มถ้าไม่มีเลขโต๊ะ
+    }
+};

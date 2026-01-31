@@ -24,19 +24,13 @@
                 <p class="modal-item-base-price">ราคาเริ่มต้น: <span id="modal-base-price">0.00</span> บาท</p>
             </div>
 
-            <div class="customization-group">
-                <h3>📌 โต๊ะที่สั่ง (บังคับเลือก)</h3>
-                <div class="table-selection-group">
-                    <select id="modal-table-number" name="table_number" required>
-                        <option value="">-- กรุณาเลือกโต๊ะ --</option>
-                        <option value="T1">โต๊ะ 1</option>
-                        <option value="T2">โต๊ะ 2</option>
-                        <option value="T3">โต๊ะ 3</option>
-                        <option value="T4">โต๊ะ 4</option>
-                        <option value="T5">โต๊ะ 5</option>
-                    </select>
-                </div>
-            </div>
+            <div class="table-info-section">
+    📌 โต๊ะที่สั่ง: 
+    <span id="display-table" style="font-weight: bold; color: #ff6347; font-size: 1.2em;">
+        (กำลังตรวจสอบเลขโต๊ะ...)
+    </span>
+    <input type="hidden" id="table-select-id"> 
+</div>
 
             <form id="item-customization-form" class="customization-form">
                 <div class="customization-group">

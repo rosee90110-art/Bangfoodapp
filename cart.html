@@ -13,7 +13,6 @@
         <i class="fas fa-chevron-left"></i> 
         <span>กลับ</span>
     </a>
-    </a>
     <h1 class="bangfood">BANGFOOD</h1>
     <p class="menu-label">หน้า MENU</p>
    </header>
@@ -68,17 +67,23 @@ function renderCartItems() {
     const listContainer = document.getElementById('cart-items-list');
     const totalAmountDisplay = document.getElementById('final-total-amount');
     const checkoutBtn = document.getElementById('checkout-btn');
-    const tableInfoEl = document.getElementById('table-display-info'); // ตัวที่แสดง "โต๊ะที่: T1"
+    const tableInfoEl = document.getElementById('table-display-info'); 
     
+    // 1. ดึงข้อมูลสินค้าจาก Session
     const cartData = sessionStorage.getItem('bangfood_cart');
-    const currentCart = cartData ? JSON.parse(cartData) : { items: [], table: null };
+    const currentCart = cartData ? JSON.parse(cartData) : { items: [] };
 
-    // ✅ ตรวจสอบและแสดง/ล้างเลขโต๊ะ
+    // 2. ดึงเลขโต๊ะจาก QR Code (ที่เก็บไว้ใน localStorage จากหน้าแรก)
+    const qrTable = localStorage.getItem('selectedTable');
+    
+    // ✅ แสดงเลขโต๊ะที่สแกนมา
     if (tableInfoEl) {
-        if (currentCart.items && currentCart.items.length > 0 && currentCart.table) {
-            tableInfoEl.textContent = "โต๊ะที่: " + currentCart.table;
+        if (qrTable) {
+            tableInfoEl.textContent = "โต๊ะที่: " + qrTable;
+            tableInfoEl.style.color = "#ff6347"; // แต่งสีให้เด่น
         } else {
-            tableInfoEl.textContent = ""; // ล้างข้อความเลขโต๊ะออกทันที
+            tableInfoEl.textContent = "ไม่ได้ระบุโต๊ะ (กรุณาสแกน QR ใหม่)";
+            tableInfoEl.style.color = "red";
         }
     }
 
@@ -90,7 +95,7 @@ function renderCartItems() {
         return;
     }
 
-    // ถ้ามีสินค้า (ส่วนแสดงผล HTML เดิมของคุณ)
+    // ส่วนแสดงผลรายการอาหาร (เหมือนเดิมของคุณ)
     checkoutBtn.style.display = 'block'; 
     let html = '';
     let total = 0;
@@ -98,14 +103,14 @@ function renderCartItems() {
     currentCart.items.forEach((item, index) => {
         total += (item.finalPrice || 0);
         html += `
-            <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #333; background: var(--bg-color-card); margin-bottom: 8px; border-radius: 8px;">
+            <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #333; background: #1e1e1e; margin-bottom: 8px; border-radius: 8px;">
                 <div class="item-details-cart">
-                    <p class="item-name-cart" style="font-weight: bold; margin: 0;">${item.name}</p>
-                    <small style="color: var(--text-color-secondary);">${item.options || 'ธรรมดา'}</small>
+                    <p class="item-name-cart" style="font-weight: bold; margin: 0; color: white;">${item.name}</p>
+                    <small style="color: #888;">${item.options || 'ธรรมดา'}</small>
                 </div>
                 <div style="text-align: right;">
-                    <p style="color: var(--price-color); font-weight: bold; margin: 0 0 5px 0;">${(item.finalPrice || 0).toFixed(2)}</p>
-                    <button class="remove-btn" onclick="removeItem(${index})" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">ลบ</button>
+                    <p style="color: #4CAF50; font-weight: bold; margin: 0 0 5px 0;">${(item.finalPrice || 0).toFixed(2)}</p>
+                    <button class="remove-btn" onclick="removeItem(${index})" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">ลบ</button>
                 </div>
             </div>
         `;
@@ -117,56 +122,6 @@ function renderCartItems() {
 
         // --- 2. ฟังก์ชันลบสินค้า ---
         // --- 1. ฟังก์ชันแสดงรายการสินค้า (ฉบับแก้ไข) ---
-function renderCartItems() {
-    const listContainer = document.getElementById('cart-items-list');
-    const totalAmountDisplay = document.getElementById('final-total-amount');
-    const checkoutBtn = document.getElementById('checkout-btn');
-    const tableInfoEl = document.getElementById('table-display-info'); // ตัวที่แสดง "โต๊ะที่: T1"
-    
-    const cartData = sessionStorage.getItem('bangfood_cart');
-    const currentCart = cartData ? JSON.parse(cartData) : { items: [], table: null };
-
-    // ✅ ตรวจสอบและแสดง/ล้างเลขโต๊ะ
-    if (tableInfoEl) {
-        if (currentCart.items && currentCart.items.length > 0 && currentCart.table) {
-            tableInfoEl.textContent = "โต๊ะที่: " + currentCart.table;
-        } else {
-            tableInfoEl.textContent = ""; // ล้างข้อความเลขโต๊ะออกทันที
-        }
-    }
-
-    // ถ้าตะกร้าว่าง
-    if (!currentCart.items || currentCart.items.length === 0) {
-        listContainer.innerHTML = '<p class="no-orders-message" style="text-align:center; padding: 20px;">ไม่มีรายการในตะกร้าสินค้า</p>';
-        totalAmountDisplay.textContent = '0.00';
-        checkoutBtn.style.display = 'none'; 
-        return;
-    }
-
-    // ถ้ามีสินค้า (ส่วนแสดงผล HTML เดิมของคุณ)
-    checkoutBtn.style.display = 'block'; 
-    let html = '';
-    let total = 0;
-
-    currentCart.items.forEach((item, index) => {
-        total += (item.finalPrice || 0);
-        html += `
-            <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #333; background: var(--bg-color-card); margin-bottom: 8px; border-radius: 8px;">
-                <div class="item-details-cart">
-                    <p class="item-name-cart" style="font-weight: bold; margin: 0;">${item.name}</p>
-                    <small style="color: var(--text-color-secondary);">${item.options || 'ธรรมดา'}</small>
-                </div>
-                <div style="text-align: right;">
-                    <p style="color: var(--price-color); font-weight: bold; margin: 0 0 5px 0;">${(item.finalPrice || 0).toFixed(2)}</p>
-                    <button class="remove-btn" onclick="removeItem(${index})" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">ลบ</button>
-                </div>
-            </div>
-        `;
-    });
-
-    listContainer.innerHTML = html;
-    totalAmountDisplay.textContent = total.toLocaleString(undefined, {minimumFractionDigits: 2});
-}
 
 // --- 2. ฟังก์ชันลบสินค้า (ฉบับแก้ไข: ล้างเลขโต๊ะเมื่อว่าง) ---
 window.removeItem = function(index) {
@@ -205,46 +160,33 @@ window.removeItem = function(index) {
         // --- 4. ฟังก์ชันสั่งซื้อ (ฉบับแก้ไข: เคลียร์หน้าจอหลังสั่งซื้อ) ---
 window.placeOrder = function() {
     const cartData = sessionStorage.getItem('bangfood_cart');
-    const currentCart = cartData ? JSON.parse(cartData) : { items: [], table: null };
+    const currentCart = cartData ? JSON.parse(cartData) : { items: [] };
 
-    if (!db) { alert("ระบบฐานข้อมูลยังไม่พร้อมใช้งาน"); return; }
+    // ดึงเลขโต๊ะที่สแกนมาจาก QR
+    const tableNumber = localStorage.getItem('selectedTable') || 'N/A'; 
+
     if (currentCart.items.length === 0) {
         alert("ไม่พบรายการในตะกร้าสินค้า!");
         return;
     }
     
-    const tableNumber = currentCart.table || 'N/A'; 
     const finalTotal = currentCart.items.reduce((sum, item) => sum + (item.finalPrice || 0), 0); 
 
     const orderData = {
-        tableNumber: tableNumber,
+        tableNumber: tableNumber, // ✅ ส่งเลขโต๊ะที่สแกนมาเข้าไปที่นี่
         items: currentCart.items,
         total: finalTotal,
         status: 'รอดำเนินการ', 
         timestamp: firebase.database.ServerValue.TIMESTAMP 
     };
 
-    // ส่งข้อมูลไปยัง Firebase
     db.ref('orders').push(orderData)
         .then(() => {
-            // ✅ 1. ล้างข้อมูลตะกร้าใน Session Storage ออกให้หมด
             sessionStorage.removeItem('bangfood_cart');
-            
-            // ✅ 2. บันทึกเลขโต๊ะลง LocalStorage (เผื่อใช้ดูสถานะภายหลังแม้ปิดหน้าเว็บไป)
-            localStorage.setItem('last_table_number', tableNumber);
-
             alert(`ยืนยันคำสั่งซื้อสำเร็จ! โต๊ะ ${tableNumber}`);
-
-            // ✅ 3. เคลียร์การแสดงผลหน้าตะกร้าทันที (เรียกฟังก์ชันวาดหน้าจอใหม่ซึ่งตอนนี้จะว่างเปล่า)
-            renderCartItems(); 
-
-            // ✅ 4. นำทางไปยังหน้าติดตามสถานะ
             window.location.href = `track.html?table=${tableNumber}`;
         })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("เกิดข้อผิดพลาดในการสั่งซื้อ");
-        });
+        .catch(error => { alert("เกิดข้อผิดพลาด"); });
 };
     </script>
 </body>

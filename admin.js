@@ -195,42 +195,98 @@ function updateOrderStatus(orderId, newStatus) {
     });
 }
 // ใน admin.js: โค้ดสำหรับดึงและแสดงคำสั่งซื้อแบบ Real-time
+// --- ส่วนที่ 1: จัดการออเดอร์ (รอดำเนินการ / ชำระเงินแล้ว) ---
 window.loadOrdersRealtime = function() {
-    if (typeof db === 'undefined' || !db) {
-        return console.error("Firebase DB not initialized.");
-    }
-    
     const ordersRef = db.ref('orders');
-
-    // ใช้ on('value') เพื่อให้มีการอัปเดตทุกครั้งที่ข้อมูลเปลี่ยน
     ordersRef.on('value', (snapshot) => {
-        // ล้างรายการเดิมก่อนแสดงผลใหม่ทุกครั้ง
-        document.getElementById('orders-list-pending').innerHTML = '';
-        document.getElementById('orders-list-processing').innerHTML = '';
-        document.getElementById('orders-list-completed').innerHTML = '';
-        document.getElementById('orders-list-cancelled').innerHTML = '';
+        const orders = snapshot.val();
+        const pendingContainer = document.getElementById('orders-list-container');
+        const completedContainer = document.getElementById('completed-orders-container');
+        
+        pendingContainer.innerHTML = '';
+        completedContainer.innerHTML = '';
 
-        snapshot.forEach(childSnapshot => {
-            const orderId = childSnapshot.key;
-            const order = childSnapshot.val();
+        if (!orders) return;
 
-            // เรียกใช้ฟังก์ชันสร้าง Card (ที่คุณมีอยู่แล้ว)
-            const orderCard = createOrderCard(orderId, order, order.status); 
+        Object.keys(orders).forEach(id => {
+            const order = orders[id];
+            const html = `
+                <div class="order-card" style="background:#1e1e1e; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid #333;">
+                    <p><b>โต๊ะ: ${order.tableNumber}</b> | สถานะ: ${order.status}</p>
+                    <p>ยอดรวม: ${order.total} บาท</p>
+                    ${order.status === 'ชำระเงินแล้ว' ? 
+                        `<button onclick="archiveToHistory('${id}')" style="background:#4CAF50; color:white; border:none; padding:10px; width:100%; cursor:pointer; border-radius:5px; font-weight:bold;">📥 เก็บลงประวัติการขาย</button>` 
+                        : `<p style="color:#aaa; font-size:0.8em;">(รอชำระเงินก่อนจึงจะเก็บลงประวัติได้)</p>`}
+                </div>
+            `;
 
-            // จัดประเภทและเพิ่ม Card เข้าไปในคอลัมน์ที่เหมาะสม
             if (order.status === 'รอดำเนินการ') {
-                document.getElementById('orders-list-pending').insertAdjacentHTML('afterbegin', orderCard);
-            } else if (order.status === 'กำลังทำ') {
-                document.getElementById('orders-list-processing').insertAdjacentHTML('afterbegin', orderCard);
-            } else if (order.status === 'เสร็จสมบูรณ์') {
-                document.getElementById('orders-list-completed').insertAdjacentHTML('afterbegin', orderCard);
-            } else if (order.status === 'ยกเลิก') {
-                document.getElementById('orders-list-cancelled').insertAdjacentHTML('afterbegin', orderCard);
+                pendingContainer.innerHTML += html;
+            } else {
+                completedContainer.innerHTML += html;
             }
         });
-    }, (error) => {
-        console.error("Error loading orders:", error);
     });
+};
+
+// --- ส่วนที่ 2: ฟังก์ชันเก็บลงประวัติ (Archive) ---
+window.archiveToHistory = function(orderId) {
+    if (!confirm("ยืนยันการเก็บออเดอร์นี้ลงประวัติ?")) return;
+
+    db.ref(`orders/${orderId}`).once('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            // เพิ่ม timestamp สำหรับเก็บประวัติ
+            data.archivedAt = Date.now(); 
+            
+            // ย้ายไป history ก่อน
+            db.ref('history').push(data).then(() => {
+                // ย้ายสำเร็จแล้วค่อยลบจาก orders
+                db.ref(`orders/${orderId}`).remove();
+                alert("เก็บข้อมูลลงประวัติแล้ว");
+            });
+        }
+    });
+};
+
+// --- ส่วนที่ 3: จัดการเมนู (เปิด-ปิดเมนู) ---
+function loadAdminMenu() {
+    const menuList = document.getElementById('admin-menu-list');
+    db.ref('products').on('value', (snapshot) => {
+        const products = snapshot.val();
+        menuList.innerHTML = '';
+        if (!products) return;
+
+        for (let id in products) {
+            const p = products[id];
+            const isOut = p.status === 'out_of_stock';
+            menuList.innerHTML += `
+                <div class="admin-item-card" style="background:#1e1e1e; padding:15px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><b>${p.name}</b><br><small>${p.price} บาท</small></div>
+                    <button onclick="toggleProductStatus('${id}', '${p.status}')" 
+                            style="background:${isOut ? '#41ff7aff' : '#ff4757'}; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;">
+                        ${isOut ? 'เปิดขาย' : 'ปิดเมนู'}
+                    </button>
+                </div>
+            `;
+        }
+    });
+}
+
+window.toggleProductStatus = function(id, currentStatus) {
+    const newStatus = currentStatus === 'available' ? 'out_of_stock' : 'available';
+    db.ref(`products/${id}`).update({ status: newStatus });
+};
+
+// เรียกโหลดเมนูเมื่อเปิดหน้าจัดการเมนู
+window.switchTab = function(tabName) {
+    document.getElementById('pending-section').style.display = 'none';
+    document.getElementById('completed-section').style.display = 'none';
+    document.getElementById('menu-section').style.display = 'none';
+
+    document.getElementById(`${tabName}-section`).style.display = 'block';
+    
+    if (tabName === 'menu') loadAdminMenu();
 };
 // ฟังก์ชันสำหรับหน้า admin.html
 function updateAdminDashboard() {
@@ -306,66 +362,72 @@ function loadOrdersRealtime() {
     });
 }
 // ตรวจสอบให้แน่ใจว่าฟังก์ชันนี้อยู่นอกสุดของไฟล์ admin.js หรืออยู่ในขอบเขตที่ HTML เรียกถึงได้
+// ฟังก์ชันสำหรับกดเก็บออเดอร์ลงประวัติด้วยมือ
 window.archiveOrder = function(orderId) {
-    if (confirm("คุณต้องการบันทึกรายการนี้ไปยังประวัติการขายใช่หรือไม่?")) {
-        const orderRef = db.ref('orders/' + orderId);
-        const historyRef = db.ref('history');
+    if (!confirm("ต้องการเก็บออเดอร์นี้ลงประวัติการขายใช่หรือไม่?")) return;
 
-        // 1. ดึงข้อมูลออเดอร์ทั้งหมด
-        orderRef.once('value').then((snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                // 2. เตรียมข้อมูลบันทึกประวัติ (ดึงรายการอาหารและราคาทั้งหมดมาด้วย)
-                const historyEntry = {
-                    ...data,
-                    archivedAt: firebase.database.ServerValue.TIMESTAMP, // บันทึกเวลาที่กดปุ่ม
-                    status: 'เสร็จสิ้น'
-                };
+    // 1. ดึงข้อมูลออเดอร์นั้นออกมาจาก Firebase ก่อน
+    db.ref(`orders/${orderId}`).once('value', (snapshot) => {
+        const orderData = snapshot.val();
+        
+        if (orderData) {
+            // เพิ่มเวลาที่เก็บออเดอร์ (ใช้สำหรับหน้า History)
+            orderData.archivedAt = Date.now(); 
 
-                // 3. บันทึกเข้า Node 'history'
-                return historyRef.push(historyEntry).then(() => {
-                    // 4. เมื่อบันทึกสำเร็จ ให้ลบออกจากหน้าหลัก
-                    return orderRef.remove();
-                });
-            }
-        }).then(() => {
-            alert("✅ บันทึกข้อมูลสำเร็จ!");
-        }).catch((error) => {
-            console.error("Archive Error:", error);
-            alert("เกิดข้อผิดพลาดในการบันทึก");
-        });
-    }
+            // 2. ส่งข้อมูลไปที่กิ่ง 'history'
+            db.ref('history').push(orderData, (error) => {
+                if (!error) {
+                    // 3. เมื่อเก็บสำเร็จแล้ว ค่อยลบออเดอร์ออกจากหน้า Admin (กิ่ง orders)
+                    db.ref(`orders/${orderId}`).remove();
+                    alert("เก็บลงประวัติเรียบร้อยครับ");
+                } else {
+                    alert("เกิดข้อผิดพลาด: " + error.message);
+                }
+            });
+        }
+    });
 };
 // ฟังก์ชันสำหรับสลับ Tab
 window.switchTab = function(tabName) {
     const pendingSection = document.getElementById('pending-section');
     const completedSection = document.getElementById('completed-section');
+    const menuSection = document.getElementById('menu-section'); // เพิ่มตัวนี้
+
     const btnPending = document.getElementById('tab-pending');
     const btnCompleted = document.getElementById('tab-completed');
+    const btnMenu = document.getElementById('tab-menu'); // เพิ่มตัวนี้
 
+    // 1. ซ่อนทุก Section ก่อน
+    pendingSection.style.display = 'none';
+    completedSection.style.display = 'none';
+    if(menuSection) menuSection.style.display = 'none';
+
+    // 2. ล้างสีปุ่มทั้งหมดให้เป็นสีเข้มปกติ
+    [btnPending, btnCompleted, btnMenu].forEach(btn => {
+        if(btn) {
+            btn.style.background = '#333';
+            btn.style.color = 'white';
+        }
+    });
+
+    // 3. เช็กว่ากด Tab ไหน แล้วเปิด/เปลี่ยนสีปุ่มอันนั้น
     if (tabName === 'pending') {
-        // แสดงส่วนรอดำเนินการ
         pendingSection.style.display = 'block';
-        completedSection.style.display = 'none';
-        
-        // ปรับสีปุ่ม
         btnPending.style.background = '#41ffd0ff';
         btnPending.style.color = 'black';
-        btnCompleted.style.background = '#333';
-        btnCompleted.style.color = 'white';
-    } else {
-        // แสดงส่วนที่เสร็จแล้ว
-        pendingSection.style.display = 'none';
+    } else if (tabName === 'completed') {
         completedSection.style.display = 'block';
-        
-        // ปรับสีปุ่ม
         btnCompleted.style.background = '#41ff7aff';
         btnCompleted.style.color = 'black';
-        btnPending.style.background = '#333';
-        btnPending.style.color = 'white';
+    } else if (tabName === 'menu') {
+        if(menuSection) {
+            menuSection.style.display = 'block';
+            btnMenu.style.background = '#c9a227'; // สีทองสำหรับจัดการเมนู
+            btnMenu.style.color = 'black';
+            loadAdminMenu(); // เรียกฟังก์ชันโหลดรายการอาหารมาโชว์
+        }
     }
 };
-
 // ปรับปรุงฟังก์ชัน Render เดิมของคุณ (ให้แน่ใจว่าเรียกใช้ ID container ให้ถูกต้อง)
 // ตัวอย่างเช่นใน Firebase listener:
 ordersRef.on('value', (snapshot) => {
@@ -373,3 +435,79 @@ ordersRef.on('value', (snapshot) => {
     // ... โค้ดคำนวณยอดรวมและคัดแยกสถานะของคุณ ...
     // แสดงผลลงใน orders-list-container และ completed-orders-container ตามเดิม
 });
+// --- ส่วนจัดการจัดการเมนู (Product Management) ---
+
+// 1. ฟังก์ชันดึงรายการเมนูทั้งหมดมาโชว์ในหน้า Admin
+function loadAdminMenu() {
+    const adminMenuList = document.getElementById('admin-menu-list');
+    if (!adminMenuList) return;
+
+    console.log("กำลังเชื่อมต่อกับ Firebase เพื่อดึงเมนู..."); // เช็กว่าฟังก์ชันทำงานไหม
+
+    db.ref('products').on('value', (snapshot) => {
+        const products = snapshot.val();
+        console.log("ข้อมูลที่ดึงได้จาก Firebase:", products); // ดูว่าข้อมูลมาไหม
+
+        adminMenuList.innerHTML = ''; 
+
+        if (!products) {
+            adminMenuList.innerHTML = '<p style="text-align:center; color: #888;">ไม่พบข้อมูลในกิ่ง products</p>';
+            return;
+        }
+
+        for (let id in products) {
+            const p = products[id];
+            const isOut = p.status === 'out_of_stock';
+
+            adminMenuList.innerHTML += `
+                <div class="admin-item-card" style="background: #1e1e1e; padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between;">
+                    <div>
+                        <strong style="color: #c9a227;">${p.name}</strong><br>
+                        <span>${p.price} บาท</span>
+                    </div>
+                    <button onclick="toggleProductStatus('${id}', '${p.status}')" 
+                        style="background: ${isOut ? '#41ff7aff' : '#ff4757'}; border: none; padding: 5px 10px; border-radius: 5px;">
+                        ${isOut ? 'เปิดขาย' : 'ปิดเมนู'}
+                    </button>
+                </div>
+            `;
+        }
+    });
+}
+
+// 2. ฟังก์ชันเปลี่ยนสถานะ เปิด/ปิด เมนู
+window.toggleProductStatus = function(id, currentStatus) {
+    const newStatus = currentStatus === 'available' ? 'out_of_stock' : 'available';
+    db.ref(`products/${id}`).update({ status: newStatus });
+};
+
+// 3. ฟังก์ชันแก้ไขราคา
+window.editPrice = function(id, currentPrice) {
+    const newPrice = prompt(`ระบุราคาใหม่สำหรับเมนูนี้ (ราคาปัจจุบัน: ${currentPrice}):`);
+    if (newPrice !== null && !isNaN(newPrice) && newPrice !== "") {
+        db.ref(`products/${id}`).update({ price: parseInt(newPrice) });
+    }
+};
+
+// เรียกใช้งานเมื่อโหลดหน้า admin
+document.addEventListener('DOMContentLoaded', () => {
+    // ถ้ามีการคลิกเปลี่ยน Tab ไปที่หน้าจัดการเมนู ให้โหลดข้อมูล
+    // (สมมติว่าคุณทำปุ่ม switchTab ไว้แล้ว)
+    loadAdminMenu(); 
+});
+// ฟังก์ชันสำหรับแก้ไขราคาอาหาร
+window.editPrice = function(id, currentPrice) {
+    const newPrice = prompt(`ระบุราคาใหม่สำหรับรายการนี้ (ราคาปัจจุบัน: ${currentPrice} บาท):`);
+    
+    // ตรวจสอบว่ามีการพิมพ์ตัวเลขจริง และไม่กด Cancel
+    if (newPrice !== null && newPrice !== "") {
+        const priceNum = parseInt(newPrice);
+        if (!isNaN(priceNum)) {
+            db.ref(`products/${id}`).update({ price: priceNum })
+                .then(() => alert("อัปเดตราคาเรียบร้อยแล้ว"))
+                .catch(err => alert("เกิดข้อผิดพลาด: " + err.message));
+        } else {
+            alert("กรุณากรอกตัวเลขที่ถูกต้องครับ");
+        }
+    }
+};

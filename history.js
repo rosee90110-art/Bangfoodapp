@@ -33,6 +33,9 @@ db.ref('history').on('value', (snapshot) => {
 
     snapshot.forEach((child) => {
         const order = child.val();
+        if (!order.archivedAt || isNaN(new Date(order.archivedAt).getTime())) {
+        return; 
+    }
         totalBills++;
         totalRevenue += parseFloat(order.total || 0);
 

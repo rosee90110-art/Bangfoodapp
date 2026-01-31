@@ -1,0 +1,116 @@
+{
+  "products": {
+    "item_K001": {
+      "name": "ข้าวผัด",
+      "price": 50,
+      "category": "อาหาร",
+      "status": "available",
+      "img": "menu/kpad.jpg"
+    },
+    "item_K002": {
+      "name": "ข้าวผัดไข่",
+      "price": 50,
+      "category": "อาหาร",
+      "status": "available",
+      "img": "menu/kpadkai.jpg"
+    },
+    "item_K003": {
+      "name": "ข้าวผัดเนื้อ",
+      "price": 50,
+      "category": "อาหาร",
+      "status": "available",
+      "img": "menu/kpadner.jpg"
+    },
+    "item_K004": {
+      "name": "ข้าวผัดปู",
+      "price": 50,
+      "category": "อาหาร",
+      "status": "available",
+      "img": "menu/kpadpu.jpg"
+    },
+    "item_K005": {
+      "name": "ข้าวผัดทะเล",
+      "price": 50,
+      "category": "อาหาร",
+      "status": "available",
+      "img": "menu/kpadtale.jpg"
+    },
+    "item_K006": {
+      "name": "ข้าวผัดต้มยำ",
+      "price": 50,
+      "category": "อาหาร",
+      "status": "available",
+      "img": "menu/kpadtom.jpg"
+    },
+    "item_N001": {
+      "name": "ก๋วยเตี๋ยวเรีอ",
+      "price": 50,
+      "category": "ก๋วยเตี๋ยว",
+      "status": "available",
+      "img": "noodle/noodle.jpg"
+    },
+    "item_N002": {
+      "name": "ก๋วยเตี๋ยวเนื่อ",
+      "price": 50,
+      "category": "ก๋วยเตี๋ยว",
+      "status": "available",
+      "img": "noodle/noodlenea.jpg"
+    },
+    "item_N003": {
+      "name": "ก๋วยเตี๋ยวไก่",
+      "price": 50,
+      "category": "ก๋วยเตี๋ยว",
+      "status": "available",
+      "img": "noodle/noodlekai.jpg"
+    },
+    "item_N004": {
+      "name": "ก๋วยเตี๋ยวเป็ด",
+      "price": 50,
+      "category": "ก๋วยเตี๋ยว",
+      "status": "available",
+      "img": "noodle/noodleped.jpg"
+    },
+    "item_N005": {
+      "name": "ก๋วยเตี๋ยวเย็นตาโฟ",
+      "price": 50,
+      "category": "ก๋วยเตี๋ยว",
+      "status": "available",
+      "img": "noodle/noodleice.jpg"
+    },
+     "item_N006": {
+      "name": "ก๋วยจัํบ",
+      "price": 50,
+      "category": "ก๋วยเตี๋ยว",
+      "status": "available",
+      "img": "noodle/noodlerea.jpg"
+    },
+    "item_W001": {
+      "name": "ชาไทย",
+      "price": 25,
+      "category": "เครื่องดื่ม",
+      "status": "available",
+      "img": "dring/chatai.png"
+    },
+    "item_W002": {
+      "name": "ชาเขียว",
+      "price": 25,
+      "category": "เครื่องดื่ม",
+      "status": "available",
+      "img": "dring/chagreen.png"
+    },
+    "item_W003": {
+      "name": "โกโก้ปั่น",
+      "price": 30,
+      "category": "เครื่องดื่ม",
+      "status": "available",
+      "img": "dring/gogopan.png"
+    },
+    "item_W004": {
+      "name": "โอริโอ้ปั่น",
+      "price": 30,
+      "category": "เครื่องดื่ม",
+      "status": "available",
+      "img": "dring/oriopan.png"
+    }
+  }
+}

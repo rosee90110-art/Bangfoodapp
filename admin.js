@@ -1,513 +1,265 @@
-
-// File: admin.js - โค้ดที่รองรับการแสดงผล 2 ส่วน, คำนวณยอด และกรอง
+// admin.js - ฉบับรวมร่างสมบูรณ์ (โชว์รายละเอียด + แก้ไขปุ่มนิ่ง)
 
 if (typeof db !== 'undefined') {
-    const ordersPendingContainer = document.getElementById('orders-list-container');
-    const ordersCompletedContainer = document.getElementById('completed-orders-container'); // NEW
-    const orderCountEl = document.getElementById('order-count');
-    const dailyRevenueEl = document.getElementById('daily-revenue'); // NEW
-    const tableFilterInput = document.getElementById('table-filter'); // NEW
-    const ordersRef = db.ref('orders'); 
+    const ordersRef = db.ref('orders');
 
-    // ฟังก์ชันจัดการสถานะและการลบ (เหมือนเดิม)
-    window.updateOrderStatus = function(orderId, newStatus) {
-        if (confirm(`ยืนยันการเปลี่ยนสถานะคำสั่งซื้อ ID: ${orderId} เป็น "${newStatus}" ใช่หรือไม่?`)) {
-            ordersRef.child(orderId).update({ status: newStatus })
-                .catch(error => console.error("Update Error:", error));
-        }
-    }
-    window.cancelOrder = function(orderId) {
-        if (confirm(`ยืนยันการยกเลิก/ลบคำสั่งซื้อ ID: ${orderId} ออกจากระบบ ใช่หรือไม่?`)) {
-            ordersRef.child(orderId).remove()
-                .catch(error => console.error("Remove Error:", error));
-        }
-    }
-    
-    // NEW: ฟังก์ชันสร้าง HTML สำหรับคำสั่งซื้อแต่ละรายการ
-    // ใน admin.js: ฟังก์ชัน createOrderCard
-function createOrderCard(orderId, order, statusClass, itemsHtml, displayTime) {
-    const tableNum = order.tableNumber || order.table || 'N/A';
-    const status = order.status || 'รอดำเนินการ'; 
-    const total = parseFloat(order.total || 0).toFixed(2);
+    // --- 1. ฟังก์ชันโหลดข้อมูลและวาดหน้าจอ (Real-time) ---
+    window.loadOrdersRealtime = function() {
+        ordersRef.on('value', (snapshot) => {
+            const pendingContainer = document.getElementById('orders-list-container');
+            const completedContainer = document.getElementById('completed-orders-container');
+            
+            if (pendingContainer) pendingContainer.innerHTML = '';
+            if (completedContainer) completedContainer.innerHTML = '';
 
-    return `
-        <div class="order-card ${statusClass}" data-table="${tableNum}">
-            <h4 class="order-total">ยอดรวม: ${total} บาท</h4>
-            <h3 class="order-table">โต๊ะ: ${tableNum}</h3> 
-            <p class="order-time">${displayTime}</p>
-            <div class="order-status ${statusClass}">${status}</div>
-            
-            <ul class="order-items-list">
-                ${itemsHtml}
-            </ul>
-            
-           <div class="action-buttons">
-            ${status === 'รอดำเนินการ' ? `<button class="btn-action btn-start" onclick="updateOrderStatus('${orderId}', 'กำลังทำ')">เริ่มทำ</button>` : ''}
-            ${status === 'กำลังทำ' ? `<button class="btn-action btn-complete" onclick="updateOrderStatus('${orderId}', 'เสร็จสมบูรณ์')">เสร็จ</button>` : ''}
-    
-            ${status === 'ชำระเงินแล้ว' ? 
-            `<button class="btn-action btn-save" style="background-color: #4CAF50; color: white;" onclick="archiveOrder('${orderId}')">บันทึกรายการ</button>` : 
-            `<button class="btn-action btn-cancel" onclick="cancelOrder('${orderId}')">ลบ/ยกเลิก</button>`
-    }
-            </div>
-        </div>
-    `;
-}
-// NEW: ฟังก์ชันกรองคำสั่งซื้อตามหมายเลขโต๊ะ
-    window.filterOrders = function() {
-        const filterText = tableFilterInput.value.trim().toUpperCase();
-        
-        document.querySelectorAll('.order-card').forEach(card => {
-            const tableNumber = card.getAttribute('data-table').toUpperCase();
-            
-            if (filterText === '' || tableNumber.includes(filterText)) {
-                card.style.display = 'block'; // แสดง
-            } else {
-                card.style.display = 'none'; // ซ่อน
+            if (!snapshot.exists()) {
+                if (pendingContainer) pendingContainer.innerHTML = '<p class="no-orders" style="text-align:center; color:#888;">ไม่มีคำสั่งซื้อใหม่</p>';
+                return;
             }
-        });
-    };
-    
-    // โค้ดหลัก: ฟังการเปลี่ยนแปลงข้อมูลแบบเรียลไทม์
-    ordersRef.on('value', (snapshot) => {
-        ordersPendingContainer.innerHTML = ''; 
-        ordersCompletedContainer.innerHTML = ''; // เคลียร์ส่วนที่เสร็จสมบูรณ์
-        
-        let totalOrders = 0;
-        let totalRevenue = 0; // NEW: ตัวแปรสำหรับคำนวณยอดรวม
-        
-        const orders = snapshot.val();
-        
-        if (orders) {
-            // โหลดข้อมูลจาก Firebase (โดยเรียงย้อนหลัง)
-            Object.keys(orders).reverse().forEach(orderId => {
-                const order = orders[orderId];
-                totalOrders++;
 
+            snapshot.forEach((child) => {
+                const orderId = child.key;
+                const order = child.val();
                 const status = order.status || 'รอดำเนินการ';
-                // เพิ่มบรรทัดนี้ในฟังก์ชัน createOrderCard
-let statusClass = (status === 'รอดำเนินการ') ? 'status-pending' : 
-                 (status === 'กำลังทำ') ? 'status-processing' : 
-                 (status === 'ชำระเงินแล้ว') ? 'status-paid' : 'status-completed';
-
-                // โค้ดการสร้างรายการสินค้า (เหมือนเดิมที่มีการแปลง 'S' เป็น 'ธรรมดา')
-                let itemsHtml = '<li class="order-item-detail">ไม่พบรายละเอียดรายการสินค้า</li>';
-                if (order.items && Array.isArray(order.items)) {
+                
+                // สร้างรายการอาหาร + โชว์ พิเศษ/ไข่ดาว
+                let itemsHtml = '';
+                if (order.items) {
                     itemsHtml = order.items.map(item => {
-                        const itemName = item.name || 'รายการที่ไม่ระบุชื่อ'; 
-                        
-                        // โค้ดแปลง 'S' เป็น 'ธรรมดา'
-                        const rawOptions = item.options || 'S';
-                        let displayOptions = rawOptions;
-                        if (rawOptions.startsWith('S')) {
-                            displayOptions = rawOptions.replace('S', 'ธรรมดา');
-                        }
-                        const itemOptions = displayOptions;
-                        
-                        const itemNotes = item.notes ? `<small class="item-note-admin">โน้ต: ${item.notes}</small>` : '';
-
+                        const details = item.options || 'ธรรมดา';
                         return `
-                            <li class="order-item-detail">
-                                <span class="item-name-admin">${itemName}</span>
-                                <small class="item-option-admin">${itemOptions}</small>
-                                ${itemNotes}
-                                <span class="item-price-admin">${parseFloat(item.finalPrice || 0).toFixed(2)} บาท</span>
+                            <li style="border-bottom: 1px solid #444; padding: 8px 0; list-style:none;">
+                                <div style="display: flex; justify-content: space-between; color:#fff;">
+                                    <strong>${item.quantity || 1}x ${item.name}</strong>
+                                    <span style="color: #41ff7aff;">฿${parseFloat(item.finalPrice || 0).toFixed(2)}</span>
+                                </div>
+                                <div style="color: #ffeb3b; font-size: 0.85em; margin-top: 4px; background: #333; padding: 2px 8px; border-radius: 4px; display:inline-block;">
+                                    ✨ ${details}
+                                </div>
                             </li>
                         `;
                     }).join('');
                 }
-                
-                // รูปแบบวันที่/เวลา
-                const timestampDate = new Date(order.timestamp);
-                const displayTime = isNaN(timestampDate) ? 'ไม่ระบุเวลา' : 
-                                    timestampDate.toLocaleString('th-TH', { 
-                                        day: '2-digit', 
-                                        month: '2-digit', 
-                                        hour: '2-digit', 
-                                        minute: '2-digit', 
-                                        hour12: false 
-                                    });
 
-                const orderCardHtml = createOrderCard(orderId, order, statusClass, itemsHtml, displayTime);
-                
-                // NEW: แยกคำสั่งซื้อตามสถานะ
-                if (status === 'เสร็จสมบูรณ์' || status === 'ชำระเงินแล้ว') {
-                    ordersCompletedContainer.innerHTML += orderCardHtml;
-                    totalRevenue += parseFloat(order.total || 0); // คำนวณยอด
+                // กำหนดปุ่มตามสถานะ
+                let actionButtons = '';
+                if (status === 'รอดำเนินการ') {
+                    actionButtons = `<button onclick="updateOrderStatus('${orderId}', 'กำลังทำ')" style="background:#ff9800; color:white; border:none; padding:10px; border-radius:5px; flex:1; cursor:pointer;">เริ่มทำ</button>`;
+                } else if (status === 'กำลังทำ') {
+                    actionButtons = `<button onclick="updateOrderStatus('${orderId}', 'เสร็จสมบูรณ์')" style="background:#4CAF50; color:white; border:none; padding:10px; border-radius:5px; flex:1; cursor:pointer;">เสร็จแล้ว</button>`;
+                } else if (status === 'เสร็จสมบูรณ์') {
+                    actionButtons = `<button onclick="updateOrderStatus('${orderId}', 'ชำระเงินแล้ว')" style="background:#2196F3; color:white; border:none; padding:10px; border-radius:5px; flex:1; cursor:pointer;">จ่ายเงินแล้ว</button>`;
+                } else if (status === 'ชำระเงินแล้ว') {
+                    actionButtons = `<button onclick="archiveToHistory('${orderId}')" style="background:#673AB7; color:white; border:none; padding:10px; border-radius:5px; flex:1; cursor:pointer;">📥 เก็บลงประวัติ</button>`;
+                }
+
+                const cardHtml = `
+                    <div class="order-card" style="background:#1e1e1e; border:1px solid #333; padding:15px; margin-bottom:15px; border-radius:10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom: 1px dashed #555; padding-bottom:5px;">
+                            <span style="color:#c9a227; font-size:1.1em;"><b>โต๊ะ: ${order.tableNumber || order.table || 'N/A'}</b></span>
+                            <span style="background:#444; color:#fff; padding:2px 8px; border-radius:4px; font-size:0.7em;">${status}</span>
+                        </div>
+                        <ul style="padding:0; margin:0;">${itemsHtml}</ul>
+                        <p style="font-weight:bold; color:#fff; text-align:right; margin:10px 0;">ยอดรวม: ${order.total || 0} บาท</p>
+                        <div style="display:flex; gap:10px;">
+                            ${actionButtons}
+                            <button onclick="cancelOrder('${orderId}')" style="background:#ff4757; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;">ลบ</button>
+                        </div>
+                    </div>
+                `;
+
+                // แยกฝั่งแสดงผล
+                if (status === 'ชำระเงินแล้ว' || status === 'เสร็จสมบูรณ์') {
+                    if (completedContainer) completedContainer.insertAdjacentHTML('beforeend', cardHtml);
                 } else {
-                    ordersPendingContainer.innerHTML += orderCardHtml;
+                    if (pendingContainer) pendingContainer.insertAdjacentHTML('beforeend', cardHtml);
                 }
             });
-            
-            // แสดงข้อความเมื่อไม่มีคำสั่งซื้อในแต่ละส่วน
-            if (ordersPendingContainer.innerHTML === '') {
-                ordersPendingContainer.innerHTML = '<p class="no-orders-message">ไม่มีคำสั่งซื้อที่รอดำเนินการ</p>';
-            }
-             if (ordersCompletedContainer.innerHTML === '') {
-                ordersCompletedContainer.innerHTML = '<p class="no-orders-message">ไม่มีคำสั่งซื้อที่เสร็จสมบูรณ์ในระบบ</p>';
-            }
-            
-        } else {
-            ordersPendingContainer.innerHTML = '<p class="no-orders-message">ไม่มีคำสั่งซื้อที่รอดำเนินการ</p>';
-            ordersCompletedContainer.innerHTML = '<p class="no-orders-message">ไม่มีคำสั่งซื้อที่เสร็จสมบูรณ์ในระบบ</p>';
-        }
-        
-        // อัปเดตตัวนับและยอดรวม
-        orderCountEl.textContent = totalOrders;
-        dailyRevenueEl.textContent = totalRevenue.toFixed(2);
-        
-        // หลังจากโหลดข้อมูลเสร็จ ให้ทำการกรองอีกครั้งเพื่อแสดงผลที่ถูกต้อง
-        filterOrders(); 
-        
-    }, (error) => {
-        ordersPendingContainer.innerHTML = '<p class="error-message">ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาตรวจสอบ Console</p>';
-        console.error("Firebase Database Connection Error:", error);
-    });
+        });
+    };
 
-} else {
-    console.error("Firebase SDK (db variable) is not ready. Check your admin.html configuration.");
-}
-// ใน admin.js: ฟังก์ชันสำหรับอัปเดตสถานะคำสั่งซื้อใน Firebase
-function updateOrderStatus(orderId, newStatus) {
-    // ตรวจสอบการเชื่อมต่อ Firebase (สมมติว่า 'db' คือ Firebase Database)
-    if (typeof db === 'undefined' || !db) {
-        console.error("Firebase DB object 'db' is undefined or null. Cannot update status.");
-        return;
-    }
+    // --- 2. ฟังก์ชันจัดการสถานะออเดอร์ ---
+    // แก้ไขฟังก์ชันเดิมของน้าให้เป็นแบบนี้
+window.updateOrderStatus = function(orderId, newStatus) {
+    const orderRef = ordersRef.child(orderId);
 
-    // สร้าง Path อ้างอิงไปยังคำสั่งซื้อที่ต้องการอัปเดต
-    const orderRef = db.ref('orders/' + orderId);
-
-    // ทำการอัปเดต Field 'status'
-    orderRef.update({
-        status: newStatus 
-        // newStatus จะเป็น 'กำลังทำ' หรือ 'เสร็จสมบูรณ์' ตามปุ่มที่กด
-    })
-    .then(() => {
-        console.log(`Order ${orderId} status updated to ${newStatus}`);
-        
-        // *** หมายเหตุ: เมื่ออัปเดตสำเร็จ Real-time Listener ใน admin.js 
-        // จะรับข้อมูลใหม่และทำการ Refresh Order Card เองโดยอัตโนมัติ ***
-    })
-    .catch(error => {
-        console.error("Error updating status:", error);
-        alert("เกิดข้อผิดพลาดในการอัปเดตสถานะ");
-    });
-}
-// ใน admin.js: โค้ดสำหรับดึงและแสดงคำสั่งซื้อแบบ Real-time
-// --- ส่วนที่ 1: จัดการออเดอร์ (รอดำเนินการ / ชำระเงินแล้ว) ---
-window.loadOrdersRealtime = function() {
-    const ordersRef = db.ref('orders');
-    ordersRef.on('value', (snapshot) => {
-        const orders = snapshot.val();
-        const pendingContainer = document.getElementById('orders-list-container');
-        const completedContainer = document.getElementById('completed-orders-container');
-        
-        pendingContainer.innerHTML = '';
-        completedContainer.innerHTML = '';
-
-        if (!orders) return;
-
-        Object.keys(orders).forEach(id => {
-            const order = orders[id];
-            const html = `
-                <div class="order-card" style="background:#1e1e1e; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid #333;">
-                    <p><b>โต๊ะ: ${order.tableNumber}</b> | สถานะ: ${order.status}</p>
-                    <p>ยอดรวม: ${order.total} บาท</p>
-                    ${order.status === 'ชำระเงินแล้ว' ? 
-                        `<button onclick="archiveToHistory('${id}')" style="background:#4CAF50; color:white; border:none; padding:10px; width:100%; cursor:pointer; border-radius:5px; font-weight:bold;">📥 เก็บลงประวัติการขาย</button>` 
-                        : `<p style="color:#aaa; font-size:0.8em;">(รอชำระเงินก่อนจึงจะเก็บลงประวัติได้)</p>`}
-                </div>
-            `;
-
-            if (order.status === 'รอดำเนินการ') {
-                pendingContainer.innerHTML += html;
-            } else {
-                completedContainer.innerHTML += html;
+    // ✅ เพิ่มส่วนนี้: ถ้าสถานะคือ 'ชำระเงินแล้ว' ให้ส่งข้อมูลสลิปทันที
+    if (newStatus === 'ชำระเงินแล้ว') {
+        orderRef.once('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // ส่งข้อมูลไป Path ที่หน้า track รอฟังอยู่
+                db.ref(`currentReceipt/${data.tableNumber}`).set({
+                    tableNumber: data.tableNumber,
+                    items: data.items,
+                    total: data.total,
+                    paidAt: firebase.database.ServerValue.TIMESTAMP
+                });
             }
         });
-    });
+    }
+
+    // ส่วนอัปเดตสถานะเดิมของน้า
+    orderRef.update({ status: newStatus })
+        .catch(err => alert("เกิดข้อผิดพลาด: " + err.message));
 };
 
-// --- ส่วนที่ 2: ฟังก์ชันเก็บลงประวัติ (Archive) ---
-window.archiveToHistory = function(orderId) {
-    if (!confirm("ยืนยันการเก็บออเดอร์นี้ลงประวัติ?")) return;
+    window.cancelOrder = function(orderId) {
+        if (confirm('ยืนยันการลบออเดอร์นี้?')) {
+            ordersRef.child(orderId).remove();
+        }
+    };
 
+    window.archiveToHistory = function(orderId) {
+    if (!confirm("ต้องการย้ายรายการนี้ไปที่หน้าประวัติการขาย?")) return;
+
+    // ดึงข้อมูลออเดอร์นั้นมาจาก Firebase ก่อน
     db.ref(`orders/${orderId}`).once('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
-            // เพิ่ม timestamp สำหรับเก็บประวัติ
+            // เพิ่มเวลาที่บันทึกเข้าไป เพื่อใช้เรียงลำดับในหน้าประวัติ
             data.archivedAt = Date.now(); 
             
-            // ย้ายไป history ก่อน
+            // 1. ส่งข้อมูลไปที่กล่อง 'history'
             db.ref('history').push(data).then(() => {
-                // ย้ายสำเร็จแล้วค่อยลบจาก orders
+                // 2. เมื่อส่งสำเร็จแล้ว ให้ลบออกจากหน้าจัดการ (orders)
                 db.ref(`orders/${orderId}`).remove();
-                alert("เก็บข้อมูลลงประวัติแล้ว");
+                alert("บันทึกลงประวัติเรียบร้อยครับน้า!");
+            }).catch(err => {
+                alert("เกิดข้อผิดพลาด: " + err.message);
             });
         }
     });
 };
 
-// --- ส่วนที่ 3: จัดการเมนู (เปิด-ปิดเมนู) ---
-function loadAdminMenu() {
-    const menuList = document.getElementById('admin-menu-list');
-    db.ref('products').on('value', (snapshot) => {
-        const products = snapshot.val();
-        menuList.innerHTML = '';
-        if (!products) return;
+    // --- 3. ส่วนจัดการเมนู (เปิด-ปิดรายการอาหาร) ---
+    window.loadAdminMenu = function() {
+        const menuList = document.getElementById('admin-menu-list');
+        if (!menuList) return;
+        
+        db.ref('products').on('value', (snapshot) => {
+            const products = snapshot.val();
+            menuList.innerHTML = '';
+            if (!products) return;
 
-        for (let id in products) {
-            const p = products[id];
-            const isOut = p.status === 'out_of_stock';
-            menuList.innerHTML += `
-                <div class="admin-item-card" style="background:#1e1e1e; padding:15px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
-                    <div><b>${p.name}</b><br><small>${p.price} บาท</small></div>
-                    <button onclick="toggleProductStatus('${id}', '${p.status}')" 
-                            style="background:${isOut ? '#41ff7aff' : '#ff4757'}; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;">
-                        ${isOut ? 'เปิดขาย' : 'ปิดเมนู'}
-                    </button>
-                </div>
-            `;
-        }
-    });
-}
-
-window.toggleProductStatus = function(id, currentStatus) {
-    const newStatus = currentStatus === 'available' ? 'out_of_stock' : 'available';
-    db.ref(`products/${id}`).update({ status: newStatus });
-};
-
-// เรียกโหลดเมนูเมื่อเปิดหน้าจัดการเมนู
-window.switchTab = function(tabName) {
-    document.getElementById('pending-section').style.display = 'none';
-    document.getElementById('completed-section').style.display = 'none';
-    document.getElementById('menu-section').style.display = 'none';
-
-    document.getElementById(`${tabName}-section`).style.display = 'block';
-    
-    if (tabName === 'menu') loadAdminMenu();
-};
-// ฟังก์ชันสำหรับหน้า admin.html
-function updateAdminDashboard() {
-    let totalRevenue = 0;
-    let totalOrders = 0;
-
-    // 1. ดึงยอดจากออเดอร์ที่ยังไม่ได้จ่ายเงิน (orders)
-    // ตัวอย่าง Logic ใน admin.js
-db.ref('orders').on('value', (snapshot) => {
-    const pendingContainer = document.getElementById('orders-list-container'); // ช่องรอดำเนินการ
-    const completedContainer = document.getElementById('completed-orders-container'); // ช่องที่เสร็จ/ชำระแล้ว
-    
-    // ล้างข้อมูลเก่าก่อนวาดใหม่
-    pendingContainer.innerHTML = '';
-    if(completedContainer) completedContainer.innerHTML = '';
-
-    snapshot.forEach((child) => {
-        const order = child.val();
-        const orderId = child.key;
-        const orderCard = createOrderCard(orderId, order); // ฟังก์ชันสร้างการ์ดของคุณ
-
-        // แยกช่องแสดงผลตามสถานะ
-        if (order.status === 'ชำระเงินแล้ว' || order.status === 'เสร็จสมบูรณ์') {
-            // ถ้าจ่ายแล้ว หรือ ทำเสร็จแล้ว ให้ไปอยู่ช่องล่าง (Completed)
-            if(completedContainer) {
-                completedContainer.insertAdjacentHTML('beforeend', orderCard);
-            }
-        } else {
-            // ถ้ายังไม่เสร็จ (รอดำเนินการ/กำลังทำ) ให้ไปอยู่ช่องบน (Pending)
-            pendingContainer.insertAdjacentHTML('beforeend', orderCard);
-        }
-    });
-});
-}
-// ในไฟล์ admin.js
-function loadOrdersRealtime() {
-    const ordersRef = db.ref('orders');
-    const pendingContainer = document.getElementById('orders-list-container');
-    const completedContainer = document.getElementById('completed-orders-container');
-
-    ordersRef.on('value', (snapshot) => {
-        // ล้างข้อมูลเก่าออกก่อนวาดใหม่
-        pendingContainer.innerHTML = '';
-        completedContainer.innerHTML = '';
-
-        if (!snapshot.exists()) {
-            pendingContainer.innerHTML = '<p>ไม่มีคำสั่งซื้อใหม่</p>';
-            completedContainer.innerHTML = '<p>ไม่มีรายการที่ชำระเงินแล้ว</p>';
-            return;
-        }
-
-        snapshot.forEach((child) => {
-            const orderId = child.key;
-            const order = child.val();
-            
-            // ใช้ฟังก์ชันสร้างการ์ดที่มีอยู่เดิมของคุณ
-            const orderCard = createOrderCard(orderId, order); 
-
-            // --- จุดสำคัญ: แยกสถานะ ---
-            if (order.status === 'ชำระเงินแล้ว' || order.status === 'เสร็จสมบูรณ์') {
-                // ถ้าสถานะเป็น "ชำระเงินแล้ว" หรือ "เสร็จสมบูรณ์" ให้ย้ายมาช่องล่าง
-                completedContainer.insertAdjacentHTML('beforeend', orderCard);
-            } else {
-                // ถ้าสถานะอื่นๆ (รอดำเนินการ, กำลังทำ) ให้ไว้ช่องบน
-                pendingContainer.insertAdjacentHTML('beforeend', orderCard);
+            for (let id in products) {
+                const p = products[id];
+                const isOut = p.status === 'out_of_stock';
+                menuList.innerHTML += `
+                    <div style="background:#1e1e1e; padding:15px; margin-bottom:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #333;">
+                        <div><b style="color:#fff;">${p.name}</b><br><small style="color:#aaa;">${p.price} บาท</small></div>
+                        <button onclick="toggleProductStatus('${id}', '${p.status}')" 
+                                style="background:${isOut ? '#41ff7aff' : '#ff4757'}; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-weight:bold;">
+                            ${isOut ? 'เปิดขาย' : 'ปิดเมนู'}
+                        </button>
+                    </div>
+                `;
             }
         });
+    };
+
+    window.toggleProductStatus = function(id, currentStatus) {
+        const newStatus = currentStatus === 'available' ? 'out_of_stock' : 'available';
+        db.ref(`products/${id}`).update({ status: newStatus });
+    };
+
+    // --- 4. ระบบสลับ Tab ---
+    window.switchTab = function(tabName) {
+        const sections = ['pending-section', 'completed-section', 'menu-section'];
+        sections.forEach(s => {
+            const el = document.getElementById(s);
+            if (el) el.style.display = 'none';
+        });
+
+        const target = document.getElementById(`${tabName}-section`);
+        if (target) target.style.display = 'block';
         
-        // อัปเดตตัวเลขจำนวนรายการและรายได้ (ถ้ามีฟังก์ชันนี้อยู่)
-        if (typeof updateAdminDashboard === 'function') {
-            updateAdminDashboard();
-        }
-    });
+        if (tabName === 'menu') loadAdminMenu();
+    };
+
+    // เริ่มทำงานเมื่อโหลดหน้าเสร็จ
+    // ปรับส่วนท้ายของ track.html ให้สะอาดแบบนี้
+document.addEventListener('DOMContentLoaded', () => {
+    startTracking();
+    listenForReceipt(); 
+});
 }
-// ตรวจสอบให้แน่ใจว่าฟังก์ชันนี้อยู่นอกสุดของไฟล์ admin.js หรืออยู่ในขอบเขตที่ HTML เรียกถึงได้
-// ฟังก์ชันสำหรับกดเก็บออเดอร์ลงประวัติด้วยมือ
-window.archiveOrder = function(orderId) {
-    if (!confirm("ต้องการเก็บออเดอร์นี้ลงประวัติการขายใช่หรือไม่?")) return;
+function toggleDropdown() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
 
-    // 1. ดึงข้อมูลออเดอร์นั้นออกมาจาก Firebase ก่อน
-    db.ref(`orders/${orderId}`).once('value', (snapshot) => {
-        const orderData = snapshot.val();
-        
-        if (orderData) {
-            // เพิ่มเวลาที่เก็บออเดอร์ (ใช้สำหรับหน้า History)
-            orderData.archivedAt = Date.now(); 
+// ถ้าคลิกข้างนอกกล่องเมนู ให้มันปิดเองอัตโนมัติ
+window.onclick = function(event) {
+    if (!event.target.matches('.menu-icon') && !event.target.matches('.menu-icon span')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+// ฟังก์ชันสำหรับกด "จ่ายเงินแล้ว" ในหน้า Admin
+window.markAsPaid = function(orderId) {
+    if (!confirm("ยืนยันการชำระเงินและย้ายไปหน้าประวัติ?")) return;
 
-            // 2. ส่งข้อมูลไปที่กิ่ง 'history'
-            db.ref('history').push(orderData, (error) => {
-                if (!error) {
-                    // 3. เมื่อเก็บสำเร็จแล้ว ค่อยลบออเดอร์ออกจากหน้า Admin (กิ่ง orders)
-                    db.ref(`orders/${orderId}`).remove();
-                    alert("เก็บลงประวัติเรียบร้อยครับ");
-                } else {
-                    alert("เกิดข้อผิดพลาด: " + error.message);
-                }
+    const orderRef = db.ref(`orders/${orderId}`);
+
+    orderRef.once('value', (snapshot) => {
+        if (snapshot.exists()) {
+            const orderData = snapshot.val();
+            const tableNo = orderData.tableNumber;
+
+            // 1. ส่งข้อมูลไปยัง currentReceipt เพื่อให้หน้า track ของลูกค้าเด้งปุ่มสลิป
+            db.ref(`currentReceipt/${tableNo}`).set({
+                tableNumber: tableNo,
+                items: orderData.items,
+                total: orderData.total,
+                paidAt: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                
+                // 2. ย้ายข้อมูลไปเก็บในหน้า History (ประวัติการขาย)
+                return db.ref('history').push({
+                    ...orderData,
+                    completedAt: firebase.database.ServerValue.TIMESTAMP
+                });
+
+            }).then(() => {
+                
+                // 3. ลบออเดอร์ออกจากหน้าจอทำงาน (orders)
+                return orderRef.remove();
+
+            }).then(() => {
+                alert(`เช็คบิลโต๊ะ ${tableNo} เรียบร้อย! สลิปส่งไปหน้าลูกค้าแล้ว`);
+            }).catch((error) => {
+                console.error("เกิดข้อผิดพลาด:", error);
+                alert("ไม่สามารถบันทึกการจ่ายเงินได้");
             });
         }
     });
 };
-// ฟังก์ชันสำหรับสลับ Tab
-window.switchTab = function(tabName) {
-    const pendingSection = document.getElementById('pending-section');
-    const completedSection = document.getElementById('completed-section');
-    const menuSection = document.getElementById('menu-section'); // เพิ่มตัวนี้
-
-    const btnPending = document.getElementById('tab-pending');
-    const btnCompleted = document.getElementById('tab-completed');
-    const btnMenu = document.getElementById('tab-menu'); // เพิ่มตัวนี้
-
-    // 1. ซ่อนทุก Section ก่อน
-    pendingSection.style.display = 'none';
-    completedSection.style.display = 'none';
-    if(menuSection) menuSection.style.display = 'none';
-
-    // 2. ล้างสีปุ่มทั้งหมดให้เป็นสีเข้มปกติ
-    [btnPending, btnCompleted, btnMenu].forEach(btn => {
-        if(btn) {
-            btn.style.background = '#333';
-            btn.style.color = 'white';
-        }
-    });
-
-    // 3. เช็กว่ากด Tab ไหน แล้วเปิด/เปลี่ยนสีปุ่มอันนั้น
-    if (tabName === 'pending') {
-        pendingSection.style.display = 'block';
-        btnPending.style.background = '#41ffd0ff';
-        btnPending.style.color = 'black';
-    } else if (tabName === 'completed') {
-        completedSection.style.display = 'block';
-        btnCompleted.style.background = '#41ff7aff';
-        btnCompleted.style.color = 'black';
-    } else if (tabName === 'menu') {
-        if(menuSection) {
-            menuSection.style.display = 'block';
-            btnMenu.style.background = '#c9a227'; // สีทองสำหรับจัดการเมนู
-            btnMenu.style.color = 'black';
-            loadAdminMenu(); // เรียกฟังก์ชันโหลดรายการอาหารมาโชว์
-        }
-    }
-};
-// ปรับปรุงฟังก์ชัน Render เดิมของคุณ (ให้แน่ใจว่าเรียกใช้ ID container ให้ถูกต้อง)
-// ตัวอย่างเช่นใน Firebase listener:
-ordersRef.on('value', (snapshot) => {
-    const orders = snapshot.val();
-    // ... โค้ดคำนวณยอดรวมและคัดแยกสถานะของคุณ ...
-    // แสดงผลลงใน orders-list-container และ completed-orders-container ตามเดิม
-});
-// --- ส่วนจัดการจัดการเมนู (Product Management) ---
-
-// 1. ฟังก์ชันดึงรายการเมนูทั้งหมดมาโชว์ในหน้า Admin
-function loadAdminMenu() {
-    const adminMenuList = document.getElementById('admin-menu-list');
-    if (!adminMenuList) return;
-
-    console.log("กำลังเชื่อมต่อกับ Firebase เพื่อดึงเมนู..."); // เช็กว่าฟังก์ชันทำงานไหม
-
-    db.ref('products').on('value', (snapshot) => {
-        const products = snapshot.val();
-        console.log("ข้อมูลที่ดึงได้จาก Firebase:", products); // ดูว่าข้อมูลมาไหม
-
-        adminMenuList.innerHTML = ''; 
-
-        if (!products) {
-            adminMenuList.innerHTML = '<p style="text-align:center; color: #888;">ไม่พบข้อมูลในกิ่ง products</p>';
-            return;
-        }
-
-        for (let id in products) {
-            const p = products[id];
-            const isOut = p.status === 'out_of_stock';
-
-            adminMenuList.innerHTML += `
-                <div class="admin-item-card" style="background: #1e1e1e; padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between;">
-                    <div>
-                        <strong style="color: #c9a227;">${p.name}</strong><br>
-                        <span>${p.price} บาท</span>
-                    </div>
-                    <button onclick="toggleProductStatus('${id}', '${p.status}')" 
-                        style="background: ${isOut ? '#41ff7aff' : '#ff4757'}; border: none; padding: 5px 10px; border-radius: 5px;">
-                        ${isOut ? 'เปิดขาย' : 'ปิดเมนู'}
-                    </button>
-                </div>
-            `;
-        }
-    });
-}
-
-// 2. ฟังก์ชันเปลี่ยนสถานะ เปิด/ปิด เมนู
-window.toggleProductStatus = function(id, currentStatus) {
-    const newStatus = currentStatus === 'available' ? 'out_of_stock' : 'available';
-    db.ref(`products/${id}`).update({ status: newStatus });
-};
-
-// 3. ฟังก์ชันแก้ไขราคา
-window.editPrice = function(id, currentPrice) {
-    const newPrice = prompt(`ระบุราคาใหม่สำหรับเมนูนี้ (ราคาปัจจุบัน: ${currentPrice}):`);
-    if (newPrice !== null && !isNaN(newPrice) && newPrice !== "") {
-        db.ref(`products/${id}`).update({ price: parseInt(newPrice) });
-    }
-};
-
-// เรียกใช้งานเมื่อโหลดหน้า admin
-document.addEventListener('DOMContentLoaded', () => {
-    // ถ้ามีการคลิกเปลี่ยน Tab ไปที่หน้าจัดการเมนู ให้โหลดข้อมูล
-    // (สมมติว่าคุณทำปุ่ม switchTab ไว้แล้ว)
-    loadAdminMenu(); 
-});
-// ฟังก์ชันสำหรับแก้ไขราคาอาหาร
-window.editPrice = function(id, currentPrice) {
-    const newPrice = prompt(`ระบุราคาใหม่สำหรับรายการนี้ (ราคาปัจจุบัน: ${currentPrice} บาท):`);
+// ฟังก์ชันเมื่อกดปุ่ม "จ่ายเงินแล้ว" ในหน้า Admin
+window.payOrder = function(orderId) {
+    const orderRef = db.ref(`orders/${orderId}`);
     
-    // ตรวจสอบว่ามีการพิมพ์ตัวเลขจริง และไม่กด Cancel
-    if (newPrice !== null && newPrice !== "") {
-        const priceNum = parseInt(newPrice);
-        if (!isNaN(priceNum)) {
-            db.ref(`products/${id}`).update({ price: priceNum })
-                .then(() => alert("อัปเดตราคาเรียบร้อยแล้ว"))
-                .catch(err => alert("เกิดข้อผิดพลาด: " + err.message));
-        } else {
-            alert("กรุณากรอกตัวเลขที่ถูกต้องครับ");
+    orderRef.once('value', (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const tableNo = data.tableNumber;
+
+            // ✨ จุดสำคัญ: ส่งข้อมูลไปที่ currentReceipt เพื่อให้หน้า track เห็น
+            db.ref(`currentReceipt/${tableNo}`).set({
+                tableNumber: tableNo,
+                items: data.items,
+                total: data.total,
+                paidAt: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                // เก็บเข้าประวัติ และลบออเดอร์ปกติ
+                db.ref('history').push({...data, archivedAt: firebase.database.ServerValue.TIMESTAMP});
+                orderRef.remove();
+                alert(`เช็คบิลโต๊ะ ${tableNo} เรียบร้อย!`);
+            });
         }
-    }
+    });
 };

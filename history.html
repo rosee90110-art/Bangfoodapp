@@ -6,28 +6,36 @@
     <title>ประวัติการขาย - BANGFOOD</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        
-        /* CSS เพิ่มเติมเฉพาะหน้า History */
         body { background-color: #121212; color: #fff; font-family: 'Kanit', sans-serif; }
         .history-app-container { padding: 20px; max-width: 600px; margin: 0 auto; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .btn-back-admin { background: #444; color: #fff; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 0.9em; }
         
         /* Dashboard สรุปยอด */
-        .summary-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: #1e1e1e; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #333; }
+        .summary-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: #1e1e1e; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #333; transition: 0.3s; }
         .stat-card.highlighted { border-color: #4CAF50; background: linear-gradient(145deg, #1e1e1e, #1a2e1b); }
         .stat-label { display: block; font-size: 0.85em; color: #aaa; margin-bottom: 5px; }
         .stat-value { font-size: 1.5em; font-weight: bold; color: #fff; }
-        .currency { font-size: 0.6em; margin-left: 5px; color: #4CAF50; }
 
-        /* รายการประวัติ */
+        /* ส่วนค้นหาแบบพับเก็บได้ */
+        .filter-toggle-btn {
+            background: #2c2c2c; padding: 15px; border-radius: 12px; border: 1px solid #41ff51; 
+            margin-bottom: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+        }
+        .filter-panel {
+            display: none; background: #1e1e1e; padding: 15px; border-radius: 12px; 
+            border: 1px dashed #41ff51; margin-bottom: 20px; animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .history-grid { display: flex; flex-direction: column; gap: 15px; }
         .status-msg { text-align: center; color: #888; margin-top: 50px; }
-        
-        /* ปรับแต่ง Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        input[type="date"], input[type="time"] { padding: 8px; border-radius: 6px; border: none; background: #fff; color: #333; }
     </style>
 </head>
 <body>
@@ -39,31 +47,41 @@
         </header>
 
         <main>
-            <div class="search-filter-container" style="margin: 20px 0; display: flex; gap: 10px; justify-content: center; align-items: center;">
-    <div style="background: #2c2c2c; padding: 10px; border-radius: 8px; border: 1px solid #41ff51;">
-        <span style="color: #41ff51; font-weight: bold; margin-right: 10px;">📅 เลือกวันที่:</span>
-        <input type="date" id="search-date" style="padding: 5px; border-radius: 4px; border: none; outline: none; background: #fff; color: #333;">
-        
-        <button onclick="filterHistoryByDate()" style="background: #41ff51; color: black; border: none; padding: 5px 15px; margin-left: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-            🔍 ค้นหา
-        </button>
-        
-        <button onclick="resetHistoryFilter()" style="background: #f44336; color: white; border: none; padding: 5px 15px; margin-left: 5px; border-radius: 4px; cursor: pointer;">
-            ล้างค่า
-        </button>
-    </div>
-</div>
+            <div class="filter-toggle-btn" onclick="toggleFilterPanel()">
+                <span style="color: #41ff51; font-weight: bold;">🔍 ค้นหาละเอียด (วันที่/เวลา)</span>
+                <span id="filter-arrow" style="color: #41ff51; transition: 0.3s;">▼</span>
+            </div>
+
+            <div id="filter-panel" class="filter-panel">
+                <div style="display: grid; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #aaa; min-width: 60px;">📅 วันที่:</span>
+                        <input type="date" id="search-date" style="flex: 1;">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="color: #aaa; min-width: 60px;">⏰ เวลา:</span>
+                        <input type="time" id="start-time" value="00:00" style="flex: 1;">
+                        <span style="color: #555;">ถึง</span>
+                        <input type="time" id="end-time" value="23:59" style="flex: 1;">
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 5px;">
+                        <button onclick="filterHistoryByDateTime()" style="flex: 2; background: #41ff51; color: black; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">🔍 ค้นหา</button>
+                        <button onclick="resetHistoryFilter()" style="flex: 1; background: #444; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer;">ล้างค่า</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="summary-dashboard">
- <div class="stat-card">
-        <span class="stat-label">จำนวนบิล</span>
-        <span id="total-bills" class="stat-value">0</span>
-    </div>
-    <div class="stat-card highlighted">
-        <span class="stat-label">รายได้รวมวันนี้</span>
-        <span id="total-revenue" class="stat-value">0.00</span>
-        <span class="currency">บาท</span>
-    </div>
-</div>
+                <div class="stat-card">
+                    <span class="stat-label">จำนวนบิล</span>
+                    <span id="total-bills" class="stat-value">0</span>
+                </div>
+                <div class="stat-card highlighted">
+                    <span class="stat-label">รายได้ช่วงที่เลือก</span>
+                    <span id="total-revenue" class="stat-value">0.00</span>
+                    <span style="font-size: 0.6em; color: #4CAF50;"> บาท</span>
+                </div>
+            </div>
 
             <div id="history-list" class="history-grid">
                 <p class="status-msg">กำลังเชื่อมต่อฐานข้อมูล...</p>
@@ -73,8 +91,129 @@
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    
-    <script src="history.js"></script>
 
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCY...", 
+        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bangfood-cb30f",
+        storageBucket: "bangfood-cb30f.firebasestorage.app",
+        messagingSenderId: "390955623784",
+        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let allHistoryData = [];
+
+    // --- ดึงข้อมูล Real-time ---
+    db.ref('history').on('value', (snapshot) => {
+        allHistoryData = [];
+        if (snapshot.exists()) {
+            snapshot.forEach((child) => {
+                allHistoryData.push({ id: child.key, ...child.val() });
+            });
+        }
+        renderHistory(allHistoryData);
+    });
+
+    // --- ฟังก์ชันสลับการแสดงแผงค้นหา ---
+    window.toggleFilterPanel = function() {
+        const panel = document.getElementById('filter-panel');
+        const arrow = document.getElementById('filter-arrow');
+        const isOpen = panel.style.display === "block";
+        panel.style.display = isOpen ? "none" : "block";
+        arrow.style.transform = isOpen ? "rotate(0deg)" : "rotate(180deg)";
+    };
+
+    // --- ฟังก์ชันค้นหา วันที่ + เวลา ---
+    window.filterHistoryByDateTime = function() {
+        const searchDate = document.getElementById('search-date').value;
+        const startTime = document.getElementById('start-time').value;
+        const endTime = document.getElementById('end-time').value;
+
+        if (!searchDate) return alert("กรุณาเลือกวันที่ก่อนครับน้า");
+
+        const filtered = allHistoryData.filter(order => {
+            const d = new Date(order.archivedAt);
+            const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            
+            return dateStr === searchDate && timeStr >= startTime && timeStr <= endTime;
+        });
+
+        renderHistory(filtered);
+    };
+
+    window.resetHistoryFilter = function() {
+        document.getElementById('search-date').value = '';
+        renderHistory(allHistoryData);
+    };
+
+    function renderHistory(data) {
+        const historyList = document.getElementById('history-list');
+        const totalBillsEl = document.getElementById('total-bills');
+        const totalRevenueEl = document.getElementById('total-revenue');
+        
+        let html = '';
+        let totalSum = 0;
+        
+        data.sort((a, b) => b.archivedAt - a.archivedAt);
+
+        data.forEach((order) => {
+            totalSum += parseFloat(order.total || 0);
+            // แก้ไขจากของเดิมที่เป็น xundefined
+            let itemsHtml = order.items ? order.items.map(item => `
+                <div style="padding: 8px 0; border-bottom: 1px solid #333; font-size: 0.9em;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><b>${item.name || 'ไม่มีชื่อ'}</b> x${item.quantity || item.qty || 1}</span>
+                        <span style="color: #41ff7aff; font-weight: bold;">฿${parseFloat(item.finalPrice || 0).toFixed(2)}</span>
+                    </div>
+                    
+                    ${item.options ? `
+                        <div style="color: #ffeb3b; font-size: 0.8em; margin-top: 2px; padding-left: 5px;">
+                            ✨ ${item.options.replace(/\n/g, ' | ')} 
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('') : '';
+
+            html += `
+                <div class="stat-card" style="text-align: left; border-left: 5px solid #4CAF50;">
+                    <div onclick="toggleOrderDetails('${order.id}')" style="cursor: pointer;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <b style="color: #c9a227;">โต๊ะ: ${order.tableNumber || 'N/A'}</b>
+                            <b>${order.total} บาท</b>
+                        </div>
+                        <div style="color: #888; font-size: 0.75em; margin-top: 5px;">
+                            📅 ${new Date(order.archivedAt).toLocaleString('th-TH')}
+                        </div>
+                    </div>
+                    <div id="details-${order.id}" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #555;">
+                        ${itemsHtml}
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button onclick="printBill('${order.id}')" style="flex: 1; background: #2196F3; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">📄 บิล</button>
+                            <button onclick="deleteHistory('${order.id}')" style="flex: 1; background: #ff4757; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">🗑️ ลบ</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        historyList.innerHTML = data.length ? html : '<p class="status-msg">ไม่พบข้อมูล</p>';
+        totalBillsEl.textContent = data.length;
+        totalRevenueEl.textContent = totalSum.toFixed(2);
+    }
+
+    window.toggleOrderDetails = function(id) {
+        const el = document.getElementById(`details-${id}`);
+        el.style.display = el.style.display === "none" ? "block" : "none";
+    };
+
+    window.printBill = (id) => { event.stopPropagation(); alert("พิมพ์บิล: " + id); };
+    window.deleteHistory = (id) => { 
+        event.stopPropagation(); 
+        if(confirm("ลบประวัตินี้?")) db.ref(`history/${id}`).remove(); 
+    };
+</script>
 </body>
 </html>

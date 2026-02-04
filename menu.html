@@ -111,38 +111,163 @@
             </form>
             <div class="modal-footer">
                 <p class="final-price-display">ราคาสุทธิ: <span id="modal-final-price">0.00</span> บาท</p>
-                <button id="add-to-cart-confirm-btn" class="add-confirm-btn">
-                    ยืนยันการสั่งซื้อ
-                </button>
-                <a href="index.html" id="add-to-cart-confirm-btn" class="add-confirm-btnm">
-                    ยกเลิกการสั่งซื่อ                
-                </a>
+                <button class="confirm-btn" onclick="confirmOrder()">
+    <span>🚀 ยืนยันการสั่งซื้อ</span>
+</button>
+               
             </div>
         </div>
     </div>
-    <script>
-    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-    // 2. ตั้งค่า Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
-        authDomain: "bangfood-cb30f.firebaseapp.com",
-        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "bangfood-cb30f",
-        storageBucket: "bangfood-cb30f.appspot.com",
-        messagingSenderId: "390955623784",
-        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+<script>
+  function initializeMenuPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const imgParam = urlParams.get('img');
+    const nameParam = urlParams.get('name') || "อาหาร";
+    const priceParam = urlParams.get('price') || "0";
+
+    // 1. โหลดรูปภาพ
+    const imgElement = document.getElementById('modal-item-image');
+    if (imgElement && imgParam) {
+        imgElement.src = imgParam; 
+    }
+
+    try {
+        // 2. ใส่ชื่ออาหาร
+        const nameNode = document.getElementById('modal-item-name');
+        if (nameNode) nameNode.innerText = nameParam;
+
+        // 3. ใส่ราคาเริ่มต้น
+        const basePriceNode = document.getElementById('modal-base-price');
+        const finalPriceNode = document.getElementById('modal-final-price');
+        
+        if (basePriceNode) basePriceNode.innerText = parseFloat(priceParam).toFixed(2);
+        if (finalPriceNode) finalPriceNode.innerText = parseFloat(priceParam).toFixed(2);
+
+        // 4. ใส่เลขโต๊ะ
+        const tableNode = document.getElementById('display-table');
+        const tableNo = urlParams.get('table') || "1";
+        if (tableNode) tableNode.innerText = tableNo;
+
+    } catch (e) {
+        console.log("Error filling data:", e);
+    }
+  }
+
+  function confirmOrder() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableNo = urlParams.get('table') || '1'; 
+    
+    const name = document.getElementById('modal-item-name').innerText || "อาหาร";
+    const itemImg = urlParams.get('img') || ""; 
+    
+    const finalPriceText = document.getElementById('modal-final-price').innerText;
+    const finalPrice = parseFloat(finalPriceText) || 0;
+
+    let details = [];
+    
+    // ใส่เครื่องหมาย • ข้างหน้าเพื่อให้ดูเป็น List รายการครับ
+    const selectedSize = document.querySelector('input[name="size"]:checked');
+    if (selectedSize) details.push("• ปริมาณ: " + selectedSize.value);
+
+    document.querySelectorAll('input[name="addon"]:checked').forEach(input => {
+        details.push("• เพิ่ม: " + input.value); 
+    });
+
+    const notes = document.getElementById('modal-notes').value.trim();
+    if (notes) details.push("📝 หมายเหตุ: " + notes);
+
+    // ✅ จุดสำคัญ: เปลี่ยนจาก .join(", ") เป็น .join("<br>") เพื่อให้ขึ้นบรรทัดใหม่
+    const optionsText = details.join("<br>") || "ธรรมดา";
+
+    const cartKey = `bangfood_cart_table_${tableNo}`; 
+    let cartData = sessionStorage.getItem(cartKey);
+    let cart = cartData ? JSON.parse(cartData) : { items: [] };
+
+    cart.items.push({
+        name: name,
+        finalPrice: finalPrice, 
+        options: optionsText,
+        img: itemImg, 
+        quantity: 1
+    });
+
+    sessionStorage.setItem(cartKey, JSON.stringify(cart));
+    alert("เพิ่ม " + name + " ลงตะกร้าเรียบร้อยครับ!");
+    window.location.href = `cart.html?table=${tableNo}`;
+}
+// 1. ดึงข้อมูลรูปภาพจาก URL (น้าเขียนดึง name กับ price ไว้แล้ว ให้เพิ่ม img ครับ)
+const urlParams = new URLSearchParams(window.location.search);
+const pName = urlParams.get('name');
+const pPrice = urlParams.get('price');
+const pImg = urlParams.get('img'); // <--- เพิ่มบรรทัดนี้เพื่อดึงลิงก์รูป
+
+// 2. ปรับฟังก์ชัน addToCart ให้เก็บค่า pImg ลงไปด้วย
+function addToCart() {
+    const tableNo = localStorage.getItem('selectedTable') || '1';
+    const cartKey = 'bangfood_cart_table_' + tableNo;
+    let cartData = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
+
+    // ... (โค้ดคำนวณราคาพิเศษ/ไข่ดาว ของน้า) ...
+
+    const newItem = {
+        name: pName,
+        price: pPrice,
+        finalPrice: totalCalculatedPrice, // ราคารวมที่น้าคำนวณไว้
+        img: pImg, // <--- จุดสำคัญ! ต้องยัดรูปที่ดึงมาจาก URL ลงไปตรงนี้
+        options: selectedOptionsText // พวก "พิเศษ", "ไข่ดาว"
     };
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    cartData.items.push(newItem);
+    sessionStorage.setItem(cartKey, JSON.stringify(cartData));
     
-    // ใช้ var หรือ window.db เพื่อให้ไฟล์ script.js มองเห็นแน่นอน
-    window.db = firebase.database(); 
+    alert("เพิ่มลงตะกร้าแล้ว!");
+    window.location.href = `index.html?table=${tableNo}`;
+}
+
+  // ฟังก์ชันคำนวณราคา
+  function updatePrice() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const basePrice = parseFloat(urlParams.get('price')) || 0;
+    let extraPrice = 0;
+
+    document.querySelectorAll('input:checked').forEach(input => {
+        extraPrice += parseFloat(input.getAttribute('data-modifier')) || 0;
+    });
+
+    const total = basePrice + extraPrice;
+    const finalPriceNode = document.getElementById('modal-final-price');
+    if (finalPriceNode) {
+        finalPriceNode.innerText = total.toFixed(2);
+    }
+  }
+
+  // ตั้งค่า Event Listeners สำหรับการเปลี่ยนราคา
+  document.addEventListener('change', function(e) {
+    if (e.target.name === 'size' || e.target.name === 'addon') {
+        updatePrice();
+    }
+  });
+
+  // Firebase Config
+  const firebaseConfig = {
+      apiKey: "AIza...", 
+      authDomain: "bangfood-cb30f.firebaseapp.com",
+      databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "bangfood-cb30f",
+      storageBucket: "bangfood-cb30f.appspot.com",
+      messagingSenderId: "390955623784",
+      appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+  };
+
+  if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+  }
+  window.db = firebase.database();
 </script>
 
-    
-    <script src="script.js"></script>
+
 </body>
 </html>

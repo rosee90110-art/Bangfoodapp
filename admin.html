@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -9,18 +10,20 @@
 <body onload="loadOrdersRealtime()">
     
     <header class="app-header">
-    <div class="logo-section">
-        <img  class="app-logo"> <h1>BANGFOOD</h1>
-    </div>
+    <h1 class="logo">BANGFOOD</h1>
     
-    <div class="header-buttons">
-        <a href="history.html"style="text-decoration: none;">
-             <button class="btn-logout1">ประวัติการขาย</button>
-        </a>
-        
-        <button onclick="logout()" class="btn-logout">ออกจากระบบ</button>
+    <div class="menu-icon" onclick="toggleDropdown()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div id="myDropdown" class="dropdown-content">
+        <a href="history.html">📜 ประวัติการขาย</a>
+        <a href="#" onclick="logout()" style="color: #ff4444;">🚪 ออกจากระบบ</a>
     </div>
 </header>
+
 
     <div class="admin-tabs-container">
     <button id="tab-pending" class="btn-tab active" onclick="switchTab('pending')">

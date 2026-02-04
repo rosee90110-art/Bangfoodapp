@@ -8,19 +8,28 @@
     
     </head>
 <body>
-   <header class="app-header">
+ 
+   <header id="menu-container"class="app-header">
     <a href="start.html" class="back-link">
-        <i class="fas fa-chevron-left"></i> 
-        <span>กลับ</span>
+        <i class="fas fa-chevron-left"></i> <span>กลับ</span>
     </a>
+    
     <h1 class="bangfoodindex">BANGFOOD</h1>
-    <p class="menu-label">หน้า MENU</p>
-    <div id="table-status-bar" style="text-align: center; color: #ff6347; font-weight: bold; margin-bottom: 10px;">
-    กำลังตรวจสอบเลขโต๊ะ...
-</div>
-   </header>
-   
-    <main class="menu-container">
+    
+    <div class="menu-toggle" onclick="tgl()">
+        
+        <span></span><span></span><span></span>
+    </div>
+
+    <div id="dwr" class="drawer">
+        <a href="index.html" onclick="go(this.href, event)">🏠 หน้าหลัก</a>
+        <a href="cart.html" onclick="go(this.href, event)">🛒 ตะกร้า</a>
+        <a href="track.html" onclick="go(this.href, event)">📍 ติดตาม</a>
+        <a href="#" onclick="tgl()" style="color:#ff4444; border-bottom:none;">❌ ปิดเมนู</a>
+    </div>
+    
+</header>
+   <main class="menu-container">
     <div class="menu-tabs"> 
         <a href="#" class="menu-tab active" data-category="อาหาร" onclick="switchCategory('อาหาร', event)">อาหาร</a>
         <a href="#" class="menu-tab" data-category="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว', event)">ก๋วยเตี๋ยว</a>
@@ -36,46 +45,53 @@
     <div id="drink-container" class="menu-category-content" style="display: none;">
         </div>
 </main>
+    
 
-    <div class="floating-cart-summary-container">
-        <div class="floating-cart-summary">
-            <span id="cart-item-count">0</span> รายการ
-            <span class="separator">|</span>
-            <span id="cart-total">0.00</span> บาท 
-        
-        
-            <a href="cart.html" id="cart-label" class="checkout-button">
-                🍽️
-            </a>
+<div class="curved-nav-container">
+    <div class="nav-bg-curved">
+        <svg viewBox="0 0 400 100" preserveAspectRatio="none">
+            <path d="M0,100 L400,100 L400,40 
+                     C360,40 340,40 330,60 
+                     C320,80 280,80 270,60 
+                     C260,40 240,40 200,40 
+                     C160,40 140,40 130,60 
+                     C120,80 80,80 70,60 
+                     C60,40 40,40 0,40 Z" fill="#121212"/>
+        </svg>
+    </div>
+
+    <div class="nav-buttons-wrapper">
+        <div class="nav-btn-box">
+            <button class="round-btn side" onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+                🛒
+            </button>
+            <span class="label"></span>
+        </div>
+
+        <div class="nav-btn-box main-box">
+            <button class="round-btn center" onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+                🏠
+            </button>
+        </div>
+
+        <div class="nav-btn-box">
+            <button class="round-btn side" onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
+                📍
+            </button>
+            <span class="label"></span>
         </div>
     </div>
+</div>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-    // 1. ดึงค่าโต๊ะจาก URL และแสดงผล
-    const urlParams = new URLSearchParams(window.location.search);
-    const tableNo = urlParams.get('table');
-    const tableDisplay = document.getElementById('table-status-bar');
+  
+    // 1. ประกาศตัวแปร Global ไว้บนสุดเพื่อให้ทุกที่มองเห็น
+    var urlParams = new URLSearchParams(window.location.search);
+    var db; 
 
-    if (tableNo) {
-        localStorage.setItem('selectedTable', tableNo);
-        if (tableDisplay) {
-            tableDisplay.innerText = "📍 โต๊ะที่: " + tableNo;
-            tableDisplay.style.color = "#4CAF50"; // เปลี่ยนเป็นสีเขียวเมื่อเจอโต๊ะ
-        }
-    } else {
-        // กรณีเข้าผ่านลิงก์ตรงไม่มีเลขโต๊ะ ให้ดึงจากที่เคยจำไว้
-        const savedTable = localStorage.getItem('selectedTable');
-        if (savedTable && tableDisplay) {
-            tableDisplay.innerText = "📍 โต๊ะที่: " + savedTable + " (เดิม)";
-        } else if (tableDisplay) {
-            tableDisplay.innerText = "❌ กรุณาสแกน QR Code ที่โต๊ะ";
-            tableDisplay.style.color = "#ff4444";
-        }
-    }
-
-    // 2. ตั้งค่า Firebase
+    // 2. ตั้งค่า Firebase ให้เสร็จก่อนเพื่อน
     const firebaseConfig = {
         apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
         authDomain: "bangfood-cb30f.firebaseapp.com",
@@ -89,9 +105,107 @@
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
-    
-    // ใช้ var หรือ window.db เพื่อให้ไฟล์ script.js มองเห็นแน่นอน
-    window.db = firebase.database(); 
+    db = firebase.database();
+    window.db = db; // ยัดลง window เพื่อให้ไฟล์ script.js มองเห็น
+
+    // 3. ฟังก์ชันโหลดเมนู (แก้ไขให้ดึงข้อมูลได้ชัวร์ขึ้น)
+    function loadMenuFromFirebase() {
+        const productsRef = db.ref('products'); 
+        productsRef.on('value', (snapshot) => {
+            const products = snapshot.val();
+            const foodCont = document.getElementById('food-container');
+            const noodleCont = document.getElementById('noodle-container');
+            const drinkCont = document.getElementById('drink-container');
+
+            if (!foodCont || !products) return;
+
+            foodCont.innerHTML = '';
+            noodleCont.innerHTML = '';
+            drinkCont.innerHTML = '';
+
+            for (let id in products) {
+    const p = products[id];
+    const isOut = p.status === 'out_of_stock';
+    // ดึงเลขโต๊ะมาเพื่อสร้าง Link ที่ถูกต้อง
+    const tableNo = localStorage.getItem('selectedTable') || '1';
+
+    const productHTML = `
+        <div class="menu-item ${isOut ? 'item-disabled' : ''}" style="${isOut ? 'opacity: 0.6;' : ''}">
+            <img src="${p.img}" alt="${p.name}" class="item-image" style="${isOut ? 'filter: grayscale(1);' : ''}">
+            <div class="item-details">
+                <h3 class="item-name">${p.name} ${isOut ? '<span style="color:red;">(หมด)</span>' : ''}</h3>
+                <div class="item-price"><span>${p.price}</span> บาท</div>
+            </div>
+            ${isOut 
+                ? `<button class="add-to-cart-btn" disabled style="background:#888;">หมด</button>` 
+                : `<a href="${p.category === 'เครื่องดื่ม' ? 'drink.html' : 'menu.html'}?name=${encodeURIComponent(p.name)}&price=${p.price}&img=${p.img}&table=${tableNo}" class="add-to-cart-btn"> + เพิ่ม </a>`
+            }
+        </div>`;
+
+    if (p.category === 'อาหาร') foodCont.innerHTML += productHTML;
+    else if (p.category === 'ก๋วยเตี๋ยว') noodleCont.innerHTML += productHTML;
+    else if (p.category === 'เครื่องดื่ม') drinkCont.innerHTML += productHTML;
+}
+        });
+    }
+    function tgl() {
+    const d = document.getElementById('dwr');
+    // ใช้สไตล์สลับการแสดงผลแบบเรียบง่าย
+    if (d.style.display === "block") {
+        d.style.display = "none";
+    } else {
+        d.style.display = "block";
+    }
+}
+// ตัวอย่างฟังก์ชันเพิ่มของลงตะกร้าในหน้าแรก (index.html)
+function addToCart(productName, price, imgUrl) { // <--- ต้องรับค่า imgUrl มาด้วย
+    const tableNo = getTableNo();
+    const cartKey = 'bangfood_cart_table_' + tableNo;
+    let cartData = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
+
+    const newItem = {
+        name: productName,
+        price: price,
+        finalPrice: price,
+        img: imgUrl, // <--- จุดสำคัญ! ต้องเก็บลิงก์รูปไว้ตรงนี้
+        options: "" 
+    };
+
+    cartData.items.push(newItem);
+    sessionStorage.setItem(cartKey, JSON.stringify(cartData));
+    updateFloatingCart(); // อัปเดตแถบสีดำด้านล่าง
+}
+
+function go(u, e) {
+    e.preventDefault();
+    const t = localStorage.getItem('selectedTable') || '1';
+    window.location.href = u.split('?')[0] + "?table=" + t;
+}
+
+    // 4. ฟังก์ชันจัดการเลขโต๊ะ
+    function checkTable() {
+        const display = document.getElementById('table-status-bar');
+        let table = urlParams.get('table') || localStorage.getItem('selectedTable');
+
+        if (table && table !== "null") {
+            localStorage.setItem('selectedTable', table);
+            if (display) {
+                display.innerText = "📍 โต๊ะที่: " + table;
+                display.style.color = "#4CAF50";
+            }
+        } else {
+            if (display) {
+                display.innerText = "❌ กรุณาสแกน QR Code";
+                display.style.color = "#ff4444";
+            }
+        }
+    }
+
+    // 5. รันทุกอย่างเมื่อพร้อม
+    document.addEventListener('DOMContentLoaded', () => {
+        checkTable();
+        loadMenuFromFirebase();
+    });
 </script>
 
     <script src="script.js"></script>

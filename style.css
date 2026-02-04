@@ -1,24 +1,59 @@
-/* 1. จัดการตัว Header หลักให้คงที่ */
+
+/* จัดการ Header ให้เกาะขอบบนและกระจายซ้าย-ขวา */
 .app-header {
     position: sticky;
     top: 0;
-    z-index: 1001;
-    background-color: #121212;
-    transition: all 0.3s ease; /* เพิ่มความนุ่มนวลเวลาเปลี่ยนขนาด */
+    left: 0;
+    width: 100%;
+    height: 70px;            /* ล็อคความสูงให้แน่นอน */
+    background-color: #1b1b1b;
+    display: flex;
+    justify-content: space-between; /* กระจายปุ่มกลับ-ชื่อร้าน-ปุ่มเมนู */
+    align-items: center;
+    padding: 0 15px;
+    z-index: 2000;           /* อยู่เหนือรายการอาหารแน่นอน */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
 
-/* 2. จัดการตัว Tabs หมวดหมู่ให้ตามลงมาต่อจาก Header */
+/* ล็อคแถบ อาหาร/ก๋วยเตี๋ยว ให้ต่อท้าย Header พอดี */
 .menu-tabs {
     position: sticky;
-    top: 70px; /* ระยะความสูงของ Header เพื่อให้ต่อกันพอดี */
+    top: 70px;               /* ต้องเท่ากับความสูง height ของ Header */
+    background-color: #1a1a1a;
+    z-index: 1000;           /* น้อยกว่า Header เพื่อให้เมนูเด้งทับได้ */
     display: flex;
     justify-content: space-around;
-    background-color: #1a1a1a;
-    padding: 1px 0;
-    z-index: 1000;
-    transition: all 0.3s ease; /* ให้ย่อแบบนุ่มนวล */
+    padding: 10px 0;
     border-bottom: 1px solid #333;
 }
+
+/* ตัวเมนู Dropdown (แบบหน้า Admin) */
+.drawer {
+    position: fixed;         /* ใช้ fixed เพื่อให้ลอยตามจอแม้เลื่อนลงลึก */
+    top: 65px;               /* อยู่ใต้ปุ่ม 3 ขีดพอดี */
+    right: 15px;
+    width: 180px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    display: none;           /* ซ่อนไว้รอคลิก */
+    z-index: 3000;           /* สูงที่สุดเพื่อให้ลอยทับทุกอย่าง */
+    overflow: hidden;
+}
+
+/* ลิงก์ในเมนู */
+.drawer a {
+    color: #eee;
+    text-decoration: none;
+    padding: 14px 18px;
+    display: block;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #333;
+}
+
+.drawer a:last-child { border-bottom: none; }
+/* 2. จัดการตัว Tabs หมวดหมู่ให้ตามลงมาต่อจาก Header */
 
 /* 3. สไตล์เมื่อเลื่อนลง (ย่อขนาด) */
 .menu-tabs.shrunk {
@@ -76,27 +111,6 @@ body {
 }
 /* --- 2. ส่วนหัวของแอป (Header) --- */
 
-.app-header h1 { 
-    font-size: 1.8rem; 
-    margin: 5px;
-    padding: 5px;
-    text-align: left; 
-}
-.app-header .back-link {
-    flex-shrink: 0; /* ไม่ให้ถูกบีบ */
-    margin-left: 15px;
-    font-size: 1em; /* เพิ่มขนาดให้อ่านง่ายขึ้น */
-}
-
-/* สำหรับหน้า Admin: (ใช้โค้ดเดิมที่คุณมี) */
-.app-header .btn-logout {
-    flex-shrink: 0;
-}
-.app-header p { 
-    color: var(--text-color-secondary); 
-    font-size: 0.9rem; opacity: 0.8; }
-
-/* --- 3. ส่วนรายการเมนู (Menu Container & Title) --- */
 .menu-container { padding: 20px 15px; }
 .menu-container h2 {
     font-size: 1.5rem;
@@ -190,41 +204,6 @@ body {
     border-radius: 8px;
     font-weight: bold;
     transition: background-color 0.2s;
-}
-
-
-#view-cart-btn:hover { background-color: #9C27B0; }
-/* --- 6. การปรับขนาดสำหรับหน้าจอที่ใหญ่ขึ้น (PC/Tablet) --- */
-@media (min-width: 650px) {
-    /* จำกัดความกว้างของเนื้อหาหลัก */
-    .menu-container,
-    .app-header {
-        max-width: 800px; /* จำกัดความกว้างสูงสุด */
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    /* ปรับขนาดส่วนหัวบนจอใหญ่ */
-    .app-header h1 {
-        font-size: 2.2rem;
-    }
-
-    /* ปรับขนาดรายการเมนูให้มีช่องไฟมากขึ้น */
-    .menu-item {
-        padding: 20px;
-    }
-
-    .item-image {
-        width: 100px;
-        height: 100px;
-    }
-
-    /* จัดปุ่มให้ชิดขวาบนหน้าจอใหญ่ */
-    .add-to-cart-btn {
-        padding: 10px 20px;
-    }
 }
 
 
@@ -930,21 +909,6 @@ body {
 }
 /* ในไฟล์ style.css */
 
-.app-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;       /* ทำให้ Header ค้างเมื่อเลื่อนจอ */
-    top: 0;                 /* ยึดไว้ที่ขอบบนสุด */
-    left: 0;
-    width: 100%;
-    padding: 10px 15px;
-    background-color: #1b1b1b; /* ต้องมีสีพื้นหลัง ไม่งั้นเมนูจะเลื่อนมาทับตัวหนังสือ */
-    min-height: 70px;
-    z-index: 1000;          /* มั่นใจว่า Header อยู่เหนือทุกอย่างในหน้าจอ */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5); /* เพิ่มเงาเล็กน้อยเพื่อให้ดูมีมิติเวลาเลื่อน */
-}
-
 /* ส่วนของปุ่มและชื่อร้านคงเดิมตามที่จัดไว้ */
 .back-button {
     text-decoration: none;
@@ -1504,42 +1468,6 @@ body {
 body {
     padding-bottom: 70px; 
 }
-/*อาหารและเครื่อมดื่ม
-/* ส่วนสำหรับ Tabs (อาหาร / เครื่องดื่ม) */
-.menu-tabs {
-    text-align: center;
-    display: flex;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #555;
-}
-
-.menu-tab {
-    text-decoration: none;
-    color: #999; /* สีข้อความปกติ */
-    font-size: 1.4em;
-    font-weight: 500;
-    padding: 1px 0px 8px 0;
-    margin-right: 20px;
-    cursor: pointer;
-    transition: color 0.2s, border-bottom 0.2s;
-    border-bottom: 3px solid transparent; /* เส้นใสรองรับ Active */
-}
-
-.menu-tab:hover {
-    color: #fff;
-}
-
-/* Tab ที่ถูกเลือกอยู่ (Active) */
-.menu-tab.active {
-    color: #ff7b00; /* สีส้มตามธีม */
-    border-bottom: 3px solid #ff5900; /* ขีดเส้นใต้เมื่อ Active */
-}
-
-/* ส่วนสำหรับ Menu Items */
-.menu-item-card {
-    display: flex; /* เพื่อให้รายการสินค้าแสดงได้ตามปกติ */
-    /* ... (สไตล์เดิมของ item card) ... */
-}
 
 /* ใน style.css: สไตล์สำหรับปุ่ม/ลิงก์ย้อนกลับ */
 .back-to-menu-btn {
@@ -1978,4 +1906,269 @@ body {
 
 .item-notes {
     color: #ff9f43; /* สีโน้ตให้ดูต่างออกไป */
+}
+/* สไตล์ปุ่ม 3 ขีด */
+.menu-icon {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px;
+}
+
+.menu-icon span {
+    width: 25px;
+    height: 3px;
+    background-color: #4CAF50;
+    border-radius: 2px;
+}
+
+/* กล่องเมนูเล็กๆ ที่จะเลื่อนออกมา */
+.dropdown-content {
+    display: none; /* ซ่อนไว้ก่อน */
+    position: absolute;
+    right: 10px; /* ชิดขวา */
+    top: 60px;   /* อยู่ใต้ header */
+    background-color: #2c2c2c;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    border-radius: 8px;
+    z-index: 1000;
+    overflow: hidden;
+    border: 1px solid #444;
+}
+
+/* ลิงก์ข้างในเมนู */
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #3d3d3d;
+}
+
+.dropdown-content a:hover {
+    background-color: #3d3d3d;
+}
+
+/* คลาสสำหรับสั่งให้แสดงเมนู */
+.show { display: block; animation: fadeIn 0.2s; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* ดีไซน์ปุ่มยืนยันใหม่ */
+.confirm-btn {
+    width: 100%;
+    background: linear-gradient(45deg, #ff4b2b, #ff416c); /* ไล่สีส้มแดงแบบดุดัน */
+    color: white;
+    border: none;
+    padding: 18px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 75, 43, 0.4); /* เงาสีส้มฟุ้งๆ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* เอฟเฟกต์ตอนกดหรือเอาเมาส์จิ้ม */
+.confirm-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 10px rgba(255, 75, 43, 0.2);
+}
+
+/* เอฟเฟกต์แสงวิ่งผ่านปุ่ม */
+.confirm-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
+}
+
+.confirm-btn:hover::before {
+    left: 100%;
+}
+/* แถบหัวข้อหลัก */
+
+
+/* ปุ่ม 3 ขีดสีเขียว */
+.menu-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    padding: 5px;
+    z-index: 2001; /* อยู่สูงกว่า Header */
+}
+
+.menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #4CAF50; /* สีเขียวตามหน้าแอดมิน */
+    margin: 4px 0;
+}
+
+/* กล่องเมนูที่กดออกมา (Drawer) */
+.drawer {
+    position: absolute;
+    top: 55px;
+    right: 10px;
+    width: 160px;
+    background: #2a2a2a;
+    z-index: 2000; /* ดันให้ลอยทับแถบเมนู (500) และรายการอาหาร */
+    display: none;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+}
+
+.drawer.active {
+    display: block; /* แสดงผลเมื่อกด */
+}
+
+/* ลิงก์ด้านในเมนู */
+.drawer a {
+    color: white;
+    text-decoration: none;
+    padding: 12px 15px;
+    display: block;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #333;
+    transition: 0.2s;
+}
+
+.drawer a:hover {
+    background: #333;
+    color: #4CAF50;
+}
+.track-item {
+    background: #252525;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    border: 1px solid #444;
+}
+
+.track-item img {
+    border: 1px solid #555;
+}
+/* ช่วยให้รายการที่ขึ้นบรรทัดใหม่ในตะกร้าดูห่างกันกำลังดี */
+.cart-item small {
+    line-height: 1.5; 
+    display: block;
+    margin-top: 5px;
+}
+.receipt-floating-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #41ff7aff; /* สีเขียวเหมือนยอดรวม */
+    color: #000;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 1000;
+    cursor: pointer;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { bottom: 30px; }
+    50% { bottom: 40px; }
+}
+.curved-nav-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 110px; /* ลดความสูงรวมลงเล็กน้อย */
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.nav-bg-curved {
+    position: absolute;
+    bottom: -1px;
+    width: 100%;
+    height: 90px; /* ปรับฐานให้ดูแน่นขึ้น */
+    z-index: 1;
+    pointer-events: auto;
+}
+
+.nav-bg-curved svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 -4px 8px rgba(0,0,0,0.5));
+}
+
+.nav-buttons-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding-bottom: 1px; 
+    pointer-events: auto;
+}
+
+.nav-btn-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+/* ปุ่มข้าง */
+.round-btn.side {
+    width: 58px;
+    height: 58px;
+    background: #1e1e1e;
+    color: white;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    margin-bottom: 2px;
+}
+
+/* 📍 ปุ่มบ้านขยับลงมาอีกนิด */
+.round-btn.center {
+    width: 78px;
+    height: 78px;
+    background: linear-gradient(145deg, #ff9800, #f44336);
+    border-radius: 50%;
+    border: 2px solid #f15000;
+    font-size: 2.5rem;
+    margin-bottom: 22px; /* 👈 ลดจาก 35px ลงมาเหลือ 22px เพื่อให้ปุ่มบ้านลงต่ำมาอีกนิด */
+    box-shadow: 0 8px 20px rgba(239, 36, 0, 0.45);
+}
+
+.label {
+    font-size: 0.75rem;
+    color: #ffffff;
+    font-weight: 500;
+    text-shadow: 1px 1px 3px rgba(0,0,0,1);
+    margin-top: 5px;
 }

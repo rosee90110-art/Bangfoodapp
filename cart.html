@@ -5,17 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตะกร้าสินค้า - BANGFOOD</title>
     <link rel="stylesheet" href="style.css"> 
+    <style>
+        /* 📍 เพิ่มสไตล์ส่วนปุ่มที่ตรึงไว้ด้านล่าง */
+        .cart-footer-fixed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(18, 18, 18, 0.95); /* พื้นหลังดำโปร่งแสง */
+            backdrop-filter: blur(10px); /* เอฟเฟกต์กระจกฝ้า */
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        .cart-total-summary h3 {
+            margin: 0 0 15px 0;
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        #final-total-amount {
+            color: #ffff41; /* สีเหลืองสว่าง */
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        .checkout-btn-large {
+            width: 100%;
+            background: linear-gradient(135deg, #ff9800, #f44336); /* ไล่สีปุ่มให้หรู */
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+            transition: 0.3s;
+        }
+
+        .checkout-btn-large:active {
+            transform: scale(0.98);
+        }
+
+        
+    </style>
 </head>
 
 <body onload="renderCartItems()">
     <header class="app-header">
-    <a href="javascript:void(0)" class="back-link" onclick="goBackToIndex()">
-        <i class="fas fa-chevron-left"></i> 
-        <span>กลับ</span>
-    </a>
-    <h1 class="bangfood">BANGFOOD</h1>
-    <p class="menu-label">หน้า MENU</p>
-</header>
+        <a href="javascript:void(0)" class="back-link" onclick="goBackToIndex()">
+            <i class="fas fa-chevron-left"></i> 
+            <span>กลับ</span>
+        </a>
+        <h1 class="bangfood">BANGFOOD</h1>
+        <p class="menu-label">หน้า MENU</p>
+    </header>
 
     <div class="cart-container">
         <div class="cart-header-row">
@@ -27,151 +77,151 @@
 
         <div id="cart-items-list" class="cart-items-list">
         </div>
+    </div>
 
+    <div class="cart-footer-fixed">
         <div class="cart-total-summary">
             <h3>ยอดรวมทั้งหมด: <span id="final-total-amount">0.00</span> บาท</h3>
         </div>
 
-        <div id="order-action-area" style="padding-bottom: 20px;">
-            <p id="order-confirmed-message" style="display: none; color: #4CAF50; font-weight: bold; font-size: 1.2em; text-align: center; padding: 15px 0;"></p>
-
+        <div id="order-action-area">
+            <p id="order-confirmed-message" style="display: none; color: #4CAF50; font-weight: bold; font-size: 1.2em; text-align: center; padding: 10px 0;"></p>
             <button id="checkout-btn" class="checkout-btn-large" onclick="placeOrder()"> 
                 ยืนยันคำสั่งซื้อ (ชำระเงิน)
             </button>
-
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<script>
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
             authDomain: "bangfood-cb30f.firebaseapp.com",
             databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
             projectId: "bangfood-cb30f", 
-            storageBucket: "bangfood-cb30f.appspot.com", // ต้องมีคอมม่าปิดท้ายตรงนี้ครับ!
+            storageBucket: "bangfood-cb30f.appspot.com",
             messagingSenderId: "390955623784",
             appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-        }; // ปีกกาปิดอันเดียว ถูกต้องแล้วครับ
+        };
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         var db = firebase.database(); 
+
+        function getTableNo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let table = urlParams.get('table');
+            if (table && table !== 'null') {
+                localStorage.setItem('selectedTable', table);
+                return table;
+            }
+            return localStorage.getItem('selectedTable') || '1';
+        }
+
+        function renderCartItems() {
+            const listContainer = document.getElementById('cart-items-list');
+            const totalAmountDisplay = document.getElementById('final-total-amount');
+            const tableNo = getTableNo();
+            const cartKey = 'bangfood_cart_table_' + tableNo;
+            
+            const cartData = sessionStorage.getItem(cartKey);
+            const currentCart = cartData ? JSON.parse(cartData) : { items: [] };
+
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+            let grandTotal = 0;
+
+            const tableDisplay = document.getElementById('table-display-info');
+            if (tableDisplay) tableDisplay.innerText = " โต๊ะที่: " + tableNo;
+
+            if (!currentCart.items || currentCart.items.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#888;">ตะกร้าว่างครับ</p>';
+                if (totalAmountDisplay) totalAmountDisplay.textContent = '0.00';
+                return;
+            }
+
+            currentCart.items.forEach((item, index) => {
+                const itemPrice = parseFloat(item.finalPrice) || 0;
+                grandTotal += itemPrice;
+                
+                listContainer.innerHTML += `
+                    <div class="cart-item" style="display:flex; align-items:center; padding:12px; border-bottom:1px solid #444; color:white; background: #252525; margin-bottom: 8px; border-radius: 10px; gap: 12px;">
+                        <img src="${item.img || 'https://via.placeholder.com/50'}" style="width: 55px; height: 55px; border-radius: 8px; object-fit: cover;">
+                        <div style="flex: 1;">
+                            <p style="margin:0; font-weight: bold; font-size: 1rem;">${item.name}</p>
+                            <small style="color: #aaa; display: block; line-height: 1.4; margin-top: 4px;">${item.options || ''}</small>
+                        </div>
+                        <div style="text-align:right; min-width: 70px;">
+                            <p style="margin:0; font-weight: bold; color: #ffff41;">${itemPrice.toFixed(2)}</p>
+                            <button onclick="removeItem(${index})" style="color: #ff4444; background: none; border: 1px solid #ff4444; border-radius: 5px; padding: 2px 8px; margin-top: 5px; cursor: pointer; font-size: 0.75rem;">
+                                ลบ
+                            </button>
+                        </div>
+                    </div>`;
+            });
+            if (totalAmountDisplay) totalAmountDisplay.textContent = grandTotal.toFixed(2);
+        }
+
+        // ฟังก์ชันลบสินค้า (น้าอย่าลืมฟังก์ชันนี้นะครับ)
+        window.removeItem = function(index) {
+            const tableNo = getTableNo();
+            const cartKey = 'bangfood_cart_table_' + tableNo;
+            let cartData = JSON.parse(sessionStorage.getItem(cartKey));
+            cartData.items.splice(index, 1);
+            sessionStorage.setItem(cartKey, JSON.stringify(cartData));
+            renderCartItems();
+        }
+
+        window.placeOrder = function() {
+            const tableNo = getTableNo();
+            const cartKey = 'bangfood_cart_table_' + tableNo;
+            const cartData = JSON.parse(sessionStorage.getItem(cartKey));
+
+            if (!cartData || cartData.items.length === 0) return alert("ไม่มีสินค้าในตะกร้า!");
+
+            const checkoutBtn = document.getElementById('checkout-btn');
+            checkoutBtn.disabled = true;
+            checkoutBtn.innerText = "กำลังส่งออเดอร์...";
+
+            const orderItems = cartData.items.map(item => ({
+                name: item.name,
+                finalPrice: parseFloat(item.finalPrice) || 0, 
+                options: item.options || '',
+                img: item.img || '',
+                status: 'รอดำเนินการ'
+            }));
+
+            const orderData = {
+                tableNumber: tableNo,
+                items: orderItems,
+                total: orderItems.reduce((s, i) => s + (i.finalPrice), 0),
+                status: 'รอดำเนินการ',
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            db.ref('orders').push(orderData).then(() => {
+                sessionStorage.removeItem(cartKey);
+                alert("ส่งคำสั่งซื้อเรียบร้อย!");
+                window.location.href = `track.html?table=${tableNo}`;
+            }).catch(err => {
+                checkoutBtn.disabled = false;
+                checkoutBtn.innerText = "ยืนยันคำสั่งซื้อ (ชำระเงิน)";
+                alert("เกิดข้อผิดพลาด: " + err.message);
+            });
+        };
+
+        function goBackToIndex() { 
+            const tableNo = getTableNo();
+            window.location.href = `index.html?table=${tableNo}`; 
+        }
+
+        function goToTracking() { 
+            const tableNo = getTableNo();
+            window.location.href = `track.html?table=${tableNo}`; 
+        }
     </script>
-    
-   <script>
-// 1. ฟังก์ชันดึงเลขโต๊ะ
-function getTableNo() {
-    const urlParams = new URLSearchParams(window.location.search);
-    let table = urlParams.get('table');
-    if (table && table !== 'null') {
-        localStorage.setItem('selectedTable', table);
-        return table;
-    }
-    return localStorage.getItem('selectedTable') || '1';
-}
-
-// 2. แสดงรายการในตะกร้า (ปรับให้รองรับการขึ้นบรรทัดใหม่ของตัวเลือก)
-function renderCartItems() {
-    const listContainer = document.getElementById('cart-items-list');
-    const totalAmountDisplay = document.getElementById('final-total-amount');
-    const tableNo = getTableNo();
-    const cartKey = 'bangfood_cart_table_' + tableNo;
-    
-    const cartData = sessionStorage.getItem(cartKey);
-    const currentCart = cartData ? JSON.parse(cartData) : { items: [] };
-
-    if (!listContainer) return;
-    listContainer.innerHTML = '';
-    let grandTotal = 0;
-
-    const tableDisplay = document.getElementById('table-display-info');
-    if (tableDisplay) tableDisplay.innerText = " โต๊ะที่: " + tableNo;
-
-    if (!currentCart.items || currentCart.items.length === 0) {
-        listContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#888;">ตะกร้าว่างครับ</p>';
-        if (totalAmountDisplay) totalAmountDisplay.textContent = '0.00';
-        return;
-    }
-
-    currentCart.items.forEach((item, index) => {
-        const itemPrice = parseFloat(item.finalPrice) || 0;
-        grandTotal += itemPrice;
-        
-        listContainer.innerHTML += `
-            <div class="cart-item" style="display:flex; align-items:center; padding:12px; border-bottom:1px solid #444; color:white; background: #252525; margin-bottom: 8px; border-radius: 10px; gap: 12px;">
-                <img src="${item.img || 'https://via.placeholder.com/50'}" style="width: 55px; height: 55px; border-radius: 8px; object-fit: cover;">
-                
-                <div style="flex: 1;">
-                    <p style="margin:0; font-weight: bold; font-size: 1rem;">${item.name}</p>
-                    <small style="color: #aaa; display: block; line-height: 1.4; margin-top: 4px;">${item.options || ''}</small>
-                </div>
-                
-                <div style="text-align:right; min-width: 70px;">
-                    <p style="margin:0; font-weight: bold; color: #ffff41;">${itemPrice.toFixed(2)}</p>
-                    <button onclick="removeItem(${index})" style="color: #ff4444; background: none; border: 1px solid #ff4444; border-radius: 5px; padding: 2px 8px; margin-top: 5px; cursor: pointer; font-size: 0.75rem;">
-                        ลบ
-                    </button>
-                </div>
-            </div>`;
-    });
-    if (totalAmountDisplay) totalAmountDisplay.textContent = grandTotal.toFixed(2);
-}
-
-// 3. ฟังก์ชันสั่งซื้อ (แก้ไขจุด Error 'price undefined')
-window.placeOrder = function() {
-    const tableNo = getTableNo();
-    const cartKey = 'bangfood_cart_table_' + tableNo;
-    const cartData = JSON.parse(sessionStorage.getItem(cartKey));
-
-    if (!cartData || cartData.items.length === 0) return alert("ไม่มีสินค้าในตะกร้า!");
-
-    // 1. ปิดปุ่มทันทีเพื่อป้องกันการกดเบิ้ล
-    const checkoutBtn = document.getElementById('checkout-btn');
-    checkoutBtn.disabled = true;
-    checkoutBtn.innerText = "กำลังส่งออเดอร์...";
-
-    const orderItems = cartData.items.map(item => ({
-        name: item.name,
-        finalPrice: parseFloat(item.finalPrice) || 0, 
-        options: item.options || '',
-        img: item.img || '',
-        status: 'รอดำเนินการ' // ใส่สถานะที่ตัวสินค้าด้วย
-    }));
-
-    const orderData = {
-        tableNumber: tableNo,
-        items: orderItems,
-        total: orderItems.reduce((s, i) => s + (i.finalPrice), 0),
-        status: 'รอดำเนินการ',
-        timestamp: firebase.database.ServerValue.TIMESTAMP
-    };
-
-    // 2. ใช้ push().set() เพื่อสร้างออเดอร์ใหม่แบบไม่ทับของเดิม แต่หน้า Track จะดึงมาทั้งหมด
-    db.ref('orders').push(orderData).then(() => {
-        sessionStorage.removeItem(cartKey);
-        alert("ส่งคำสั่งซื้อเรียบร้อย!");
-        window.location.href = `track.html?table=${tableNo}`;
-    }).catch(err => {
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerText = "ยืนยันคำสั่งซื้อ (ชำระเงิน)";
-        alert("เกิดข้อผิดพลาด: " + err.message);
-    });
-};
-// ฟังก์ชันสำหรับปุ่มกลับหน้าหลัก
-function goBackToIndex() { 
-    const tableNo = getTableNo();
-    window.location.href = `index.html?table=${tableNo}`; 
-}
-
-// ฟังก์ชันสำหรับปุ่มไปหน้าติดตามสถานะ
-function goToTracking() { 
-    const tableNo = getTableNo();
-    window.location.href = `track.html?table=${tableNo}`; 
-}
-</script>
 </body>
 </html>

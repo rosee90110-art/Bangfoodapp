@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Center | BANGFOOD</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #ff9800, #f44336);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: #0a0a0a; /* ดำสนิทแบบพรีเมียม */
+            color: #fff;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ส่วนหัว */
+        .admin-nav {
+            padding: 40px 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .admin-nav h1 {
+            font-size: 1.4rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            margin: 0;
+        }
+
+        .container { padding: 25px; max-width: 500px; margin: 0 auto; }
+
+        /* การ์ดสถิติ (Summary) */
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 24px;
+            text-align: center;
+        }
+
+        .stat-card span { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card h2 { 
+            margin: 10px 0 0; font-size: 1.8rem; 
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* เมนูคำสั่งหลัก (Menu Grid) */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .admin-card {
+            display: flex;
+            align-items: center;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            border-radius: 24px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .admin-card:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
+
+        .icon-circle {
+            width: 55px;
+            height: 55px;
+            background: var(--primary-gradient);
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
+        }
+
+        .card-info b { display: block; font-size: 1.1rem; font-weight: 400; margin-bottom: 4px; }
+        .card-info small { color: #666; font-size: 0.85rem; }
+
+        .footer-link {
+            display: block;
+            text-align: center;
+            margin-top: 50px;
+            color: #444;
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="admin-nav">
+        <h1>ADMIN CENTER</h1>
+        <a href="start.html" style="text-decoration:none; font-size:1.5rem;">🏠</a>
+    </header>
+
+    <div class="container">
+        <div class="stats-row">
+            <div class="stat-card">
+                <span>ออเดอร์วันนี้</span>
+                <h2 id="order-count">0</h2>
+            </div>
+            <div class="stat-card">
+                <span>ยอดขาย (฿)</span>
+                <h2 id="sales-total">0</h2>
+            </div>
+        </div>
+
+        <div class="admin-grid">
+            <a href="admin_orders.html" class="admin-card">
+                <div class="icon-circle">📑</div>
+                <div class="card-info">
+                    <b>จัดการออเดอร์</b>
+                    <small>ดูออเดอร์ใหม่และสถานะอาหาร</small>
+                </div>
+            </a>
+
+            <a href="admin_products.html" class="admin-card">
+                <div class="icon-circle">🥘</div>
+                <div class="card-info">
+                    <b>จัดการเมนูอาหาร</b>
+                    <small>แก้ไขราคา, รูป และเปิด-ปิดเมนู</small>
+                </div>
+            </a>
+
+            <a href="admin_tables.html" class="admin-card">
+                <div class="icon-circle">🪑</div>
+                <div class="card-info">
+                    <b>จัดการโต๊ะ</b>
+                    <small>สร้าง QR Code และดูสถานะโต๊ะ</small>
+                </div>
+            </a>
+        </div>
+
+        <a href="start.html" class="footer-link">EXIT SYSTEM</a>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // ใช้ Firebase Config เดิมของน้านะครับ
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+            authDomain: "bangfood-cb30f.firebaseapp.com",
+            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "bangfood-cb30f",
+            storageBucket: "bangfood-cb30f.appspot.com",
+            messagingSenderId: "390955623784",
+            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+        };
+        
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // ฟังก์ชันดึงสรุปยอดแบบ Real-time
+        function loadDashboard() {
+            db.ref('orders').on('value', (snapshot) => {
+                const orders = snapshot.val();
+                if(orders) {
+                    const count = Object.keys(orders).length;
+                    document.getElementById('order-count').innerText = count;
+                    // ยอดขายสามารถวนลูปบวกเพิ่มจากข้อมูลออเดอร์ได้ครับ
+                }
+            });
+        }
+
+        window.onload = loadDashboard;
+    </script>
+</body>
+</html>

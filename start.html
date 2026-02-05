@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -6,94 +5,285 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ยินดีต้อนรับสู่ BANGFOOD</title>
     <link rel="stylesheet" href="style.css">
+    
     <style>
-        /* CSS สำหรับหน้านี้โดยเฉพาะ อาจรวมใน style.css ก็ได้ */
+        /* 🎥 Background Video Setup */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 0;
+        }
+
+        /* 📍 3 ขีดอันเล็ก (Minimal Style) */
+        .top-header {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+
+        .menu-toggle {
+            display: flex;
+            gap: 4px;
+            right: 0;
+            top: 10px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .menu-toggle span {
+            width: 15px; /* เล็กลงตามคำขอ */
+            height: 1.5px;
+            background-color: white;
+        }
+
+        /* 📋 Admin Dropdown (ขนาดเล็ก ไม่บังจอ) */
+        .admin-dropdown {
+            position: fixed;
+            top: 40px;
+            right: 20px;
+            width: 180px;
+            background: rgba(20, 20, 20, 0);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 1002;
+            display: none; /* ซ่อนไว้ก่อน */
+            overflow: hidden;
+            animation: fadeInDown 0.3s ease-out;
+        }
+
+        .admin-dropdown.active {
+            display: block; /* สั่งให้โชว์ */
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ff4b2b;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .close-item {
+            padding: 12px;
+            color: #555;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 🏠 Main Container */
         .landing-container {
+            position: relative;
+            z-index: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            text-align: center;
-            padding: 20px;
-        }
-        .landing-btn-group {
-            display: flex;
-            flex-direction: column; /* เรียงปุ่มแนวตั้งบนมือถือ */
-            gap: 20px;
-            width: 90%;
-            max-width: 400px;
-            margin-top: 30px;
-        }
-        .landing-button {
-            padding: 15px 30px;
-            font-size: 1.2em;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: transform 0.2s, box-shadow 0.2s;
             color: white;
-            font-weight: bold;
         }
-        #customer-btn {
-            background-color: #3027b0; /* สีม่วงหลัก */
+
+        .app-header-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: 5px;
+    margin-bottom: 5px;
+    color: white;
+    /* 📍 เพิ่มเงาแบบ 3 ชั้น: เงาขอบชัด, เงาฟุ้ง และเงาลึก */
+    text-shadow: 
+        5px 5px 7px rgba(0, 0, 0, 0.8),    /* ชั้นที่ 1: เน้นขอบตัวอักษรให้ชัด */
+        0 10px 20px rgba(0, 0, 0, 0.5),   /* ชั้นที่ 2: เงาฟุ้งนุ่มๆ ให้ดูมีมิติ */
+        0 20px 40px rgba(0, 0, 0, 0.4);   /* ชั้นที่ 3: เงาลึกเพื่อให้ตัวหนังสือดู 'ลอย' ออกมา */
+}
+        .landing-container p {
+            font-weight: 200;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.7);
         }
-        #admin-btn {
-            background-color: #9c2929; /* สีเขียวสำหรับแอดมิน */
+
+        /* 🔘 Minimal Button */
+        .landing-btn-group {
+            margin-top: 16px;
+            width: 250px;
         }
+
+        .landing-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            transition: 0.4s;
+            cursor: pointer;
+        }
+
         .landing-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        /* สำหรับหน้าจอ PC ให้ปุ่มอยู่แนวนอน */
-        @media (min-width: 600px) {
-            .landing-btn-group {
-                flex-direction: row; /* เรียงปุ่มแนวนอนบน PC */
-            }
+            background: white;
+            color: black;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
 
-<div class="landing-container">
-    <h1 class="app-header-title" style="font-size: 3em;">BANGFOOD</h1>
-    <p style="font-size: 1.1em; margin-top: 10px;">กรุณาเลือกโหมดการใช้งาน:</p>
-
-   <div class="landing-btn-group">
-    <button onclick="customerStart()" class="landing-button" id="customer-btn" style="border: none; cursor: pointer; width: 100%;">
-        ลูกค้า (สแกนสั่งอาหาร)
-    </button>
+    <video autoplay muted loop playsinline class="video-background">
+        <source src="intro.mp4" type="video/mp4">
+    </video>
     
-    <a href="admin.html" id="admin-btn" class="landing-button">
-        ผู้ดูแลระบบ (Admin)
-    </a>
-</div>
-</div>
-<script>
-function customerStart() {
-    // 1. ดึงค่า Parameters จาก URL ที่สแกนมา (เช่น ?table=5)
-    const urlParams = new URLSearchParams(window.location.search);
-    const table = urlParams.get('table');
+    <div class="video-overlay"></div>
+    
+    <div class="top-header">
+        <div class="menu-toggle" onclick="toggleAdminMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
 
-    if (table) {
-        // 2. ถ้าเจอเลขโต๊ะ ให้บันทึกลงเครื่องและพ่วงไปกับ URL ใหม่
-        localStorage.setItem('selectedTable', table);
-        window.location.href = `index.html?table=${table}`;
-    } else {
-        // 3. ถ้าไม่มีเลขโต๊ะ (เช่น พิมพ์เข้าเว็บเอง) ให้ไปหน้า index ปกติ
-        window.location.href = `index.html`;
+ <div id="admin-dropdown" class="admin-dropdown">
+    <a href="admin.html" class="dropdown-item">⚙️ โหมดผู้ดูแลระบบ</a>
+    <div class="dropdown-divider"></div>
+    <div class="language-select dropdown-item" onclick="switchLanguage()">
+        <span id="lang-text">🌐 TH | EN</span>
+    </div>
+</div>
+
+<div class="landing-container">
+    <h1 class="app-header-title">BANGFOOD</h1>
+    <p id="welcome-msg">ร้านบังอะซิล ยินดีให้บริการครับ</p>
+
+    <div class="landing-btn-group">
+        <button onclick="customerStart()" class="landing-button" id="customer-btn">
+            สั่งอาหารกดที่นี่
+        </button>
+    </div>
+</div>
+    <div class="landing-container">
+        <h1 class="app-header-title">BANGFOOD</h1>
+        <p>ร้านบังอะซิล ยินดีให้บริการครับ</p>
+
+        <div class="landing-btn-group">
+            <button onclick="customerStart()" class="landing-button" id="customer-btn">
+                สั่งอาหารกดที่นี่
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ✅ แก้ไข: ฟังก์ชันสลับการเปิด-ปิด Dropdown
+        function toggleAdminMenu() {
+            const dropdown = document.getElementById('admin-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // ปิดเมนูเมื่อคลิกที่อื่นข้างนอก
+        window.onclick = function(event) {
+            if (!event.target.closest('.top-header') && !event.target.closest('.admin-dropdown')) {
+                document.getElementById('admin-dropdown').classList.remove('active');
+            }
+        }
+
+        function customerStart() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const table = urlParams.get('table');
+
+            if (table) {
+                localStorage.setItem('selectedTable', table);
+                window.location.href = `index.html?table=${table}`;
+            } else {
+                window.location.href = `index.html`;
+            }
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const table = urlParams.get('table');
+            if (table) {
+                localStorage.setItem('selectedTable', table);
+                console.log("บันทึกเลขโต๊ะเตรียมไว้แล้ว: " + table);
+            }
+        }
+        // 1. คลังคำแปล (น้าเพิ่มคำแปลหน้าอื่นๆ ใส่ในนี้ได้เลย)
+const translations = {
+    th: {
+        welcome: "ร้านบังอะซิล ยินดีให้บริการครับ",
+        orderBtn: "สั่งอาหารกดที่นี่",
+        adminMode: "⚙️ โหมดผู้ดูแลระบบ"
+    },
+    en: {
+        welcome: "Welcome to Bang Azil Food",
+        orderBtn: "Order Now",
+        adminMode: "⚙️ Admin Mode"
     }
+};
+
+// 2. ฟังก์ชันอัปเดตข้อความในหน้าเว็บ
+function updatePageLanguage(lang) {
+    document.getElementById('welcome-msg').innerText = translations[lang].welcome;
+    document.getElementById('customer-btn').innerText = translations[lang].orderBtn;
+    // เปลี่ยนข้อความในเมนูด้วย
+    document.querySelector('.dropdown-item[href="admin.html"]').innerText = translations[lang].adminMode;
+    
+    // บันทึกลงเครื่อง
+    localStorage.setItem('appLang', lang);
 }
 
-// ตรวจสอบทันทีที่เข้าหน้า start.html ว่ามีเลขโต๊ะมาไหม
-window.onload = function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const table = urlParams.get('table');
-    if (table) {
-        localStorage.setItem('selectedTable', table);
-        console.log("บันทึกเลขโต๊ะเตรียมไว้แล้ว: " + table);
-    }
+// 3. ฟังก์ชันสลับภาษา (เมื่อกดที่ปุ่ม 🌐)
+function switchLanguage() {
+    let currentLang = localStorage.getItem('appLang') || 'th';
+    let newLang = (currentLang === 'th') ? 'en' : 'th';
+    updatePageLanguage(newLang);
 }
-</script>
 
+// 4. เช็คภาษาทันทีที่เปิดหน้าเว็บ
+window.addEventListener('DOMContentLoaded', () => {
+    let savedLang = localStorage.getItem('appLang') || 'th';
+    updatePageLanguage(savedLang);
+});
+    </script>
 </body>
 </html>

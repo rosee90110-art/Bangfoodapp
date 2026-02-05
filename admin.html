@@ -1,58 +1,76 @@
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>หน้าจอแอดมิน - คำสั่งซื้อใหม่</title>
+    <title>หน้าจอแอดมิน - BANGFOOD</title>
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body onload="loadOrdersRealtime()">
     
     <header class="app-header">
-    <h1 class="logo">BANGFOOD</h1>
-    
-    <div class="menu-icon" onclick="toggleDropdown()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-
-    <div id="myDropdown" class="dropdown-content">
-        <a href="history.html">📜 ประวัติการขาย</a>
-        <a href="#" onclick="logout()" style="color: #ff4444;">🚪 ออกจากระบบ</a>
-    </div>
-</header>
-
-
-    <div class="admin-tabs-container">
-    <button id="tab-pending" class="btn-tab active" onclick="switchTab('pending')">
-        📝 <br> รอดำเนินการ
-    </button>
-    <button id="tab-completed" class="btn-tab" onclick="switchTab('completed')">
-        ✅ <br> ชำระเงินแล้ว
-    </button>
-    <button id="tab-menu" class="btn-tab" onclick="switchTab('menu')">
-        🍴 <br> จัดการเมนู
-    </button>
-</div>
-
-<div id="menu-section" class="tab-content" style="display:none; padding: 20px;">
-    <div class="section-title">🍴 เปิด-ปิดรายการอาหาร</div>
-    <div id="admin-menu-list">
+        <h1 class="logo">BANGFOOD</h1>
+        <div class="menu-icon" onclick="toggleDropdown()">
+            <span></span><span></span><span></span>
         </div>
-</div>
+        <div id="myDropdown" class="dropdown-content">
+            <a href="history.html">📜 ประวัติการขาย</a>
+            <a href="#" onclick="logoutAdmin()" style="color: #ff4444;">🚪 ออกจากระบบ</a>
+        </div>
+    </header>
 
-<div id="pending-section" class="tab-content">
-    <div class="section-title">📌 คำสั่งซื้อที่กำลังทำ</div>
-    <div id="orders-list-container"></div>
-</div>
+    <main style="padding-bottom: 120px;">
+        <div id="pending-section" class="tab-content">
+            <div class="section-title">📌 คำสั่งซื้อที่กำลังทำ</div>
+            <div id="orders-list-container"></div>
+        </div>
 
-<div id="completed-section" class="tab-content" style="display: none;">
-    <div class="section-title">✅ รายการที่พร้อมเสิร์ฟ/จ่ายแล้ว</div>
-    <div id="completed-orders-container"></div>
+        <div id="completed-section" class="tab-content" style="display: none;">
+            <div class="section-title">✅ รายการที่พร้อมเสิร์ฟ/จ่ายแล้ว</div>
+            <div id="completed-orders-container"></div>
+        </div>
+
+        <div id="menu-section" class="tab-content" style="display:none; padding: 20px;">
+            <div class="section-title">🍴 เปิด-ปิดรายการอาหาร</div>
+            <div id="admin-menu-list"></div>
+        </div>
+    </main>
+
+    <div class="curved-nav-container">
+        <div class="nav-bg-curved">
+            <svg viewBox="0 0 400 100" preserveAspectRatio="none">
+                <path d="M0,100 L400,100 L400,40 
+                         C360,40 340,40 330,60 
+                         C320,80 280,80 270,60 
+                         C260,40 240,40 200,40 
+                         C160,40 140,40 130,60 
+                         C120,80 80,80 70,60 
+                         C60,40 40,40 0,40 Z" fill="#121212"/>
+            </svg>
+        </div>
+<div class="luxury-dock-container">
+    <div class="luxury-dock-bar">
+        <div class="lux-item" onclick="switchTab('pending')">
+            <button id="tab-pending" class="lux-btn active">
+                <span class="lux-icon">📝</span>
+            </button>
+            <span class="lux-label">รอทำ</span>
+        </div>
+
+        <div class="lux-item main-item" onclick="window.location.href='admin_center.html'">
+            <button class="lux-home-btn">
+                <span class="lux-home-icon">🏠</span>
+            </button>
+        </div>
+
+        <div class="lux-item" onclick="switchTab('completed')">
+            <button id="tab-completed" class="lux-btn active">
+                <span class="lux-icon">✅</span>
+            </button>
+            <span class="lux-label">จ่ายแล้ว</span>
+        </div>
+    </div>
 </div>
-    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
@@ -74,7 +92,7 @@
     
     // เรียกใช้ฟังก์ชันทันทีที่หน้าจอเริ่มโหลด
     checkAdminAccess();
-
+    
         // ... (โค้ด firebaseConfig ที่คุณให้มา) ...
         const firebaseConfig = {
             apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
@@ -96,8 +114,96 @@
                 window.location.href = "start.html";
             }
         }
+        
     </script>
     
     <script src="admin.js"></script>
 </body>
 </html>
+<style>
+    /* 📍 คอนเทนเนอร์คุมตำแหน่งลอยตัว */
+.luxury-dock-container {
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+/* 📍 ตัวแท่งกระจก (Glassmorphism Dock) */
+.luxury-dock-bar {
+    display: flex;
+    align-items: center;
+    background: rgba(25, 25, 25, 0.7); /* โปร่งแสง */
+    backdrop-filter: blur(25px) saturate(180%); /* เบลอและเพิ่มความสดของสีหลังกระจก */
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    padding: 10px 30px;
+    border-radius: 45px;
+    border: 1px solid rgba(255, 255, 255, 0.15); /* ขอบกระจกมีแสงสะท้อน */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 
+                inset 0 0 10px rgba(255, 255, 255, 0.05);
+    gap: 20px;
+    pointer-events: auto;
+}
+
+/* ส่วนประกอบใน Dock */
+.lux-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* ปุ่มสถานะทั่วไป */
+.lux-btn {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 4px;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+.lux-icon { font-size: 1.2rem; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
+.lux-label { font-size: 0.65rem; color: #777; font-weight: 300; letter-spacing: 0.5px; }
+
+/* 📍 สถานะ Active เมื่อปุ่มถูกเลือก */
+.lux-btn.active {
+    background: linear-gradient(145deg, #333, #222);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transform: translateY(-8px) scale(1.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+.lux-btn.active + .lux-label { color: #fff; font-weight: 500; }
+
+/* 📍 ปุ่ม Home กลางหน้าจอ (Luxury Neumorphism) */
+.lux-home-btn {
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(145deg, #ff8a00, #e52d27); /* ไล่สีส้มแดงหรูๆ */
+    border-radius: 50%;
+    border: 4px solid #f22800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px; /* ดันให้ลอยสูง */
+    box-shadow: 0 10px 25px rgba(229, 45, 39, 0.5), 
+                inset 0 4px 10px rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.lux-home-icon { font-size: 1.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+
+.lux-home-btn:hover { transform: scale(1.1) translateY(-5px); }
+.lux-home-btn:active { transform: scale(0.9); }
+</style>

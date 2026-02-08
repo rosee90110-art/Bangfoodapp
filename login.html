@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin System | BANGFOOD</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        h2 { margin-bottom: 25px; letter-spacing: 2px; font-weight: 300; color: #ff9800; }
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #ff9800; background: rgba(0, 0, 0, 0.6); }
+        button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #ff9800, #f44336);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        button:active { transform: scale(0.96); }
+        .toggle-link {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .toggle-link span { color: #ff9800; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div id="login-box">
+            <h2>ADMIN LOGIN</h2>
+            <input type="text" id="user" placeholder="ชื่อผู้ใช้">
+            <input type="password" id="pass" placeholder="รหัสผ่าน">
+            <button onclick="handleLogin()">เข้าสู่ระบบ</button>
+            <p class="toggle-link" onclick="toggleForm()">ยังไม่มีบัญชี? <span>สมัครสมาชิก</span></p>
+        </div>
+
+        <div id="register-box" style="display: none;">
+            <h2>ADMIN REGISTER</h2>
+            <input type="text" id="reg-user" placeholder="ตั้งชื่อผู้ใช้">
+            <input type="password" id="reg-pass" placeholder="ตั้งรหัสผ่าน">
+            <input type="password" id="reg-confirm" placeholder="ยืนยันรหัสผ่าน">
+            <button onclick="handleRegister()" style="background: #4CAF50;">สร้างบัญชีใหม่</button>
+            <p class="toggle-link" onclick="toggleForm()">มีบัญชีอยู่แล้ว? <span>กลับไปล็อคอิน</span></p>
+        </div>
+        
+        <p><a href="admin_center.html" style="color: #444; font-size: 0.8rem; text-decoration: none; display: block; margin-top: 25px;">ยกเลิก</a></p>
+    </div>
+
+    <script>
+        // 1. ฟังก์ชันสลับหน้าจอ Login / Register
+        function toggleForm() {
+            const loginBox = document.getElementById('login-box');
+            const registerBox = document.getElementById('register-box');
+            if (loginBox.style.display === 'none') {
+                loginBox.style.display = 'block';
+                registerBox.style.display = 'none';
+            } else {
+                loginBox.style.display = 'none';
+                registerBox.style.display = 'block';
+            }
+        }
+
+        // 2. ฟังก์ชันสมัครสมาชิก (เก็บลง localStorage)
+        function handleRegister() {
+            const user = document.getElementById('reg-user').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if (!user || !pass) return alert("กรุณากรอกข้อมูลให้ครบครับน้า!");
+            if (pass !== confirm) return alert("รหัสผ่านสองช่องไม่ตรงกันครับ!");
+
+            // ดึงข้อมูลบัญชีทั้งหมดที่มีอยู่
+            let admins = JSON.parse(localStorage.getItem('adminAccounts')) || [];
+
+            // ตรวจสอบชื่อซ้ำ
+            if (admins.find(a => a.username === user)) return alert("ชื่อนี้มีคนใช้แล้วครับน้า!");
+
+            // เพิ่มบัญชีใหม่
+            admins.push({ username: user, password: pass });
+            localStorage.setItem('adminAccounts', JSON.stringify(admins));
+
+            alert("สมัครสำเร็จ! ล็อคอินเข้าใช้งานได้เลยครับน้า");
+            toggleForm(); // กลับไปหน้าล็อคอิน
+        }
+
+        // 3. ฟังก์ชันล็อคอิน
+        function handleLogin() {
+            const user = document.getElementById('user').value.trim();
+            const pass = document.getElementById('pass').value;
+
+            // ดึงบัญชีจาก localStorage มาเช็ค
+            let admins = JSON.parse(localStorage.getItem('adminAccounts')) || [];
+            const foundAdmin = admins.find(a => a.username === user && a.password === pass);
+
+            // เช็คทั้งบัญชีที่สมัครใหม่ และรหัส "bang" เดิมของน้า
+            if (foundAdmin || (user === "admin" && pass === "bang")) {
+                sessionStorage.setItem('isAdminLoggedIn', 'true');
+                sessionStorage.setItem('currentAdminName', user);
+                alert("ยินดีต้อนรับครับน้า!");
+                window.location.href = "admin_center.html";
+            } else {
+                alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องครับ!");
+            }
+        }
+    </script>
+</body>
+</html>

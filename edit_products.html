@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการเมนูพรีเมียม | BANGFOOD</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #ff9800, #f44336);
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        body { background-color: #0a0a0a; color: white; font-family: 'Kanit', sans-serif; margin: 0; padding-bottom: 120px; }
+        .admin-container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        /* 📍 CSS สำหรับระบบย่อ-ขยาย (Accordion) */
+        .collapsible-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            transition: 0.3s;
+        }
+        .collapsible-card.active { border-color: #ff9800; }
+
+        .collapsible-header {
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+            font-weight: bold;
+            color: #ff9800;
+        }
+        .collapsible-header:hover { background: rgba(255, 255, 255, 0.05); }
+        .chevron { transition: 0.4s; font-size: 0.8rem; }
+        .active .chevron { transform: rotate(180deg); }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            padding: 0 25px;
+        }
+        .active .collapsible-content {
+            max-height: 2000px; /* ขยายให้พอดีกับข้อมูล */
+            padding: 10px 25px 25px 25px;
+        }
+
+        /* สไตล์เดิมของน้า */
+        .menu-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
+        .stat-box { background: var(--glass); border: 1px solid var(--border); padding: 15px 5px; border-radius: 18px; text-align: center; }
+        .stat-box b { display: block; font-size: 1.2rem; color: #ff9800; }
+        
+        input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; box-sizing: border-box; }
+        .option-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 12px; }
+        .option-row input[type="checkbox"] { width: 22px; height: 22px; margin: 0; cursor: pointer; accent-color: #ff9800; }
+        
+        .btn-group-action { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .btn-add-new { width: 100%; padding: 16px; background: #28a745; border: none; border-radius: 15px; color: white; font-weight: bold; cursor: pointer; }
+        .btn-save-edit { width: 100%; padding: 16px; background: var(--primary-gradient); border: none; border-radius: 15px; color: white; font-weight: bold; cursor: pointer; display: none; }
+        .btn-cancel { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 15px; color: #aaa; cursor: pointer; display: none; }
+
+        .product-item { display: flex; align-items: center; background: var(--glass); padding: 18px; border-radius: 22px; margin-bottom: 12px; border: 1px solid var(--border); cursor: pointer; }
+        .product-img { width: 65px; height: 65px; border-radius: 15px; object-fit: cover; margin-right: 18px; }
+        .product-info { flex: 1; }
+        .action-btns { display: flex; gap: 10px; }
+        .btn-status { padding: 8px 12px; border-radius: 10px; border: none; cursor: pointer; font-size: 0.75rem; }
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+    <div class="header-flex">
+        <h2>🥘 จัดการเมนู & ตัวเลือก</h2>
+        <a href="admin_center.html" style="color: #666; text-decoration: none;">กลับหน้าหลัก</a>
+    </div>
+
+    <div class="menu-stats">
+        <div class="stat-box"><b id="count-food">0</b><span>อาหาร</span></div>
+        <div class="stat-box"><b id="count-noodle">0</b><span>เส้น</span></div>
+        <div class="stat-box"><b id="count-drink">0</b><span>น้ำ</span></div>
+    </div>
+
+    <div id="card-main" class="collapsible-card">
+        <div class="collapsible-header" onclick="toggleCard('card-main')">
+            <span id="form-title">➕ ข้อมูลเมนูใหม่</span>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <input type="hidden" id="edit-id"> 
+            <input type="text" id="p-name" placeholder="ชื่ออาหาร">
+            <input type="number" id="p-price" placeholder="ราคาพื้นฐาน (บาท)">
+            <input type="text" id="p-img" placeholder="ลิงก์รูปภาพ (URL)">
+            <select id="p-category" onchange="autoLoadAddonsByCategory()">
+                <option value="อาหาร">หมวดอาหาร (ข้าว)</option>
+                <option value="ก๋วยเตี๋ยว">หมวดก๋วยเตี๋ยว</option>
+                <option value="เครื่องดื่ม">หมวดเครื่องดื่ม</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="card-addon" class="collapsible-card">
+        <div class="collapsible-header" onclick="toggleCard('card-addon')">
+            <span>⚙️ ตั้งค่าปริมาณ & ตัวเลือกเสริม</span>
+            <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <h4 style="color:#ff9800; margin-bottom:10px;">🍲 ปริมาณ (เช่น ธรรมดา/พิเศษ)</h4>
+            <div id="sizes-list-container"></div>
+            <button onclick="addSizeRow()" style="width:100%; background:none; border:1px dashed #555; color:#888; padding:8px; border-radius:10px; margin-top:5px; cursor:pointer;">+ เพิ่มปริมาณ</button>
+
+            <h4 style="color:#ff9800; margin: 20px 0 10px 0;">🥚 ตัวเลือกเสริม (เช่น ไข่ดาว/ทะเล)</h4>
+            <div id="addons-list-container"></div>
+            <button onclick="addAddonRow()" style="width:100%; background:none; border:1px dashed #555; color:#888; padding:8px; border-radius:10px; margin-top:5px; cursor:pointer;">+ เพิ่มตัวเลือก</button>
+
+            <div class="btn-group-action">
+                <button id="btn-add-new" class="btn-add-new" onclick="saveAsNew()">➕ เพิ่มเป็นเมนูใหม่</button>
+                <button id="btn-save-edit" class="btn-save-edit" onclick="updateExisting()">💾 บันทึกแก้ไข (Sync ทั้งหมวด)</button>
+                <button id="btn-cancel" class="btn-cancel" onclick="resetForm()">ยกเลิกการเลือก</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="product-list-container"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+        authDomain: "bangfood-cb30f.firebaseapp.com",
+        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bangfood-cb30f",
+        storageBucket: "bangfood-cb30f.appspot.com",
+        messagingSenderId: "390955623784",
+        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 📍 ฟังก์ชัน เปิด/ปิด กล่อง
+    function toggleCard(id) {
+        document.getElementById(id).classList.toggle('active');
+    }
+
+    function addSizeRow(name = "", price = "0", available = true) {
+        const container = document.getElementById('sizes-list-container');
+        const div = document.createElement('div');
+        div.className = 'size-row option-row';
+        div.innerHTML = `<input type="checkbox" class="size-check" ${available ? 'checked' : ''}><input type="text" class="size-name" placeholder="ชื่อ" value="${name}" style="flex: 2;"><input type="number" class="size-price" placeholder="฿" value="${price}" style="flex: 1;"><button onclick="this.parentElement.remove()" style="background:none; border:none; color:#ff4444; cursor:pointer;">✕</button>`;
+        container.appendChild(div);
+    }
+
+    function addAddonRow(name = "", price = "", available = true) {
+        const container = document.getElementById('addons-list-container');
+        const div = document.createElement('div');
+        div.className = 'addon-row option-row';
+        div.innerHTML = `<input type="checkbox" class="addon-check" ${available ? 'checked' : ''}><input type="text" class="addon-name" placeholder="ชื่อ" value="${name}" style="flex: 2;"><input type="number" class="addon-price" placeholder="฿" value="${price}" style="flex: 1;"><button onclick="this.parentElement.remove()" style="background:none; border:none; color:#ff4444; cursor:pointer;">✕</button>`;
+        container.appendChild(div);
+    }
+
+    function getFormData() {
+        const name = document.getElementById('p-name').value.trim();
+        const price = document.getElementById('p-price').value;
+        const img = document.getElementById('p-img').value.trim();
+        const category = document.getElementById('p-category').value;
+        let sizes = [];
+        document.querySelectorAll('.size-row').forEach(row => {
+            const sName = row.querySelector('.size-name').value.trim();
+            if(sName) sizes.push({ name: sName, price: parseFloat(row.querySelector('.size-price').value) || 0, available: row.querySelector('.size-check').checked });
+        });
+        let addons = [];
+        document.querySelectorAll('.addon-row').forEach(row => {
+            const aName = row.querySelector('.addon-name').value.trim();
+            if(aName) addons.push({ name: aName, price: parseFloat(row.querySelector('.addon-price').value) || 0, available: row.querySelector('.addon-check').checked });
+        });
+        if(!name || !price || !img) { alert("กรุณากรอกข้อมูลให้ครบครับ!"); return null; }
+        return { name, price: parseFloat(price), img, category, config: { sizes, addons } };
+    }
+
+    function syncToCategory(category, config) {
+        db.ref('products').once('value', snapshot => {
+            const products = snapshot.val();
+            let updates = {};
+            for (let id in products) { if (products[id].category === category) updates[`/products/${id}/config`] = config; }
+            db.ref().update(updates);
+        });
+        db.ref('category_presets/' + category).set(config);
+    }
+
+    function autoLoadAddonsByCategory() {
+        if (document.getElementById('edit-id').value !== "") return;
+        const cat = document.getElementById('p-category').value;
+        db.ref('category_presets/' + cat).once('value', snapshot => {
+            const preset = snapshot.val();
+            document.getElementById('sizes-list-container').innerHTML = "";
+            document.getElementById('addons-list-container').innerHTML = "";
+            if (preset) {
+                if(preset.sizes) preset.sizes.forEach(s => addSizeRow(s.name, s.price, s.available));
+                if(preset.addons) preset.addons.forEach(a => addAddonRow(a.name, a.price, a.available));
+            } else { addSizeRow("ธรรมดา", 0); addAddonRow(); }
+        });
+    }
+
+    function saveAsNew() {
+        const data = getFormData();
+        if(!data) return;
+        data.status = 'instock';
+        db.ref('products').push(data).then(() => { syncToCategory(data.category, data.config); alert("เพิ่มสำเร็จ!"); resetForm(); });
+    }
+
+    function updateExisting() {
+        const id = document.getElementById('edit-id').value;
+        const data = getFormData();
+        if(!id || !data) return;
+        db.ref('products/' + id).update(data).then(() => { syncToCategory(data.category, data.config); alert("อัปเดตเรียบร้อย!"); resetForm(); });
+    }
+
+    function editProduct(id, name, price, img, category, config) {
+        document.getElementById('edit-id').value = id;
+        document.getElementById('p-name').value = name;
+        document.getElementById('p-price').value = price;
+        document.getElementById('p-img').value = img;
+        document.getElementById('p-category').value = category;
+        document.getElementById('sizes-list-container').innerHTML = "";
+        document.getElementById('addons-list-container').innerHTML = "";
+        if (config) {
+            if(config.sizes) config.sizes.forEach(s => addSizeRow(s.name, s.price, s.available !== false));
+            if(config.addons) config.addons.forEach(a => addAddonRow(a.name, a.price, a.available !== false));
+        }
+        document.getElementById('form-title').innerText = "📝 แก้ไข: " + name;
+        document.getElementById('btn-add-new').style.display = "none";
+        document.getElementById('btn-save-edit').style.display = "block";
+        document.getElementById('btn-cancel').style.display = "block";
+        
+        // 📍 กางกล่องอัตโนมัติเมื่อกดแก้ไข
+        document.getElementById('card-main').classList.add('active');
+        document.getElementById('card-addon').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        document.getElementById('edit-id').value = "";
+        document.getElementById('p-name').value = "";
+        document.getElementById('p-price').value = "";
+        document.getElementById('p-img').value = "";
+        document.getElementById('form-title').innerText = "➕ ข้อมูลเมนูใหม่";
+        document.getElementById('btn-add-new').style.display = "block";
+        document.getElementById('btn-save-edit').style.display = "none";
+        document.getElementById('btn-cancel').style.display = "none";
+        // พับกล่องเก็บ
+        document.getElementById('card-main').classList.remove('active');
+        document.getElementById('card-addon').classList.remove('active');
+        autoLoadAddonsByCategory();
+    }
+
+    function loadProducts() {
+        db.ref('products').on('value', snapshot => {
+            const list = document.getElementById('product-list-container');
+            list.innerHTML = '';
+            const data = snapshot.val();
+            let counts = { 'อาหาร': 0, 'ก๋วยเตี๋ยว': 0, 'เครื่องดื่ม': 0 };
+            for (let id in data) {
+                const p = data[id];
+                counts[p.category]++;
+                const isOut = p.status === 'out_of_stock';
+                list.innerHTML += `<div class="product-item" onclick='editProduct("${id}", "${p.name}", "${p.price}", "${p.img}", "${p.category}", ${JSON.stringify(p.config || {})})'><img src="${p.img}" class="product-img" onerror="this.src='https://via.placeholder.com/100'"><div class="product-info"><b>${p.name} ${isOut ? '(หมด)' : ''}</b><span>฿${p.price}</span></div><div class="action-btns"><button class="btn-status ${isOut ? 'status-out' : 'status-in'}" onclick="event.stopPropagation(); toggleStatus('${id}', '${p.status}')">${isOut ? 'หมด' : 'ขาย'}</button><button onclick="event.stopPropagation(); if(confirm('ลบ?')) db.ref('products/${id}').remove()">🗑️</button></div></div>`;
+            }
+            document.getElementById('count-food').innerText = counts['อาหาร'];
+            document.getElementById('count-noodle').innerText = counts['ก๋วยเตี๋ยว'];
+            document.getElementById('count-drink').innerText = counts['เครื่องดื่ม'];
+        });
+    }
+
+    function toggleStatus(id, currentStatus) {
+        db.ref('products/' + id).update({ status: currentStatus === 'instock' ? 'out_of_stock' : 'instock' });
+    }
+
+    window.onload = function() { loadProducts(); autoLoadAddonsByCategory(); };
+</script>
+</body>
+</html>

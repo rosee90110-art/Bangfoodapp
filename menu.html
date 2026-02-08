@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html lang="th">
-    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตัวเลือกอาหาร - BANGFOOD</title>
     <link rel="stylesheet" href="style.css"> 
+    <style>
+        /* 📍 สไตล์สำหรับปุ่มปริมาณ (Radio) และท็อปปิ้ง (Checkbox) */
+        .option-item { 
+            display: flex; align-items: center; padding: 14px; 
+            background: rgba(255,255,255,0.05); border-radius: 15px; 
+            margin-bottom: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); 
+            transition: 0.3s;
+        }
+        .option-item:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
+        .option-item input { margin-right: 15px; transform: scale(1.3); accent-color: #ff9800; }
+        .label-text { flex: 1; color: white; font-size: 1rem; }
+        .price-text { color: #ff9800; font-weight: bold; font-size: 0.9rem; }
+    </style>
 </head>
 <body onload="initializeMenuPage()">
     <header class="app-header">
-    <a href="javascript:history.back()" class="back-button"> 
-        <i class="fas fa-chevron-left"></i> กลับ
-    </a>
-    <h1 class="bangfoodmenu">BANGFOOD</h1>
-    <p class="menu-label">หน้า MENU</p>
-   </header>
+        <a href="javascript:history.back()" class="back-button">กลับ</a>
+        <h1 class="bangfoodmenu">BANGFOOD</h1>
+        <p class="menu-label">ตัวเลือกอาหาร</p>
+    </header>
+
     <div id="item-detail-modal" class="modal" style="display: block;">
         <div class="modal-content">
-            
             <div class="item-info-section">
                 <img id="modal-item-image" src="" alt="รูปภาพอาหาร" class="modal-image">
                 <h2 id="modal-item-name" class="modal-item-name"></h2>
@@ -25,249 +35,145 @@
             </div>
 
             <div class="table-info-section">
-    📌 โต๊ะที่สั่ง: 
-    <span id="display-table" style="font-weight: bold; color: #ff6347; font-size: 1.2em;">
-        (กำลังตรวจสอบเลขโต๊ะ...)
-    </span>
-    <input type="hidden" id="table-select-id"> 
-</div>
+                📌 โต๊ะที่สั่ง: <span id="display-table" style="font-weight: bold; color: #ff6347; font-size: 1.2em;">1</span>
+            </div>
 
             <form id="item-customization-form" class="customization-form">
-                <div class="customization-group">
-                    <h3>🍲 ปริมาณ</h3>
-                    <label class="radio-label">
-                        <input type="radio" name="size" value="ธรรมดา" data-modifier="0" checked>
-                        ธรรมดา (Normal)
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="size" value="พิเศษ" data-modifier="10">
-                        พิเศษ (+ 10 บาท)
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="size" value="โครตพิเศษ" data-modifier="20">
-                        โครตพิเศษ (+ 20 บาท)
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="size" value="โครตพ่อโครตแม่พิเศษ" data-modifier="30">
-                        โครตพ่อโครตแม่พิเศษ (+ 30 บาท)
-                    </label>
+                <div class="customization-group" id="group-sizes">
+                    <h3>🍲 เลือกปริมาณ</h3>
+                    <div id="dynamic-sizes-container"></div>
                 </div>
-                <div class="customization-group">
-            
-                    <h3>🥚 ประเภทไข่</h3>
-                    <div class="addon-category">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="addon" value="ไข่ดาว" data-modifier="10">
-                            เพิ่มไข่ดาว 🍳 (+ 10 บาท)
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="addon" value="ไข่เจียว" data-modifier="10">
-                            เพิ่มไข่เจียว 🥘 (+ 10 บาท)
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="addon" value="ไข่ข้น" data-modifier="15">
-                            เพิ่มไข่ข้น 🫓 (+ 15 บาท)
-                        </label>
-                    </div>
+
+                <div class="customization-group" id="group-addons">
+                    <h3>🥚 ตัวเลือกเสริม</h3>
+                    <div id="dynamic-addons-container"></div>
                 </div>
-                <div class="customization-group">
-            
-                    <h3 style="margin-top: 15px;">🌊 ประเภททะเล</h3>
-                    <div class="addon-category">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="addon" value="หมึก" data-modifier="10">
-                            เพิ่มหมึก 🦑 (+ 10 บาท)
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="addon" value="กุ้ง" data-modifier="10">
-                            เพิ่มกุ้ง 🦐 (+ 10 บาท)
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="addon" value="ปู" data-modifier="10">
-                            เพิ่มปู 🦀 (+ 10 บาท)
-                        </label>
-                    </div>
-                    
-                </div>
-                <div class="customization-group">
-            
-                    <h3 style="margin-top: 15px;">🍖 ตัวเลือกเสริมอื่น ๆ</h3>
-                    <div class="addon-category">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="addon" value="ไส้กรอก" data-modifier="10">
-                            เพิ่มไส้กรอก 🌭 (+ 10 บาท)
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="addon" value="ไก่กรอบ" data-modifier="10">
-                            เพิ่มไก่กรอบ 🍗 (+ 10 บาท)
-                        </label>
-                    </div>
-                    
-                </div>
+
                 <div class="customization-group">
                     <h3>✍️ หมายเหตุ (Optional)</h3>
                     <textarea id="modal-notes" rows="3" placeholder="ตัวอย่าง: เผ็ดน้อย, ไม่ใส่ผักชี"></textarea>
                 </div>
             </form>
+
             <div class="modal-footer">
                 <p class="final-price-display">ราคาสุทธิ: <span id="modal-final-price">0.00</span> บาท</p>
-                <button class="confirm-btn" onclick="confirmOrder()">
-    <span>🚀 ยืนยันการสั่งซื้อ</span>
-</button>
-               
+                <button class="confirm-btn" onclick="confirmOrder()">🚀 ยืนยันการสั่งซื้อ</button>
             </div>
         </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-  function initializeMenuPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const imgParam = urlParams.get('img');
-    const nameParam = urlParams.get('name') || "อาหาร";
-    const priceParam = urlParams.get('price') || "0";
-
-    // 1. โหลดรูปภาพ
-    const imgElement = document.getElementById('modal-item-image');
-    if (imgElement && imgParam) {
-        imgElement.src = imgParam; 
-    }
-
-    try {
-        // 2. ใส่ชื่ออาหาร
-        const nameNode = document.getElementById('modal-item-name');
-        if (nameNode) nameNode.innerText = nameParam;
-
-        // 3. ใส่ราคาเริ่มต้น
-        const basePriceNode = document.getElementById('modal-base-price');
-        const finalPriceNode = document.getElementById('modal-final-price');
-        
-        if (basePriceNode) basePriceNode.innerText = parseFloat(priceParam).toFixed(2);
-        if (finalPriceNode) finalPriceNode.innerText = parseFloat(priceParam).toFixed(2);
-
-        // 4. ใส่เลขโต๊ะ
-        const tableNode = document.getElementById('display-table');
-        const tableNo = urlParams.get('table') || "1";
-        if (tableNode) tableNode.innerText = tableNo;
-
-    } catch (e) {
-        console.log("Error filling data:", e);
-    }
-  }
-
-  function confirmOrder() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tableNo = urlParams.get('table') || '1'; 
-    
-    const name = document.getElementById('modal-item-name').innerText || "อาหาร";
-    const itemImg = urlParams.get('img') || ""; 
-    
-    const finalPriceText = document.getElementById('modal-final-price').innerText;
-    const finalPrice = parseFloat(finalPriceText) || 0;
-
-    let details = [];
-    
-    // ใส่เครื่องหมาย • ข้างหน้าเพื่อให้ดูเป็น List รายการครับ
-    const selectedSize = document.querySelector('input[name="size"]:checked');
-    if (selectedSize) details.push("• ปริมาณ: " + selectedSize.value);
-
-    document.querySelectorAll('input[name="addon"]:checked').forEach(input => {
-        details.push("• เพิ่ม: " + input.value); 
-    });
-
-    const notes = document.getElementById('modal-notes').value.trim();
-    if (notes) details.push("📝 หมายเหตุ: " + notes);
-
-    // ✅ จุดสำคัญ: เปลี่ยนจาก .join(", ") เป็น .join("<br>") เพื่อให้ขึ้นบรรทัดใหม่
-    const optionsText = details.join("<br>") || "ธรรมดา";
-
-    const cartKey = `bangfood_cart_table_${tableNo}`; 
-    let cartData = sessionStorage.getItem(cartKey);
-    let cart = cartData ? JSON.parse(cartData) : { items: [] };
-
-    cart.items.push({
-        name: name,
-        finalPrice: finalPrice, 
-        options: optionsText,
-        img: itemImg, 
-        quantity: 1
-    });
-
-    sessionStorage.setItem(cartKey, JSON.stringify(cart));
-    alert("เพิ่ม " + name + " ลงตะกร้าเรียบร้อยครับ!");
-    window.location.href = `cart.html?table=${tableNo}`;
-}
-// 1. ดึงข้อมูลรูปภาพจาก URL (น้าเขียนดึง name กับ price ไว้แล้ว ให้เพิ่ม img ครับ)
-const urlParams = new URLSearchParams(window.location.search);
-const pName = urlParams.get('name');
-const pPrice = urlParams.get('price');
-const pImg = urlParams.get('img'); // <--- เพิ่มบรรทัดนี้เพื่อดึงลิงก์รูป
-
-// 2. ปรับฟังก์ชัน addToCart ให้เก็บค่า pImg ลงไปด้วย
-function addToCart() {
-    const tableNo = localStorage.getItem('selectedTable') || '1';
-    const cartKey = 'bangfood_cart_table_' + tableNo;
-    let cartData = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-
-    // ... (โค้ดคำนวณราคาพิเศษ/ไข่ดาว ของน้า) ...
-
-    const newItem = {
-        name: pName,
-        price: pPrice,
-        finalPrice: totalCalculatedPrice, // ราคารวมที่น้าคำนวณไว้
-        img: pImg, // <--- จุดสำคัญ! ต้องยัดรูปที่ดึงมาจาก URL ลงไปตรงนี้
-        options: selectedOptionsText // พวก "พิเศษ", "ไข่ดาว"
+    const firebaseConfig = {
+        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+        authDomain: "bangfood-cb30f.firebaseapp.com",
+        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "bangfood-cb30f",
+        storageBucket: "bangfood-cb30f.appspot.com",
+        messagingSenderId: "390955623784",
+        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
     };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    cartData.items.push(newItem);
-    sessionStorage.setItem(cartKey, JSON.stringify(cartData));
-    
-    alert("เพิ่มลงตะกร้าแล้ว!");
-    window.location.href = `index.html?table=${tableNo}`;
-}
+    function initializeMenuPage() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const nameParam = urlParams.get('name');
+        const tableNo = urlParams.get('table') || "1";
+        document.getElementById('display-table').innerText = tableNo;
 
-  // ฟังก์ชันคำนวณราคา
-  function updatePrice() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const basePrice = parseFloat(urlParams.get('price')) || 0;
-    let extraPrice = 0;
+        // ดึงข้อมูลสินค้าจาก Firebase
+        db.ref('products').orderByChild('name').equalTo(nameParam).once('value', snapshot => {
+            const data = snapshot.val();
+            if (data) {
+                const key = Object.keys(data)[0];
+                const product = data[key];
+                const config = product.config || {};
 
-    document.querySelectorAll('input:checked').forEach(input => {
-        extraPrice += parseFloat(input.getAttribute('data-modifier')) || 0;
-    });
+                document.getElementById('modal-item-name').innerText = product.name;
+                document.getElementById('modal-base-price').innerText = parseFloat(product.price).toFixed(2);
+                document.getElementById('modal-item-image').src = product.img;
 
-    const total = basePrice + extraPrice;
-    const finalPriceNode = document.getElementById('modal-final-price');
-    if (finalPriceNode) {
-        finalPriceNode.innerText = total.toFixed(2);
+                // 📍 1. สร้างส่วนปริมาณ (Sizes) 
+                const sizeContainer = document.getElementById('dynamic-sizes-container');
+                sizeContainer.innerHTML = "";
+                if (config.sizes && config.sizes.length > 0) {
+                    config.sizes.forEach((s, index) => {
+                        if (s.available !== false) {
+                            const html = `
+                                <label class="option-item">
+                                    <input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" ${index === 0 ? 'checked' : ''} onchange="updatePrice()">
+                                    <span class="label-text">${s.name}</span>
+                                    <span class="price-text">${s.price > 0 ? '+ ' + s.price : ''}</span>
+                                </label>`;
+                            sizeContainer.insertAdjacentHTML('beforeend', html);
+                        }
+                    });
+                } else { document.getElementById('group-sizes').style.display = 'none'; }
+
+                // 📍 2. สร้างส่วนตัวเลือกเสริม (Addons)
+                const addonContainer = document.getElementById('dynamic-addons-container');
+                addonContainer.innerHTML = "";
+                if (config.addons && config.addons.length > 0) {
+                    config.addons.forEach(item => {
+                        if (item.available !== false) {
+                            const html = `
+                                <label class="option-item">
+                                    <input type="checkbox" name="addon" value="${item.name}" data-modifier="${item.price}" onchange="updatePrice()">
+                                    <span class="label-text">${item.name}</span>
+                                    <span class="price-text">+ ${item.price}</span>
+                                </label>`;
+                            addonContainer.insertAdjacentHTML('beforeend', html);
+                        }
+                    });
+                } else { document.getElementById('group-addons').style.display = 'none'; }
+                
+                updatePrice();
+            }
+        });
     }
-  }
 
-  // ตั้งค่า Event Listeners สำหรับการเปลี่ยนราคา
-  document.addEventListener('change', function(e) {
-    if (e.target.name === 'size' || e.target.name === 'addon') {
-        updatePrice();
+    function updatePrice() {
+        const basePrice = parseFloat(document.getElementById('modal-base-price').innerText) || 0;
+        let extraPrice = 0;
+        // คำนวณจาก Size (Radio)
+        const sizeInput = document.querySelector('input[name="size"]:checked');
+        if (sizeInput) extraPrice += parseFloat(sizeInput.getAttribute('data-modifier'));
+        // คำนวณจาก Addons (Checkbox)
+        document.querySelectorAll('input[name="addon"]:checked').forEach(input => {
+            extraPrice += parseFloat(input.getAttribute('data-modifier'));
+        });
+        document.getElementById('modal-final-price').innerText = (basePrice + extraPrice).toFixed(2);
     }
-  });
 
-  // Firebase Config
-  const firebaseConfig = {
-      apiKey: "AIza...", 
-      authDomain: "bangfood-cb30f.firebaseapp.com",
-      databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "bangfood-cb30f",
-      storageBucket: "bangfood-cb30f.appspot.com",
-      messagingSenderId: "390955623784",
-      appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-  };
+    function confirmOrder() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tableNo = urlParams.get('table') || '1';
+        const name = document.getElementById('modal-item-name').innerText;
+        const finalPrice = parseFloat(document.getElementById('modal-final-price').innerText);
+        const img = document.getElementById('modal-item-image').src;
 
-  if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-  }
-  window.db = firebase.database();
+        let details = [];
+        const size = document.querySelector('input[name="size"]:checked');
+        if (size) details.push("• ปริมาณ: " + size.value);
+
+        document.querySelectorAll('input[name="addon"]:checked').forEach(cb => {
+            details.push("• เพิ่ม: " + cb.value);
+        });
+
+        const notes = document.getElementById('modal-notes').value.trim();
+        if (notes) details.push("📝 หมายเหตุ: " + notes);
+
+        const cartKey = `bangfood_cart_table_${tableNo}`;
+        let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
+        cart.items.push({ name: name, finalPrice: finalPrice, options: details.join("<br>"), img: img, quantity: 1 });
+        sessionStorage.setItem(cartKey, JSON.stringify(cart));
+
+        alert("เพิ่มลงตะกร้าเรียบร้อยครับ!");
+        window.location.href = `cart.html?table=${tableNo}`;
+    }
 </script>
-
-
 </body>
 </html>

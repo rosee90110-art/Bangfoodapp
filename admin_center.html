@@ -4,191 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Center | BANGFOOD</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #ff9800, #f44336);
-            --glass: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            background-color: #0a0a0a; /* ดำสนิทแบบพรีเมียม */
-            color: #fff;
+            background-color: #0a0a0a;
+            color: #ffffff;
             font-family: 'Kanit', sans-serif;
             margin: 0;
             padding: 0;
         }
 
-        /* ส่วนหัว */
-        .admin-nav {
+        .admin-header {
             padding: 40px 25px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
             border-bottom: 1px solid var(--glass-border);
         }
 
-        .admin-nav h1 {
-            font-size: 1.4rem;
-            font-weight: 300;
-            letter-spacing: 4px;
+        .admin-header h1 {
+            font-size: 1.6rem;
+            letter-spacing: 5px;
             margin: 0;
-        }
-
-        .container { padding: 25px; max-width: 500px; margin: 0 auto; }
-
-        /* การ์ดสถิติ (Summary) */
-        .stats-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            padding: 20px;
-            border-radius: 24px;
-            text-align: center;
-        }
-
-        .stat-card span { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-card h2 { 
-            margin: 10px 0 0; font-size: 1.8rem; 
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* เมนูคำสั่งหลัก (Menu Grid) */
-        .admin-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 18px;
+        .container {
+            padding: 25px;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        .admin-card {
+        /* 📋 Grid เมนูหลัก */
+        .admin-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .menu-card {
             display: flex;
             align-items: center;
-            background: var(--glass);
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             padding: 25px;
-            border-radius: 24px;
+            border-radius: 25px;
             text-decoration: none;
             color: white;
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .admin-card:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
+        .menu-card:active {
+            transform: scale(0.96);
+            background: rgba(255,255,255,0.1);
+        }
 
-        .icon-circle {
-            width: 55px;
-            height: 55px;
+        .menu-icon {
+            width: 60px;
+            height: 60px;
             background: var(--primary-gradient);
-            border-radius: 18px;
+            border-radius: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-right: 20px;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
         }
 
-        .card-info b { display: block; font-size: 1.1rem; font-weight: 400; margin-bottom: 4px; }
-        .card-info small { color: #666; font-size: 0.85rem; }
+        .menu-info b {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 5px;
+        }
 
-        .footer-link {
+        .menu-info small {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .exit-btn {
             display: block;
             text-align: center;
             margin-top: 50px;
-            color: #444;
+            color: #555;
             text-decoration: none;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            border: 1px solid #333;
+            padding: 12px;
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+
+        .exit-btn:hover {
+            color: #ff4444;
+            border-color: #ff4444;
         }
     </style>
 </head>
 <body>
 
-    <header class="admin-nav">
+    <header class="admin-header">
         <h1>ADMIN CENTER</h1>
-        <a href="start.html" style="text-decoration:none; font-size:1.5rem;">🏠</a>
     </header>
 
     <div class="container">
-        <div class="stats-row">
-            <div class="stat-card">
-                <span>ออเดอร์วันนี้</span>
-                <h2 id="order-count">0</h2>
-            </div>
-            <div class="stat-card">
-                <span>ยอดขาย (฿)</span>
-                <h2 id="sales-total">0</h2>
-            </div>
+        <div class="admin-menu-list">
+            
+            <a href="admin.html" class="menu-card">
+                <div class="menu-icon">📑</div>
+                <div class="menu-info">
+                    <b>จัดการคำสั่งซื้อ</b>
+                    <small>ดูออเดอร์ใหม่ และสถานะการทำอาหาร</small>
+                </div>
+            </a>
+
+            <a href="history.html" class="menu-card">
+                <div class="menu-icon">📜</div>
+                <div class="menu-info">
+                    <b>ประวัติการสั่งซื้อ</b>
+                    <small>ตรวจสอบยอดขาย และรายการย้อนหลัง</small>
+                </div>
+            </a>
+
+            <a href="edit_products.html" class="menu-card">
+                <div class="menu-icon">🥘</div>
+                <div class="menu-info">
+                    <b>แก้ไข/จัดการสินค้า</b>
+                    <small>เพิ่มเมนูใหม่ แก้ไขราคา และรูปภาพ</small>
+                </div>
+            </a>
+
+            <a href="admin_users.html" class="menu-card">
+                <div class="menu-icon">👥</div>
+                <div class="menu-info">
+                    <b>จัดการยูสเซอร์แอดมิน</b>
+                    <small>ดูรายชื่อ, ลบ หรือแก้ไขบัญชีผู้ดูแลระบบ</small>
+                </div>
+            </a>
+
         </div>
 
-        <div class="admin-grid">
-            <a href="admin_orders.html" class="admin-card">
-                <div class="icon-circle">📑</div>
-                <div class="card-info">
-                    <b>จัดการออเดอร์</b>
-                    <small>ดูออเดอร์ใหม่และสถานะอาหาร</small>
-                </div>
-            </a>
-
-            <a href="admin_products.html" class="admin-card">
-                <div class="icon-circle">🥘</div>
-                <div class="card-info">
-                    <b>จัดการเมนูอาหาร</b>
-                    <small>แก้ไขราคา, รูป และเปิด-ปิดเมนู</small>
-                </div>
-            </a>
-
-            <a href="admin_tables.html" class="admin-card">
-                <div class="icon-circle">🪑</div>
-                <div class="card-info">
-                    <b>จัดการโต๊ะ</b>
-                    <small>สร้าง QR Code และดูสถานะโต๊ะ</small>
-                </div>
-            </a>
-        </div>
-
-        <a href="start.html" class="footer-link">EXIT SYSTEM</a>
+        <a href="start.html" class="exit-btn">ออกจากโหมดแอดมิน</a>
     </div>
+    <header class="admin-top-nav">
+    <div class="menu-container">
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div id="admin-dropdown" class="dropdown-content">
+            <a href="login.html" id="login-link">🔐 เข้าสู่ระบบ (Admin)</a>
+            <a href="#" onclick="logoutAdmin()" id="logout-link" style="display:none; color: #ff4444;">🚪 ออกจากระบบ</a>
+        </div>
+    </div>
+</header>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<style>
+    /* 📍 สไตล์ปุ่ม 3 ขีด และ Dropdown */
+    .admin-top-nav {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 2000;
+    }
+    .hamburger-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        padding: 10px;
+        background: var(--glass-bg);
+        border-radius: 12px;
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(10px);
+    }
+    .hamburger-menu span {
+        width: 25px;
+        height: 2px;
+        background-color: white;
+        transition: 0.3s;
+    }
+    .dropdown-content {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: rgba(20, 20, 20, 0.95);
+        min-width: 180px;
+        border-radius: 15px;
+        border: 1px solid var(--glass-border);
+        display: none;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .dropdown-content a {
+        padding: 15px 20px;
+        display: block;
+        color: white;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    .dropdown-content a:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .show { display: block; }
+</style>
 
-    <script>
-        // ใช้ Firebase Config เดิมของน้านะครับ
-        const firebaseConfig = {
-            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
-            authDomain: "bangfood-cb30f.firebaseapp.com",
-            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "bangfood-cb30f",
-            storageBucket: "bangfood-cb30f.appspot.com",
-            messagingSenderId: "390955623784",
-            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-        };
-        
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+<script>
+    function toggleMenu() {
+        document.getElementById("admin-dropdown").classList.toggle("show");
+    }
 
-        // ฟังก์ชันดึงสรุปยอดแบบ Real-time
-        function loadDashboard() {
-            db.ref('orders').on('value', (snapshot) => {
-                const orders = snapshot.val();
-                if(orders) {
-                    const count = Object.keys(orders).length;
-                    document.getElementById('order-count').innerText = count;
-                    // ยอดขายสามารถวนลูปบวกเพิ่มจากข้อมูลออเดอร์ได้ครับ
+    // ปิดเมนูเมื่อคลิกที่อื่น
+    window.onclick = function(event) {
+        if (!event.target.matches('.hamburger-menu') && !event.target.matches('.hamburger-menu span')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                if (dropdowns[i].classList.contains('show')) {
+                    dropdowns[i].classList.remove('show');
                 }
-            });
+            }
         }
+    }
 
-        window.onload = loadDashboard;
-    </script>
+    // ตรวจสอบสถานะการล็อคอิน
+    function checkLoginStatus() {
+        const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
+        if (isLoggedIn === 'true') {
+            document.getElementById('login-link').style.display = 'none';
+            document.getElementById('logout-link').style.display = 'block';
+        }
+    }
+
+    function logoutAdmin() {
+        if(confirm("ยืนยันการออกจากระบบ?")) {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            location.reload();
+        }
+    }
+    
+    window.onload = checkLoginStatus;
+</script>
 </body>
 </html>

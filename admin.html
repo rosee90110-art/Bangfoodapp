@@ -5,8 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>หน้าจอแอดมิน - BANGFOOD</title>
     <link rel="stylesheet" href="style.css"> 
+    <style>
+        /* 📍 กล่องสรุปจำนวนออเดอร์ */
+        .order-summary-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .summary-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 15px 5px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        .summary-box b {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .summary-box span {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* สีแยกตามสถานะ */
+        .box-all b { color: #fff; }
+        .box-pending { border-color: rgba(255, 152, 0, 0.3); }
+        .box-pending b { color: #ff9800; } /* สีส้มรอทำ */
+        .box-done { border-color: rgba(76, 175, 80, 0.3); }
+        .box-done b { color: #4CAF50; } /* สีเขียวเสร็จแล้ว */
+
+        /* 📍 สไตล์ Badge แจ้งเตือนบนไอคอน Dock */
+        .lux-btn { position: relative; }
+        .order-badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: #ff4444; color: white;
+            font-size: 0.7rem; font-weight: bold;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            border: 2px solid #1a1a1a;
+            box-shadow: 0 2px 8px rgba(255, 68, 68, 0.5);
+            animation: pulse-alert 2s infinite;
+        }
+
+        @keyframes pulse-alert {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .luxury-dock-container { position: fixed; bottom: 30px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 10000; pointer-events: none; }
+        .luxury-dock-bar { display: flex; align-items: center; background: rgba(25, 25, 25, 0.7); backdrop-filter: blur(25px) saturate(180%); padding: 10px 30px; border-radius: 45px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); gap: 20px; pointer-events: auto; }
+        .lux-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; }
+        .lux-btn { width: 48px; height: 48px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; display: flex; justify-content: center; align-items: center; margin-bottom: 4px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .lux-btn.active { background: linear-gradient(145deg, #333, #222); border: 1px solid rgba(255, 255, 255, 0.3); transform: translateY(-8px) scale(1.1); }
+        .lux-home-btn { width: 65px; height: 65px; background: linear-gradient(145deg, #ff8a00, #e52d27); border-radius: 50%; border: 4px solid #f22800; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(229, 45, 39, 0.5); cursor: pointer; }
+    </style>
 </head>
-<body onload="loadOrdersRealtime()">
+<body onload="startAdminApp()">
     
     <header class="app-header">
         <h1 class="logo">BANGFOOD</h1>
@@ -19,6 +88,21 @@
         </div>
     </header>
 
+    <div class="order-summary-container">
+        <div class="summary-box box-all">
+            <b id="count-all">0</b>
+            <span>ทั้งหมด</span>
+        </div>
+        <div class="summary-box box-pending">
+            <b id="count-pending">0</b>
+            <span>รอทำ</span>
+        </div>
+        <div class="summary-box box-done">
+            <b id="count-done">0</b>
+            <span>เสร็จแล้ว</span>
+        </div>
+    </div>
+
     <main style="padding-bottom: 120px;">
         <div id="pending-section" class="tab-content">
             <div class="section-title">📌 คำสั่งซื้อที่กำลังทำ</div>
@@ -29,71 +113,37 @@
             <div class="section-title">✅ รายการที่พร้อมเสิร์ฟ/จ่ายแล้ว</div>
             <div id="completed-orders-container"></div>
         </div>
-
-        <div id="menu-section" class="tab-content" style="display:none; padding: 20px;">
-            <div class="section-title">🍴 เปิด-ปิดรายการอาหาร</div>
-            <div id="admin-menu-list"></div>
-        </div>
     </main>
 
-    <div class="curved-nav-container">
-        <div class="nav-bg-curved">
-            <svg viewBox="0 0 400 100" preserveAspectRatio="none">
-                <path d="M0,100 L400,100 L400,40 
-                         C360,40 340,40 330,60 
-                         C320,80 280,80 270,60 
-                         C260,40 240,40 200,40 
-                         C160,40 140,40 130,60 
-                         C120,80 80,80 70,60 
-                         C60,40 40,40 0,40 Z" fill="#121212"/>
-            </svg>
-        </div>
-<div class="luxury-dock-container">
-    <div class="luxury-dock-bar">
-        <div class="lux-item" onclick="switchTab('pending')">
-            <button id="tab-pending" class="lux-btn active">
-                <span class="lux-icon">📝</span>
-            </button>
-            <span class="lux-label">รอทำ</span>
-        </div>
+    <div class="luxury-dock-container">
+        <div class="luxury-dock-bar">
+            <div class="lux-item" onclick="switchTab('pending')">
+                <button id="tab-pending" class="lux-btn active">
+                    <span class="lux-icon">📝</span>
+                    <span id="badge-pending" class="order-badge" style="display:none;">0</span>
+                </button>
+                <span class="lux-label">รอทำ</span>
+            </div>
 
-        <div class="lux-item main-item" onclick="window.location.href='admin_center.html'">
-            <button class="lux-home-btn">
-                <span class="lux-home-icon">🏠</span>
-            </button>
-        </div>
+            <div class="lux-item main-item" onclick="window.location.href='admin_center.html'">
+                <button class="lux-home-btn">
+                    <span class="lux-home-icon">🏠</span>
+                </button>
+            </div>
 
-        <div class="lux-item" onclick="switchTab('completed')">
-            <button id="tab-completed" class="lux-btn active">
-                <span class="lux-icon">✅</span>
-            </button>
-            <span class="lux-label">จ่ายแล้ว</span>
+            <div class="lux-item" onclick="switchTab('completed')">
+                <button id="tab-completed" class="lux-btn">
+                    <span class="lux-icon">✅</span>
+                </button>
+                <span class="lux-label">จ่ายแล้ว</span>
+            </div>
         </div>
     </div>
-</div>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        
-    const ADMIN_PASSWORD = "bang"; // *** ตรวจสอบว่ารหัสผ่านถูกกำหนดไว้ที่นี่ ***
-    
-    function checkAdminAccess() {
-        // ใช้ setTimeout เพื่อให้แน่ใจว่า DOM element อื่นๆ โหลดแล้ว (ป้องกันปัญหาในบางเบราว์เซอร์)
-        setTimeout(() => {
-            const password = prompt("กรุณาป้อนรหัสผ่านผู้ดูแลระบบ:");
-            
-            if (password !== ADMIN_PASSWORD) {
-                alert("รหัสผ่านไม่ถูกต้อง! ระบบจะนำท่านกลับไปหน้าหลัก");
-                window.location.href = "start.html"; 
-            }
-        }, 50); // หน่วงเวลาเล็กน้อย
-    }
-    
-    // เรียกใช้ฟังก์ชันทันทีที่หน้าจอเริ่มโหลด
-    checkAdminAccess();
-    
-        // ... (โค้ด firebaseConfig ที่คุณให้มา) ...
         const firebaseConfig = {
             apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
             authDomain: "bangfood-cb30f.firebaseapp.com",
@@ -101,109 +151,71 @@
             projectId: "bangfood-cb30f",
             storageBucket: "bangfood-cb30f.firebasestorage.app",
             messagingSenderId: "390955623784",
-            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd",
-            measurementId: "G-6M6W033GFG"
+            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
         };
         
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.database(); 
-        
-        // ฟังก์ชัน Logout (นำกลับไปหน้าเริ่มต้น)
+
+        function startAdminApp() {
+            if (typeof loadOrdersRealtime === 'function') loadOrdersRealtime();
+            updateOrderCounters();
+        }
+
+        // 📍 ฟังก์ชันนับจำนวนออเดอร์ (อัปเกรดให้รองรับภาษาไทยตามหน้าจอ image_d4ad3a)
+        function updateOrderCounters() {
+            db.ref('orders').on('value', (snapshot) => {
+                const data = snapshot.val();
+                let pendingCount = 0;
+                let completedCount = 0;
+                let totalCount = 0;
+
+                if (data) {
+                    Object.values(data).forEach(order => {
+                        totalCount++;
+                        
+                        // 📍 เช็คสถานะตามคำที่โชว์จริงในแอปของน้า
+                        // รายการที่ "รอดำเนินการ"
+                        if (order.status === 'pending' || order.status === 'รอดำเนินการ') {
+                            pendingCount++;
+                        } 
+                        // รายการที่ "เสร็จสมบูรณ์" หรือ "จ่ายแล้ว"
+                        else if (order.status === 'completed' || order.status === 'เสร็จสมบูรณ์' || order.status === 'จ่ายแล้ว' || order.status === 'เสร็จสิ้น') {
+                            completedCount++;
+                        }
+                    });
+                }
+
+                // อัปเดตตัวเลขในกล่อง Dashboard
+                const allElem = document.getElementById('count-all');
+                const pendingElem = document.getElementById('count-pending');
+                const doneElem = document.getElementById('count-done');
+
+                if(allElem) allElem.innerText = totalCount;
+                if(pendingElem) pendingElem.innerText = pendingCount;
+                if(doneElem) doneElem.innerText = completedCount;
+
+                // อัปเดต Badge สีแดงที่ปุ่มด้านล่าง
+                const badge = document.getElementById('badge-pending');
+                if (badge) {
+                    if (pendingCount > 0) {
+                        badge.innerText = pendingCount;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            });
+        }
+
         function logoutAdmin() {
             if (confirm("คุณต้องการออกจากระบบผู้ดูแลหรือไม่?")) {
                 window.location.href = "start.html";
             }
         }
-        
     </script>
-    
     <script src="admin.js"></script>
 </body>
 </html>
-<style>
-    /* 📍 คอนเทนเนอร์คุมตำแหน่งลอยตัว */
-.luxury-dock-container {
-    position: fixed;
-    bottom: 30px;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    z-index: 10000;
-    pointer-events: none;
-}
-
-/* 📍 ตัวแท่งกระจก (Glassmorphism Dock) */
-.luxury-dock-bar {
-    display: flex;
-    align-items: center;
-    background: rgba(25, 25, 25, 0.7); /* โปร่งแสง */
-    backdrop-filter: blur(25px) saturate(180%); /* เบลอและเพิ่มความสดของสีหลังกระจก */
-    -webkit-backdrop-filter: blur(25px) saturate(180%);
-    padding: 10px 30px;
-    border-radius: 45px;
-    border: 1px solid rgba(255, 255, 255, 0.15); /* ขอบกระจกมีแสงสะท้อน */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 
-                inset 0 0 10px rgba(255, 255, 255, 0.05);
-    gap: 20px;
-    pointer-events: auto;
-}
-
-/* ส่วนประกอบใน Dock */
-.lux-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-/* ปุ่มสถานะทั่วไป */
-.lux-btn {
-    width: 48px;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 4px;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
-}
-
-.lux-icon { font-size: 1.2rem; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
-.lux-label { font-size: 0.65rem; color: #777; font-weight: 300; letter-spacing: 0.5px; }
-
-/* 📍 สถานะ Active เมื่อปุ่มถูกเลือก */
-.lux-btn.active {
-    background: linear-gradient(145deg, #333, #222);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    transform: translateY(-8px) scale(1.1);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-}
-.lux-btn.active + .lux-label { color: #fff; font-weight: 500; }
-
-/* 📍 ปุ่ม Home กลางหน้าจอ (Luxury Neumorphism) */
-.lux-home-btn {
-    width: 65px;
-    height: 65px;
-    background: linear-gradient(145deg, #ff8a00, #e52d27); /* ไล่สีส้มแดงหรูๆ */
-    border-radius: 50%;
-    border: 4px solid #f22800;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 15px; /* ดันให้ลอยสูง */
-    box-shadow: 0 10px 25px rgba(229, 45, 39, 0.5), 
-                inset 0 4px 10px rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.lux-home-icon { font-size: 1.8rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-
-.lux-home-btn:hover { transform: scale(1.1) translateY(-5px); }
-.lux-home-btn:active { transform: scale(0.9); }
-</style>

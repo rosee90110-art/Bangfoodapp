@@ -71,11 +71,11 @@
         .round-btn.center {
             width: 85px;
             height: 85px;
-            background: linear-gradient(135deg, #ff9800, #f44336);
+            background: linear-gradient(135deg,  #009b9b);
             border-radius: 50%;
             font-size: 2.5rem;
             color: white;
-            box-shadow: 0 12px 25px rgba(244, 67, 54, 0.6);
+            box-shadow: 0 12px 25px rgba(54, 244, 244, 0.444);
             border: 6px solid #803a1706;
             display: flex;
             justify-content: center; align-items: center;
@@ -155,24 +155,23 @@
             <button class="round-btn center">
                 <i class="fas fa-map-marker-alt"></i>
             </button>
-           
+            <span style="color:#0080b3" class="label">ยืนยันรายการ</span>
         </div>
 
         <div class="nav-buttons-wrapper">
             <div class="nav-btn-box" onclick="goToCart()">
                 <button class="round-btn side">
-                    <i class="fas fa-shopping-cart"></i>
-                </button>
-                
+                      🛒 </button>
+                  <span class="label">ตะกร้า</span>
             </div>
             
             <div style="flex: 1.2; pointer-events: none;"></div>
             
             <div class="nav-btn-box" onclick="goBackToIndex()">
                 <button class="round-btn side">
-                    <i class="fas fa-home"></i>
+                    📝
                 </button>
-                
+                <span class="label">เมนู</span>
             </div>
         </div>
     </div>

@@ -94,12 +94,6 @@
     --shadow-dark: 0 4px 8px rgba(0, 0, 0, 0.5); /* เงาสำหรับ Dark Mode */
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color-main); /* ใช้ Dark Mode Background */
@@ -2140,18 +2134,7 @@ body {
     flex: 1;
 }
 
-/* ปุ่มข้าง */
-.round-btn.side {
-    width: 58px;
-    height: 58px;
-    background: #1e1e1e;
-    color: white;
-    font-size: 1.5rem;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    margin-bottom: 2px;
-}
+
 
 /* 📍 ปุ่มบ้านขยับลงมาอีกนิด */
 .round-btn.center {

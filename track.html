@@ -5,33 +5,173 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ติดตามสถานะคำสั่งซื้อ - BANGFOOD</title>
     <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #121212; color: #fff; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; }
+        .container { padding: 20px; padding-bottom: 180px; max-width: 500px; margin: 0 auto; }
+        
+        .status-box { 
+            text-align: center; padding: 20px; 
+            background: linear-gradient(145deg, #252525, #1a1a1a); 
+            border-radius: 15px; margin-bottom: 25px; 
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        /* 📍 แถบเมนูด้านล่าง Diamond Glow Premium Jumbo */
+        .curved-nav-container {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 420px;
+            height: 90px;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none; /* แก้ปัญหากดไม่ได้ */
+        }
+
+        .nav-buttons-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background: rgba(25, 25, 25, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            width: 100%;
+            height: 99px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            position: relative;
+            padding: 0 10px;
+            /* 📍 รอยเว้ากว้างรองรับปุ่มจัมโบ้ */
+            mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
+            -webkit-mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
+        }
+
+        .nav-btn-box { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; }
+
+        /* 📍 ปุ่มติดตามตรงกลาง (สลับมาไว้ที่นี่) */
+        .center-home-wrapper {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -45px);
+            /* 📍 ดันให้สูงกว่าทุกอย่างและเปิดการกด */
+            z-index: 2010; 
+            pointer-events: auto; 
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .round-btn.center {
+            width: 85px;
+            height: 85px;
+            background: linear-gradient(135deg, #ff9800, #f44336);
+            border-radius: 50%;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 12px 25px rgba(244, 67, 54, 0.6);
+            border: 6px solid #803a1706;
+            display: flex;
+            justify-content: center; align-items: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .round-btn.center:active { transform: scale(0.9); }
+
+        .round-btn.side {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(145deg, rgba(45, 45, 45, 1), rgba(20, 20, 20, 1));
+            border-radius: 18px;
+            font-size: 1.6rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center; align-items: center;
+            
+        }
+        .nav-btn-box:active .round-btn.side {
+            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.7);
+            transform: scale(0.9) translateY(2px);
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            color: #fff;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Modal สำหรับใบเสร็จ */
+        #receipt-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); z-index: 3000; display: flex; 
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .receipt-card {
+            background: #fff; color: #333; width: 100%; max-width: 320px; 
+            padding: 25px; border-radius: 15px; font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
 </head>
 
 <body> 
     <header class="app-header">
-        <a href="index.html" class="back-link">
+        <a href="javascript:void(0)" class="back-link" onclick="goBackToIndex()">
+            <i class="fas fa-chevron-left"></i> 
             <span>กลับ</span>
         </a>
         <h1 class="bangfood">BANGFOOD</h1>
-        <span>Track</span>
+        <p class="menu-label" style="text-align: center; color: #888; font-size: 0.8rem; margin: 0;">ORDER TRACKING</p>
     </header>
 
-    <div class="container" style="padding: 20px;">
-        <div id="status-display" class="status-box" style="text-align: center; padding: 20px; background: #1e1e1e; border-radius: 10px; margin-bottom: 20px;">
-            <p id="tracking-table-header">กำลังโหลดข้อมูล...</p>
+    <div class="container">
+        <div id="status-display" class="status-box">
+            <h2 id="tracking-table-header" style="margin:0; color: #ff9800;">📍 โหลดข้อมูล...</h2>
+            <p style="margin: 10px 0 0; font-size: 0.8rem; color: #888;">สถานะอาหารปัจจุบัน</p>
         </div>
 
         <div id="order-details-display" class="order-details">
-            <div class="block-track" style="display: flex; justify-content: space-between; border-bottom: 2px solid #444; padding-bottom: 10px; margin-bottom: 10px;">
-                <span class="track-item-name-header">รายการสินค้า</span>
-                <span class="track-price-header">ราคา</span>
+            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #444; padding-bottom: 10px; margin-bottom: 15px;">
+                <span style="font-weight: bold; color: #aaa;">รายการสินค้า</span>
+                <span style="font-weight: bold; color: #aaa;">ราคา</span>
+            </div>
+            <div id="items-list-container"></div>
+            <div style="margin-top: 20px; text-align: right; border-top: 2px solid #444; padding-top: 15px;">
+                <h3 style="margin: 0;">ยอดรวม: <span id="total-amount-display" style="color: #41ff7aff; font-size: 1.5rem;">0.00 บาท</span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="curved-nav-container">
+        <div class="center-home-wrapper">
+            <button class="round-btn center">
+                <i class="fas fa-map-marker-alt"></i>
+            </button>
+           
+        </div>
+
+        <div class="nav-buttons-wrapper">
+            <div class="nav-btn-box" onclick="goToCart()">
+                <button class="round-btn side">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+                
             </div>
             
-            <ul id="items-list-container" class="item-list" style="padding: 0;">
-                </ul>
-
-            <div class="total-summary-track" style="margin-top: 20px; text-align: right; border-top: 2px solid #444; padding-top: 15px;">
-                <h3 class="total-amount">ยอดรวม: <span id="total-amount-display" style="color: #41ff7aff;">0.00 บาท</span></h3>
+            <div style="flex: 1.2; pointer-events: none;"></div>
+            
+            <div class="nav-btn-box" onclick="goBackToIndex()">
+                <button class="round-btn side">
+                    <i class="fas fa-home"></i>
+                </button>
                 
             </div>
         </div>
@@ -41,236 +181,79 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-       
-    const firebaseConfig = {
-        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
-        authDomain: "bangfood-cb30f.firebaseapp.com",
-        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "bangfood-cb30f",
-        storageBucket: "bangfood-cb30f.firebasestorage.app",
-        messagingSenderId: "390955623784",
-        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database(); 
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+            authDomain: "bangfood-cb30f.firebaseapp.com",
+            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "bangfood-cb30f",
+            storageBucket: "bangfood-cb30f.firebasestorage.app",
+            messagingSenderId: "390955623784",
+            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+        };
+        
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database(); 
 
-    function startTracking() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tableNo = urlParams.get('table') || '1';
-    document.getElementById('tracking-table-header').textContent = "📍 โต๊ะ " + tableNo;
-
-    db.ref('orders').orderByChild('tableNumber').equalTo(tableNo).on('value', (snapshot) => {
-        const listContainer = document.getElementById('items-list-container');
-        const totalDisplay = document.getElementById('total-amount-display');
-
-        let html = '';
-        let total = 0;
-
-        if (snapshot.exists()) {
-            snapshot.forEach(orderChild => {
-                const order = orderChild.val();
-                const currentStatus = order.status || 'รอดำเนินการ';
-
-                if (order.items) {
-                    order.items.forEach((item) => {
-                        let statusColor = "#ffd700"; 
-                        let icon = "⏳";
-                        
-                        if (currentStatus === 'กำลังทำ') { 
-                            statusColor = "#ff9800"; 
-                            icon = "🍳"; 
-                        } else if (currentStatus === 'เสร็จสมบูรณ์') { 
-                            statusColor = "#4CAF50"; 
-                            icon = "✅"; 
-                        } else if (currentStatus === 'ชำระเงินแล้ว') {
-                            statusColor = "#2196F3"; 
-                            icon = "💰";
-                        }
-
-                        total += parseFloat(item.finalPrice || 0);
-
-                        // 🚀 สร้าง HTML ของปุ่ม "ดูใบเสร็จ" เฉพาะรายการที่ชำระเงินแล้ว
-                        let receiptButtonHtml = '';
-                        if (currentStatus === 'ชำระเงินแล้ว') {
-                            receiptButtonHtml = `
-                                <button onclick="showIndividualReceipt('${item.name}', '${item.finalPrice}', '${item.options || 'ธรรมดา'}', '${tableNo}')" 
-                                    style="margin-top: 12px; width: 100%; background: #41ff7aff; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(65, 255, 122, 0.3);">
-                                    🧾 ดูใบเสร็จรายการนี้
-                                </button>
-                            `;
-                        }
-
-                        html += `
-                        <div class="item-card" style="background: linear-gradient(145deg, #252525, #1a1a1a); border-radius: 12px; padding: 18px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <img src="${item.img || 'https://via.placeholder.com/70'}" 
-                                     style="width: 75px; height: 75px; border-radius: 10px; object-fit: cover; border: 1.5px solid rgba(255,215,0,0.2);">
-                                <div style="flex: 1;">
-                                    <div style="display:flex; justify-content:space-between; align-items: flex-start;">
-                                        <div>
-                                            <div style="color:#ffffff; font-size: 1.1rem; font-weight: 600;">
-                                                ${item.name} <span style="color: rgba(255,255,255,0.3); font-size: 0.9rem;">x${item.quantity || 1}</span>
-                                            </div>
-                                            <div style="color: #b0b0b0; font-size: 0.85rem; margin-top: 4px;">
-                                                ${item.options ? item.options.replace(/,/g, ' •') : 'ธรรมดา'}
-                                            </div>
-                                        </div>
-                                        <div style="text-align: right;">
-                                            <span style="color: #d4af37; font-size: 1.1rem; font-weight: 700;">฿${parseFloat(item.finalPrice).toFixed(2)}</span>
-                                        </div>
-                                    </div>
-                                    <div style="margin-top: 10px; color: ${statusColor}; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
-                                        <span style="margin-right: 5px;">${icon}</span> ${currentStatus}
-                                    </div>
-                                </div>
-                            </div>
-                            ${receiptButtonHtml} </div>`;
-                    });
-                }
-            });
-            listContainer.innerHTML = html;
-            totalDisplay.textContent = total.toFixed(2) + " บาท";
-        } else {
-            listContainer.innerHTML = "<div style='color:#666; text-align:center; padding: 60px 0;'>ยังไม่มีรายการสั่งซื้อในขณะนี้</div>";
-            totalDisplay.textContent = "0.00 บาท";
-            // ล้างปุ่มเก่าที่อาจค้างอยู่
-            db.ref(`currentReceipt/${tableNo}`).remove();
+        function getTableNo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('table') || localStorage.getItem('selectedTable') || '1';
         }
-    });
-}
-function showIndividualReceipt(name, price, options, table) {
-    const modalHtml = `
-        <div id="receipt-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; display:flex; justify-content:center; align-items:center; padding:20px;">
-            <div style="background:#fff; color:#333; width:100%; max-width:320px; padding:25px; border-radius:10px; font-family:'Courier New', Courier, monospace; position:relative;">
-                <div style="text-align:center; border-bottom:1px dashed #ccc; padding-bottom:15px; margin-bottom:15px;">
-                    <h2 style="margin:0;">BANGFOOD</h2>
-                    <p style="font-size:0.8rem;">โต๊ะ: ${table}</p>
-                    <p style="font-size:0.7rem;">${new Date().toLocaleString('th-TH')}</p>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                    <div>
-                        <div style="font-weight:bold;">${name}</div>
-                        <div style="font-size:0.8rem; color:#666;">${options}</div>
-                    </div>
-                    <div style="font-weight:bold;">${parseFloat(price).toFixed(2)}</div>
-                </div>
-                <div style="border-top:1px solid #000; padding-top:10px; text-align:center;">
-                    <h3 style="margin:0;">ยอดสุทธิ: ฿${parseFloat(price).toFixed(2)}</h3>
-                    <p style="font-size:0.7rem; margin-top:10px;">ขอบคุณที่ใช้บริการครับน้า!</p>
-                </div>
-                <button onclick="this.parentElement.parentElement.remove()" style="margin-top:20px; width:100%; padding:10px; background:#e74c3c; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">ปิด</button>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
-    // --- ส่วนที่เพิ่มใหม่: ระบบปุ่มดูใบเสร็จแบบโต้ตอบ ---
-let currentReceiptData = null;
 
+        function startTracking() {
+            const tableNo = getTableNo();
+            document.getElementById('tracking-table-header').textContent = "📍 โต๊ะที่ " + tableNo;
 
+            db.ref('orders').orderByChild('tableNumber').equalTo(tableNo).on('value', (snapshot) => {
+                const listContainer = document.getElementById('items-list-container');
+                const totalDisplay = document.getElementById('total-amount-display');
+                let html = '';
+                let total = 0;
 
-
-window.openReceiptModal = function() {
-    if (!currentReceiptData) return;
-    
-    const data = currentReceiptData;
-    const modalHtml = `
-        <div id="receipt-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; 
-            background:rgba(0,0,0,0.9); z-index:2000; display:flex; justify-content:center; align-items:center; padding:20px;">
-            
-            <div style="background:#fff; color:#333; width:100%; max-width:350px; padding:25px; border-radius:10px; font-family:'Courier New', Courier, monospace; box-shadow: 0 0 25px rgba(255,255,255,0.1);">
-                <div style="text-align:center; border-bottom:1px dashed #ccc; padding-bottom:15px; margin-bottom:15px;">
-                    <h2 style="margin:0; font-family: 'Kanit', sans-serif;">BANGFOOD</h2>
-                    <p style="font-size:0.8rem; margin:5px 0;">โต๊ะ: ${data.tableNumber}</p>
-                    <p style="font-size:0.7rem; color:#666;">${new Date(data.paidAt).toLocaleString('th-TH')}</p>
-                </div>
-
-                <div style="margin-bottom:15px; max-height:250px; overflow-y:auto;">
-                    ${data.items.map(item => `
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.9rem;">
-                            <div style="flex:1; padding-right:10px;">
-                                <div style="font-weight:bold;">${item.name} x${item.quantity || 1}</div>
-                                <div style="font-size:0.75rem; color:#888;">${item.options || 'ธรรมดา'}</div>
-                            </div>
-                            <div style="font-weight:bold;">${parseFloat(item.finalPrice).toFixed(2)}</div>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <div style="border-top:1px dashed #ccc; padding-top:10px; margin-bottom:20px;">
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.2rem;">
-                        <span>ยอดรวม</span>
-                        <span style="color:#2e7d32;">฿${data.total}</span>
-                    </div>
-                </div>
-
-                <div style="text-align:center; font-size:0.8rem; background:#f9f9f9; padding:10px; border-radius:5px; margin-bottom:20px;">
-                    ✅ ชำระเงินเรียบร้อยแล้ว<br>ขอบคุณที่มาอุดหนุนครับน้า!
-                </div>
-
-                <button onclick="document.getElementById('receipt-modal').remove()" 
-                    style="width:100%; background:#e74c3c; color:white; border:none; padding:12px; border-radius:5px; cursor:pointer; font-weight:bold;">
-                    ปิดหน้าต่าง
-                </button>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-};
-
-// เพิ่มการเรียกใช้งานใน DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-    startTracking();
-    listenForReceipt(); // เรียกฟังก์ชันใหม่
-});
-
-    window.handlePayment = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const tableNo = urlParams.get('table') || '1';
-        if (confirm(`ยืนยันการแจ้งชำระเงิน โต๊ะ ${tableNo}?`)) {
-            // แก้ไข: tableNumber ให้ตรงกับที่เก็บใน DB
-            db.ref('orders').orderByChild('tableNumber').equalTo(tableNo).once('value', (snapshot) => {
-                if(snapshot.exists()){
-                    snapshot.forEach(child => {
-                        child.ref.update({ status: 'ชำระเงินแล้ว' });
+                if (snapshot.exists()) {
+                    snapshot.forEach(orderChild => {
+                        const order = orderChild.val();
+                        const currentStatus = order.status || 'รอดำเนินการ';
+                        if (order.items) {
+                            order.items.forEach((item) => {
+                                let statusColor = "#ffd700"; let icon = "⏳";
+                                if (currentStatus === 'กำลังทำ') { statusColor = "#ff9800"; icon = "🍳"; }
+                                else if (currentStatus === 'เสร็จสมบูรณ์') { statusColor = "#4CAF50"; icon = "✅"; }
+                                else if (currentStatus === 'ชำระเงินแล้ว') { statusColor = "#2196F3"; icon = "💰"; }
+                                total += parseFloat(item.finalPrice || 0);
+                                let receiptBtn = currentStatus === 'ชำระเงินแล้ว' ? `<button onclick="showIndividualReceipt('${item.name}', '${item.finalPrice}', '${item.options || 'ธรรมดา'}', '${tableNo}')" style="margin-top: 12px; width: 100%; background: #41ff7aff; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">🧾 ดูใบเสร็จ</button>` : '';
+                                html += `
+                                <div style="background: #252525; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);">
+                                    <div style="display: flex; gap: 15px; align-items: center;">
+                                        <img src="${item.img || 'https://via.placeholder.com/70'}" style="width: 65px; height: 65px; border-radius: 10px; object-fit: cover;">
+                                        <div style="flex: 1;">
+                                            <div style="display:flex; justify-content:space-between;"><b style="font-size: 1rem;">${item.name}</b><span style="color: #d4af37; font-weight: bold;">฿${parseFloat(item.finalPrice).toFixed(2)}</span></div>
+                                            <small style="color: #888;">${item.options || 'ธรรมดา'}</small>
+                                            <div style="margin-top: 8px; color: ${statusColor}; font-size: 0.7rem; font-weight: bold;">${icon} ${currentStatus}</div>
+                                        </div>
+                                    </div>
+                                    ${receiptBtn}
+                                </div>`;
+                            });
+                        }
                     });
-                    alert("แจ้งพนักงานเรียบร้อยครับ!");
+                    listContainer.innerHTML = html;
+                    totalDisplay.textContent = total.toFixed(2) + " บาท";
+                } else {
+                    listContainer.innerHTML = "<p style='text-align:center; padding: 50px 0; color:#666;'>ยังไม่มีประวัติการสั่งครับ</p>";
+                    totalDisplay.textContent = "0.00 บาท";
                 }
             });
         }
-    };
 
-    document.addEventListener('DOMContentLoaded', startTracking);
-    // --- ส่วนดักฟังเพื่อโชว์ปุ่มสลิป ---
-let receiptData = null;
-const tableNo = new URLSearchParams(window.location.search).get('table') || '1';
+        function showIndividualReceipt(name, price, options, table) {
+            const modalHtml = `<div id="receipt-modal"><div class="receipt-card"><div style="text-align:center; border-bottom:1px dashed #ccc; padding-bottom:15px; margin-bottom:15px;"><h2 style="margin:0;">BANGFOOD</h2><p style="font-size:0.8rem; margin:5px 0;">โต๊ะ: ${table}</p></div><div style="display:flex; justify-content:space-between; margin-bottom:20px;"><div style="font-size:0.9rem;"><b>${name}</b><br><small>${options}</small></div><b>${parseFloat(price).toFixed(2)}</b></div><div style="border-top:1px solid #000; padding-top:10px; text-align:center;"><h3 style="margin:0;">ยอดสุทธิ: ฿${parseFloat(price).toFixed(2)}</h3></div><button onclick="document.getElementById('receipt-modal').remove()" style="margin-top:20px; width:100%; padding:10px; background:#e74c3c; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">ปิด</button></div></div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
 
+        function goBackToIndex() { window.location.href = `index.html?table=${getTableNo()}`; }
+        function goToCart() { window.location.href = `cart.html?table=${getTableNo()}`; }
 
-
-function showReceiptPopup() {
-    if (!receiptData) return;
-    // สร้างหน้าต่าง Popup แสดงรายการ
-    const content = `
-        <div id="receipt-modal" class="modal-overlay">
-            <div class="receipt-card">
-                <h2>BANGFOOD</h2>
-                <p>โต๊ะ: ${receiptData.tableNumber}</p>
-                <hr>
-                ${receiptData.items.map(item => `
-                    <div style="display:flex; justify-content:space-between;">
-                        <span>${item.name} x${item.quantity || 1}</span>
-                        <span>${item.finalPrice}</span>
-                    </div>
-                `).join('')}
-                <hr>
-                <h3>ยอดรวม: ${receiptData.total} บาท</h3>
-                <button onclick="this.parentElement.parentElement.remove()" class="close-btn">ปิด</button>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', content);
-}
-</script>
+        document.addEventListener('DOMContentLoaded', startTracking);
+    </script>
 </body>
 </html>

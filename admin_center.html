@@ -104,6 +104,7 @@
             padding: 12px;
             border-radius: 15px;
             transition: 0.3s;
+            cursor: pointer;
         }
 
         .exit-btn:hover {
@@ -155,105 +156,27 @@
 
         </div>
 
-        <a href="start.html" class="exit-btn">ออกจากโหมดแอดมิน</a>
+        <div onclick="logoutAdmin()" class="exit-btn">ออกจากโหมดแอดมิน / Logout</div>
     </div>
-    <header class="admin-top-nav">
-    <div class="menu-container">
-        <div class="hamburger-menu" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <div id="admin-dropdown" class="dropdown-content">
-            <a href="login.html" id="login-link">🔐 เข้าสู่ระบบ (Admin)</a>
-            <a href="#" onclick="logoutAdmin()" id="logout-link" style="display:none; color: #ff4444;">🚪 ออกจากระบบ</a>
-        </div>
-    </div>
-</header>
-
-<style>
-    /* 📍 สไตล์ปุ่ม 3 ขีด และ Dropdown */
-    .admin-top-nav {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 2000;
-    }
-    .hamburger-menu {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        cursor: pointer;
-        padding: 10px;
-        background: var(--glass-bg);
-        border-radius: 12px;
-        border: 1px solid var(--glass-border);
-        backdrop-filter: blur(10px);
-    }
-    .hamburger-menu span {
-        width: 25px;
-        height: 2px;
-        background-color: white;
-        transition: 0.3s;
-    }
-    .dropdown-content {
-        position: absolute;
-        top: 60px;
-        right: 0;
-        background: rgba(20, 20, 20, 0.95);
-        min-width: 180px;
-        border-radius: 15px;
-        border: 1px solid var(--glass-border);
-        display: none;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .dropdown-content a {
-        padding: 15px 20px;
-        display: block;
-        color: white;
-        text-decoration: none;
-        font-size: 0.9rem;
-    }
-    .dropdown-content a:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-    .show { display: block; }
-</style>
 
 <script>
-    function toggleMenu() {
-        document.getElementById("admin-dropdown").classList.toggle("show");
-    }
-
-    // ปิดเมนูเมื่อคลิกที่อื่น
-    window.onclick = function(event) {
-        if (!event.target.matches('.hamburger-menu') && !event.target.matches('.hamburger-menu span')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            for (var i = 0; i < dropdowns.length; i++) {
-                if (dropdowns[i].classList.contains('show')) {
-                    dropdowns[i].classList.remove('show');
-                }
-            }
-        }
-    }
-
-    // ตรวจสอบสถานะการล็อคอิน
+    // ตรวจสอบว่าแอดมินล็อคอินอยู่หรือไม่ ถ้าไม่มีให้เด้งออกไปหน้าแรก
     function checkLoginStatus() {
         const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
-        if (isLoggedIn === 'true') {
-            document.getElementById('login-link').style.display = 'none';
-            document.getElementById('logout-link').style.display = 'block';
+        if (isLoggedIn !== 'true') {
+            window.location.href = "start.html";
         }
     }
 
     function logoutAdmin() {
-        if(confirm("ยืนยันการออกจากระบบ?")) {
+        if(confirm("ยืนยันการออกจากระบบแอดมิน?")) {
             sessionStorage.removeItem('isAdminLoggedIn');
-            location.reload();
+            sessionStorage.removeItem('currentAdminName'); // ลบชื่อแอดมินที่ล็อคอินอยู่ด้วย
+            window.location.href = "start.html";
         }
     }
     
+    // เรียกใช้ตอนโหลดหน้า
     window.onload = checkLoginStatus;
 </script>
 </body>

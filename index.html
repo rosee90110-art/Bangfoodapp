@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เมนูอาหาร | BANGFOOD</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* 📍 ส่วนหัวและเมนูแอดมิน */
         .top-header { top: 20px; right: 20px; z-index: 1001; }
         .menu-toggle { flex-direction: column; gap: 4px; cursor: pointer; background: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 12px; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); }
         .menu-toggle span { width: 15px; height: 1.5px; background-color: white; }
@@ -15,7 +17,280 @@
         .dropdown-item:hover { background: rgba(255, 255, 255, 0.1); color: #ff4b2b; }
         .dropdown-divider { height: 1px; background: rgba(255,255,255,0.05); }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .app-header-title { font-size: 3.5rem; font-weight: 700; letter-spacing: 5px; margin-bottom: 5px; color: white; text-shadow: 5px 5px 7px rgba(0, 0, 0, 0.8), 0 10px 20px rgba(0, 0, 0, 0.5), 0 20px 40px rgba(0, 0, 0, 0.4); }
+
+        /* 📍 ส่วนเมนูด้านล่าง Diamond Glow Premium Jumbo */
+        .curved-nav-container {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 420px;
+            height: 90px;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none;
+        }
+
+        .nav-buttons-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background: rgba(25, 25, 25, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            width: 100%;
+            height: 90px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            position: relative;
+            padding: 0 10px;
+            pointer-events: auto;
+            mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
+            -webkit-mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
+        }
+
+        .nav-btn-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            flex: 1;
+            position: relative; /* 📍 เพื่อให้ตัวเลข Badge ลอยอยู่บนปุ่มได้ */
+        }
+
+        /* 📍 ตัวเลขบนตะกร้า (Cart Badge) */
+        #cart-count-badge {
+            position: absolute;
+            top: -5px;
+            right: 15%;
+            background: #ff4b2b;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            padding: 2px;
+            border-radius: 50%;
+            display: none; /* ซ่อนไว้ก่อนถ้าไม่มีของ */
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #1a1a1a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            z-index: 2010;
+        }
+
+        .center-home-wrapper {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -45px);
+            z-index: 2010; 
+            pointer-events: auto; 
+            cursor: pointer;
+        }
+
+        .round-btn.center {
+            width: 85px;
+            height: 85px;
+            background: linear-gradient(135deg, #ff9800, #f49536);
+            border-radius: 50%;
+            font-size: 2.8rem;
+            color: white;
+            box-shadow: 0 12px 25px rgba(244, 67, 54, 0.6);
+            border: 6px solid #ef470415;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .round-btn.side {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(145deg, rgba(45, 45, 45, 1), rgba(20, 20, 20, 1));
+            border-radius: 18px;
+            font-size: 1.6rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .nav-btn-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            flex: 1;
+            position: relative; /* 📍 เพื่อให้ตัวเลข Badge ลอยอยู่บนปุ่มได้ */
+        }
+
+        /* 📍 หัวข้อเมนูยอดฮิตข้างบนรูป */
+        .section-title-container {
+            padding: 20px 20px 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fire-icon {
+            color: #ff4b2b;
+            animation: flicker 1.5s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { text-shadow: 0 0 4px #ff4b2b; transform: scale(1); }
+            100% { text-shadow: 0 0 12px #ff9100; transform: scale(1.1); }
+        }
+
+        .view-all {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* 📍 ส่วน Main Slider */
+        .slider-wrapper {
+            width: 100%;
+            padding-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .image-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            gap: 15px;
+            padding: 10px 20px;
+        }
+
+        .image-slider::-webkit-scrollbar { display: none; }
+
+        .slide-card {
+            flex: 0 0 85%;
+            scroll-snap-align: center;
+            position: relative;
+            border-radius: 25px;
+            overflow: hidden;
+            height: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        .slide-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            color: white;
+        }
+
+        .slide-info h2 { margin: 0; font-size: 1.3rem; color: #ffbc00; }
+        .slide-info p { margin: 5px 0 0; font-size: 0.85rem; opacity: 0.9; }
+
+        /* 📍 แถบเมนูด้านล่าง Diamond Glow Jumbo */
+       
+        .nav-buttons-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            background: rgba(25, 25, 25, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            width: 100%;
+            height: 99px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            position: relative;
+            padding: 0 10px;
+            /* 📍 รอยเว้ากว้างรองรับปุ่มจัมโบ้ */
+            mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
+            -webkit-mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
+        }
+        .nav-btn-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* 🚀 ปุ่มยืนยันคำสั่งซื้อตรงกลางแบบจัมโบ้ (จิ้มได้ 100%) */
+        .center-home-wrapper {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -45px);
+            /* 📍 ดันให้สูงกว่าทุกอย่างและเปิดการกด */
+            z-index: 2010; 
+            pointer-events: auto; 
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .round-btn.center {
+            width: 85px;
+            height: 85px;
+            background: linear-gradient(135deg, #f8d300, #c8b700);
+            border-radius: 50%;
+            font-size: 2.2rem;
+            color: white;
+            box-shadow: 0 12px 25px rgba(170, 165, 14, 0.5);
+            border: 6px solid #0021081d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .round-btn.center:active { transform: scale(0.9); }
+        /* 📍 สไตล์จุดบอกตำแหน่งสไลด์ */
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            background-color: #ff4b2b; /* สีเดียวกับแบรนด์ */
+            width: 20px; /* ยืดออกให้ดูพรีเมียม */
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -39,7 +314,49 @@
     </div>
 </header>
 
-<main class="menu-container">
+    <main>
+    <div class="section-title-container">
+        <h2 class="section-title">
+            <i class="fas fa-fire fire-icon"></i> เมนูยอดฮิต
+        </h2>
+    </div>
+
+    <div class="slider-wrapper">
+        <div class="image-slider" id="main-slider">
+            <div class="slide-card">
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80">
+                <div class="slide-info">
+                    <h2>เมนูสลัดรวมมิตร</h2>
+                    <p>อร่อย คลีน ดีต่อสุขภาพ</p>
+                </div>
+            </div>
+
+            <div class="slide-card">
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80">
+                <div class="slide-info">
+                    <h2>ข้าวผัดกุ้งจัมโบ้</h2>
+                    <p>กุ้งเน้นๆ เต็มคำ</p>
+                </div>
+            </div>
+
+            <div class="slide-card">
+                <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=80">
+                <div class="slide-info">
+                    <h2>สเต็กทีโบนพรีเมียม</h2>
+                    <p>เนื้อนุ่ม ชุ่มฉ่ำ ซอสสูตรเด็ด</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slider-dots" id="slider-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+</main>
+</main>
+<main class="menu-container" style="padding-bottom: 150px;">
     <div class="menu-tabs"> 
         <a href="#" class="menu-tab active" id="tab-food" data-category="อาหาร" onclick="switchCategory('อาหาร', event)">อาหาร</a>
         <a href="#" class="menu-tab" id="tab-noodle" data-category="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว', event)">ก๋วยเตี๋ยว</a>
@@ -48,23 +365,25 @@
     <div id="food-container" class="menu-category-content"></div>
     <div id="noodle-container" class="menu-category-content" style="display: none;"></div>
     <div id="drink-container" class="menu-category-content" style="display: none;"></div>
+    
 </main>
 
 <div class="curved-nav-container">
-    <div class="nav-bg-curved">
-        <svg viewBox="0 0 400 100" preserveAspectRatio="none"><path d="M0,100 L400,100 L400,40 C360,40 340,40 330,60 C320,80 280,80 270,60 C260,40 240,40 200,40 C160,40 140,40 130,60 C120,80 80,80 70,60 C60,40 40,40 0,40 Z" fill="#121212"/></svg>
+    <div class="center-home-wrapper" onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+        <button class="round-btn center">📝</button>
     </div>
+
     <div class="nav-buttons-wrapper">
-        <div class="nav-btn-box">
-            <button class="round-btn side" onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">🛒</button>
-            <span class="label" id="lbl-cart">ตะกร้า</span>
+        <div class="nav-btn-box" onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+            <button class="round-btn side">🛒</button>
+            <span id="cart-count-badge">0</span> <span class="label">ตะกร้า</span>
         </div>
-        <div class="nav-btn-box main-box">
-            <button class="round-btn center" onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">🏠</button>
-        </div>
-        <div class="nav-btn-box">
-            <button class="round-btn side" onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">📍</button>
-            <span class="label" id="lbl-track">ติดตาม</span>
+        
+        <div style="flex: 1.2;"></div>
+        
+        <div class="nav-btn-box" onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
+            <button class="round-btn side"><i class="fas fa-map-marker-alt"></i></button>
+             <span class="label">ติดตาม</span>
         </div>
     </div>
 </div>
@@ -73,19 +392,31 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-    const translations = {
-    th: {
-        // ... ข้อความเดิมของน้า ...
-        "ข้าวผัด": "ข้าวผัด","ข้าวผัดไข่": "ข้าวผัดไข่","ข้าวผัดเนื้อ": "ข้าวผัดเนื้อ","ข้าวผัดปู": "ข้าวผัดปู","ข้าวผัดทะเล": "ข้าวผัดทะเล","ข้าวผัดต้มยำ": "ข้าวผัดต้มยำ",
-        "txt-back": "กลับ", "txt-admin": "⚙️ โหมดผู้ดูแลระบบ", "tab-food": "อาหาร", "tab-noodle": "ก๋วยเตี๋ยว", "tab-drink": "เครื่องดื่ม", "lbl-cart": "ตะกร้า", "lbl-track": "ติดตาม", "unit": "บาท", "out": "(หมด)", "add": "+ เพิ่ม", "sold": "หมด"
-    },
-    en: {
-        // ... ข้อความเดิมของน้า ...
-        "ข้าวผัด": "Fried Rice","ข้าวผัดไข่": "Egg Fried Rice","ข้าวผัดเนื้อ": "Beef Fried Rice","ข้าวผัดปู": "Crab Fried Rice","ข้าวผัดทะเล": "Seafood Fried Rice","ข้าวผัดต้มยำ": "Tom Yum Fried Rice",
-        "txt-back": "Back", "txt-admin": "⚙️ Admin Mode", "tab-food": "Food", "tab-noodle": "Noodles", "tab-drink": "Drinks", "lbl-cart": "Cart", "lbl-track": "Track", "unit": "THB", "out": "(Out)", "add": "+ Add", "sold": "Out"
-    }
-};
+    // 📍 ฟังก์ชันอัปเดตตัวเลขในตะกร้า
+    function updateCartBadge() {
+        const tableNo = localStorage.getItem('selectedTable') || '1';
+        const cartKey = 'bangfood_cart_table_' + tableNo;
+        const cartData = sessionStorage.getItem(cartKey);
+        const badge = document.getElementById('cart-count-badge');
 
+        if (cartData) {
+            const cart = JSON.parse(cartData);
+            const count = cart.items ? cart.items.length : 0;
+            if (count > 0) {
+                badge.innerText = count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    const translations = {
+        th: { "txt-back": "กลับ", "txt-admin": "⚙️ โหมดผู้ดูแลระบบ", "tab-food": "อาหาร", "tab-noodle": "ก๋วยเตี๋ยว", "tab-drink": "เครื่องดื่ม", "unit": "บาท", "out": "(หมด)", "add": "+ เพิ่ม", "sold": "หมด" },
+        en: { "txt-back": "Back", "txt-admin": "⚙️ Admin Mode", "tab-food": "Food", "tab-noodle": "Noodles", "tab-drink": "Drinks", "unit": "THB", "out": "(Out)", "add": "+ Add", "sold": "Out" }
+    };
 
     function applyPageLanguage() {
         const lang = localStorage.getItem('appLang') || 'th';
@@ -99,66 +430,74 @@
         const currentLang = localStorage.getItem('appLang') || 'th';
         localStorage.setItem('appLang', currentLang === 'th' ? 'en' : 'th');
         applyPageLanguage();
-        loadMenuFromFirebase(); // รีโหลดเมนูอาหารเพื่อให้เปลี่ยนภาษาทันที
+        loadMenuFromFirebase();
     }
 
     function toggleAdminMenu() { document.getElementById('admin-dropdown').classList.toggle('active'); }
 
-    // Firebase Config
     const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     function loadMenuFromFirebase() {
-        const productsRef = db.ref('products');
-        productsRef.on('value', (snapshot) => {
+        db.ref('products').on('value', (snapshot) => {
             const products = snapshot.val();
-            const lang = localStorage.getItem('appLang') || 'th'; // ดึงภาษาปัจจุบันมาเช็ค
-            
-            const containers = { 
-                'อาหาร': 'food-container', 
-                'ก๋วยเตี๋ยว': 'noodle-container', 
-                'เครื่องดื่ม': 'drink-container' 
-            };
-            
-            Object.values(containers).forEach(id => { 
-                const c = document.getElementById(id); 
-                if(c) c.innerHTML = ''; 
-            });
+            const lang = localStorage.getItem('appLang') || 'th';
+            const containers = { 'อาหาร': 'food-container', 'ก๋วยเตี๋ยว': 'noodle-container', 'เครื่องดื่ม': 'drink-container' };
+            Object.values(containers).forEach(id => { document.getElementById(id).innerHTML = ''; });
 
             for (let id in products) {
                 const p = products[id];
                 const isOut = p.status === 'out_of_stock';
-
-                // 📍 จุดสำคัญ: แปลงชื่ออาหารโดยเทียบจากคลัง translations
-                // ถ้าในคลังมีชื่ออาหารนี้ (เช่น "ข้าวผัดทะเล") ให้ใช้คำแปลภาษาอังกฤษ (Seafood Fried Rice) 
-                // ถ้าหาไม่เจอ ให้ใช้ชื่อเดิมจาก Firebase ครับ
-                const translatedName = translations[lang][p.name] || p.name;
-
-                const statusTxt = isOut ? `<span style="color:red;">${translations[lang].out}</span>` : '';
-                const btnTxt = isOut ? translations[lang].sold : translations[lang].add;
-                const priceUnit = translations[lang].unit;
-
                 const productHTML = `
                     <div class="menu-item" style="${isOut ? 'opacity: 0.6;' : ''}">
                         <img src="${p.img}" class="item-image" style="${isOut ? 'filter: grayscale(1);' : ''}">
                         <div class="item-details">
-                            <h3 class="item-name">${translatedName} ${statusTxt}</h3>
-                            <div class="item-price"><span>${p.price}</span> ${priceUnit}</div>
+                            <h3 class="item-name">${p.name} ${isOut ? `<span style="color:red;">${translations[lang].out}</span>` : ''}</h3>
+                            <div class="item-price"><span>${p.price}</span> ${translations[lang].unit}</div>
                         </div>
                         ${isOut 
-                            ? `<button class="add-to-cart-btn" disabled style="background:#888;">${btnTxt}</button>` 
-                            : `<a href="${p.category === 'เครื่องดื่ม' ? 'drink.html' : 'menu.html'}?name=${encodeURIComponent(p.name)}&price=${p.price}&img=${p.img}" class="add-to-cart-btn">${btnTxt}</a>`
+                            ? `<button class="add-to-cart-btn" disabled style="background:#888;">${translations[lang].sold}</button>` 
+                            : `<a href="${p.category === 'เครื่องดื่ม' ? 'drink.html' : 'menu.html'}?name=${encodeURIComponent(p.name)}&price=${p.price}&img=${p.img}" class="add-to-cart-btn">${translations[lang].add}</a>`
                         }
                     </div>`;
-
                 const container = document.getElementById(containers[p.category]);
                 if (container) container.innerHTML += productHTML;
             }
         });
     }
 
-    document.addEventListener('DOMContentLoaded', () => { applyPageLanguage(); loadMenuFromFirebase(); });
+    function switchCategory(cat, e) {
+        if(e) e.preventDefault();
+        document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`[data-category="${cat}"]`).classList.add('active');
+        document.getElementById('food-container').style.display = (cat === 'อาหาร') ? 'block' : 'none';
+        document.getElementById('noodle-container').style.display = (cat === 'ก๋วยเตี๋ยว') ? 'block' : 'none';
+        document.getElementById('drink-container').style.display = (cat === 'เครื่องดื่ม') ? 'block' : 'none';
+    }
+
+    // 📍 เรียกฟังก์ชันตอนโหลดหน้า
+    document.addEventListener('DOMContentLoaded', () => { 
+        applyPageLanguage(); 
+        loadMenuFromFirebase(); 
+        updateCartBadge(); // 📍 เช็คจำนวนของตอนเปิดแอป
+    });
+    // 📍 ฟังก์ชันควบคุมจุดบอกตำแหน่งสไลด์
+    const slider = document.getElementById('main-slider');
+    const dots = document.querySelectorAll('.dot');
+
+    slider.addEventListener('scroll', () => {
+        // คำนวณหา index ของรูปที่แสดงอยู่
+        const scrollIndex = Math.round(slider.scrollLeft / (slider.clientWidth * 0.85)); 
+        
+        dots.forEach((dot, index) => {
+            if (index === scrollIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    });
 </script>
 </body>
 </html>

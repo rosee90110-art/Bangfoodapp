@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Dashboard | BANGFOOD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --premium-gold: #c5a059;
+            --bg-deep: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border-dim: rgba(255, 255, 255, 0.08);
+            --success: #4CAF50;
+            --info: #2196F3;
+        }
+
+        body { background-color: var(--bg-deep); color: #f5f5f5; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; padding-bottom: 100px; }
+
+        /* 📍 แถบบนสุดของจอ (Sticky Header) */
+        .app-top-bar {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(20px);
+            padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border-dim);
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .app-top-bar h1 { font-size: 1.1rem; color: #fff; margin: 0; letter-spacing: 2px; font-weight: 500; }
+        .close-btn { color: var(--premium-gold); text-decoration: none; font-size: 1.2rem; transition: 0.3s; }
+
+        .container { padding: 20px; }
+
+        /* 📊 Filter Tabs - สวยและเด้งได้ */
+        .filter-tabs { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; scrollbar-width: none; animation: slideInRight 0.8s ease-out; }
+        .filter-btn { background: var(--glass); border: 1px solid var(--border-dim); color: #666; padding: 10px 20px; border-radius: 14px; cursor: pointer; white-space: nowrap; font-size: 0.8rem; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .filter-btn.active { background: var(--premium-gold); color: #000; font-weight: bold; border-color: var(--premium-gold); transform: scale(1.05); box-shadow: 0 5px 15px rgba(197, 160, 89, 0.2); }
+
+        /* 💰 Metric Cards แอนิเมชันตอนโหลด */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .stat-card { 
+            background: var(--glass); border: 1px solid var(--border-dim); padding: 20px; border-radius: 24px; 
+            opacity: 0; transform: translateY(20px); animation: slideUpFade 0.6s forwards;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .stat-card span { font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 1px; display: block; }
+        .stat-card b { display: block; font-size: 1.3rem; color: var(--premium-gold); margin-top: 8px; }
+
+        /* 📈 Chart & Table Section */
+        .card-box { 
+            background: var(--glass); border: 1px solid var(--border-dim); border-radius: 28px; padding: 20px; margin-bottom: 20px;
+            opacity: 0; animation: slideUpFade 0.8s forwards; animation-delay: 0.5s;
+        }
+        .card-title { font-size: 0.85rem; color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+        .table-row { 
+            display: grid; grid-template-columns: 2fr 1fr 1.2fr; padding: 15px 10px; border-bottom: 1px solid rgba(255,255,255,0.03); 
+            animation: fadeIn 0.5s ease-out;
+        }
+        .table-row b { font-size: 0.85rem; color: #ddd; font-weight: 400; }
+        .table-row .price { text-align: right; color: var(--success); font-weight: 600; }
+
+        /* 📍 แอนิเมชันต่างๆ */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .value-pop { animation: valuePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes valuePop { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body onload="initDashboard()">
+
+    <header class="app-top-bar">
+        <a href="admin_center.html" class="close-btn"><i class="fas fa-chevron-left"></i></a>
+        <h1>BANGFOOD INSIGHTS</h1>
+        <div style="width: 25px;"></div>
+    </header>
+
+    <div class="container">
+        <div class="filter-tabs">
+            <button class="filter-btn active" onclick="updateView('day', this)">วันนี้</button>
+            <button class="filter-btn" onclick="updateView('week', this)">7 วันล่าสุด</button>
+            <button class="filter-btn" onclick="updateView('month', this)">เดือนนี้</button>
+            <button class="filter-btn" onclick="updateView('year', this)">ปีนี้</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span>รายได้รวมทั้งหมด</span>
+                <b id="total-revenue">฿0.00</b>
+            </div>
+            <div class="stat-card">
+                <span>จำนวนออเดอร์</span>
+                <b id="total-orders">0</b>
+            </div>
+            <div class="stat-card">
+                <span>เฉลี่ย/บิล</span>
+                <b id="avg-order">฿0.00</b>
+            </div>
+            <div class="stat-card">
+                <span>ยอดขายจาน</span>
+                <b id="total-qty">0</b>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <div class="card-title"><i class="fas fa-chart-bar" style="color:var(--info)"></i> แนวโน้มรายได้สะสม</div>
+            <div style="height: 200px;"><canvas id="mainChart"></canvas></div>
+        </div>
+
+        <div class="card-box">
+            <div class="card-title"><i class="fas fa-chart-pie" style="color:var(--premium-gold)"></i> สัดส่วนเมนูทำเงิน</div>
+            <div style="height: 180px;"><canvas id="donutChart"></canvas></div>
+        </div>
+
+        <div class="card-title" style="margin-left:10px;">รายการขายแยกตามเมนู</div>
+        <div class="card-box" id="product-details-table" style="padding:0;">
+            <div id="table-body"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
+            authDomain: "bangfood-cb30f.firebaseapp.com", 
+            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
+            projectId: "bangfood-cb30f", 
+            storageBucket: "bangfood-cb30f.appspot.com", 
+            messagingSenderId: "390955623784", 
+            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" 
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let rawHistory = [];
+        let mainChart, donutChart;
+
+        function initDashboard() {
+            db.ref('history').on('value', snap => {
+                if (snap.exists()) {
+                    rawHistory = Object.values(snap.val());
+                    updateView('day');
+                }
+            });
+        }
+
+        function updateView(mode, btn) {
+            if(btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            const now = new Date();
+            let totalRev = 0, totalOrders = 0, totalQty = 0;
+            let productMap = {}; let timeGroups = {};
+
+            rawHistory.forEach(order => {
+                if (!order || !order.timestamp) return;
+                const date = new Date(order.timestamp);
+                let isMatch = false; let key = "";
+
+                if (mode === 'day' && date.toDateString() === now.toDateString()) { isMatch = true; key = date.getHours() + ":00"; }
+                else if (mode === 'week') {
+                    const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(now.getDate() - 7);
+                    if (date >= sevenDaysAgo) { isMatch = true; key = date.toLocaleDateString('th-TH', {weekday: 'short'}); }
+                }
+                else if (mode === 'month' && date.getMonth() === now.getMonth()) { isMatch = true; key = date.getDate().toString(); }
+                else if (mode === 'year' && date.getFullYear() === now.getFullYear()) { isMatch = true; key = date.toLocaleDateString('th-TH', {month: 'short'}); }
+
+                if (isMatch) {
+                    const amt = parseFloat(order.total || 0);
+                    totalRev += amt; totalOrders++;
+                    timeGroups[key] = (timeGroups[key] || 0) + amt;
+                    if(order.items) {
+                        order.items.forEach(i => {
+                            const q = parseInt(i.quantity || 1); const p = parseFloat(i.finalPrice || 0);
+                            totalQty += q;
+                            if(!productMap[i.name]) productMap[i.name] = { qty: 0, price: 0 };
+                            productMap[i.name].qty += q; productMap[i.name].price += p;
+                        });
+                    }
+                }
+            });
+
+            // 📍 อัปเดตพร้อมใส่แอนิเมชันเด้ง (Pop)
+            const updateWithAnim = (id, val) => {
+                const el = document.getElementById(id);
+                el.innerText = val;
+                el.classList.remove('value-pop');
+                void el.offsetWidth; // trigger reflow
+                el.classList.add('value-pop');
+            };
+
+            updateWithAnim('total-revenue', "฿" + totalRev.toLocaleString(undefined, {minimumFractionDigits: 2}));
+            updateWithAnim('total-orders', totalOrders.toLocaleString());
+            updateWithAnim('total-qty', totalQty.toLocaleString());
+            updateWithAnim('avg-order', "฿" + (totalRev / (totalOrders || 1)).toLocaleString(undefined, {minimumFractionDigits: 2}));
+
+            const sorted = Object.entries(productMap).sort((a,b) => b[1].price - a[1].price);
+            renderTable(sorted);
+            renderMainChart(timeGroups);
+            renderDonutChart(sorted.slice(0, 5));
+        }
+
+        function renderTable(data) {
+            document.getElementById('table-body').innerHTML = data.map(([name, info]) => `
+                <div class="table-row">
+                    <b>${name}</b>
+                    <div style="text-align:center; color:#666;">x${info.qty}</div>
+                    <div class="price">฿${info.price.toLocaleString()}</div>
+                </div>`).join('');
+        }
+
+       function renderMainChart(data) {
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    if (mainChart) mainChart.destroy();
+    mainChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{ 
+                label: 'ยอดขาย',
+                data: Object.values(data), 
+                backgroundColor: '#c5a059', 
+                borderRadius: 5 
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { 
+                y: { 
+                    display: true, // 📍 เปิดให้โชว์ตัวเลขแกนตั้ง
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#444', font: { size: 9 } }
+                },
+                x: { 
+                    grid: { display: false },
+                    ticks: { color: '#666', font: { size: 10 } }
+                }
+            }
+        }
+    });
+}
+
+        function renderDonutChart(data) {
+            const ctx = document.getElementById('donutChart').getContext('2d');
+            if (donutChart) donutChart.destroy();
+            donutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: data.map(d => d[0]), datasets: [{ data: data.map(d => d[1].price), backgroundColor: ['#c5a059', '#a6874b', '#876d3d', '#69552f', '#4a3c21'], borderWidth: 0 }] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, cutout: '78%',
+                    animation: { animateScale: true, animateRotate: true }, // กราฟวงกลมหมุนตอนโหลด
+                    plugins: { legend: { position: 'right', labels: { color: '#666', font: { size: 9 }, usePointStyle: true } } }
+                }
+            });
+        }
+
+        initDashboard();
+    </script>
+</body>
+</html>

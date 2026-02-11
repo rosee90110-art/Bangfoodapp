@@ -3,176 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ติดตามสถานะคำสั่งซื้อ - BANGFOOD</title>
-    <link rel="stylesheet" href="style.css"> 
+    <title>ติดตามสถานะ - BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #121212; color: #fff; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; }
-        .container { padding: 20px; padding-bottom: 180px; max-width: 500px; margin: 0 auto; }
+        :root {
+            --premium-gold: #c5a059;
+            --bg-deep: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border-dim: rgba(255, 255, 255, 0.08);
+            --success: #4CAF50;
+        }
+
+        body { background-color: var(--bg-deep); color: #e0e0e0; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; }
+        .container { padding: 20px; padding-bottom: 160px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.8s ease-out; }
         
+        /* 📍 Header */
+        .app-header {
+            background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px);
+            padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 2000; border-bottom: 1px solid var(--border-dim);
+        }
+        .app-header h1 { font-size: 1.2rem; color: #fff; letter-spacing: 2px; margin: 0; font-weight: 600; }
+
+        /* 📍 Status Box */
         .status-box { 
-            text-align: center; padding: 20px; 
-            background: linear-gradient(145deg, #252525, #1a1a1a); 
-            border-radius: 15px; margin-bottom: 25px; 
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            text-align: center; padding: 30px 20px; 
+            background: var(--glass); border-radius: 24px; 
+            margin-bottom: 30px; border: 1px solid var(--border-dim);
+        }
+        .status-box h2 { margin: 0; color: var(--premium-gold); font-size: 1.5rem; font-weight: 500; }
+
+        /* 📍 Order Items */
+        .section-label { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; padding-left: 5px; }
+        
+        .order-item-card {
+            background: var(--glass); border-radius: 20px; padding: 15px;
+            margin-bottom: 12px; border: 1px solid var(--border-dim);
+            display: flex; gap: 15px; align-items: center;
+        }
+        .item-img { width: 65px; height: 65px; border-radius: 12px; object-fit: cover; filter: grayscale(20%); }
+        .item-info { flex: 1; }
+        .item-name { font-size: 1rem; color: #fff; margin: 0; font-weight: 400; }
+        .item-options { color: #666; font-size: 0.75rem; margin-top: 2px; }
+        
+        .status-tag {
+            font-size: 0.7rem; padding: 4px 10px; border-radius: 8px;
+            font-weight: 500; display: inline-block; margin-top: 8px;
         }
 
-        /* 📍 แถบเมนูด้านล่าง Diamond Glow Premium Jumbo */
+        /* 📍 Total Section */
+        .total-container {
+            margin-top: 30px; padding: 20px; border-top: 1px solid var(--border-dim);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .total-label { color: #666; font-size: 0.9rem; }
+        .total-price { color: var(--premium-gold); font-size: 1.8rem; font-weight: 600; }
+
+        /* 📍 Navigation */
         .curved-nav-container {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 420px;
-            height: 90px;
-            z-index: 2000;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            pointer-events: none; /* แก้ปัญหากดไม่ได้ */
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; height: 75px; z-index: 2000;
+            display: flex; justify-content: center; align-items: flex-end;
         }
-
         .nav-buttons-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            background: rgba(25, 25, 25, 0.85);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            width: 100%;
-            height: 99px;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            position: relative;
-            padding: 0 10px;
-            /* 📍 รอยเว้ากว้างรองรับปุ่มจัมโบ้ */
-            mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
-            -webkit-mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
+            background: rgba(20, 20, 20, 0.9); backdrop-filter: blur(20px);
+            width: 100%; height: 100%; border-radius: 35px;
+            border: 1px solid var(--border-dim); display: flex; justify-content: space-around; align-items: center;
+            mask-image: radial-gradient(circle 60px at center -5px, transparent 48px, black 49px);
+            -webkit-mask-image: radial-gradient(circle 60px at center -5px, transparent 48px, black 49px);
         }
-
-        .nav-btn-box { display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; }
-
-        /* 📍 ปุ่มติดตามตรงกลาง (สลับมาไว้ที่นี่) */
-        .center-home-wrapper {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, -45px);
-            /* 📍 ดันให้สูงกว่าทุกอย่างและเปิดการกด */
-            z-index: 2010; 
-            pointer-events: auto; 
-            cursor: pointer;
-            text-align: center;
-        }
-
         .round-btn.center {
-            width: 85px;
-            height: 85px;
-            background: linear-gradient(135deg,  #009b9b);
-            border-radius: 50%;
-            font-size: 2.5rem;
-            color: white;
-            box-shadow: 0 12px 25px rgba(54, 244, 244, 0.444);
-            border: 6px solid #803a1706;
-            display: flex;
-            justify-content: center; align-items: center;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: absolute; top: -38px; left: 50%; transform: translateX(-50%);
+            width: 78px; height: 78px; background: #fff; border-radius: 50%;
+            border: 6px solid var(--bg-deep); color: #000; font-size: 1.8rem;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
+        .nav-icon { color: #555; font-size: 1.3rem; cursor: pointer; transition: 0.3s; }
+        .nav-icon:hover { color: #fff; }
 
-        .round-btn.center:active { transform: scale(0.9); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .round-btn.side {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(145deg, rgba(45, 45, 45, 1), rgba(20, 20, 20, 1));
-            border-radius: 18px;
-            font-size: 1.6rem;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center; align-items: center;
-            
-        }
-        .nav-btn-box:active .round-btn.side {
-            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.7);
-            transform: scale(0.9) translateY(2px);
-        }
-
-        .nav-label {
-            font-size: 0.7rem;
-            color: #fff;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-
-        /* Modal สำหรับใบเสร็จ */
-        #receipt-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.9); z-index: 3000; display: flex; 
-            justify-content: center; align-items: center; padding: 20px;
-        }
-        .receipt-card {
-            background: #fff; color: #333; width: 100%; max-width: 320px; 
-            padding: 25px; border-radius: 15px; font-family: 'Courier New', Courier, monospace;
-        }
+        /* Receipt Modal */
+        #receipt-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; display: flex; justify-content: center; align-items: center; }
+        .receipt-card { background: #fff; color: #111; width: 85%; max-width: 300px; padding: 30px; border-radius: 24px; font-family: monospace; }
     </style>
 </head>
-
 <body> 
     <header class="app-header">
-        <a href="javascript:void(0)" class="back-link" onclick="goBackToIndex()">
-            <i class="fas fa-chevron-left"></i> 
-            <span>กลับ</span>
-        </a>
-        <h1 class="bangfood">BANGFOOD</h1>
-        <p class="menu-label" style="text-align: center; color: #888; font-size: 0.8rem; margin: 0;">ORDER TRACKING</p>
+        <div onclick="goBackToIndex()" style="cursor:pointer;"><i class="fas fa-chevron-left"></i></div>
+        <h1>BANGFOOD</h1>
+        <div style="width: 20px;"></div>
     </header>
 
     <div class="container">
         <div id="status-display" class="status-box">
-            <h2 id="tracking-table-header" style="margin:0; color: #ff9800;">📍 โหลดข้อมูล...</h2>
-            <p style="margin: 10px 0 0; font-size: 0.8rem; color: #888;">สถานะอาหารปัจจุบัน</p>
+            <p style="color: #666; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 2px;">Table Status</p>
+            <h2 id="tracking-table-header">...</h2>
         </div>
 
-        <div id="order-details-display" class="order-details">
-            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #444; padding-bottom: 10px; margin-bottom: 15px;">
-                <span style="font-weight: bold; color: #aaa;">รายการสินค้า</span>
-                <span style="font-weight: bold; color: #aaa;">ราคา</span>
-            </div>
+        <div id="order-details-display">
+            <div class="section-label">Your Orders</div>
             <div id="items-list-container"></div>
-            <div style="margin-top: 20px; text-align: right; border-top: 2px solid #444; padding-top: 15px;">
-                <h3 style="margin: 0;">ยอดรวม: <span id="total-amount-display" style="color: #41ff7aff; font-size: 1.5rem;">0.00 บาท</span></h3>
+            
+            <div class="total-container">
+                <span class="total-label">ยอดชำระสุทธิ</span>
+                <span class="total-price">฿<span id="total-amount-display">0.00</span></span>
             </div>
         </div>
     </div>
 
     <div class="curved-nav-container">
-        <div class="center-home-wrapper">
-            <button class="round-btn center">
-                <i class="fas fa-map-marker-alt"></i>
-            </button>
-            <span style="color:#0080b3" class="label">ยืนยันรายการ</span>
+        <div class="round-btn center" onclick="window.location.reload()">
+            <i class="fas fa-sync-alt" style="font-size: 1.5rem;"></i>
         </div>
-
         <div class="nav-buttons-wrapper">
-            <div class="nav-btn-box" onclick="goToCart()">
-                <button class="round-btn side">
-                      🛒 </button>
-                  <span class="label">ตะกร้า</span>
-            </div>
-            
-            <div style="flex: 1.2; pointer-events: none;"></div>
-            
-            <div class="nav-btn-box" onclick="goBackToIndex()">
-                <button class="round-btn side">
-                    📝
-                </button>
-                <span class="label">เมนู</span>
-            </div>
+            <div onclick="goToCart()" class="nav-icon"><i class="fas fa-shopping-basket"></i></div>
+            <div style="flex: 1.2;"></div>
+            <div onclick="goBackToIndex()" class="nav-icon"><i class="fas fa-plus"></i></div>
         </div>
     </div>
 
@@ -180,16 +128,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
-            authDomain: "bangfood-cb30f.firebaseapp.com",
-            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "bangfood-cb30f",
-            storageBucket: "bangfood-cb30f.firebasestorage.app",
-            messagingSenderId: "390955623784",
-            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-        };
-        
+        const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.firebasestorage.app", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         const db = firebase.database(); 
 
@@ -200,53 +139,67 @@
 
         function startTracking() {
             const tableNo = getTableNo();
-            document.getElementById('tracking-table-header').textContent = "📍 โต๊ะที่ " + tableNo;
+            document.getElementById('tracking-table-header').textContent = "โต๊ะที่ " + tableNo;
 
+            // ดึงข้อมูลออเดอร์ของโต๊ะนี้
             db.ref('orders').orderByChild('tableNumber').equalTo(tableNo).on('value', (snapshot) => {
                 const listContainer = document.getElementById('items-list-container');
                 const totalDisplay = document.getElementById('total-amount-display');
-                let html = '';
-                let total = 0;
+                let html = ''; 
+                let grandTotal = 0;
 
                 if (snapshot.exists()) {
+                    // วนลูปตาม "ออเดอร์" (เพื่อแยกกล่องตามเวลาที่กดสั่ง)
                     snapshot.forEach(orderChild => {
                         const order = orderChild.val();
                         const currentStatus = order.status || 'รอดำเนินการ';
+                        let orderItemsHtml = '';
+                        let orderTotal = 0;
+
+                        // กำหนดสีสถานะ
+                        let statusColor = "#666"; 
+                        if (currentStatus === 'กำลังทำ') statusColor = "#ff9800";
+                        else if (currentStatus === 'เสร็จสมบูรณ์') statusColor = "#4CAF50";
+
                         if (order.items) {
                             order.items.forEach((item) => {
-                                let statusColor = "#ffd700"; let icon = "⏳";
-                                if (currentStatus === 'กำลังทำ') { statusColor = "#ff9800"; icon = "🍳"; }
-                                else if (currentStatus === 'เสร็จสมบูรณ์') { statusColor = "#4CAF50"; icon = "✅"; }
-                                else if (currentStatus === 'ชำระเงินแล้ว') { statusColor = "#2196F3"; icon = "💰"; }
-                                total += parseFloat(item.finalPrice || 0);
-                                let receiptBtn = currentStatus === 'ชำระเงินแล้ว' ? `<button onclick="showIndividualReceipt('${item.name}', '${item.finalPrice}', '${item.options || 'ธรรมดา'}', '${tableNo}')" style="margin-top: 12px; width: 100%; background: #41ff7aff; color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">🧾 ดูใบเสร็จ</button>` : '';
-                                html += `
-                                <div style="background: #252525; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05);">
-                                    <div style="display: flex; gap: 15px; align-items: center;">
-                                        <img src="${item.img || 'https://via.placeholder.com/70'}" style="width: 65px; height: 65px; border-radius: 10px; object-fit: cover;">
+                                const price = parseFloat(item.finalPrice || 0);
+                                orderTotal += price;
+                                grandTotal += price;
+
+                                // วาดรายการอาหารภายในออเดอร์นั้นๆ
+                                orderItemsHtml += `
+                                    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                                        <img src="${item.img || 'https://via.placeholder.com/70'}" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover;">
                                         <div style="flex: 1;">
-                                            <div style="display:flex; justify-content:space-between;"><b style="font-size: 1rem;">${item.name}</b><span style="color: #d4af37; font-weight: bold;">฿${parseFloat(item.finalPrice).toFixed(2)}</span></div>
-                                            <small style="color: #888;">${item.options || 'ธรรมดา'}</small>
-                                            <div style="margin-top: 8px; color: ${statusColor}; font-size: 0.7rem; font-weight: bold;">${icon} ${currentStatus}</div>
+                                            <p style="margin: 0; color: #fff; font-size: 0.95rem;">${item.name}</p>
+                                            <p style="margin: 2px 0 0; color: #666; font-size: 0.75rem;">${item.options || 'ธรรมดา'}</p>
                                         </div>
-                                    </div>
-                                    ${receiptBtn}
-                                </div>`;
+                                        <div style="color: #fff; font-size: 0.9rem;">฿${price.toFixed(2)}</div>
+                                    </div>`;
                             });
+
+                            // ครอบด้วยกล่องออเดอร์ (แยกตามรอบการสั่ง)
+                            html += `
+                                <div style="background: var(--glass); border: 1px solid var(--border-dim); border-radius: 24px; padding: 20px; margin-bottom: 20px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                                        <span style="font-size: 0.75rem; color: #555;">ID: ${orderChild.key.slice(-6)}</span>
+                                        <span class="status-tag" style="color: ${statusColor}; border: 1px solid ${statusColor}44; margin:0;">● ${currentStatus}</span>
+                                    </div>
+                                    ${orderItemsHtml}
+                                    <div style="text-align: right; margin-top: 10px; font-size: 0.85rem; color: var(--premium-gold);">
+                                        รวมยอดรอบนี้: <b>฿${orderTotal.toFixed(2)}</b>
+                                    </div>
+                                </div>`;
                         }
                     });
                     listContainer.innerHTML = html;
-                    totalDisplay.textContent = total.toFixed(2) + " บาท";
+                    totalDisplay.textContent = grandTotal.toFixed(2);
                 } else {
-                    listContainer.innerHTML = "<p style='text-align:center; padding: 50px 0; color:#666;'>ยังไม่มีประวัติการสั่งครับ</p>";
-                    totalDisplay.textContent = "0.00 บาท";
+                    listContainer.innerHTML = "<div style='text-align:center; padding: 40px 0; color: #444;'><p>ไม่มีรายการที่กำลังปรุง</p></div>";
+                    totalDisplay.textContent = "0.00";
                 }
             });
-        }
-
-        function showIndividualReceipt(name, price, options, table) {
-            const modalHtml = `<div id="receipt-modal"><div class="receipt-card"><div style="text-align:center; border-bottom:1px dashed #ccc; padding-bottom:15px; margin-bottom:15px;"><h2 style="margin:0;">BANGFOOD</h2><p style="font-size:0.8rem; margin:5px 0;">โต๊ะ: ${table}</p></div><div style="display:flex; justify-content:space-between; margin-bottom:20px;"><div style="font-size:0.9rem;"><b>${name}</b><br><small>${options}</small></div><b>${parseFloat(price).toFixed(2)}</b></div><div style="border-top:1px solid #000; padding-top:10px; text-align:center;"><h3 style="margin:0;">ยอดสุทธิ: ฿${parseFloat(price).toFixed(2)}</h3></div><button onclick="document.getElementById('receipt-modal').remove()" style="margin-top:20px; width:100%; padding:10px; background:#e74c3c; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">ปิด</button></div></div>`;
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
         }
 
         function goBackToIndex() { window.location.href = `index.html?table=${getTableNo()}`; }

@@ -3,190 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตัวเลือกอาหาร - BANGFOOD</title>
-    <link rel="stylesheet" href="style.css"> 
+    <title>ตัวเลือกอาหาร | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 📍 สไตล์สำหรับปุ่มปริมาณ (Radio) และท็อปปิ้ง (Checkbox) */
+        :root {
+            --premium-gold: #d4af37;
+            --soft-gold: rgba(212, 175, 55, 0.15);
+            --bg-dark: #121212;
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body { background-color: var(--bg-dark); color: #fff; font-family: 'Kanit', sans-serif; margin: 0; overflow-x: hidden; }
+
+        /* 📍 แอนิเมชันเปิดตัว Header */
+        .app-header {
+            background: rgba(14, 14, 14, 0.8); backdrop-filter: blur(20px);
+            padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 2000; border-bottom: 1px solid var(--glass-border);
+            animation: headerEntry 0.8s ease-out both;
+        }
+        @keyframes headerEntry { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        .bangfood { color: var(--premium-gold); font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; margin: 0; }
+
+        /* 📍 แอนิเมชันรูปอาหาร */
+        .item-info-section { padding: 30px 20px; text-align: center; }
+        .modal-image {
+            width: 85%; max-width: 280px; border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            animation: imageEntry 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+        @keyframes imageEntry { from { opacity: 0; transform: scale(0.7) rotate(-3deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+
+        /* 📍 รายการตัวเลือก */
         .option-item { 
-            display: flex; align-items: center; padding: 14px; 
-            background: rgba(255,255,255,0.05); border-radius: 15px; 
-            margin-bottom: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); 
-            transition: 0.3s;
+            display: flex; align-items: center; padding: 18px; 
+            background: rgba(255,255,255,0.02); border-radius: 22px; 
+            margin: 0 20px 12px; cursor: pointer; border: 1px solid var(--glass-border);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideUpFade 0.7s cubic-bezier(0.23, 1, 0.32, 1) both;
         }
-        .option-item:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
-        .option-item input { margin-right: 15px; transform: scale(1.3); accent-color: #ff9800; }
-        .label-text { flex: 1; color: white; font-size: 1rem; }
-        .price-text { color: #ff9800; font-weight: bold; font-size: 0.9rem; }
-        
-        .table-info-section {
-            background: rgba(255, 152, 0, 0.1);
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 15px 0;
-            border: 1px dashed #ff9800;
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .option-item:has(input:checked) { background: var(--soft-gold); border-color: var(--premium-gold); }
+        .option-item input { margin-right: 15px; accent-color: var(--premium-gold); width: 18px; height: 18px; }
+
+        /* 📍 กล่องยอดรวมแบบลอยเหนือแถบเมนู (ซ้าย-ขวา) */
+        .price-summary-float {
+            position: fixed;
+            bottom: 100px; /* ลอยอยู่บนแถบเมนูพอดี */
+            left: 3%; transform: translateX(-50%);
+            width: 80%; max-width: 400px;
+            background: rgba(25, 25, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 8px 25px; border-radius: 25px;
+            z-index: 1500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            display: flex; justify-content: space-between; align-items: center;
+            animation: slideUpFade 0.7s both 0.6s;
         }
+        .price-label { font-size: 0.85rem; color: #aaa; text-transform: uppercase; }
+        .price-amount { color: var(--premium-gold); font-weight: 800; font-size: 1.8rem; text-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+
+        /* 📍 แถบเมนูรอยเว้าสมบูรณ์แบบ */
+        .curved-nav-container {
+            position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+            width: 94%; max-width: 420px; height: 85px; z-index: 2000;
+            display: flex; justify-content: center; align-items: flex-end; pointer-events: none;
+            animation: navEntry 0.8s cubic-bezier(0.23, 1, 0.32, 1) both 0.5s;
+        }
+        @keyframes navEntry { from { opacity: 0; transform: translate(-50%, 100%); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+        .nav-buttons-wrapper {
+            background: rgba(20, 20, 20, 0.98); width: 100%; height: 75px; border-radius: 38px;
+            border: 1px solid var(--glass-border); pointer-events: auto;
+            display: flex; justify-content: space-around; align-items: center;
+            -webkit-mask-image: radial-gradient(circle 65px at center -5px, transparent 54px, black 55px);
+        }
+
+        /* 📍 ปุ่มยืนยัน Magnetic Breath */
+        .center-confirm-wrapper {
+            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+            z-index: 2100; pointer-events: auto; cursor: pointer;
+        }
+        .round-btn.center {
+            width: 82px; height: 82px;
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            border-radius: 50%; font-size: 2.2rem; color: #fff;
+            border: 8px solid var(--bg-dark);
+            display: flex; justify-content: center; align-items: center;
+            animation: breath 3s ease-in-out infinite 1s;
+        }
+        @keyframes breath { 
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); } 
+            50% { transform: scale(1.08); box-shadow: 0 0 25px rgba(212, 175, 55, 0.6); } 
+        }
+
+        .nav-label { font-size: 0.7rem; color: #555; margin-top: 5px; font-weight: 600; text-align: center; }
+        .label-gold { color: var(--premium-gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        .round-btn.side { width: 50px; height: 50px; background: rgba(255, 255, 255, 0.03); border-radius: 16px; border: 1px solid var(--glass-border); color: #888; font-size: 1.3rem; display: flex; justify-content: center; align-items: center; }
     </style>
 </head>
 <body onload="initializeMenuPage()">
     <header class="app-header">
-        <a href="javascript:history.back()" class="back-link">
-            <i class="fas fa-chevron-left"></i> <span>กลับ</span>
-        </a>
-        <h1 class="bangfood">BANGFOOD</h1>
-        <p class="menu-label">ตัวเลือกอาหาร</p>
+        <a href="javascript:history.back()" style="color: #444;"><i class="fas fa-chevron-left"></i></a>
+        <h1 class="bangfood">SELECTION</h1>
+        <div style="width: 20px;"></div>
     </header>
 
-    <div id="item-detail-modal" class="modal" style="display: block; position: relative; padding-bottom: 100px;">
-        <div class="modal-content">
-            <div class="item-info-section">
-                <img id="modal-item-image" src="" alt="รูปภาพอาหาร" class="modal-image">
-                <h2 id="modal-item-name" class="modal-item-name"></h2>
-                <p class="modal-item-base-price">ราคาเริ่มต้น: <span id="modal-base-price">0.00</span> บาท</p>
+    <div id="scroll-content" style="padding-bottom: 220px;">
+        <div class="item-info-section">
+            <img id="modal-item-image" src="" alt="food" class="modal-image">
+            <h2 id="modal-item-name" style="margin: 25px 0 8px; letter-spacing: 0.5px; animation: slideUpFade 0.7s both 0.2s;"></h2>
+            <p style="color: #666; font-size: 0.85rem; letter-spacing: 1px; animation: slideUpFade 0.7s both 0.3s;">FROM ฿<span id="modal-base-price">0.00</span></p>
+        </div>
+
+        <form id="custom-order-form">
+            <div id="dynamic-sizes-container"></div>
+            <div id="dynamic-addons-container"></div>
+            
+            <div style="padding: 10px 20px; animation: slideUpFade 0.7s both 0.7s;">
+                <p style="color: #444; font-size: 0.75rem; text-transform: uppercase; margin-left: 10px; margin-bottom: 10px;">หมายเหตุพิเศษ</p>
+                <textarea id="modal-notes" rows="2" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid #222; border-radius: 18px; color: #fff; padding: 18px; box-sizing: border-box; outline: none;" placeholder="ระบุความต้องการของคุณ..."></textarea>
             </div>
+        </form>
+    </div>
 
-            <div class="table-info-section">
-                📌 โต๊ะที่สั่ง: <span id="display-table" style="font-weight: bold; color: #ff6347; font-size: 1.2em;">-</span>
+    <div class="price-summary-float">
+        <div class="price-label">ยอดชำระสุทธิ</div>
+        <div class="price-amount">฿<span id="modal-final-price">0.00</span></div>
+    </div>
+
+    <div class="curved-nav-container">
+        <div class="center-confirm-wrapper" onclick="confirmOrder()">
+            <div class="round-btn center"><i class="fas fa-plus"></i></div>
+            <span class="nav-label label-gold">CONFIRM</span>
+        </div>
+        <div class="nav-buttons-wrapper">
+            <div class="nav-btn-box" onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+                <button class="round-btn side"><i class="fas fa-home"></i></button>
+                <span class="nav-label">HOME</span>
             </div>
-
-            <form id="item-customization-form" class="customization-form">
-                <div class="customization-group" id="group-sizes">
-                    <h3>🍲 เลือกปริมาณ</h3>
-                    <div id="dynamic-sizes-container"></div>
-                </div>
-
-                <div class="customization-group" id="group-addons">
-                    <h3>🥚 ตัวเลือกเสริม</h3>
-                    <div id="dynamic-addons-container"></div>
-                </div>
-
-                <div class="customization-group">
-                    <h3>✍️ หมายเหตุ (Optional)</h3>
-                    <textarea id="modal-notes" rows="3" placeholder="ตัวอย่าง: เผ็ดน้อย, ไม่ใส่ผักชี"></textarea>
-                </div>
-            </form>
-
-            <div class="modal-footer">
-                <p class="final-price-display">ราคาสุทธิ: <span id="modal-final-price">0.00</span> บาท</p>
-                <button class="confirm-btn" onclick="confirmOrder()">🚀 ยืนยันลงตะกร้า</button>
+            <div style="flex: 1;"></div>
+            <div class="nav-btn-box" onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+                <button class="round-btn side"><i class="fas fa-shopping-bag"></i></button>
+                <span class="nav-label">CART</span>
             </div>
         </div>
     </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
-        authDomain: "bangfood-cb30f.firebaseapp.com",
-        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "bangfood-cb30f",
-        storageBucket: "bangfood-cb30f.appspot.com",
-        messagingSenderId: "390955623784",
-        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-    };
+    const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     function initializeMenuPage() {
         const urlParams = new URLSearchParams(window.location.search);
         const nameParam = urlParams.get('name');
-        
-        // 📍 แก้ไขระบบดึงเลขโต๊ะ: เช็ค URL ก่อน ถ้าไม่มีไปเช็ค LocalStorage
-        let tableNo = urlParams.get('table');
-        if (!tableNo || tableNo === 'null') {
-            tableNo = localStorage.getItem('selectedTable') || '1';
-        } else {
-            localStorage.setItem('selectedTable', tableNo);
-        }
-        document.getElementById('display-table').innerText = tableNo;
-
+        const tableNo = urlParams.get('table') || localStorage.getItem('selectedTable') || '1';
+        localStorage.setItem('selectedTable', tableNo);
         if (!nameParam) return;
-
         db.ref('products').orderByChild('name').equalTo(nameParam).once('value', snapshot => {
             const data = snapshot.val();
             if (data) {
-                const key = Object.keys(data)[0];
-                const product = data[key];
-                const config = product.config || {};
-
+                const product = Object.values(data)[0];
                 document.getElementById('modal-item-name').innerText = product.name;
                 document.getElementById('modal-base-price').innerText = parseFloat(product.price).toFixed(2);
                 document.getElementById('modal-item-image').src = product.img;
-
-                renderOptions(config);
+                renderOptions(product.config || {});
                 updatePrice();
             }
         });
     }
 
     function renderOptions(config) {
-        // ส่วนจัดการ Sizes
         const sizeContainer = document.getElementById('dynamic-sizes-container');
-        sizeContainer.innerHTML = "";
-        if (config.sizes && config.sizes.length > 0) {
-            config.sizes.forEach((s, index) => {
-                const html = `
-                    <label class="option-item">
-                        <input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" ${index === 0 ? 'checked' : ''} onchange="updatePrice()">
-                        <span class="label-text">${s.name}</span>
-                        <span class="price-text">${s.price > 0 ? '+ ' + s.price : ''}</span>
-                    </label>`;
-                sizeContainer.insertAdjacentHTML('beforeend', html);
+        if (config.sizes) {
+            sizeContainer.innerHTML = `<h3 style="color:#333; font-size:0.75rem; margin-left:30px; text-transform:uppercase; animation: slideUpFade 0.7s both 0.4s;">Size Selection</h3>`;
+            config.sizes.forEach((s, i) => {
+                const item = document.createElement('label');
+                item.className = 'option-item';
+                item.style.animationDelay = (0.5 + (i * 0.1)) + 's';
+                item.innerHTML = `<input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" ${i===0?'checked':''} onchange="updatePrice()"><b style="font-weight:500;">${s.name}</b><span style="margin-left:auto; color:var(--premium-gold);">+${s.price}</span>`;
+                sizeContainer.appendChild(item);
             });
-        } else { document.getElementById('group-sizes').style.display = 'none'; }
-
-        // ส่วนจัดการ Addons
+        }
         const addonContainer = document.getElementById('dynamic-addons-container');
-        addonContainer.innerHTML = "";
-        if (config.addons && config.addons.length > 0) {
-            config.addons.forEach(item => {
-                const html = `
-                    <label class="option-item">
-                        <input type="checkbox" name="addon" value="${item.name}" data-modifier="${item.price}" onchange="updatePrice()">
-                        <span class="label-text">${item.name}</span>
-                        <span class="price-text">+ ${item.price}</span>
-                    </label>`;
-                addonContainer.insertAdjacentHTML('beforeend', html);
+        if (config.addons) {
+            const baseDelay = 0.7;
+            addonContainer.innerHTML = `<h3 style="color:#333; font-size:0.75rem; margin-left:30px; text-transform:uppercase; margin-top:20px; animation: slideUpFade 0.7s both 0.5s;">Extra Add-ons</h3>`;
+            config.addons.forEach((a, i) => {
+                const item = document.createElement('label');
+                item.className = 'option-item';
+                item.style.animationDelay = (baseDelay + (i * 0.1)) + 's';
+                item.innerHTML = `<input type="checkbox" name="addon" value="${a.name}" data-modifier="${a.price}" onchange="updatePrice()"><b style="font-weight:500;">${a.name}</b><span style="margin-left:auto; color:var(--premium-gold);">+${a.price}</span>`;
+                addonContainer.appendChild(item);
             });
-        } else { document.getElementById('group-addons').style.display = 'none'; }
+        }
     }
 
     function updatePrice() {
-        const basePrice = parseFloat(document.getElementById('modal-base-price').innerText) || 0;
-        let extraPrice = 0;
-        const sizeInput = document.querySelector('input[name="size"]:checked');
-        if (sizeInput) extraPrice += parseFloat(sizeInput.getAttribute('data-modifier') || 0);
-        document.querySelectorAll('input[name="addon"]:checked').forEach(input => {
-            extraPrice += parseFloat(input.getAttribute('data-modifier') || 0);
-        });
-        document.getElementById('modal-final-price').innerText = (basePrice + extraPrice).toFixed(2);
+        const base = parseFloat(document.getElementById('modal-base-price').innerText);
+        let extra = 0;
+        const size = document.querySelector('input[name="size"]:checked');
+        if (size) extra += parseFloat(size.dataset.modifier);
+        document.querySelectorAll('input[name="addon"]:checked').forEach(a => extra += parseFloat(a.dataset.modifier));
+        document.getElementById('modal-final-price').innerText = (base + extra).toFixed(2);
     }
 
     function confirmOrder() {
-        const tableNo = localStorage.getItem('selectedTable') || '1';
-        const name = document.getElementById('modal-item-name').innerText;
-        const finalPrice = document.getElementById('modal-final-price').innerText;
-        const img = document.getElementById('modal-item-image').src;
-
-        let details = [];
-        const size = document.querySelector('input[name="size"]:checked');
-        if (size) details.push("• ปริมาณ: " + size.value);
-        document.querySelectorAll('input[name="addon"]:checked').forEach(cb => {
-            details.push("• เพิ่ม: " + cb.value);
-        });
-        const notes = document.getElementById('modal-notes').value.trim();
-        if (notes) details.push("📝 หมายเหตุ: " + notes);
-
+        const tableNo = localStorage.getItem('selectedTable');
         const cartKey = `bangfood_cart_table_${tableNo}`;
         let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-        cart.items.push({ name: name, finalPrice: finalPrice, options: details.join("<br>"), img: img, quantity: 1 });
+        const size = document.querySelector('input[name="size"]:checked');
+        let options = size ? "• " + size.value : "";
+        document.querySelectorAll('input[name="addon"]:checked').forEach(a => options += "<br>• " + a.value);
+        const notes = document.getElementById('modal-notes').value;
+        if(notes) options += "<br>📝 " + notes;
+        cart.items.push({ name: document.getElementById('modal-item-name').innerText, finalPrice: document.getElementById('modal-final-price').innerText, options: options, img: document.getElementById('modal-item-image').src, quantity: 1 });
         sessionStorage.setItem(cartKey, JSON.stringify(cart));
-
-        alert("เพิ่มลงตะกร้าแล้วครับน้า!");
-        window.location.href = `cart.html?table=${tableNo}`;
+        window.location.href = `index.html?table=${tableNo}`;
     }
 </script>
 </body>

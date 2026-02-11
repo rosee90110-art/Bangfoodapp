@@ -348,12 +348,6 @@ body {
 }
 
 /* สรุปยอดรวมและปุ่มชำระเงิน */
-.cart-total-summary {
-    text-align: right;
-    margin-bottom: 20px;
-    padding-top: 10px;
-    border-top: 2px solid #632308
-}
 
 #cart-page-total {
     font-size: 1.5em;
@@ -2088,17 +2082,6 @@ body {
     0%, 100% { bottom: 30px; }
     50% { bottom: 40px; }
 }
-.curved-nav-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 110px; /* ลดความสูงรวมลงเล็กน้อย */
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    pointer-events: none;
-}
 
 .nav-bg-curved {
     position: absolute;
@@ -2137,16 +2120,6 @@ body {
 
 
 /* 📍 ปุ่มบ้านขยับลงมาอีกนิด */
-.round-btn.center {
-    width: 78px;
-    height: 78px;
-    background: linear-gradient(145deg, #ff9800, #f44336);
-    border-radius: 50%;
-    border: 2px solid #f15000;
-    font-size: 2.5rem;
-    margin-bottom: 22px; /* 👈 ลดจาก 35px ลงมาเหลือ 22px เพื่อให้ปุ่มบ้านลงต่ำมาอีกนิด */
-    box-shadow: 0 8px 20px rgba(239, 36, 0, 0.45);
-}
 
 .label {
     font-size: 0.75rem;

@@ -263,3 +263,4 @@ window.payOrder = function(orderId) {
         }
     });
 };
+

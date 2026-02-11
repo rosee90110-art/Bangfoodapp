@@ -3,191 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตะกร้าสินค้า - BANGFOOD</title>
+    <title>ตะกร้าสินค้า | BANGFOOD</title>
     <link rel="stylesheet" href="style.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 📍 ส่วนที่ 1: กล่องสรุปยอดเงิน */
+        :root {
+            --premium-gold: #c5a059;
+            --bg-charcoal: #121212;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body { 
+            background-color: var(--bg-charcoal); 
+            color: #f1f1f1; 
+            font-family: 'Kanit', sans-serif; 
+            margin: 0; 
+            background-image: radial-gradient(circle at 50% 20%, #1c1c1c, #121212);
+            padding-bottom: 100%;
+            overflow-x: hidden;
+        }
+
+        /* 📍 Header แบบกระจกฝ้า */
+        .app-header {
+            background: rgba(18, 18, 18, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .bangfood {
+            font-weight: 800;
+            color: var(--premium-gold);
+            margin: 0;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+
+        /* 📍 รายการในตะกร้าพร้อมแอนิเมชัน Cascade */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 16px; 
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            margin: 0 15px 12px;
+            border-radius: 22px;
+            gap: 15px;
+            opacity: 0;
+            animation: slideUpFade 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:active { transform: scale(0.98); }
+
+        .cart-item img {
+            width: 70px; height: 70px;
+            border-radius: 16px;
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* 📍 กล่องสรุปยอดเงินแบบลอยเหนือแถบเมนู */
         .cart-footer-fixed {
             position: fixed;
-            bottom: 125px; 
-            left: 50%;
+            bottom: 110px;
+            left: 5.5%;
             transform: translateX(-50%);
             width: 90%;
             max-width: 400px;
-            background: rgba(25, 25, 25, 0.9);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 20px;
-            box-sizing: border-box;
-            z-index: 1000;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-            text-align: center;
+            background: rgba(25, 25, 25, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            padding: 3px 25px;
+            border-radius: 25px;
+            z-index: 1500;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideUpFade 0.8s both 0.4s;
         }
 
-        .cart-total-summary h3 {
-            margin: 0;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 300;
+        .cart-total-summary h3 { 
+            margin: 0; 
+            font-size: 0.8rem; 
+            color: #888; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
         }
 
-        #final-total-amount {
-            color: #ffff41;
-            font-weight: bold;
-            font-size: 1.4rem;
+        #final-total-amount { 
+            color: var(--premium-gold); 
+            font-weight: 800; 
+            font-size: 1.8rem; 
+            text-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 📍 ส่วนที่ 2: แถบเมนูชุดเทพแบบปรับแต่ง (Diamond Glow Premium Jumbo) */
+        .price-bump { transform: scale(1.15); color: #fff !important; }
+
+        /* 📍 แถบเมนูด้านล่างรอยเว้าสมบูรณ์ */
         .curved-nav-container {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 420px;
-            height: 90px;
-            z-index: 2000;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            pointer-events: none; /* แก้ปัญหากดไม่ได้ */
-        }
-        .nav-buttons-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            background: rgba(25, 25, 25, 0.85);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            width: 100%;
-            height: 99px;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            position: relative;
-            padding: 0 10px;
-            /* 📍 รอยเว้ากว้างรองรับปุ่มจัมโบ้ */
-            mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
-            -webkit-mask-image: radial-gradient(circle 60px at center 0px, transparent 54px, black 55px);
-        }
-        .nav-btn-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            flex: 1;
+            position: fixed; bottom: 15px; left: 50%;
+            transform: translateX(-50%); width: 92%; max-width: 420px;
+            height: 75px; z-index: 2000; display: flex;
+            justify-content: center; align-items: flex-end; pointer-events: none;
+            animation: navEntry 1s cubic-bezier(0.23, 1, 0.32, 1) both 0.5s;
         }
 
-        /* 🚀 ปุ่มยืนยันคำสั่งซื้อตรงกลางแบบจัมโบ้ (จิ้มได้ 100%) */
-        .center-home-wrapper {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translate(-50%, -45px);
-            /* 📍 ดันให้สูงกว่าทุกอย่างและเปิดการกด */
-            z-index: 2010; 
-            pointer-events: auto; 
-            cursor: pointer;
-            text-align: center;
+        .nav-buttons-wrapper {
+            display: flex; align-items: center; justify-content: space-around;
+            background: #151515; width: 100%; height: 100%; border-radius: 35px;
+            border: 1px solid var(--glass-border); pointer-events: auto;
+            mask-image: radial-gradient(circle 60px at center -5px, transparent 48px, black 49px);
+            -webkit-mask-image: radial-gradient(circle 60px at center -5px, transparent 48px, black 49px);
+        }
+
+        .center-btn-wrapper {
+            position: absolute; top: -38px; left: 50%;
+            transform: translateX(-50%); z-index: 2100; 
+            pointer-events: auto; cursor: pointer;
         }
 
         .round-btn.center {
-            width: 85px;
-            height: 85px;
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            border-radius: 50%;
-            font-size: 2.2rem;
-            color: white;
-            box-shadow: 0 12px 25px rgba(76, 175, 80, 0.5);
-            border: 6px solid #0021081d;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 78px; height: 78px;
+            background: #fff;
+            border-radius: 50%; font-size: 2rem; color: #000;
+            border: 6px solid var(--bg-charcoal);
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: pulseBreath 3s infinite; /* แอนิเมชันปุ่มสั่งซื้อ */
         }
-
-        .round-btn.center:active { transform: scale(0.9); }
 
         .round-btn.side {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(145deg, rgba(45, 45, 45, 1), rgba(20, 20, 20, 1));
-            border-radius: 18px;
-            font-size: 1.6rem;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            
-        }
-        .nav-btn-box:active .round-btn.side {
-            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.7);
-            transform: scale(0.9) translateY(2px);
+            width: 48px; height: 48px;
+            background: transparent;
+            border-radius: 15px; font-size: 1.2rem; color: #666;
+            border: 1px solid var(--glass-border);
+            display: flex; justify-content: center; align-items: center;
         }
 
-        .nav-label {
-            font-size: 0.7rem;
-            color: #fff;
-            margin-top: 4px;
-            font-weight: 500;
+        .nav-label { font-size: 0.65rem; color: #555; margin-top: 5px; font-weight: 600; text-align: center; }
+        .active-gold { color: var(--premium-gold) !important; }
+
+        .remove-btn {
+            background: rgba(255, 71, 87, 0.1); color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.2);
+            padding: 6px 12px; border-radius: 10px;
+            font-size: 0.7rem; font-weight: bold; cursor: pointer;
         }
-        
-        .btn-loading { animation: pulse 1s infinite; }
-        @keyframes pulse {
-            0% { transform: translate(-50%, -55px) scale(1); }
-            50% { transform: translate(-50%, -55px) scale(0.95); }
-            100% { transform: translate(-50%, -55px) scale(1); }
-        }
+
+        /* 📍 Keyframes Animations */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes navEntry { from { opacity: 0; transform: translate(-50%, 50px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        @keyframes pulseBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); box-shadow: 0 12px 30px rgba(255,255,255,0.2); } }
     </style>
 </head>
 
 <body onload="renderCartItems()">
     <header class="app-header">
-        <a href="javascript:void(0)" class="back-link" onclick="goBackToIndex()">
-            <i class="fas fa-chevron-left"></i> 
-            <span>กลับ</span>
+        <a href="javascript:void(0)" onclick="goBackToIndex()" style="color: #444;">
+            <i class="fas fa-chevron-left"></i>
         </a>
-        <h1 class="bangfood">BANGFOOD</h1>
-        <p class="menu-label">ตะกร้าสินค้า</p>
+        <h1 class="bangfood">MY BASKET</h1>
+        <div style="width: 20px;"></div>
     </header>
 
-    <div class="cart-container" style="padding-bottom: 240px;">
-        <div class="cart-header-row">
-            <h3 id="table-display-info" style="color: white; text-align: center; width: 100%;"></h3> 
-        </div>
-        <div id="cart-items-list" class="cart-items-list"></div>
+    <div class="cart-container" style="padding: 20px 0;">
+        <div id="table-display-info" style="text-align: center; color: #444; font-size: 0.8rem; margin-bottom: 20px; letter-spacing: 2px;"></div> 
+        <div id="cart-items-list"></div>
     </div>
 
     <div class="cart-footer-fixed">
         <div class="cart-total-summary">
-            <h3>ยอดรวมทั้งหมด: <span id="final-total-amount">0.00</span> บาท</h3>
+            <h3>ยอดชำระสุทธิ</h3>
         </div>
+        <div id="final-total-amount">0.00</div>
     </div>
 
     <div class="curved-nav-container">
-        <div id="order-btn-wrapper" class="center-home-wrapper" onclick="placeOrder()">
-            <button id="checkout-btn" class="round-btn center">
-                <i class="fas fa-paper-plane"></i>
-    
-            </button>
-                <span class="label">สั่งเพิ่ม</span><a></a>
+        <div id="order-btn-wrapper" class="center-btn-wrapper" onclick="placeOrder()">
+            <div class="round-btn center">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <span class="nav-label active-gold">สั่งอาหาร</span>
         </div>
 
         <div class="nav-buttons-wrapper">
             <div class="nav-btn-box" onclick="goBackToIndex()">
-                <button class="round-btn side">📝</button>
-                <span class="label">สั่งเพิ่ม</span>
+                <button class="round-btn side"><i class="fas fa-plus"></i></button>
+                <span class="nav-label">เพิ่มเมนู</span>
             </div>
-            
-            <div style="flex: 1.2; pointer-events: none;"></div> 
-            
+            <div style="flex: 1.2;"></div> 
             <div class="nav-btn-box" onclick="goToTracking()">
-                <button class="round-btn side"><i class="fas fa-map-marker-alt"></i></button>
-               <span class="label">สถานะ</span>
+                <button class="round-btn side"><i class="fas fa-clock"></i></button>
+                <span class="nav-label">ติดตาม</span>
             </div>
         </div>
     </div>
@@ -196,26 +214,14 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
-            authDomain: "bangfood-cb30f.firebaseapp.com",
-            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
-            projectId: "bangfood-cb30f", 
-            storageBucket: "bangfood-cb30f.appspot.com",
-            messagingSenderId: "390955623784",
-            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
         if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
         var db = firebase.database(); 
 
         function getTableNo() {
             const urlParams = new URLSearchParams(window.location.search);
             let table = urlParams.get('table');
-            if (table && table !== 'null') {
-                localStorage.setItem('selectedTable', table);
-                return table;
-            }
+            if (table && table !== 'null') { localStorage.setItem('selectedTable', table); return table; }
             return localStorage.getItem('selectedTable') || '1';
         }
 
@@ -231,32 +237,38 @@
             listContainer.innerHTML = '';
             let grandTotal = 0;
 
-            const tableDisplay = document.getElementById('table-display-info');
-            if (tableDisplay) tableDisplay.innerText = "โต๊ะที่: " + tableNo;
+            document.getElementById('table-display-info').innerHTML = `STATION: ${tableNo}`;
 
             if (!currentCart.items || currentCart.items.length === 0) {
-                listContainer.innerHTML = '<p style="text-align:center; padding:50px; color:#888;">ตะกร้าว่างครับน้า</p>';
-                if (totalAmountDisplay) totalAmountDisplay.textContent = '0.00';
+                listContainer.innerHTML = '<div style="text-align:center; padding:100px 0; color:#333; animation: slideUpFade 0.6s forwards;"><i class="fas fa-shopping-basket" style="font-size:3rem; margin-bottom:15px;"></i><p>ยังไม่มีรายการอาหารครับน้า</p></div>';
+                totalAmountDisplay.textContent = '0.00';
                 return;
             }
 
             currentCart.items.forEach((item, index) => {
                 const itemPrice = parseFloat(item.finalPrice) || 0;
                 grandTotal += itemPrice;
-                listContainer.innerHTML += `
-                    <div class="cart-item" style="display:flex; align-items:center; padding:12px; background: #252525; margin-bottom: 8px; border-radius: 15px; gap: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                        <img src="${item.img || 'https://via.placeholder.com/50'}" style="width: 60px; height: 60px; border-radius: 10px; object-fit: cover;">
-                        <div style="flex: 1;">
-                            <p style="margin:0; font-weight: bold; color: white;">${item.name}</p>
-                            <small style="color: #aaa;">${item.options || ''}</small>
+                const html = `
+                    <div class="cart-item" style="animation-delay: ${index * 0.1}s">
+                        <img src="${item.img || 'https://via.placeholder.com/100'}">
+                        <div class="item-info" style="flex: 1;">
+                            <b style="color:#fff; display:block; margin-bottom:2px;">${item.name}</b>
+                            <small style="color:#666; font-size:0.75rem;">${item.options || 'ปกติ'}</small>
                         </div>
                         <div style="text-align:right;">
-                            <p style="margin:0; font-weight: bold; color: #ffff41;">${itemPrice.toFixed(2)}</p>
-                            <button onclick="removeItem(${index})" style="color: #ff4444; background: none; border: 1px solid #ff4444; border-radius: 5px; padding: 2px 8px; margin-top: 5px; cursor: pointer;">ลบ</button>
+                            <p style="margin:0 0 8px; font-weight: 700; color:var(--premium-gold);">฿${itemPrice.toFixed(2)}</p>
+                            <button class="remove-btn" onclick="removeItem(${index})">ลบ</button>
                         </div>
                     </div>`;
+                listContainer.insertAdjacentHTML('beforeend', html);
             });
-            if (totalAmountDisplay) totalAmountDisplay.textContent = grandTotal.toFixed(2);
+
+            // แอนิเมชันยอดเงินเปลี่ยน
+            if (totalAmountDisplay.textContent !== grandTotal.toFixed(2)) {
+                totalAmountDisplay.classList.add('price-bump');
+                setTimeout(() => totalAmountDisplay.classList.remove('price-bump'), 300);
+            }
+            totalAmountDisplay.textContent = grandTotal.toFixed(2);
         }
 
         window.removeItem = function(index) {
@@ -272,16 +284,8 @@
             const tableNo = getTableNo();
             const cartKey = 'bangfood_cart_table_' + tableNo;
             const cartData = JSON.parse(sessionStorage.getItem(cartKey));
-
-            if (!cartData || cartData.items.length === 0) return alert("เลือกอาหารก่อนครับน้า!");
-
-            if (!confirm("ยืนยันการสั่งอาหารใช่ไหมครับ?")) return;
-
-            const checkoutBtn = document.getElementById('checkout-btn');
-            const wrapper = document.getElementById('order-btn-wrapper');
-            checkoutBtn.disabled = true;
-            wrapper.classList.add('btn-loading');
-            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            if (!cartData || cartData.items.length === 0) return alert("กรุณาเลือกเมนูก่อนครับน้า");
+            if (!confirm("ยืนยันส่งออเดอร์เข้าครัวใช่ไหมครับ?")) return;
 
             const orderData = {
                 tableNumber: tableNo,
@@ -293,13 +297,7 @@
 
             db.ref('orders').push(orderData).then(() => {
                 sessionStorage.removeItem(cartKey);
-                alert("สั่งอาหารเรียบร้อย! พนักงานกำลังเตรียมอาหารครับ");
                 window.location.href = `track.html?table=${tableNo}`;
-            }).catch(err => {
-                alert("เกิดข้อผิดพลาด: " + err.message);
-                checkoutBtn.disabled = false;
-                wrapper.classList.remove('btn-loading');
-                checkoutBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
             });
         };
 

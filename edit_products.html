@@ -4,81 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการเมนูพรีเมียม | BANGFOOD</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #ff9800, #f44336);
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
+            --primary-gold: #c5a059;
+            --premium-orange: #ff9800;
+            --bg-dark: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.04);
+            --border-dim: rgba(255, 255, 255, 0.1);
+            --danger: #ff4444;
+            --success: #4CAF50;
         }
-        body { background-color: #0a0a0a; color: white; font-family: 'Kanit', sans-serif; margin: 0; padding-bottom: 120px; }
-        .admin-container { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
+        * { box-sizing: border-box; }
+        body { 
+            background-color: var(--bg-dark); color: #fff; 
+            font-family: 'Kanit', sans-serif; margin: 0; padding-bottom: 120px; 
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% -20%, #1a1a1a 0%, #0a0a0a 80%);
+        }
         
-        /* 📍 CSS สำหรับระบบย่อ-ขยาย (Accordion) */
-        .collapsible-card {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            backdrop-filter: blur(15px);
-            transition: 0.3s;
-        }
-        .collapsible-card.active { border-color: #ff9800; }
-
-        .collapsible-header {
-            padding: 18px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.02);
-            font-weight: bold;
-            color: #ff9800;
-        }
-        .collapsible-header:hover { background: rgba(255, 255, 255, 0.05); }
-        .chevron { transition: 0.4s; font-size: 0.8rem; }
-        .active .chevron { transform: rotate(180deg); }
-
-        .collapsible-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out;
-            padding: 0 25px;
-        }
-        .active .collapsible-content {
-            max-height: 2000px; /* ขยายให้พอดีกับข้อมูล */
-            padding: 10px 25px 25px 25px;
-        }
-
-        /* สไตล์เดิมของน้า */
-        .menu-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
-        .stat-box { background: var(--glass); border: 1px solid var(--border); padding: 15px 5px; border-radius: 18px; text-align: center; }
-        .stat-box b { display: block; font-size: 1.2rem; color: #ff9800; }
+        .admin-container { padding: 20px; max-width: 500px; margin: 0 auto; }
         
-        input, select { width: 100%; padding: 14px; margin: 8px 0; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; box-sizing: border-box; }
-        .option-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 12px; }
-        .option-row input[type="checkbox"] { width: 22px; height: 22px; margin: 0; cursor: pointer; accent-color: #ff9800; }
-        
-        .btn-group-action { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .btn-add-new { width: 100%; padding: 16px; background: #28a745; border: none; border-radius: 15px; color: white; font-weight: bold; cursor: pointer; }
-        .btn-save-edit { width: 100%; padding: 16px; background: var(--primary-gradient); border: none; border-radius: 15px; color: white; font-weight: bold; cursor: pointer; display: none; }
-        .btn-cancel { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 15px; color: #aaa; cursor: pointer; display: none; }
+        /* 📍 Header Animation */
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; animation: fadeInDown 0.8s ease-out; }
+        .header-flex h2 { margin: 0; font-weight: 500; color: var(--primary-gold); font-size: 1.1rem; letter-spacing: 2px; text-shadow: 0 0 15px rgba(197, 160, 89, 0.2); }
 
-        .product-item { display: flex; align-items: center; background: var(--glass); padding: 18px; border-radius: 22px; margin-bottom: 12px; border: 1px solid var(--border); cursor: pointer; }
-        .product-img { width: 65px; height: 65px; border-radius: 15px; object-fit: cover; margin-right: 18px; }
-        .product-info { flex: 1; }
-        .action-btns { display: flex; gap: 10px; }
-        .btn-status { padding: 8px 12px; border-radius: 10px; border: none; cursor: pointer; font-size: 0.75rem; }
+        /* 📍 Stats Grid เด้งขึ้นทีละอัน */
+        .menu-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
+        .stat-box { 
+            background: var(--glass); border: 1px solid var(--border-dim); 
+            padding: 15px 5px; border-radius: 20px; text-align: center;
+            opacity: 0; transform: translateY(20px); animation: slideUpFade 0.5s forwards;
+        }
+        .stat-box:nth-child(1) { animation-delay: 0.1s; }
+        .stat-box:nth-child(2) { animation-delay: 0.2s; }
+        .stat-box:nth-child(3) { animation-delay: 0.3s; }
+        .stat-box b { display: block; font-size: 1.3rem; color: var(--premium-orange); }
+        .stat-box span { font-size: 0.7rem; color: #666; text-transform: uppercase; }
+
+        /* 📍 Search Bar */
+        .search-bar { 
+            background: var(--glass); border: 1px solid var(--border-dim); border-radius: 18px; 
+            padding: 12px 18px; display: flex; align-items: center; margin-bottom: 25px;
+            animation: fadeIn 1s ease-out 0.4s both; transition: 0.3s;
+        }
+        .search-bar:focus-within { border-color: var(--primary-gold); box-shadow: 0 0 15px rgba(197, 160, 89, 0.1); }
+        .search-bar input { background: none; border: none; padding: 0 10px; width: 100%; color: #fff; font-size: 0.9rem; outline: none; }
+
+        /* 📍 Form Card แอนิเมชันเปิดแบบ Spring */
+        .collapsible-card { 
+            background: var(--glass); border: 1px solid var(--border-dim); border-radius: 30px; 
+            margin-bottom: 20px; overflow: hidden; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+        .collapsible-card.active { border-color: var(--primary-gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .collapsible-header { padding: 22px 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 0 20px; }
+        .active .collapsible-content { max-height: 2500px; padding: 20px; }
+
+        /* 📍 Image Upload */
+        .upload-area { 
+            width: 100%; height: 160px; background: rgba(0,0,0,0.2); border: 2px dashed var(--border-dim); 
+            border-radius: 20px; position: relative; display: flex; align-items: center; justify-content: center; 
+            margin-bottom: 20px; overflow: hidden; transition: 0.3s;
+        }
+        .upload-area:active { transform: scale(0.98); border-color: var(--primary-gold); }
+        .upload-area img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; animation: zoomIn 0.4s ease-out; }
+
+        /* 📍 Inputs & Rows */
+        input, select { 
+            width: 100%; padding: 16px; margin-bottom: 12px; background: rgba(0,0,0,0.4); 
+            border: 1px solid var(--border-dim); border-radius: 16px; color: #fff; font-family: inherit; 
+            font-size: 0.95rem; transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary-gold); background: rgba(255,255,255,0.05); }
+
+        .option-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; animation: slideInLeft 0.4s ease-out; }
+        .option-row input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--primary-gold); transition: 0.3s; }
+
+        /* 📍 Buttons */
+        .btn-add-new { 
+            width: 100%; padding: 18px; background: var(--success); border: none; border-radius: 18px; 
+            color: white; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
+        }
+        .btn-add-new:active { transform: scale(0.95); filter: brightness(1.2); }
+
+        /* 📍 Product List Animation */
+        .product-item { 
+            display: flex; align-items: center; background: var(--glass); padding: 16px; 
+            border-radius: 24px; margin-bottom: 12px; border: 1px solid var(--border-dim); 
+            transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1); opacity: 0; transform: translateX(-20px);
+        }
+        .product-item:active { transform: scale(0.98); background: rgba(255,255,255,0.06); }
+        .product-img { width: 55px; height: 55px; border-radius: 14px; object-fit: cover; margin-right: 15px; transition: 0.3s; }
+        .product-item:hover .product-img { transform: scale(1.1); }
+
+        .btn-status { padding: 6px 12px; border-radius: 10px; border: none; font-size: 0.7rem; font-weight: bold; transition: 0.3s; }
+        .status-in { background: rgba(76, 175, 80, 0.15); color: var(--success); }
+        .status-out { background: rgba(255, 68, 68, 0.15); color: var(--danger); }
+
+        /* 📍 Keyframes */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        .list-entrance { animation: slideInLeft 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
     </style>
 </head>
-<body>
+<body onload="initializeApp()">
 
 <div class="admin-container">
     <div class="header-flex">
-        <h2>🥘 จัดการเมนู & ตัวเลือก</h2>
-        <a href="admin_center.html" style="color: #666; text-decoration: none;">กลับหน้าหลัก</a>
+        <h2>BANGFOOD MANAGER</h2>
+        <a href="admin_center.html" style="color: #444; text-decoration: none; font-size: 0.9rem;"><i class="fas fa-times"></i></a>
     </div>
 
     <div class="menu-stats">
@@ -87,46 +129,53 @@
         <div class="stat-box"><b id="count-drink">0</b><span>น้ำ</span></div>
     </div>
 
+    <div class="search-bar">
+        <i class="fas fa-search" style="color: #333;"></i>
+        <input type="text" id="menu-search" placeholder="ค้นหาเมนูด่วน..." oninput="filterMenu()">
+    </div>
+
     <div id="card-main" class="collapsible-card">
         <div class="collapsible-header" onclick="toggleCard('card-main')">
-            <span id="form-title">➕ ข้อมูลเมนูใหม่</span>
-            <span class="chevron">▼</span>
+            <span id="form-title" style="font-weight:600;">➕ เพิ่ม/แก้ไขข้อมูลเมนู</span>
+            <i class="fas fa-magic" style="font-size:0.8rem; color: var(--primary-gold);"></i>
         </div>
         <div class="collapsible-content">
-            <input type="hidden" id="edit-id"> 
-            <input type="text" id="p-name" placeholder="ชื่ออาหาร">
-            <input type="number" id="p-price" placeholder="ราคาพื้นฐาน (บาท)">
-            <input type="text" id="p-img" placeholder="ลิงก์รูปภาพ (URL)">
-            <select id="p-category" onchange="autoLoadAddonsByCategory()">
-                <option value="อาหาร">หมวดอาหาร (ข้าว)</option>
-                <option value="ก๋วยเตี๋ยว">หมวดก๋วยเตี๋ยว</option>
-                <option value="เครื่องดื่ม">หมวดเครื่องดื่ม</option>
-            </select>
-        </div>
-    </div>
-
-    <div id="card-addon" class="collapsible-card">
-        <div class="collapsible-header" onclick="toggleCard('card-addon')">
-            <span>⚙️ ตั้งค่าปริมาณ & ตัวเลือกเสริม</span>
-            <span class="chevron">▼</span>
-        </div>
-        <div class="collapsible-content">
-            <h4 style="color:#ff9800; margin-bottom:10px;">🍲 ปริมาณ (เช่น ธรรมดา/พิเศษ)</h4>
-            <div id="sizes-list-container"></div>
-            <button onclick="addSizeRow()" style="width:100%; background:none; border:1px dashed #555; color:#888; padding:8px; border-radius:10px; margin-top:5px; cursor:pointer;">+ เพิ่มปริมาณ</button>
-
-            <h4 style="color:#ff9800; margin: 20px 0 10px 0;">🥚 ตัวเลือกเสริม (เช่น ไข่ดาว/ทะเล)</h4>
-            <div id="addons-list-container"></div>
-            <button onclick="addAddonRow()" style="width:100%; background:none; border:1px dashed #555; color:#888; padding:8px; border-radius:10px; margin-top:5px; cursor:pointer;">+ เพิ่มตัวเลือก</button>
-
-            <div class="btn-group-action">
-                <button id="btn-add-new" class="btn-add-new" onclick="saveAsNew()">➕ เพิ่มเป็นเมนูใหม่</button>
-                <button id="btn-save-edit" class="btn-save-edit" onclick="updateExisting()">💾 บันทึกแก้ไข (Sync ทั้งหมวด)</button>
-                <button id="btn-cancel" class="btn-cancel" onclick="resetForm()">ยกเลิกการเลือก</button>
+            <input type="hidden" id="edit-id">
+            
+            <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                <img id="p-img-preview" src="" style="display:none;">
+                <div class="upload-placeholder" id="upload-hint">
+                    <i class="fas fa-camera"></i>
+                    <span style="font-size:0.8rem;">เลือกรูปภาพเมนู</span>
+                </div>
+                <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="handleFileUpload(this)">
+                <input type="hidden" id="p-img">
             </div>
+
+            <input type="text" id="p-name" placeholder="ชื่อรายการอาหาร">
+            <input type="number" id="p-price" placeholder="ราคาพื้นฐาน (฿)">
+            
+            <select id="p-category">
+                <option value="อาหาร">อาหารจานเดียว</option>
+                <option value="ก๋วยเตี๋ยว">ก๋วยเตี๋ยว/เส้น</option>
+                <option value="เครื่องดื่ม">เครื่องดื่ม</option>
+            </select>
+            
+            <div style="margin: 20px 0 10px; font-size: 0.8rem; color: var(--primary-gold); letter-spacing: 1px;">⚙️ ตั้งค่าออปชันเสริม</div>
+            
+            <div id="sizes-list-container"></div>
+            <button onclick="addSizeRow()" style="width:100%; padding:12px; background:none; border:1px dashed #333; color:#555; border-radius:14px; margin-bottom:12px; font-size:0.8rem;">+ เพิ่มตัวเลือกขนาด</button>
+
+            <div id="addons-list-container"></div>
+            <button onclick="addAddonRow()" style="width:100%; padding:12px; background:none; border:1px dashed #333; color:#555; border-radius:14px; font-size:0.8rem;">+ เพิ่มท็อปปิ้งเสริม</button>
+
+            <button id="btn-add-new" class="btn-add-new" onclick="saveAsNew()">บันทึกข้อมูลเมนู</button>
+            <button id="btn-save-edit" class="btn-add-new" style="display:none; background:var(--primary-gold);" onclick="updateExisting()">💾 บันทึกการแก้ไข</button>
+            <button id="btn-cancel" style="width:100%; background:none; border:none; color:#444; padding:10px; display:none; margin-top:5px;" onclick="resetForm()">ยกเลิกการแก้ไข</button>
         </div>
     </div>
 
+    <div style="margin: 30px 0 10px; font-size: 0.75rem; color: #444; letter-spacing: 2px;">PRODUCT LIST</div>
     <div id="product-list-container"></div>
 </div>
 
@@ -134,118 +183,81 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
-        authDomain: "bangfood-cb30f.firebaseapp.com",
-        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "bangfood-cb30f",
-        storageBucket: "bangfood-cb30f.appspot.com",
-        messagingSenderId: "390955623784",
-        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
-    };
-
+    const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 📍 ฟังก์ชัน เปิด/ปิด กล่อง
-    function toggleCard(id) {
-        document.getElementById(id).classList.toggle('active');
+    function toggleCard(id) { document.getElementById(id).classList.toggle('active'); }
+
+    function handleFileUpload(input) {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                document.getElementById('p-img').value = base64;
+                const preview = document.getElementById('p-img-preview');
+                preview.src = base64; preview.style.display = 'block';
+                document.getElementById('upload-hint').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     function addSizeRow(name = "", price = "0", available = true) {
         const container = document.getElementById('sizes-list-container');
         const div = document.createElement('div');
-        div.className = 'size-row option-row';
-        div.innerHTML = `<input type="checkbox" class="size-check" ${available ? 'checked' : ''}><input type="text" class="size-name" placeholder="ชื่อ" value="${name}" style="flex: 2;"><input type="number" class="size-price" placeholder="฿" value="${price}" style="flex: 1;"><button onclick="this.parentElement.remove()" style="background:none; border:none; color:#ff4444; cursor:pointer;">✕</button>`;
+        div.className = 'option-row';
+        div.innerHTML = `<input type="checkbox" ${available ? 'checked' : ''}><input type="text" placeholder="ขนาด" value="${name}" style="flex:2;"><input type="number" placeholder="฿" value="${price}" style="flex:1;"><i class="fas fa-trash-alt" style="color:var(--danger); cursor:pointer;" onclick="this.parentElement.remove()"></i>`;
         container.appendChild(div);
     }
 
     function addAddonRow(name = "", price = "", available = true) {
         const container = document.getElementById('addons-list-container');
         const div = document.createElement('div');
-        div.className = 'addon-row option-row';
-        div.innerHTML = `<input type="checkbox" class="addon-check" ${available ? 'checked' : ''}><input type="text" class="addon-name" placeholder="ชื่อ" value="${name}" style="flex: 2;"><input type="number" class="addon-price" placeholder="฿" value="${price}" style="flex: 1;"><button onclick="this.parentElement.remove()" style="background:none; border:none; color:#ff4444; cursor:pointer;">✕</button>`;
+        div.className = 'option-row';
+        div.innerHTML = `<input type="checkbox" ${available ? 'checked' : ''}><input type="text" placeholder="ท็อปปิ้ง" value="${name}" style="flex:2;"><input type="number" placeholder="฿" value="${price}" style="flex:1;"><i class="fas fa-trash-alt" style="color:var(--danger); cursor:pointer;" onclick="this.parentElement.remove()"></i>`;
         container.appendChild(div);
+    }
+
+    function filterMenu() {
+        const q = document.getElementById('menu-search').value.toLowerCase();
+        document.querySelectorAll('.product-item').forEach(item => {
+            item.style.display = item.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+        });
     }
 
     function getFormData() {
         const name = document.getElementById('p-name').value.trim();
         const price = document.getElementById('p-price').value;
-        const img = document.getElementById('p-img').value.trim();
+        const img = document.getElementById('p-img').value;
         const category = document.getElementById('p-category').value;
-        let sizes = [];
-        document.querySelectorAll('.size-row').forEach(row => {
-            const sName = row.querySelector('.size-name').value.trim();
-            if(sName) sizes.push({ name: sName, price: parseFloat(row.querySelector('.size-price').value) || 0, available: row.querySelector('.size-check').checked });
+        if(!name || !price || !img) { alert("กรอกข้อมูลให้ครบก่อนนะครับ!"); return null; }
+        
+        let sizes = [], addons = [];
+        document.querySelectorAll('#sizes-list-container .option-row').forEach(row => {
+            const inputs = row.querySelectorAll('input');
+            if(inputs[1].value) sizes.push({ name: inputs[1].value, price: parseFloat(inputs[2].value) || 0, available: inputs[0].checked });
         });
-        let addons = [];
-        document.querySelectorAll('.addon-row').forEach(row => {
-            const aName = row.querySelector('.addon-name').value.trim();
-            if(aName) addons.push({ name: aName, price: parseFloat(row.querySelector('.addon-price').value) || 0, available: row.querySelector('.addon-check').checked });
+        document.querySelectorAll('#addons-list-container .option-row').forEach(row => {
+            const inputs = row.querySelectorAll('input');
+            if(inputs[1].value) addons.push({ name: inputs[1].value, price: parseFloat(inputs[2].value) || 0, available: inputs[0].checked });
         });
-        if(!name || !price || !img) { alert("กรุณากรอกข้อมูลให้ครบครับ!"); return null; }
         return { name, price: parseFloat(price), img, category, config: { sizes, addons } };
-    }
-
-    function syncToCategory(category, config) {
-        db.ref('products').once('value', snapshot => {
-            const products = snapshot.val();
-            let updates = {};
-            for (let id in products) { if (products[id].category === category) updates[`/products/${id}/config`] = config; }
-            db.ref().update(updates);
-        });
-        db.ref('category_presets/' + category).set(config);
-    }
-
-    function autoLoadAddonsByCategory() {
-        if (document.getElementById('edit-id').value !== "") return;
-        const cat = document.getElementById('p-category').value;
-        db.ref('category_presets/' + cat).once('value', snapshot => {
-            const preset = snapshot.val();
-            document.getElementById('sizes-list-container').innerHTML = "";
-            document.getElementById('addons-list-container').innerHTML = "";
-            if (preset) {
-                if(preset.sizes) preset.sizes.forEach(s => addSizeRow(s.name, s.price, s.available));
-                if(preset.addons) preset.addons.forEach(a => addAddonRow(a.name, a.price, a.available));
-            } else { addSizeRow("ธรรมดา", 0); addAddonRow(); }
-        });
     }
 
     function saveAsNew() {
         const data = getFormData();
         if(!data) return;
         data.status = 'instock';
-        db.ref('products').push(data).then(() => { syncToCategory(data.category, data.config); alert("เพิ่มสำเร็จ!"); resetForm(); });
+        db.ref('products').push(data).then(() => { alert("เพิ่มเรียบร้อย!"); resetForm(); });
     }
 
     function updateExisting() {
         const id = document.getElementById('edit-id').value;
         const data = getFormData();
         if(!id || !data) return;
-        db.ref('products/' + id).update(data).then(() => { syncToCategory(data.category, data.config); alert("อัปเดตเรียบร้อย!"); resetForm(); });
-    }
-
-    function editProduct(id, name, price, img, category, config) {
-        document.getElementById('edit-id').value = id;
-        document.getElementById('p-name').value = name;
-        document.getElementById('p-price').value = price;
-        document.getElementById('p-img').value = img;
-        document.getElementById('p-category').value = category;
-        document.getElementById('sizes-list-container').innerHTML = "";
-        document.getElementById('addons-list-container').innerHTML = "";
-        if (config) {
-            if(config.sizes) config.sizes.forEach(s => addSizeRow(s.name, s.price, s.available !== false));
-            if(config.addons) config.addons.forEach(a => addAddonRow(a.name, a.price, a.available !== false));
-        }
-        document.getElementById('form-title').innerText = "📝 แก้ไข: " + name;
-        document.getElementById('btn-add-new').style.display = "none";
-        document.getElementById('btn-save-edit').style.display = "block";
-        document.getElementById('btn-cancel').style.display = "block";
-        
-        // 📍 กางกล่องอัตโนมัติเมื่อกดแก้ไข
-        document.getElementById('card-main').classList.add('active');
-        document.getElementById('card-addon').classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        db.ref('products/' + id).update(data).then(() => { alert("แก้ไขสำเร็จ!"); resetForm(); });
     }
 
     function resetForm() {
@@ -253,27 +265,87 @@
         document.getElementById('p-name').value = "";
         document.getElementById('p-price').value = "";
         document.getElementById('p-img').value = "";
-        document.getElementById('form-title').innerText = "➕ ข้อมูลเมนูใหม่";
+        document.getElementById('p-img-preview').style.display = 'none';
+        document.getElementById('upload-hint').style.display = 'block';
         document.getElementById('btn-add-new').style.display = "block";
         document.getElementById('btn-save-edit').style.display = "none";
         document.getElementById('btn-cancel').style.display = "none";
-        // พับกล่องเก็บ
-        document.getElementById('card-main').classList.remove('active');
-        document.getElementById('card-addon').classList.remove('active');
-        autoLoadAddonsByCategory();
+        document.getElementById('sizes-list-container').innerHTML = "";
+        document.getElementById('addons-list-container').innerHTML = "";
+        if(document.getElementById('card-main').classList.contains('active')) toggleCard('card-main');
+    }
+
+    function editProduct(id, p) {
+        document.getElementById('edit-id').value = id;
+        document.getElementById('p-name').value = p.name;
+        document.getElementById('p-price').value = p.price;
+        document.getElementById('p-img').value = p.img;
+        const preview = document.getElementById('p-img-preview');
+        preview.src = p.img; preview.style.display = 'block';
+        document.getElementById('upload-hint').style.display = 'none';
+        document.getElementById('p-category').value = p.category;
+        document.getElementById('sizes-list-container').innerHTML = "";
+        document.getElementById('addons-list-container').innerHTML = "";
+        if(p.config) {
+            if(p.config.sizes) p.config.sizes.forEach(s => addSizeRow(s.name, s.price, s.available));
+            if(p.config.addons) p.config.addons.forEach(a => addAddonRow(a.name, a.price, a.available));
+        }
+        document.getElementById('form-title').innerText = "📝 แก้ไข: " + p.name;
+        document.getElementById('btn-add-new').style.display = "none";
+        document.getElementById('btn-save-edit').style.display = "block";
+        document.getElementById('btn-cancel').style.display = "block";
+        if(!document.getElementById('card-main').classList.contains('active')) toggleCard('card-main');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function loadProducts() {
         db.ref('products').on('value', snapshot => {
             const list = document.getElementById('product-list-container');
-            list.innerHTML = '';
             const data = snapshot.val();
+            list.innerHTML = '';
             let counts = { 'อาหาร': 0, 'ก๋วยเตี๋ยว': 0, 'เครื่องดื่ม': 0 };
+            let idx = 0;
             for (let id in data) {
                 const p = data[id];
                 counts[p.category]++;
                 const isOut = p.status === 'out_of_stock';
-                list.innerHTML += `<div class="product-item" onclick='editProduct("${id}", "${p.name}", "${p.price}", "${p.img}", "${p.category}", ${JSON.stringify(p.config || {})})'><img src="${p.img}" class="product-img" onerror="this.src='https://via.placeholder.com/100'"><div class="product-info"><b>${p.name} ${isOut ? '(หมด)' : ''}</b><span>฿${p.price}</span></div><div class="action-btns"><button class="btn-status ${isOut ? 'status-out' : 'status-in'}" onclick="event.stopPropagation(); toggleStatus('${id}', '${p.status}')">${isOut ? 'หมด' : 'ขาย'}</button><button onclick="event.stopPropagation(); if(confirm('ลบ?')) db.ref('products/${id}').remove()">🗑️</button></div></div>`;
+                const div = document.createElement('div');
+                div.className = 'product-item list-entrance';
+                div.style.animationDelay = (idx * 0.05) + 's';
+                
+                // 📍 ปรับการจัดวางใหม่ให้ปุ่มชิดขวา
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between'; // ดันข้อมูลกับปุ่มแยกจากกัน
+                div.style.alignItems = 'center';
+                
+                div.onclick = () => editProduct(id, p);
+                
+                // ส่วนของข้อมูลเมนู (รูป + ชื่อ + ราคา)
+                const infoPart = `
+                    <div style="display:flex; align-items:center;">
+                        <img src="${p.img}" class="product-img" onerror="this.src='https://via.placeholder.com/60'">
+                        <div class="product-info">
+                            <b>${p.name}</b>
+                            <span>฿${p.price}</span>
+                        </div>
+                    </div>`;
+                
+                // ส่วนของปุ่ม Action (ชิดขวา)
+                const actionPart = `
+                    <div style="display:flex; align-items:center; gap:12px; margin-left: auto;">
+                        <button class="btn-status ${isOut ? 'status-out' : 'status-in'}" 
+                                onclick="event.stopPropagation(); toggleStatus('${id}', '${p.status}')">
+                            ${isOut ? 'ของหมด' : 'เปิดขาย'}
+                        </button>
+                        <i class="fas fa-trash-alt" 
+                           style="color:rgba(255,255,255,0.2); font-size:1rem; cursor:pointer; padding:5px;" 
+                           onclick="event.stopPropagation(); if(confirm('ลบเมนูนี้?')) db.ref('products/${id}').remove()">
+                        </i>
+                    </div>`;
+                
+                div.innerHTML = infoPart + actionPart;
+                list.appendChild(div);
+                idx++;
             }
             document.getElementById('count-food').innerText = counts['อาหาร'];
             document.getElementById('count-noodle').innerText = counts['ก๋วยเตี๋ยว'];
@@ -281,11 +353,11 @@
         });
     }
 
-    function toggleStatus(id, currentStatus) {
-        db.ref('products/' + id).update({ status: currentStatus === 'instock' ? 'out_of_stock' : 'instock' });
+    function toggleStatus(id, current) {
+        db.ref('products/' + id).update({ status: current === 'instock' ? 'out_of_stock' : 'instock' });
     }
 
-    window.onload = function() { loadProducts(); autoLoadAddonsByCategory(); };
+    function initializeApp() { loadProducts(); }
 </script>
 </body>
 </html>

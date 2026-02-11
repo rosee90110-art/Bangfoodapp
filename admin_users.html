@@ -4,254 +4,244 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการแอดมิน | BANGFOOD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #ff9800, #f44336);
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-            --green: #4CAF50;
-            --gray: #666;
+            --premium-gold: #c5a059;
+            --bg-deep: #0a0a0a;
+            --glass-card: rgba(255, 255, 255, 0.03);
+            --border-dim: rgba(255, 255, 255, 0.08);
+            --success: #4CAF50;
+            --soft-white: rgba(255, 255, 255, 0.9);
         }
-        body { background-color: #0a0a0a; color: white; font-family: 'Kanit', sans-serif; margin: 0; padding: 20px; }
-        .container { max-width: 500px; margin: 0 auto; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { color: #888; text-decoration: none; font-size: 0.9rem; }
 
-        .admin-stats-card {
-            background: var(--glass); border: 1px solid var(--border);
-            border-radius: 20px; padding: 20px; margin-bottom: 20px;
-            text-align: center; backdrop-filter: blur(10px);
+        body { 
+            background-color: var(--bg-deep); color: var(--soft-white); 
+            font-family: 'Kanit', sans-serif; margin: 0; padding: 0;
+            background-image: radial-gradient(circle at 50% -20%, #252525 0%, #0a0a0a 70%);
+            min-height: 100vh;
         }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .stat-item b { display: block; font-size: 1.5rem; color: #ff9800; }
-        .stat-item span { font-size: 0.8rem; color: #888; }
 
+        /* 📍 Sticky Header สไตล์พรีเมียม */
+        .header { 
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(25px);
+            padding: 22px 25px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border-dim);
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .header h2 { font-size: 1rem; margin: 0; letter-spacing: 4px; color: #fff; text-transform: uppercase; font-weight: 500; text-shadow: 0 0 15px rgba(255,255,255,0.1); }
+        .back-btn { color: var(--premium-gold); text-decoration: none; font-size: 1.3rem; transition: 0.3s; }
+        .back-btn:active { transform: scale(0.85); }
+
+        .container { max-width: 450px; margin: 0 auto; padding: 25px; padding-bottom: 120px; }
+
+        /* 📊 Stats Grid ปรับให้มีมิติ */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .stat-item { 
+            background: var(--glass-card); padding: 25px 15px; border-radius: 32px; 
+            border: 1px solid var(--border-dim); text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: fadeIn 1s ease-out;
+        }
+        .stat-item i { font-size: 1.2rem; color: #444; margin-bottom: 10px; display: block; }
+        .stat-item b { display: block; font-size: 2rem; color: var(--premium-gold); letter-spacing: -1px; }
+        .stat-item span { font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 8px; display: block; }
+
+        /* 📢 กล่องประกาศสไตล์การ์ด */
+        .announce-card {
+            background: linear-gradient(145deg, rgba(197, 160, 89, 0.08), transparent);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            padding: 22px; border-radius: 32px; margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .announce-card b { font-size: 0.8rem; color: var(--premium-gold); display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-weight: 400; letter-spacing: 1px; }
+        .announce-card textarea {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-dim);
+            border-radius: 18px; color: #ccc; padding: 15px; font-family: inherit; font-size: 0.85rem;
+            resize: none; outline: none; box-sizing: border-box; transition: 0.3s;
+        }
+        .announce-card textarea:focus { border-color: var(--premium-gold); background: rgba(0,0,0,0.5); }
+
+        /* 📍 ปุ่มเพิ่มแอดมิน - ปรับให้โมเดิร์น */
         .btn-add-user {
-            width: 100%; padding: 15px; background: var(--primary-gradient);
-            border: none; border-radius: 15px; color: white; font-weight: bold;
-            font-size: 1rem; cursor: pointer; margin-bottom: 25px;
-            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.2);
+            width: 100%; padding: 20px; background: rgba(197, 160, 89, 0.05); 
+            border: 1px dashed var(--premium-gold); border-radius: 28px;
+            color: var(--premium-gold); font-size: 0.95rem; cursor: pointer;
+            margin-bottom: 35px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; justify-content: center; gap: 12px;
         }
+        .btn-add-user:active { transform: scale(0.96); background: rgba(197, 160, 89, 0.12); }
 
+        /* 📋 User Card ปรับให้ดูเป็นเลเยอร์สวยงาม */
         .user-card {
-            background: var(--glass); border: 1px solid var(--border);
-            padding: 18px; border-radius: 20px; margin-bottom: 15px;
+            background: var(--glass-card); border: 1px solid var(--border-dim);
+            padding: 28px; border-radius: 35px; margin-bottom: 18px;
             display: flex; justify-content: space-between; align-items: center;
-            transition: 0.3s;
+            opacity: 0; transform: translateY(20px); animation: slideUpFade 0.7s forwards;
+            position: relative; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        .user-card.is-me { border-left: 5px solid var(--green); background: rgba(76, 175, 80, 0.05); }
-        
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-        .online-dot { background-color: var(--green); box-shadow: 0 0 8px var(--green); }
-        .offline-dot { background-color: var(--gray); }
+        .user-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.01)); pointer-events: none; }
+        .user-card.is-me { border-color: rgba(197, 160, 89, 0.3); background: linear-gradient(135deg, rgba(197, 160, 89, 0.05), transparent); }
 
-        .user-info b { font-size: 1.1rem; color: #fff; }
-        .status-text { font-size: 0.75rem; }
-        .online-text { color: var(--green); font-weight: bold; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 12px; background: #333; transition: 0.3s; }
+        .online-now { background: var(--success); box-shadow: 0 0 15px var(--success); transform: scale(1.2); } 
 
-        .btn-group { display: flex; gap: 8px; }
-        .btn-action { padding: 8px 12px; border-radius: 10px; border: none; cursor: pointer; font-size: 0.8rem; }
-        .btn-edit { background: rgba(255, 255, 255, 0.1); color: white; }
-        .btn-delete { background: rgba(255, 68, 68, 0.15); color: #ff4444; }
+        .user-info b { font-size: 1.15rem; color: #fff; display: block; margin-top: 6px; font-weight: 500; letter-spacing: 0.5px; }
+        .user-info .role-tag { font-size: 0.6rem; color: var(--premium-gold); text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; font-weight: 600; }
+        .pass-info { font-size: 0.75rem; color: #444; margin-top: 10px; display: block; font-family: 'Courier New', Courier, monospace; }
 
-        #edit-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center;
-        }
-        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 25px; width: 85%; max-width: 350px; text-align: center; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
-        
-        .pass-box { margin-top: 5px; display: flex; align-items: center; gap: 5px; }
-        .btn-view { background: none; border: none; color: #ff9800; cursor: pointer; font-size: 0.7rem; padding: 0; }
-        .role-tag { font-size: 0.65rem; padding: 2px 8px; border-radius: 5px; background: rgba(255,255,255,0.1); color: #aaa; margin-left: 5px; }
+        .btn-group { display: flex; gap: 12px; }
+        .btn-icon { background: rgba(255,255,255,0.02); border: 1px solid var(--border-dim); color: #555; cursor: pointer; font-size: 1.1rem; width: 45px; height: 45px; border-radius: 18px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .btn-icon:hover { color: var(--premium-gold); border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); }
+        .btn-del:hover { color: #f44336; border-color: #f44336; background: rgba(244, 67, 54, 0.05); }
+
+        /* Modal */
+        #edit-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(15px); }
+        .modal-content { background: #111; padding: 45px 35px; border-radius: 40px; width: 82%; max-width: 310px; border: 1px solid var(--border-dim); text-align: center; transform: scale(0.8); opacity: 0; transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        #edit-modal.active .modal-content { transform: scale(1); opacity: 1; }
+        input, select { width: 100%; padding: 18px; margin: 10px 0; border-radius: 20px; border: 1px solid #1a1a1a; background: #000; color: #fff; outline: none; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
+        input:focus { border-color: var(--premium-gold); }
+
+        .btn-save-modal { width: 100%; padding: 20px; background: var(--premium-gold); border: none; border-radius: 22px; color: #000; font-weight: 600; margin-top: 20px; cursor: pointer; transition: 0.3s; }
+        .btn-save-modal:active { transform: scale(0.95); }
+
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-25px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
-<body>
+<body onload="renderAdmins()">
+
+<div class="header">
+    <a href="admin_center.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+    <h2>System Access</h2>
+    <div style="width: 25px;"></div>
+</div>
 
 <div class="container">
-    <div class="header">
-        <h2 style="margin:0;">👥 จัดการแอดมิน</h2>
-        <a href="admin_center.html" class="back-btn">กลับ</a>
+    <div class="stats-grid">
+        <div class="stat-item"><i class="fa-solid fa-users-gear"></i><b id="total-admins">0</b><span>Accounts</span></div>
+        <div class="stat-item"><i class="fa-solid fa-user-shield"></i><b id="online-admins">1</b><span>Active</span></div>
     </div>
 
-    <div class="admin-stats-card">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <b id="total-admins">0</b>
-                <span>ทั้งหมด</span>
-            </div>
-            <div class="stat-item">
-                <b id="online-admins">0</b>
-                <span>คุณกำลังใช้</span>
-            </div>
-        </div>
+    <div class="announce-card">
+        <b><i class="fas fa-bullhorn"></i> แถบประกาศด่วน</b>
+        <textarea id="admin-note" placeholder="ข้อความสำคัญสำหรับทีมงาน..." onchange="saveNote()"></textarea>
     </div>
 
-    <button id="add-admin-btn" class="btn-add-user" onclick="openAddModal()">+ เพิ่มแอดมินใหม่</button>
+    <button id="add-admin-btn" class="btn-add-user" onclick="openAddModal()">
+        <i class="fas fa-plus-circle"></i> Create New Admin
+    </button>
 
     <div id="admin-list-container"></div>
 </div>
 
 <div id="edit-modal">
     <div class="modal-content">
-        <h3 id="modal-title">จัดการยูสเซอร์</h3>
+        <h3 id="modal-title" style="margin-top:0; font-weight: 400; color:var(--premium-gold); letter-spacing: 3px; font-size: 0.9rem; text-transform: uppercase;">Manage Account</h3>
         <input type="hidden" id="edit-index">
-        <input type="text" id="edit-username" placeholder="ชื่อผู้ใช้">
-        <input type="text" id="edit-password" placeholder="รหัสผ่าน">
+        <input type="text" id="edit-username" placeholder="Username">
+        <input type="text" id="edit-password" placeholder="Password">
         <select id="edit-role">
             <option value="Staff">พนักงาน (Staff)</option>
             <option value="Super Admin">เจ้าของร้าน (Super Admin)</option>
         </select>
-        <button class="btn-save" onclick="saveAdminChanges()" style="width: 100%; padding: 12px; background: var(--primary-gradient); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer;">บันทึกข้อมูล</button>
-        <button onclick="closeModal()" style="background:none; border:none; color:#666; margin-top:15px; cursor:pointer;">ยกเลิก</button>
+        <button class="btn-save-modal" onclick="saveAdminChanges()">Save Account</button>
+        <button onclick="closeModal()" style="background:none; border:none; color:#444; margin-top:25px; cursor:pointer; font-size: 0.85rem; letter-spacing: 1px;">Dismiss</button>
     </div>
 </div>
 
 <script>
+    function saveNote() {
+        localStorage.setItem('admin_announcement', document.getElementById('admin-note').value);
+    }
+
     function renderAdmins() {
         const container = document.getElementById('admin-list-container');
         const admins = JSON.parse(localStorage.getItem('adminAccounts')) || [];
         const currentLoginUser = sessionStorage.getItem('currentAdminName');
         
-        // 1. ค้นหาตำแหน่งของ "เราเอง"
-        const myAccount = admins.find(a => a.username === currentLoginUser);
-        const myRole = myAccount ? myAccount.role : 'Staff';
-
-        // 2. ถ้าไม่ใช่เจ้าของร้าน ให้ซ่อนปุ่ม "เพิ่มแอดมินใหม่"
-        const addBtn = document.getElementById('add-admin-btn');
-        if (myRole !== 'Super Admin') addBtn.style.display = 'none';
-
-        container.innerHTML = '';
-        let onlineCount = 0;
+        document.getElementById('admin-note').value = localStorage.getItem('admin_announcement') || "";
         document.getElementById('total-admins').innerText = admins.length;
 
+        const myAccount = admins.find(a => a.username === currentLoginUser);
+        const myRole = myAccount ? myAccount.role : 'Staff';
+        if (myRole !== 'Super Admin') document.getElementById('add-admin-btn').style.display = 'none';
+
+        container.innerHTML = '';
         admins.forEach((admin, index) => {
             const isMe = (admin.username === currentLoginUser);
-            if(isMe) onlineCount++;
 
-            const lastLogin = admin.lastLogin ? `เข้าใช้: ${admin.lastLogin}` : 'ยังไม่เคยเข้าใช้';
-
-            // 📍 สร้างระบบเช็คสิทธิ์ปุ่ม (Permissions)
-            let actionButtons = '';
-            if (myRole === 'Super Admin') {
-                // เจ้าของร้าน: แก้ไขได้ทุกคน ลบได้ทุกคน (ยกเว้นตัวเอง)
-                actionButtons += `<button class="btn-action btn-edit" onclick="openEditModal(${index})">แก้ไข</button>`;
-                if (!isMe && admin.username !== 'admin') {
-                    actionButtons += `<button class="btn-action btn-delete" onclick="deleteAdmin(${index})">ลบ</button>`;
-                }
-            } else {
-                // พนักงาน: แก้ไขได้เฉพาะ "ตัวเอง" เท่านั้น
-                if (isMe) {
-                    actionButtons += `<button class="btn-action btn-edit" onclick="openEditModal(${index})">แก้ไขข้อมูลส่วนตัว</button>`;
-                }
-                // ถ้าไม่ใช่ตัวเอง Staff จะไม่เห็นปุ่มใดๆ เลย
+            let actionButtons = `<button class="btn-icon" onclick="openEditModal(${index})"><i class="fas fa-pen-nib"></i></button>`;
+            if (myRole === 'Super Admin' && !isMe && admin.username !== 'admin') {
+                actionButtons += `<button class="btn-icon btn-del" onclick="deleteAdmin(${index})"><i class="fas fa-trash-alt"></i></button>`;
             }
 
             container.innerHTML += `
-                <div class="user-card ${isMe ? 'is-me' : ''}">
+                <div class="user-card ${isMe ? 'is-me' : ''}" style="animation-delay: ${index * 0.15}s">
                     <div class="user-info">
-                        <div>
-                            <span class="status-dot ${isMe ? 'online-dot' : 'offline-dot'}"></span>
-                            <span class="status-text ${isMe ? 'online-text' : ''}">
-                                ${isMe ? 'คุณกำลังเข้าใช้งาน' : 'ไม่ได้ใช้งานในเครื่องนี้'}
-                            </span>
-                            <span class="role-tag">${admin.role || 'Staff'}</span>
-                        </div>
-                        <b style="margin-top:5px; display:block;">${admin.username}</b>
-                        
-                        <div class="pass-box">
-                            <small style="color:#555">Pass: </small>
-                            <small id="pass-text-${index}" style="color:#444">********</small>
-                            <button class="btn-view" onclick="togglePass(${index}, '${admin.password}')">ดู</button>
-                        </div>
-                        <small style="color:#555; font-size: 0.65rem;">${lastLogin}</small>
+                        <span class="role-tag">${admin.role || 'Staff'}</span>
+                        <b><span class="status-dot ${isMe ? 'online-now' : ''}"></span>${admin.username}</b>
+                        <span class="pass-info">Access: ${admin.password}</span>
                     </div>
-                    <div class="btn-group">
-                        ${actionButtons}
-                    </div>
+                    <div class="btn-group">${actionButtons}</div>
                 </div>
             `;
         });
-        
-        document.getElementById('online-admins').innerText = onlineCount;
-    }
-
-    function togglePass(index, realPass) {
-        const el = document.getElementById(`pass-text-${index}`);
-        if (el.innerText === '********') {
-            el.innerText = realPass;
-            el.style.color = '#ff9800';
-        } else {
-            el.innerText = '********';
-            el.style.color = '#444';
-        }
     }
 
     function openAddModal() {
-        document.getElementById('modal-title').innerText = "➕ เพิ่มแอดมินใหม่";
+        document.getElementById('modal-title').innerText = "ADD ACCOUNT";
         document.getElementById('edit-index').value = "-1";
         document.getElementById('edit-username').value = "";
         document.getElementById('edit-password').value = "";
         document.getElementById('edit-role').value = "Staff";
-        document.getElementById('edit-role').disabled = false;
-        document.getElementById('edit-modal').style.display = 'flex';
+        const modal = document.getElementById('edit-modal');
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('active'), 10);
     }
 
     function openEditModal(index) {
         const admins = JSON.parse(localStorage.getItem('adminAccounts')) || [];
         const admin = admins[index];
-        const currentLoginUser = sessionStorage.getItem('currentAdminName');
-        const myAccount = admins.find(a => a.username === currentLoginUser);
-        
-        document.getElementById('modal-title').innerText = "📝 แก้ไขข้อมูล";
         document.getElementById('edit-index').value = index;
         document.getElementById('edit-username').value = admin.username;
         document.getElementById('edit-password').value = admin.password;
         document.getElementById('edit-role').value = admin.role || "Staff";
-        
-        // 📍 กฎ: พนักงานห้ามเปลี่ยนตำแหน่งตัวเอง
-        document.getElementById('edit-role').disabled = (myAccount.role !== 'Super Admin');
-        
-        document.getElementById('edit-modal').style.display = 'flex';
+        const modal = document.getElementById('edit-modal');
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('active'), 10);
     }
 
-    function closeModal() { document.getElementById('edit-modal').style.display = 'none'; }
+    function closeModal() {
+        const modal = document.getElementById('edit-modal');
+        modal.classList.remove('active');
+        setTimeout(() => modal.style.display = 'none', 400);
+    }
 
     function saveAdminChanges() {
         const index = parseInt(document.getElementById('edit-index').value);
         const name = document.getElementById('edit-username').value.trim();
         const pass = document.getElementById('edit-password').value.trim();
         const role = document.getElementById('edit-role').value;
-        
-        if (!name || !pass) return alert("กรุณากรอกข้อมูลให้ครบ");
-        
+        if (!name || !pass) return alert("กรุณากรอกข้อมูล");
         let admins = JSON.parse(localStorage.getItem('adminAccounts')) || [];
-        
-        if (index === -1) {
-            admins.push({ username: name, password: pass, lastLogin: '', role: role });
-        } else {
-            const oldLogin = admins[index].lastLogin || '';
-            // ถ้าพนักงานแก้ตัวเอง ให้ใช้ตำแหน่งเดิม ห้ามแอบเปลี่ยนเป็น Super Admin
-            const finalRole = document.getElementById('edit-role').disabled ? admins[index].role : role;
-            admins[index] = { username: name, password: pass, lastLogin: oldLogin, role: finalRole };
-        }
-        
+        if (index === -1) admins.push({ username: name, password: pass, role: role });
+        else admins[index] = { username: name, password: pass, role: role };
         localStorage.setItem('adminAccounts', JSON.stringify(admins));
-        closeModal();
-        renderAdmins();
+        closeModal(); renderAdmins();
     }
 
     function deleteAdmin(index) {
-        if (confirm("ยืนยันการลบ?")) {
+        if (confirm("ต้องการลบบัญชีผู้ใช้นี้?")) {
             let admins = JSON.parse(localStorage.getItem('adminAccounts')) || [];
             admins.splice(index, 1);
             localStorage.setItem('adminAccounts', JSON.stringify(admins));
             renderAdmins();
         }
     }
-
-    window.onload = renderAdmins;
 </script>
 </body>
 </html>

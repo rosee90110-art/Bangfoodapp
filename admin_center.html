@@ -4,179 +4,209 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Center | BANGFOOD</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #ff9800, #f44336);
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-deep: #0a0a0a;
+            --glass-soft: rgba(255, 255, 255, 0.03);
+            --border-dim: rgba(255, 255, 255, 0.08);
+            
+            /* 📍 ชุดสีไล่เฉดแบบพรีเมียม */
+            --grad-admin: linear-gradient(135deg, #c5a059, #8e6d31);
+            --grad-order: linear-gradient(135deg, #4facfe, #00f2fe);
+            --grad-history: linear-gradient(135deg, #43e97b, #38f9d7);
+            --grad-trend: linear-gradient(135deg, #f9d423, #ff4e50);
+            --grad-product: linear-gradient(135deg, #f093fb, #f5576c);
+            --grad-revenue: linear-gradient(135deg, #667eea, #764ba2);
         }
 
         body {
-            background-color: #0a0a0a;
+            background-color: var(--bg-deep);
             color: #ffffff;
             font-family: 'Kanit', sans-serif;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            /* พื้นหลังไล่เฉดลึกเพิ่มมิติ */
+            background-image: radial-gradient(circle at 50% -20%, #222 0%, #0a0a0a 80%);
+            min-height: 100vh;
         }
 
+        /* 📍 Sticky Header */
         .admin-header {
-            padding: 40px 25px 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--glass-border);
+            position: sticky; top: 0; z-index: 2000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(25px);
+            padding: 25px; text-align: center;
+            border-bottom: 1px solid var(--border-dim);
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .admin-header h1 { 
+            font-size: 1rem; letter-spacing: 5px; margin: 0; font-weight: 500; 
+            text-transform: uppercase; color: #fff;
+            text-shadow: 0 0 15px rgba(255,255,255,0.1);
         }
 
-        .admin-header h1 {
-            font-size: 1.6rem;
-            letter-spacing: 5px;
-            margin: 0;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .container { padding: 30px 20px 120px; max-width: 450px; margin: 0 auto; }
+        .admin-menu-list { display: flex; flex-direction: column; gap: 18px; }
 
-        .container {
-            padding: 25px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* 📋 Grid เมนูหลัก */
-        .admin-menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
+        /* 📋 Menu Card - ปรับแต่งการไล่เฉด */
         .menu-card {
-            display: flex;
-            align-items: center;
-            background: var(--glass-bg);
+            display: flex; align-items: center;
+            background: var(--glass-soft);
             backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            padding: 25px;
-            border-radius: 25px;
-            text-decoration: none;
-            color: white;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-dim);
+            padding: 24px 25px; border-radius: 30px;
+            text-decoration: none; color: white;
+            opacity: 0; transform: translateY(30px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideUpPop 0.6s forwards;
+            position: relative; overflow: hidden;
         }
 
-        .menu-card:active {
-            transform: scale(0.96);
-            background: rgba(255,255,255,0.1);
-        }
+        /* เอฟเฟกต์ตอนกดปุ่ม */
+        .menu-card:active { transform: scale(0.95); }
 
-        .menu-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--primary-gradient);
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 20px;
-            font-size: 1.8rem;
-            box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
-        }
+        /* การไล่เฉดสีที่ไอคอนและขอบ */
+        .btn-admin .menu-icon i { background: var(--grad-admin); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-order .menu-icon i { background: var(--grad-order); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-history .menu-icon i { background: var(--grad-history); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-trend .menu-icon i { background: var(--grad-trend); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-product .menu-icon i { background: var(--grad-product); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-revenue .menu-icon i { background: var(--grad-revenue); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .menu-info b {
-            display: block;
-            font-size: 1.2rem;
-            font-weight: 400;
-            margin-bottom: 5px;
-        }
+        /* สีขอบซ้ายแบบไล่เฉด */
+        .btn-admin { border-left: 5px solid #c5a059; }
+        .btn-order { border-left: 5px solid #4facfe; }
+        .btn-history { border-left: 5px solid #43e97b; }
+        .btn-trend { border-left: 5px solid #f9d423; }
+        .btn-product { border-left: 5px solid #f093fb; }
+        .btn-revenue { border-left: 5px solid #667eea; }
 
-        .menu-info small {
-            color: #888;
-            font-size: 0.85rem;
-        }
+        /* การโผล่แบบไล่ลำดับ */
+        .menu-card:nth-child(1) { animation-delay: 0.1s; }
+        .menu-card:nth-child(2) { animation-delay: 0.2s; }
+        .menu-card:nth-child(3) { animation-delay: 0.3s; }
+        .menu-card:nth-child(4) { animation-delay: 0.4s; }
+        .menu-card:nth-child(5) { animation-delay: 0.5s; }
+        .menu-card:nth-child(6) { animation-delay: 0.6s; }
 
+        .menu-icon { font-size: 1.5rem; margin-right: 22px; width: 40px; display: flex; justify-content: center; }
+        .menu-info { flex: 1; }
+        .menu-info b { display: block; font-size: 1.05rem; font-weight: 500; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .menu-info small { color: #555; font-size: 0.75rem; letter-spacing: 0.5px; }
+
+        /* 📍 Logout Button */
+        .bottom-nav-logout {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(25px);
+            padding: 25px 0; border-top: 1px solid var(--border-dim);
+            display: flex; justify-content: center; z-index: 2000;
+        }
         .exit-btn {
-            display: block;
-            text-align: center;
-            margin-top: 50px;
-            color: #555;
-            text-decoration: none;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            border: 1px solid #333;
-            padding: 12px;
-            border-radius: 15px;
+            color: #ff4444; font-size: 0.75rem; letter-spacing: 4px; font-weight: 500;
+            text-transform: uppercase; display: flex; align-items: center; gap: 10px; cursor: pointer;
             transition: 0.3s;
-            cursor: pointer;
         }
+        .exit-btn:active { transform: scale(0.9); opacity: 0.7; }
 
-        .exit-btn:hover {
-            color: #ff4444;
-            border-color: #ff4444;
+        /* Animations */
+        @keyframes slideUpPop {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
     <header class="admin-header">
-        <h1>ADMIN CENTER</h1>
+        <h1>Admin Control</h1>
     </header>
 
     <div class="container">
         <div class="admin-menu-list">
             
-            <a href="admin.html" class="menu-card">
-                <div class="menu-icon">📑</div>
+            
+
+            <a href="admin.html" class="menu-card btn-order">
+                <div class="menu-icon"><i class="fas fa-receipt"></i></div>
                 <div class="menu-info">
                     <b>จัดการคำสั่งซื้อ</b>
-                    <small>ดูออเดอร์ใหม่ และสถานะการทำอาหาร</small>
+                    <small>ออเดอร์และการทำอาหาร</small>
                 </div>
+                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
             </a>
 
-            <a href="history.html" class="menu-card">
-                <div class="menu-icon">📜</div>
+            <a href="history.html" class="menu-card btn-history">
+                <div class="menu-icon"><i class="fas fa-clock-rotate-left"></i></div>
                 <div class="menu-info">
                     <b>ประวัติการสั่งซื้อ</b>
-                    <small>ตรวจสอบยอดขาย และรายการย้อนหลัง</small>
+                    <small>ตรวจสอบบิลย้อนหลัง</small>
                 </div>
+                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
             </a>
 
-            <a href="edit_products.html" class="menu-card">
-                <div class="menu-icon">🥘</div>
+            <a href="admin_users.html" class="menu-card btn-admin">
+                <div class="menu-icon"><i class="fas fa-user-shield"></i></div>
                 <div class="menu-info">
-                    <b>แก้ไข/จัดการสินค้า</b>
-                    <small>เพิ่มเมนูใหม่ แก้ไขราคา และรูปภาพ</small>
+                    <b>จัดการแอดมิน</b>
+                    <small>การเข้าถึงและความปลอดภัย</small>
                 </div>
+                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
             </a>
 
-            <a href="admin_users.html" class="menu-card">
-                <div class="menu-icon">👥</div>
+            <a href="trending.html" class="menu-card btn-trend">
+                <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="menu-info">
-                    <b>จัดการยูสเซอร์แอดมิน</b>
-                    <small>ดูรายชื่อ, ลบ หรือแก้ไขบัญชีผู้ดูแลระบบ</small>
+                    <b>อันดับเมนูยอดฮิต</b>
+                    <small>เมนูขายดีประจำสัปดาห์</small>
                 </div>
+                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
+            </a>
+
+            <a href="edit_products.html" class="menu-card btn-product">
+                <div class="menu-icon"><i class="fas fa-box-open"></i></div>
+                <div class="menu-info">
+                    <b>จัดการรายการอาหาร</b>
+                    <small>ปรับแต่งเมนูและราคา</small>
+                </div>
+                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
+            </a>
+            
+            <a href="revenue_report.html" class="menu-card btn-revenue">
+                <div class="menu-icon"><i class="fas fa-wallet"></i></div>
+                <div class="menu-info">
+                    <b>ข้อมูลรายได้สรุป</b>
+                    <small>สถิติและยอดขายทั้งหมด</small>
+                </div>
+                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
             </a>
 
         </div>
+    </div>
 
-        <div onclick="logoutAdmin()" class="exit-btn">ออกจากโหมดแอดมิน / Logout</div>
+    <div class="bottom-nav-logout">
+        <div onclick="logoutAdmin()" class="exit-btn">
+            <i class="fas fa-sign-out-alt"></i> Sign Out
+        </div>
     </div>
 
 <script>
-    // ตรวจสอบว่าแอดมินล็อคอินอยู่หรือไม่ ถ้าไม่มีให้เด้งออกไปหน้าแรก
     function checkLoginStatus() {
         const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
-        if (isLoggedIn !== 'true') {
-            window.location.href = "start.html";
-        }
+        if (isLoggedIn !== 'true') { window.location.href = "start.html"; }
     }
 
     function logoutAdmin() {
-        if(confirm("ยืนยันการออกจากระบบแอดมิน?")) {
+        if(confirm("ยืนยันการออกจากระบบ?")) {
             sessionStorage.removeItem('isAdminLoggedIn');
-            sessionStorage.removeItem('currentAdminName'); // ลบชื่อแอดมินที่ล็อคอินอยู่ด้วย
+            sessionStorage.removeItem('currentAdminName');
             window.location.href = "start.html";
         }
     }
-    
-    // เรียกใช้ตอนโหลดหน้า
     window.onload = checkLoginStatus;
 </script>
 </body>

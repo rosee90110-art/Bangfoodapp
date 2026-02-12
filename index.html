@@ -6,145 +6,137 @@
     <title>เมนูอาหาร | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --premium-gold: #c5a059;
-            --bg-deep: #0a0a0a;
-            --glass-soft: rgba(255, 255, 255, 0.03);
-            --border-dim: rgba(255, 255, 255, 0.08);
-            --text-main: #e0e0e0;
-        }
+    :root {
+        --premium-gold: #c5a059;
+        --bg-deep: #0a0a0a;
+        --glass-soft: rgba(255, 255, 255, 0.03);
+        --border-dim: rgba(255, 255, 255, 0.08);
+        --text-main: #e0e0e0;
+    }
 
-        body { 
-            background-color: rgb(17, 16, 13); color: var(--text-main); 
-            font-family: 'Kanit', sans-serif; margin: 0; padding-bottom: 200px; 
-            overflow-x: hidden; letter-spacing: 0.2px;
-        }
+    body { 
+        background-color: rgb(17, 16, 13); color: var(--text-main); 
+        font-family: 'Kanit', sans-serif; margin: 0; 
+        padding-bottom: 180px; 
+        overflow-x: hidden; letter-spacing: 0.1px;
+    }
 
-        /* 📍 Header - พรีเมียมมินิมอล */
-        .app-header {
-            background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(25px);
-            padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 2000; border-bottom: 1px solid var(--border-dim);
-            animation: fadeInDown 0.8s ease-out;
-        }
-        .bangfoodindex { font-size: 1.3rem; font-weight: 600; color: #fff; letter-spacing: 2px; margin: 0; }
+    /* 📍 Header + แอนิเมชันชื่อร้านเรืองแสง */
+    .app-header {
+        background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(20px);
+        padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
+        position: sticky; top: 0; z-index: 2000; border-bottom: 1px solid var(--border-dim);
+    }
+    .bangfoodindex { 
+        font-size: 1.15rem; font-weight: 600; letter-spacing: 4px; margin: 0;
+        background: linear-gradient(90deg, #c5a059, #fff, #c5a059);
+        background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        animation: shineText 4s linear infinite;
+    }
 
-        /* 📍 Slider - ระบบขยายรูปที่นวลที่สุด */
-        .image-slider {
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-            scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
-            gap: 15px; padding: 30px 10%; scrollbar-width: none;
-        }
-        .image-slider::-webkit-scrollbar { display: none; }
+    /* 📍 Premium Title Area */
+    .premium-title-container { padding: 20px 20px 5px; display: flex; flex-direction: column; gap: 8px; }
+    .premium-title-container h2 {
+        margin: 0; font-size: 0.9rem; font-weight: 500; color: var(--premium-gold);
+        letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 10px;
+        background: linear-gradient(90deg, #c5a059, #fff, #c5a059);
+        background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        animation: shineText 3s linear infinite;
+    }
+    .gold-line { height: 1.5px; background: linear-gradient(90deg, var(--premium-gold), transparent); width: 60px; border-radius: 10px; }
 
-        .slide-card {
-            flex: 0 0 80%; scroll-snap-align: center; position: relative;
-            border-radius: 32px; overflow: hidden; height: 340px;
-            border: 1px solid var(--border-dim); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            transform: scale(0.88); opacity: 0.5;
-        }
+    /* 📍 Shimmer Effect for Menu Name */
+    .shimmer-text {
+        background: linear-gradient(90deg, #fff, var(--premium-gold), #fff);
+        background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        animation: shineText 3s linear infinite;
+        display: inline-block;
+    }
 
-        /* การ์ดที่อยู่ตรงกลางจะเรืองแสงสีทอง */
-        .slide-card.is-active { 
-            transform: scale(1.02); opacity: 1; z-index: 10; 
-            border-color: var(--premium-gold);
-            box-shadow: 0 15px 40px rgba(197, 160, 89, 0.2);
-        }
-        
-        .slide-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .slide-info { position: absolute; text-align: center; bottom: 15px; left: 15px; right: 15px; padding: 18px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .recommend-badge { position: absolute; top: 20px; right: 20px; background: linear-gradient(135deg, var(--premium-gold), #b8860b); color: #000; padding: 6px 14px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; z-index: 10; }
+    /* 📍 Slider Area */
+    .slider-container { position: relative; width: 100%; margin-top: 5px; z-index: 100; }
+    .image-slider { 
+        display: flex; overflow-x: auto; scroll-snap-type: x mandatory; 
+        gap: 12px; padding: 10px 10%; scrollbar-width: none;
+        scroll-behavior: smooth; /* 📍 เพื่อให้การเลื่อนอัตโนมัติดูสมูท */
+    }
+    .image-slider::-webkit-scrollbar { display: none; }
+    
+    .slide-card {
+        flex: 0 0 82%; scroll-snap-align: center; position: relative;
+        border-radius: 22px; overflow: hidden; height: 185px; 
+        border: 1px solid var(--border-dim); transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: scale(0.94); opacity: 0.6; cursor: pointer;
+    }
+    .slide-card.is-active { 
+        transform: scale(1); opacity: 1; border-color: var(--premium-gold); 
+        box-shadow: 0 0 25px rgba(197, 160, 89, 0.3); 
+    }
+    .slide-card img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 📍 Menu Tabs & Items */
-        .menu-tabs { display: flex; gap: 8px; padding: 10px 20px 20px; overflow-x: auto; scrollbar-width: none; }
-        .menu-tab { padding: 8px 18px; background: var(--glass-soft); border-radius: 12px; color: #666; text-decoration: none; font-size: 0.85rem; border: 1px solid var(--border-dim); transition: 0.3s; }
-        .menu-tab.active { background: #fff; color: #000; font-weight: 500; box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+    .recommend-badge { 
+        position: absolute; top: 12px; right: 12px; background: var(--premium-gold); 
+        color: #000; padding: 4px 10px; border-radius: 8px; font-size: 0.6rem; font-weight: 800; z-index: 10;
+        pointer-events: none;
+    }
 
-        .menu-item {
-            background: var(--glass-soft); border: 1px solid var(--border-dim);
-            margin: 0 15px 12px; padding: 14px; border-radius: 22px;
-            display: flex; align-items: center; gap: 15px;
-            animation: slideUpFade 0.6s forwards; text-decoration: none; color: inherit;
-        }
+    .slide-info { 
+        position: absolute; bottom: 0; left: 0; right: 0; 
+        padding: 12px 15px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); 
+        border-top: 1.5px solid var(--premium-gold); z-index: 10; pointer-events: none;
+    }
+    .slide-info h3 { font-size: 0.9rem; margin: 0; color: #fff; }
 
-        .item-badge {
-            position: absolute; top: -8px; right: -8px; background: #ff4b2b;
-            color: white; font-size: 0.7rem; font-weight: bold; min-width: 22px; height: 22px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            border: 2px solid #1a1a1a; z-index: 10; animation: badgePop 0.4s;
-        }
+    /* 📍 Indicators */
+    .slider-indicators { display: flex; justify-content: center; gap: 8px; margin-top: 10px; margin-bottom: 20px; }
+    .dot { width: 12px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 10px; transition: 0.4s; }
+    .dot.active { width: 28px; background: var(--premium-gold); box-shadow: 0 0 10px var(--premium-gold); }
 
-        .add-to-cart-btn { background: var(--premium-gold); color: #000; padding: 8px 18px; border-radius: 12px; font-weight: bold; font-size: 0.85rem; margin-left: auto; transition: 0.2s; }
-        .add-to-cart-btn:active { transform: scale(0.9); }
+    /* 📍 Bottom Gradient Fade */
+    .bottom-gradient-fade {
+        position: fixed; bottom: 0; left: 0; width: 100%; height: 180px;
+        background: linear-gradient(to top, rgba(10, 10, 10, 1) 20%, rgba(10, 10, 10, 0.7) 50%, transparent 100%);
+        z-index: 2500; pointer-events: none;
+    }
 
-        /* 📍 Floating Price Summary */
-        .price-summary-float {
-            position: fixed; bottom: 105px; left: 50%; transform: translateX(-50%);
-            width: 88%; max-width: 320px; background: rgba(25, 25, 25, 0.95);
-            backdrop-filter: blur(25px); border: 1px solid var(--premium-gold);
-            padding: 8px 25px; border-radius: 25px; z-index: 1500;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-        }
+    /* 📍 Fixed Footer Area */
+    .fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 3000; pointer-events: none; }
+    .price-summary-float { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); width: 82%; max-width: 280px; background: rgba(20, 20, 20, 0.98); backdrop-filter: blur(25px); border: 1px solid var(--premium-gold); padding: 8px 20px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.6); pointer-events: auto; }
+    .curved-nav-container { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 350px; height: 65px; pointer-events: auto; }
+    .nav-buttons-wrapper { background: #111; width: 100%; height: 100%; border-radius: 30px; border: 1px solid var(--border-dim); display: flex; justify-content: space-around; align-items: center; }
+    .round-btn.center { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 65px; height: 65px; background: #fff; border-radius: 50%; border: 4px solid rgb(17, 16, 13); color: #000; font-size: 1.3rem; display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
 
-        /* 📍 Nav Bar */
-        .curved-nav-container { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; height: 75px; z-index: 2000; display: flex; justify-content: center; align-items: flex-end; }
-        .nav-buttons-wrapper {
-            background: #111; width: 100%; height: 100%; border-radius: 35px;
-            border: 1px solid var(--border-dim); display: flex; justify-content: space-around; align-items: center;
-            mask-image: radial-gradient(circle 60px at center -5px, transparent 48px, black 49px);
-            -webkit-mask-image: radial-gradient(circle 60px at center -5px, transparent 48px, black 49px);
-        }
-        .round-btn.center {
-            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-            width: 78px; height: 78px; background: #fff; border-radius: 50%;
-            border: 6px solid rgb(17, 16, 13); color: #000; font-size: 1.8rem;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: pulseWhite 3s infinite;
-        }
+    /* 📍 Menu Tabs & Items */
+    .menu-tabs { display: flex; gap: 6px; padding: 10px 15px 15px; overflow-x: auto; scrollbar-width: none; }
+    .menu-tab { padding: 6px 14px; background: var(--glass-soft); border-radius: 10px; color: #555; font-size: 0.75rem; border: 1px solid var(--border-dim); transition: 0.3s; }
+    .menu-tab.active { background: #fff; color: #000; font-weight: 500; }
+    .menu-item { background: var(--glass-soft); border: 1px solid var(--border-dim); margin: 0 15px 10px; padding: 12px; border-radius: 20px; display: flex; align-items: center; gap: 15px; text-decoration: none; color: inherit; transition: 0.2s; }
+    .item-image { width: 58px !important; height: 58px !important; border-radius: 12px !important; object-fit: cover; }
+    .add-to-cart-btn { padding: 6px 14px; border-radius: 10px; font-size: 0.75rem; background: rgba(197, 160, 89, 0.12); color: var(--premium-gold); border: 1px solid var(--premium-gold); font-weight: 500; margin-left: auto; }
 
-        @keyframes badgePop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        /* 📍 แอนิเมชันการเด้ง (Bounce) */
-@keyframes bounceClick {
-    0% { transform: scale(1); }
-    30% { transform: scale(0.92); }
-    50% { transform: scale(1.05); }
-    70% { transform: scale(0.98); }
-    100% { transform: scale(1); }
-}
-
-/* 📍 เมื่อกดรายการอาหาร ให้มีการเด้ง */
-.menu-item:active {
-    animation: bounceClick 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* 📍 ปรับแต่งปุ่ม "เลือก" ให้เด้งสู้มือ */
-.add-to-cart-btn {
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.add-to-cart-btn:active {
-    transform: scale(0.8);
-}
+    @keyframes shineText { to { background-position: 200% center; } }
+    @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body onload="initializeApp()">
 
+<div class="bottom-gradient-fade"></div>
+
 <header class="app-header">
-    <div style="width: 30px;"></div> <h1 class="bangfoodindex">BANGFOOD</h1>
-    <div onclick="window.location.href='admin_center.html'" style="cursor:pointer; color:#666;"><i class="fas fa-bars"></i></div>
+    <div style="width: 30px;"></div> 
+    <h1 class="bangfoodindex">BANGFOOD</h1> 
+    <div onclick="window.location.href='admin_center.html'" style="cursor:pointer; color:#444;"><i class="fas fa-bars"></i></div>
 </header>
 
 <main>
-    <div style="padding: 25px 25px 0;">
-        <h2 style="margin:0; font-size:1rem; color: var(--premium-gold); letter-spacing: 1px; font-weight: 400;"><i class="fas fa-fire"></i> เมนูยอดฮิตที่เปิดขายตอนนี้</h2>
+    <div class="premium-title-container">
+        <h2><i class="fas fa-crown"></i> เมนูยอดนิยม</h2>
+        <div class="gold-line"></div>
     </div>
 
-    <div class="slider-wrapper">
+    <div class="slider-container">
         <div class="image-slider" id="hero-best-seller-slider"></div>
+        <div class="slider-indicators" id="slider-indicators"></div>
     </div>
 
     <div class="menu-tabs"> 
@@ -157,20 +149,22 @@
     <div id="menu-main-container"></div>
 </main>
 
-<div class="price-summary-float">
-    <div style="font-size: 0.75rem; color: #666; text-transform: uppercase;">โต๊ะที่ <span id="display-table">1</span> | รวม</div>
-    <div style="color:var(--premium-gold); font-weight:600; font-size:1.6rem;">฿<span id="floating-total">0.00</span></div>
-</div>
+<div class="fixed-footer">
+    <div class="price-summary-float">
+        <div style="font-size: 0.65rem; color: #555;">โต๊ะ <span id="display-table">1</span> | รวม</div>
+        <div style="color:var(--premium-gold); font-weight:600;">฿<span id="floating-total">0.00</span></div>
+    </div>
 
-<div class="curved-nav-container">
-    <div class="round-btn center" onclick="window.location.reload()"><i class="fas fa-receipt"></i></div>
-    <div class="nav-buttons-wrapper">
-        <div onclick="goToPage('cart.html')" style="flex:1; text-align:center; cursor:pointer; position:relative;">
-            <i class="fas fa-shopping-basket" style="color:#555; font-size:1.3rem;"></i>
-            <span id="cart-count-badge" style="position:absolute; top:-5px; right:20%; background:#ff4b2b; color:white; font-size:0.65rem; padding:2px 6px; border-radius:10px; display:none;">0</span>
+    <div class="curved-nav-container">
+        <div class="round-btn center" onclick="window.location.reload()"><i class="fas fa-receipt"></i></div>
+        <div class="nav-buttons-wrapper">
+            <div onclick="goToPage('cart.html')" style="flex:1; text-align:center; position:relative; cursor:pointer;">
+                <i class="fas fa-shopping-basket" style="color:#444; font-size:1.2rem;"></i>
+                <span id="cart-count-badge" style="position:absolute; top:-5px; right:25%; background:#ff4b2b; color:white; font-size:0.6rem; padding:2px 5px; border-radius:8px; display:none;">0</span>
+            </div>
+            <div style="flex: 1.2;"></div>
+            <div onclick="goToPage('track.html')" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-clock" style="color:#444; font-size:1.2rem;"></i></div>
         </div>
-        <div style="flex: 1.2;"></div>
-        <div onclick="goToPage('track.html')" style="flex:1; text-align:center; cursor:pointer;"><i class="fas fa-clock" style="color:#555; font-size:1.3rem;"></i></div>
     </div>
 </div>
 
@@ -184,18 +178,16 @@
 
     function getTableNo() {
         const urlParams = new URLSearchParams(window.location.search);
-        let table = urlParams.get('table');
-        if (table) { localStorage.setItem('selectedTable', table); }
-        const currentTable = table || localStorage.getItem('selectedTable') || '1';
-        document.getElementById('display-table').innerText = currentTable;
-        return currentTable;
+        let table = urlParams.get('table') || localStorage.getItem('selectedTable') || '1';
+        localStorage.setItem('selectedTable', table);
+        document.getElementById('display-table').innerText = table;
+        return table;
     }
 
     function goToPage(page) { window.location.href = `${page}?table=${getTableNo()}`; }
 
     function updateCartUI() {
-        const tableNo = getTableNo();
-        const cartKey = 'bangfood_cart_table_' + tableNo;
+        const cartKey = 'bangfood_cart_table_' + getTableNo();
         const cartData = sessionStorage.getItem(cartKey);
         let total = 0, count = 0;
         if (cartData) {
@@ -209,138 +201,97 @@
         badge.style.display = count > 0 ? 'block' : 'none';
     }
 
+    // 📍 ฟังก์ชันใหม่สำหรับเลื่อน Slider อัตโนมัติ
+    let autoSlideInterval;
+    function startAutoSlide() {
+        const slider = document.getElementById('hero-best-seller-slider');
+        autoSlideInterval = setInterval(() => {
+            const cards = slider.querySelectorAll('.slide-card');
+            if (cards.length === 0) return;
+
+            let currentIndex = Array.from(cards).findIndex(c => c.classList.contains('is-active'));
+            let nextIndex = (currentIndex + 1) % cards.length;
+            
+            // คำนวณตำแหน่งการเลื่อน
+            const cardWidth = cards[0].offsetWidth + 12; // กว้างการ์ด + gap
+            slider.scrollTo({
+                left: cardWidth * nextIndex,
+                behavior: 'smooth'
+            });
+        }, 3500); // 📍 เลื่อนทุกๆ 3.5 วินาที
+    }
+
     function initHeroSlider() {
         const slider = document.getElementById('hero-best-seller-slider');
-        let autoSlideInterval;
+        const indicators = document.getElementById('slider-indicators');
         
-        // 📍 ปรับการตรวจจับให้แม่นยำขึ้นแม้มีป้าย SOLD OUT บัง
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // เคลียร์คลาสจากใบอื่นก่อน
-                    slider.querySelectorAll('.slide-card').forEach(c => c.classList.remove('is-active'));
+                    const cards = Array.from(slider.querySelectorAll('.slide-card'));
+                    const index = cards.indexOf(entry.target);
+                    cards.forEach(c => c.classList.remove('is-active'));
                     entry.target.classList.add('is-active');
+                    const dots = indicators.querySelectorAll('.dot');
+                    dots.forEach(d => d.classList.remove('active'));
+                    if(dots[index]) dots[index].classList.add('active');
                 }
             });
-        }, { 
-            root: slider, 
-            threshold: 0.5, // 📍 ลดระดับเหลือ 50% เพื่อให้ตรวจเจอง่ายขึ้น
-            rootMargin: '0px' 
+        }, { root: slider, threshold: 0.6 });
+
+        const cards = slider.querySelectorAll('.slide-card');
+        indicators.innerHTML = '';
+        cards.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            indicators.appendChild(dot);
+            observer.observe(cards[i]);
         });
 
-        const startAutoSlide = () => {
-            // เคลียร์ของเก่าก่อนเริ่มใหม่กันรวน
-            clearInterval(autoSlideInterval);
-            
-            autoSlideInterval = setInterval(() => {
-                const cards = slider.querySelectorAll('.slide-card');
-                if (cards.length <= 1) return;
-                
-                let curIndex = Array.from(cards).findIndex(c => c.classList.contains('is-active'));
-                
-                // 📍 ถ้าหา Active ไม่เจอ (เช่นตอนเพิ่งโหลด) ให้เริ่มที่ใบแรก
-                if (curIndex === -1) curIndex = 0;
-                
-                let nextIndex = (curIndex + 1) % cards.length;
-                
-                const card = cards[nextIndex];
-                // 📍 คำนวณตำแหน่งให้แม่นยำที่สุดเพื่อให้หยุดตรงกลาง
-                const scrollLeft = card.offsetLeft - (slider.clientWidth / 2) + (card.clientWidth / 2);
-                
-                slider.scrollTo({
-                    left: scrollLeft,
-                    behavior: 'smooth'
-                });
-            }, 4500); // 📍 ตั้งเวลาเลื่อนทุก 4.5 วินาที
-        };
-
-        // 📍 ตรวจสอบว่าการ์ดโหลดมาหรือยัง
-        const checkReady = setInterval(() => {
-            const cards = slider.querySelectorAll('.slide-card');
-            if (cards.length > 0) {
-                cards.forEach(c => observer.observe(c));
-                startAutoSlide();
-                clearInterval(checkReady);
-            }
-        }, 500);
-        
-        // หยุดเลื่อนเมื่อน้าเอานิ้วไปแตะ และเริ่มใหม่เมื่อปล่อย
+        // 📍 หยุด Auto-play เมื่อมีการปัดหน้าจอเอง และเริ่มใหม่เมื่อหยุด
         slider.addEventListener('touchstart', () => clearInterval(autoSlideInterval));
-        slider.addEventListener('touchend', () => startAutoSlide());
+        slider.addEventListener('touchend', () => {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        });
+        
+        startAutoSlide();
     }
 
     async function loadMenuFromFirebase() {
-        const [ordersSnap, historySnap] = await Promise.all([db.ref('orders').once('value'), db.ref('history').once('value')]);
-        const sales = {};
-        const proc = (snap) => { if (snap.exists()) Object.values(snap.val()).forEach(o => { if (o.items) o.items.forEach(i => sales[i.name] = (sales[i.name] || 0) + (i.quantity || 1)); }); };
-        proc(ordersSnap); proc(historySnap);
-
         db.ref('products').on('value', (snapshot) => {
             const products = snapshot.val();
             const hero = document.getElementById('hero-best-seller-slider');
             const menuMain = document.getElementById('menu-main-container');
-            const cartData = JSON.parse(sessionStorage.getItem('bangfood_cart_table_' + getTableNo())) || { items: [] };
-
+            const tableNo = getTableNo();
             menuMain.innerHTML = ''; hero.innerHTML = '';
             let productList = [];
-            for (let id in products) { 
-                let p = products[id]; 
-                p.sales = sales[p.name] || 0; 
-                productList.push(p); 
-            }
+            for (let id in products) { productList.push(products[id]); }
 
-            // 📍 1. ส่วนของ Slider ยอดฮิต (ถ้าของหมดให้ขึ้นป้าย SOLD OUT)
-            const top5 = [...productList]
-                .sort((a,b) => b.sales - a.sales)
-                .filter(p => p.sales > 0)
-                .slice(0, 5);
-
-            top5.forEach((p, index) => {
+            productList.slice(0, 5).forEach((p, idx) => {
                 const isOut = p.status === 'out_of_stock';
-                // 📍 ใส่ฟิลเตอร์สีเทาถ้าของหมด
-                const grayscaleStyle = isOut ? 'filter: grayscale(1); opacity: 0.6;' : '';
-                const soldOutBadge = isOut ? `<div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.8); color:#ff4444; padding:10px 20px; border-radius:15px; font-weight:bold; border:2px solid #ff4444; z-index:15;">SOLD OUT</div>` : '';
-
                 hero.innerHTML += `
-                    <div class="slide-card" style="${grayscaleStyle}">
-                        ${soldOutBadge}
-                        <div class="recommend-badge">TRENDING #${index + 1}</div>
-                        <img src="${p.img}" ${isOut ? '' : `onclick="location.href='menu.html?name=${encodeURIComponent(p.name)}&table=${getTableNo()}'"`}> 
-                        <div class="slide-info">
-                            <h3 style="margin:0; font-size:1.1rem; color:#fff;">${p.name}</h3>
-                            <p style="margin:5px 0 0; font-size:0.75rem; color:#aaa;">สั่งไปแล้ว ${p.sales} รายการ</p>
-                        </div>
+                    <div class="slide-card" onclick="${isOut ? '' : `location.href='menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}'`}">
+                        <div class="recommend-badge">RANK #${idx + 1}</div>
+                        <img src="${p.img}" style="${isOut ? 'filter: grayscale(1); opacity:0.4;' : ''}"> 
+                        <div class="slide-info"><h3 class="shimmer-text">${p.name}</h3></div>
                     </div>`;
             });
 
-            // 📍 2. รายการเมนูด้านล่าง (ถ้าของหมดให้เปลี่ยนปุ่มเป็น "ของหมด")
-            // 📍 2. รายการเมนูด้านล่าง (ปรับปรุงการวาด HTML ใหม่)
             productList.forEach((p, idx) => {
                 const isOut = p.status === 'out_of_stock';
-                const count = cartData.items ? cartData.items.filter(item => item.name === p.name).length : 0;
-                const badge = count > 0 ? `<div class="item-badge">${count}</div>` : '';
-                
-                const itemImgStyle = isOut ? 'filter: grayscale(1); opacity: 0.5;' : '';
-                const actionBtn = isOut 
-                    ? `<div style="background:#333; color:#666; padding:8px 18px; border-radius:12px; font-weight:bold; font-size:0.85rem; margin-left:auto;">ของหมด</div>`
-                    : `<div class="add-to-cart-btn">เลือก</div>`;
-
                 menuMain.innerHTML += `
-                    <a ${isOut ? '' : `href="menu.html?name=${encodeURIComponent(p.name)}&table=${getTableNo()}"`} 
-                       class="menu-item" data-category="${p.category}" 
-                       style="animation-delay: ${0.05 * idx}s; ${isOut ? 'pointer-events: none; opacity: 0.7;' : ''}">
-                        <div class="image-container">
-                            <img src="${p.img}" class="item-image" style="width:80px; height:80px; border-radius:18px; object-fit:cover; ${itemImgStyle}">
-                            ${badge}
-                        </div>
+                    <a href="${isOut ? '#' : `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`}" 
+                       class="menu-item" data-category="${p.category}" style="animation: slideUpFade 0.4s both ${idx*0.05}s; ${isOut ? 'opacity:0.5; pointer-events:none;' : ''}">
+                        <img src="${p.img}" class="item-image">
                         <div style="flex:1;">
-                            <h3 style="margin:0; font-size:1rem; font-weight:500; color:${isOut ? '#666' : '#fff'};">${p.name}</h3>
-                            <div style="color:${isOut ? '#444' : 'var(--premium-gold)'}; font-size:0.9rem; margin-top:3px;">฿${p.price}</div>
+                            <h3 style="margin:0; font-size:0.9rem;">${p.name}</h3>
+                            <div style="color:var(--premium-gold); font-size:0.8rem;">฿${p.price}</div>
                         </div>
-                        ${actionBtn}
+                        <div class="add-to-cart-btn">${isOut ? 'หมด' : 'เลือก'}</div>
                     </a>`;
             });
-            // 📍 ต้องมีบรรทัดปิดครอบคลุม db.ref('products').on ...
+            initHeroSlider();
             switchCategory(document.querySelector('.menu-tab.active').dataset.cat);
         });
     }
@@ -350,12 +301,11 @@
         document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
         document.querySelector(`[data-cat="${cat}"]`).classList.add('active');
         document.querySelectorAll('.menu-item').forEach(item => {
-            if (cat === 'ทั้งหมด' || item.dataset.category === cat) item.style.display = 'flex';
-            else item.style.display = 'none';
+            item.style.display = (cat === 'ทั้งหมด' || item.dataset.category === cat) ? 'flex' : 'none';
         });
     }
 
-    function initializeApp() { loadMenuFromFirebase(); updateCartUI(); initHeroSlider(); getTableNo(); }
+    function initializeApp() { loadMenuFromFirebase(); updateCartUI(); getTableNo(); }
 </script>
 </body>
 </html>

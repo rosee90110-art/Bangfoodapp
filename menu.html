@@ -9,7 +9,7 @@
         :root {
             --premium-gold: #c5a059;
             --soft-gold: rgba(197, 160, 89, 0.12);
-            --bg-dark: #0a0a0b;
+            --bg-dark: #121110;;
             --glass: rgba(255, 255, 255, 0.02);
             --glass-border: rgba(255, 255, 255, 0.06);
             --text-main: #e0e0e0;
@@ -80,18 +80,18 @@
 
         /* 📍 Floating Price - Stealth Glow */
         .price-summary-float {
-            position: fixed; bottom: 105px; left: 2.5%; transform: translateX(-50%);
+            position: fixed; bottom: 105px; left: 8%; transform: translateX(-50%);
             width: 82%; max-width: 340px;
             background: rgba(20, 20, 22, 0.95); backdrop-filter: blur(30px);
             border: 1px solid rgba(197, 160, 89, 0.5);
-            padding: 2px 25px; border-radius: 24px; z-index: 1500;
+            padding: 2px 2px; border-radius: 24px; z-index: 1500;
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 25px 50px rgba(0,0,0,0.9);
             animation: slideUp 0.8s ease-out both 0.5s;
         }
         .price-label { font-size: 0.65rem; color: #666; font-weight: 700; letter-spacing: 1px; }
         .price-amount { 
-            color: var(--premium-gold); font-weight: 700; font-size: 1.6rem; 
+            color: var(--premium-gold); font-weight: 700; font-size: 1.3rem; 
             text-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
         }
 
@@ -114,9 +114,9 @@
         .round-btn.center {
             position: absolute; top: -38px; left: 50%; transform: translateX(-50%);
             width: 78px; height: 78px; z-index: 2100; pointer-events: auto;
-            background: linear-gradient(135deg, #c5a059, #8e6d31);
-            border-radius: 50%; font-size: 2.2rem; color: #fff;
-            border: 8px solid #0a0a0b;
+            background: linear-gradient(135deg, #40362340, #8e6d31b3);
+            border-radius: 50%; font-size: 2.2rem; color: #000000;
+            
             display: flex; justify-content: center; align-items: center;
             animation: confirmBreath 3s ease-in-out infinite;
             box-shadow: 0 15px 35px rgba(197, 160, 89, 0.4);
@@ -252,24 +252,37 @@
     }
 
     function confirmOrder() {
-        const tableNo = localStorage.getItem('selectedTable');
-        const cartKey = `bangfood_cart_table_${tableNo}`;
-        let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-        const size = document.querySelector('input[name="size"]:checked');
-        let options = size ? "• " + size.value : "";
-        document.querySelectorAll('input[name="addon"]:checked').forEach(a => options += "<br>• " + a.value);
-        const notes = document.getElementById('modal-notes').value;
-        if(notes) options += "<br>📝 " + notes;
-        cart.items.push({ 
-            name: document.getElementById('modal-item-name').innerText, 
-            finalPrice: document.getElementById('modal-final-price').innerText, 
-            options: options, 
-            img: document.getElementById('modal-item-image').src, 
-            quantity: 1 
-        });
-        sessionStorage.setItem(cartKey, JSON.stringify(cart));
-        window.location.href = `index.html?table=${tableNo}`;
+    const tableNo = localStorage.getItem('selectedTable');
+    const cartKey = `bangfood_cart_table_${tableNo}`;
+    let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
+    
+    // 📍 สร้าง Array เก็บออฟชันพร้อมราคาแยกกัน
+    let selectedOptions = [];
+    
+    const size = document.querySelector('input[name="size"]:checked');
+    if (size) {
+        selectedOptions.push({ name: size.value, price: size.dataset.modifier });
     }
+    
+    document.querySelectorAll('input[name="addon"]:checked').forEach(a => {
+        selectedOptions.push({ name: a.value, price: a.dataset.modifier });
+    });
+
+    const notes = document.getElementById('modal-notes').value;
+    
+    cart.items.push({ 
+        name: document.getElementById('modal-item-name').innerText, 
+        finalPrice: document.getElementById('modal-final-price').innerText, 
+        // 📍 ส่งเป็น Array ของ Object ไปแทน String เดิม
+        optionsArray: selectedOptions, 
+        notes: notes,
+        img: document.getElementById('modal-item-image').src, 
+        quantity: 1 
+    });
+    
+    sessionStorage.setItem(cartKey, JSON.stringify(cart));
+    window.location.href = `index.html?table=${tableNo}`;
+}
 </script>
 </body>
 </html>

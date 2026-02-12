@@ -25,9 +25,9 @@
             z-index: 2000; border-bottom: 1px solid var(--border-dim);
             display: flex; align-items: center; padding: 0 20px; box-sizing: border-box;
         }
-        .logo { font-size: 1.3rem; letter-spacing: 4px; color: var(--premium-gold); cursor: pointer; }
+        .logo { font-size: 1rem; letter-spacing: 4px; color: var(--premium-gold); cursor: pointer; font-weight: 600; }
 
-        /* 📊 สรุปยอดด้านบน (Summary Box) */
+        /* 📊 สรุปยอดด้านบน */
         .order-summary-container {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
             padding: 20px; max-width: 1200px; margin: 0 auto;
@@ -35,46 +35,50 @@
         .summary-box {
             background: var(--glass); border: 1px solid var(--border-dim);
             border-radius: 20px; padding: 15px; text-align: center;
-            transition: 0.3s; cursor: pointer; position: relative;
+            transition: 0.3s; cursor: pointer;
         }
-        .summary-box.active { border-color: #fff; background: rgba(255,255,255,0.06); transform: translateY(-3px); }
+        .summary-box.active { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); }
         .summary-box b { display: block; font-size: 1.6rem; margin-bottom: 2px; }
-        .summary-box span { font-size: 0.75rem; color: #666; text-transform: uppercase; }
+        .summary-box span { font-size: 0.7rem; color: #666; text-transform: uppercase; font-weight: 600; }
 
-        /* 📋 รายการออเดอร์ (Order Cards) */
+        /* 📋 รายการออเดอร์ */
         #main-orders-container {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto;
         }
         .order-card {
-            background: #151515; border-radius: 24px; padding: 20px;
+            background: #151515; border-radius: 28px; padding: 22px;
             border: 1px solid var(--border-dim); display: flex; flex-direction: column;
-            animation: popIn 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            animation: popIn 0.5s ease-out;
         }
-        .order-card.new-order { border-color: var(--pending); box-shadow: 0 0 20px rgba(255, 152, 0, 0.1); }
+        .order-card.new-order { border-color: var(--pending); box-shadow: 0 0 25px rgba(255, 152, 0, 0.05); }
 
-        .card-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 12px; }
-        .table-no { color: var(--premium-gold); font-size: 1.2rem; font-weight: 600; }
-        .order-time { font-size: 0.8rem; color: #555; }
+        .card-header { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px dashed #333; padding-bottom: 15px; }
+        .table-no { color: var(--premium-gold); font-size: 1.1rem; font-weight: 600; }
+        .order-time { font-size: 0.75rem; color: #444; margin-top: 2px; }
 
-        .item-list { flex-grow: 1; margin-bottom: 15px; }
-        .item-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
-        .item-opt { font-size: 0.8rem; color: #666; margin-top: -5px; margin-bottom: 8px; }
+        /* 📍 ส่วนแสดงรายการอาหารแบบละเอียด */
+        .item-list { flex-grow: 1; margin-bottom: 20px; }
+        .item-block { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .item-block:last-child { border-bottom: none; }
+        
+        .main-food-row { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 500; }
+        .addon-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: #666; margin-top: 4px; padding-left: 10px; }
+        .addon-p { color: var(--premium-gold); }
 
-        /* 📍 ปุ่มกด (Actions) */
-        .order-actions { display: flex; gap: 8px; margin-top: auto; }
-        .btn-main { flex: 1; padding: 14px; border: none; border-radius: 14px; font-weight: 500; cursor: pointer; color: #fff; transition: 0.2s; }
-        .btn-cancel { width: 50px; background: rgba(255, 68, 68, 0.1); color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.2); }
-
-        /* 🚪 ปุ่มออกจากระบบ (Sticky Bottom) */
-        .bottom-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(10, 10, 10, 0.9); border-top: 1px solid var(--border-dim);
-            padding: 15px 0; text-align: center; backdrop-filter: blur(15px);
+        .order-total-block { 
+            text-align: right; font-weight: 700; margin-top: 10px; font-size: 1.2rem; 
+            padding: 10px 15px; background: rgba(255,255,255,0.02); border-radius: 14px; color: var(--premium-gold);
         }
-        .logout-btn { color: #555; text-decoration: none; font-size: 0.85rem; letter-spacing: 2px; cursor: pointer; }
 
-        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .order-actions { display: flex; gap: 8px; margin-top: 15px; }
+        .btn-main { flex: 1; padding: 14px; border: none; border-radius: 16px; font-weight: 600; cursor: pointer; color: #fff; transition: 0.2s; font-size: 0.9rem; }
+        .btn-cancel { width: 55px; background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.2); border-radius: 16px; }
+
+        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10, 10, 10, 0.9); border-top: 1px solid var(--border-dim); padding: 15px 0; text-align: center; backdrop-filter: blur(15px); }
+        .logout-btn { color: #444; text-decoration: none; font-size: 0.8rem; letter-spacing: 2px; cursor: pointer; font-weight: 600; }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body onload="startAdminApp()">
@@ -82,7 +86,7 @@
 <header class="app-header">
     <div class="logo" onclick="window.location.reload()">BANGFOOD ADMIN</div>
     <div style="margin-left: auto; display: flex; gap: 20px;">
-        <i class="fas fa-history" onclick="window.location.href='admin_center.html'" style="cursor:pointer; color:#666;"></i>
+        <i class="fas fa-history" onclick="window.location.href='admin_center.html'" style="cursor:pointer; color:#444;"></i>
     </div>
 </header>
 
@@ -91,10 +95,10 @@
         <b id="count-all">0</b><span>ทั้งหมด</span>
     </div>
     <div id="tab-pending-box" class="summary-box" onclick="switchTab('pending')">
-        <b id="count-pending" style="color: var(--pending);">0</b><span>รอทำ</span>
+        <b id="count-pending" style="color: var(--pending);">0</b><span>รอปรุง</span>
     </div>
     <div id="tab-completed-box" class="summary-box" onclick="switchTab('completed')">
-        <b id="count-done" style="color: var(--success);">0</b><span>เสร็จสิ้น</span>
+        <b id="count-done" style="color: var(--success);">0</b><span>เรียบร้อย</span>
     </div>
 </div>
 
@@ -103,7 +107,7 @@
 </main>
 
 <div class="bottom-bar">
-    <div onclick="logoutAdmin()" class="logout-btn"><i class="fas fa-power-off"></i> ออกจากระบบ</div>
+    <div onclick="logoutAdmin()" class="logout-btn"><i class="fas fa-power-off"></i> LOGOUT SYSTEM</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -131,20 +135,20 @@
             let counts = { t:0, p:0, c:0 };
 
             if (!snapshot.exists()) {
-                container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:100px; color:#444;">ไม่มีออเดอร์ในระบบ</div>';
+                container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:100px; color:#333;">ไม่มีออเดอร์รอการจัดการ</div>';
                 updateCounters(0,0,0); return;
             }
 
             snapshot.forEach(child => {
                 const order = child.val();
-                const status = order.status || 'pending';
+                const status = order.status || 'รอดำเนินการ';
                 counts.t++;
-                if (['รอดำเนินการ', 'กำลังทำ', 'pending'].includes(status)) counts.p++;
+                if (['รอดำเนินการ', 'กำลังทำ'].includes(status)) counts.p++;
                 else counts.c++;
 
                 let show = currentTab === 'all' || 
-                           (currentTab === 'pending' && ['รอดำเนินการ', 'กำลังทำ', 'pending'].includes(status)) ||
-                           (currentTab === 'completed' && !['รอดำเนินการ', 'กำลังทำ', 'pending'].includes(status));
+                           (currentTab === 'pending' && ['รอดำเนินการ', 'กำลังทำ'].includes(status)) ||
+                           (currentTab === 'completed' && !['รอดำเนินการ', 'กำลังทำ'].includes(status));
 
                 if (show) renderCard(container, child.key, order, status);
             });
@@ -154,22 +158,50 @@
 
     function renderCard(container, id, data, status) {
         let btn = '';
-        if (['รอดำเนินการ', 'pending'].includes(status)) btn = `<button onclick="updateStatus('${id}', 'กำลังทำ')" class="btn-main" style="background:var(--pending)">เริ่มทำอาหาร</button>`;
+        if (['รอดำเนินการ'].includes(status)) btn = `<button onclick="updateStatus('${id}', 'กำลังทำ')" class="btn-main" style="background:var(--pending)">เริ่มทำอาหาร</button>`;
         else if (status === 'กำลังทำ') btn = `<button onclick="updateStatus('${id}', 'เสร็จสมบูรณ์')" class="btn-main" style="background:var(--success)">แจ้งรับอาหาร</button>`;
         else if (status === 'เสร็จสมบูรณ์') btn = `<button onclick="updateStatus('${id}', 'ชำระเงินแล้ว')" class="btn-main" style="background:var(--info)">เก็บเงินแล้ว</button>`;
-        else btn = `<button onclick="archive('${id}')" class="btn-main" style="background:#673AB7">ลงประวัติ</button>`;
+        else btn = `<button onclick="archive('${id}')" class="btn-main" style="background:#673AB7">ลงประวัติออเดอร์</button>`;
 
-        const items = data.items.map(i => `<div class="item-row"><span>${i.quantity}x ${i.name}</span><span>฿${i.finalPrice}</span></div><div class="item-opt">${i.options || ''}</div>`).join('');
+        // 📍 ประมวลผลแยกราคาแต่ละรายการ
+        const itemsHtml = data.items.map(item => {
+            const finalP = parseFloat(item.finalPrice || 0);
+            let optionsHtml = '';
+            let optionsPriceTotal = 0;
+
+            if (item.optionsArray && item.optionsArray.length > 0) {
+                optionsHtml = item.optionsArray.map(opt => {
+                    const op = parseFloat(opt.price || 0);
+                    optionsPriceTotal += op;
+                    return `<div class="addon-row"><span>• ${opt.name}</span><span class="addon-p">+฿${op.toFixed(2)}</span></div>`;
+                }).join('');
+            } else if (item.options) {
+                optionsHtml = `<div class="addon-row"><span>${item.options}</span></div>`;
+            }
+
+            const baseP = finalP - optionsPriceTotal;
+
+            return `
+                <div class="item-block">
+                    <div class="main-food-row">
+                        <span>${item.quantity}x ${item.name}</span>
+                        <span>฿${baseP.toFixed(2)}</span>
+                    </div>
+                    <div class="addon-list">${optionsHtml}</div>
+                    ${item.notes ? `<div style="font-size:0.75rem; color:#8e6d31; margin-top:5px;">📝 ${item.notes}</div>` : ''}
+                </div>`;
+        }).join('');
+
         const time = data.timestamp ? new Date(data.timestamp).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) : '--:--';
 
         container.innerHTML += `
-            <div class="order-card ${['รอดำเนินการ', 'pending'].includes(status) ? 'new-order' : ''}">
+            <div class="order-card ${['รอดำเนินการ'].includes(status) ? 'new-order' : ''}">
                 <div class="card-header">
-                    <div><span class="table-no">โต๊ะ ${data.tableNumber}</span><div class="order-time">🕒 ${time}</div></div>
-                    <span style="font-size:0.7rem; color:var(--premium-gold)">${status}</span>
+                    <div><span class="table-no">โต๊ะ ${data.tableNumber}</span><div class="order-time">🕒 สั่งเมื่อ: ${time}</div></div>
+                    <span style="font-size:0.65rem; color:var(--premium-gold); font-weight:600; text-transform:uppercase;">${status}</span>
                 </div>
-                <div class="item-list">${items}</div>
-                <div style="text-align:right; font-weight:bold; margin-bottom:15px; font-size:1.1rem;">รวม ฿${data.total}</div>
+                <div class="item-list">${itemsHtml}</div>
+                <div class="order-total-block">รวม ฿${data.total.toLocaleString('th-TH', {minimumFractionDigits:2})}</div>
                 <div class="order-actions">${btn}<button class="btn-main btn-cancel" onclick="cancelOrder('${id}')"><i class="fas fa-trash"></i></button></div>
             </div>`;
     }
@@ -186,8 +218,8 @@
             db.ref('history').push({...s.val(), archivedAt: Date.now()}).then(() => db.ref('orders').child(id).remove());
         });
     };
-    window.cancelOrder = (id) => confirm("ลบออเดอร์นี้?") && db.ref('orders').child(id).remove();
-    window.logoutAdmin = () => confirm("ออกจากระบบ?") && (window.location.href = "start.html");
+    window.cancelOrder = (id) => confirm("ต้องการลบออเดอร์นี้ใช่ไหมครับน้า?") && db.ref('orders').child(id).remove();
+    window.logoutAdmin = () => confirm("ต้องการออกจากระบบจัดการ?") && (window.location.href = "index.html");
 </script>
 </body>
 </html>

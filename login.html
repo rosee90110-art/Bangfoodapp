@@ -25,9 +25,9 @@
             margin: 0;
             padding: 20px;
             overflow: hidden;
+            background-image: radial-gradient(circle at 50% -20%, #222 0%, #0a0a0a 80%);
         }
 
-        /* 📍 การ์ดล็อกอินแบบ Modern Glass */
         .login-card {
             background: var(--glass);
             padding: 50px 30px;
@@ -57,7 +57,6 @@
             text-transform: uppercase;
         }
 
-        /* 📍 ส่วน Input */
         .input-group {
             position: relative;
             margin-bottom: 15px;
@@ -83,7 +82,6 @@
             box-shadow: 0 0 25px rgba(197, 160, 89, 0.15);
         }
 
-        /* 📍 ปุ่ม Login */
         button {
             width: 100%;
             padding: 18px;
@@ -111,7 +109,6 @@
         }
         .cancel-btn:hover { color: #fff; }
 
-        /* 📍 แอนิเมชันตอนเปิดหน้า */
         @keyframes cardEntrance {
             from { opacity: 0; transform: scale(0.9) translateY(30px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
@@ -135,23 +132,54 @@
         <a href="admin_center.html" class="cancel-btn">ยกเลิก</a>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <script>
+        // 📍 2. ตั้งค่า Firebase (ใช้ Config ชุดเดิมของน้า)
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
+            authDomain: "bangfood-cb30f.firebaseapp.com", 
+            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
+            projectId: "bangfood-cb30f", 
+            storageBucket: "bangfood-cb30f.appspot.com", 
+            messagingSenderId: "390955623784", 
+            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" 
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // 📍 3. ฟังก์ชันล็อกอินแบบเช็คผ่าน Firebase
         function handleLogin() {
-            const user = document.getElementById('user').value.trim();
-            const pass = document.getElementById('pass').value;
+            const userInput = document.getElementById('user').value.trim();
+            const passInput = document.getElementById('pass').value;
 
-            // ตรวจสอบบัญชีจากระบบเดิมที่มีอยู่
-            let admins = JSON.parse(localStorage.getItem('adminAccounts')) || [];
-            const foundAdmin = admins.find(a => a.username === user && a.password === pass);
+            if (!userInput || !passInput) return alert("กรุณากรอกข้อมูลให้ครบครับน้า!");
 
-            // เงื่อนไขล็อกอิน (รวมถึงรหัสพื้นฐาน admin/bang)
-            if (foundAdmin || (user === "admin" && pass === "bang")) {
-                sessionStorage.setItem('isAdminLoggedIn', 'true');
-                sessionStorage.setItem('currentAdminName', user);
-                window.location.href = "admin_center.html";
-            } else {
-                alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องครับ!");
-            }
+            // ดึงข้อมูลแอดมินทั้งหมดจาก Firebase มาเทียบ
+            db.ref('admins').once('value', snap => {
+                let authenticated = false;
+                
+                if (snap.exists()) {
+                    const admins = snap.val();
+                    for (let id in admins) {
+                        if (admins[id].username === userInput && admins[id].password === passInput) {
+                            authenticated = true;
+                            break;
+                        }
+                    }
+                }
+
+                // ตรวจสอบ (ให้สิทธิ์รหัสหลัก admin/bang ด้วย)
+                if (authenticated || (userInput === "admin" && passInput === "bang")) {
+                    sessionStorage.setItem('isAdminLoggedIn', 'true');
+                    sessionStorage.setItem('currentAdminName', userInput);
+                    alert("ยินดีต้อนรับครับน้า!");
+                    window.location.href = "admin_center.html";
+                } else {
+                    alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องครับน้า!");
+                }
+            });
         }
     </script>
 </body>

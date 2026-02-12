@@ -6,7 +6,7 @@
     <title>จัดการแอดมินออนไลน์ | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ... (คงสไตล์เดิมที่น้าชอบไว้ทั้งหมดครับ) ... */
+        /* 📍 ส่วน Style คงเดิมที่น้าชอบครับ */
         :root { --premium-gold: #c5a059; --bg-deep: #0a0a0a; --glass: rgba(255, 255, 255, 0.03); --border-dim: rgba(255, 255, 255, 0.08); --success: #4CAF50; }
         body { background-color: var(--bg-deep); color: #fff; font-family: 'Kanit', sans-serif; margin: 0; background-image: radial-gradient(circle at 50% -20%, #252525 0%, #0a0a0a 70%); min-height: 100vh; }
         .header { position: sticky; top: 0; z-index: 1000; background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(25px); padding: 22px 25px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-dim); }
@@ -17,10 +17,14 @@
         .btn-add-user { width: 100%; padding: 20px; background: rgba(197, 160, 89, 0.05); border: 1px dashed var(--premium-gold); border-radius: 28px; color: var(--premium-gold); font-size: 0.95rem; cursor: pointer; margin-bottom: 35px; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .user-card { background: var(--glass); border: 1px solid var(--border-dim); padding: 28px; border-radius: 35px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
         .user-card.is-me { border-color: rgba(197, 160, 89, 0.3); background: rgba(197, 160, 89, 0.05); }
+        
+        /* 📍 จุดสถานะออนไลน์แบบใหม่ */
         .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 12px; background: #333; }
-        .online-now { background: var(--success); box-shadow: 0 0 15px var(--success); }
+        .online-glow { background: var(--success); box-shadow: 0 0 15px var(--success); }
+        
         #edit-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(15px); }
-        .modal-content { background: #111; padding: 45px 35px; border-radius: 40px; width: 82%; max-width: 310px; border: 1px solid var(--border-dim); text-align: center; }
+        .modal-content { background: #111; padding: 45px 35px; border-radius: 40px; width: 82%; max-width: 310px; border: 1px solid var(--border-dim); text-align: center; transform: scale(0.8); transition: 0.3s; }
+        #edit-modal.active .modal-content { transform: scale(1); }
         input, select { width: 100%; padding: 18px; margin: 10px 0; border-radius: 20px; border: 1px solid #1a1a1a; background: #000; color: #fff; outline: none; font-family: inherit; box-sizing: border-box; }
         .btn-save-modal { width: 100%; padding: 20px; background: var(--premium-gold); border: none; border-radius: 22px; color: #000; font-weight: 600; margin-top: 20px; cursor: pointer; }
     </style>
@@ -29,16 +33,16 @@
 
 <div class="header">
     <a href="admin_center.html" style="color:var(--premium-gold);"><i class="fas fa-arrow-left"></i></a>
-    <h2 style="font-size:1rem; letter-spacing:2px;">ONLINE ADMINS</h2>
+    <h2 style="font-size:1rem; letter-spacing:2px;">REAL-TIME ACCESS</h2>
     <div style="width:25px;"></div>
 </div>
 
 <div class="container">
     <div class="stats-grid">
-        <div class="stat-item"><b id="total-admins">0</b><span>Accounts</span></div>
-        <div class="stat-item"><b id="online-admins">1</b><span>Active Now</span></div>
+        <div class="stat-item"><b id="total-admins">0</b><span>All Admins</span></div>
+        <div class="stat-item"><b id="online-admins">0</b><span>Online Now</span></div>
     </div>
-    <button id="add-admin-btn" class="btn-add-user" onclick="openAddModal()">+ Add New Admin</button>
+    <button id="add-admin-btn" class="btn-add-user" onclick="openAddModal()">+ Create Account</button>
     <div id="admin-list-container"></div>
 </div>
 
@@ -61,7 +65,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-    // 📍 1. ตั้งค่า Firebase ให้ตรงกับของน้า
     const firebaseConfig = { 
         apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
         authDomain: "bangfood-cb30f.firebaseapp.com", 
@@ -74,38 +77,60 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function renderAdmins() {
-        db.ref('admins').on('value', snap => {
-            const container = document.getElementById('admin-list-container');
-            const currentLoginUser = sessionStorage.getItem('currentAdminName');
-            container.innerHTML = '';
-            
-            if (snap.exists()) {
-                const admins = snap.val();
-                const adminIds = Object.keys(admins);
-                document.getElementById('total-admins').innerText = adminIds.length;
-
-                adminIds.forEach(id => {
-                    const admin = admins[id];
-                    const isMe = (admin.username === currentLoginUser);
-
-                    container.innerHTML += `
-                        <div class="user-card ${isMe ? 'is-me' : ''}">
-                            <div class="user-info">
-                                <span style="font-size:0.6rem; color:var(--premium-gold); letter-spacing:2px;">${admin.role}</span>
-                                <b><span class="status-dot ${isMe ? 'online-now' : ''}"></span>${admin.username}</b>
-                                <span style="font-size:0.75rem; color:#333; margin-top:10px; display:block;">Pass: ${admin.password}</span>
-                            </div>
-                            <div style="display:flex; gap:10px;">
-                                <i class="fas fa-edit" style="color:#444; cursor:pointer;" onclick='openEditModal("${id}", ${JSON.stringify(admin)})'></i>
-                                ${!isMe ? `<i class="fas fa-trash" style="color:#500; cursor:pointer;" onclick="deleteAdmin('${id}')"></i>` : ''}
-                            </div>
-                        </div>`;
-                });
+    // 📍 1. ระบบเช็คคนออนไลน์ (Presence System)
+    const currentAdmin = sessionStorage.getItem('currentAdminName');
+    if (currentAdmin) {
+        const myPresenceRef = db.ref('online_admins/' + currentAdmin);
+        // เมื่อเชื่อมต่อสำเร็จ ให้ตั้งสถานะว่าออนไลน์
+        db.ref('.info/connected').on('value', snap => {
+            if (snap.val() === true) {
+                // เมื่อปิดหน้าจอหรือหลุด ให้ลบตัวเองออกจากรายชื่อออนไลน์อัตโนมัติ
+                myPresenceRef.onDisconnect().remove();
+                myPresenceRef.set(true);
             }
         });
     }
 
+    function renderAdmins() {
+        // ดึงข้อมูลรายชื่อแอดมินทั้งหมด
+        db.ref('admins').on('value', adminSnap => {
+            // ดึงข้อมูลคนออนไลน์ล่าสุด
+            db.ref('online_admins').on('value', onlineSnap => {
+                const container = document.getElementById('admin-list-container');
+                const onlineUsers = onlineSnap.val() || {};
+                container.innerHTML = '';
+                
+                if (adminSnap.exists()) {
+                    const admins = adminSnap.val();
+                    const adminIds = Object.keys(admins);
+                    document.getElementById('total-admins').innerText = adminIds.length;
+                    document.getElementById('online-admins').innerText = Object.keys(onlineUsers).length;
+
+                    adminIds.forEach(id => {
+                        const admin = admins[id];
+                        // 📍 เช็คว่าคนนี้กำลังออนไลน์อยู่หรือไม่
+                        const isOnline = onlineUsers[admin.username] ? true : false;
+                        const isMe = (admin.username === currentAdmin);
+
+                        container.innerHTML += `
+                            <div class="user-card ${isMe ? 'is-me' : ''}">
+                                <div class="user-info">
+                                    <span style="font-size:0.6rem; color:var(--premium-gold); letter-spacing:2px;">${admin.role}</span>
+                                    <b><span class="status-dot ${isOnline ? 'online-glow' : ''}"></span>${admin.username}</b>
+                                    <span style="font-size:0.75rem; color:#333; margin-top:10px; display:block;">Pass: ${admin.password}</span>
+                                </div>
+                                <div style="display:flex; gap:15px; font-size:1.1rem;">
+                                    <i class="fas fa-edit" style="color:#444; cursor:pointer;" onclick='openEditModal("${id}", ${JSON.stringify(admin)})'></i>
+                                    ${!isMe ? `<i class="fas fa-trash" style="color:#500; cursor:pointer;" onclick="deleteAdmin('${id}')"></i>` : ''}
+                                </div>
+                            </div>`;
+                    });
+                }
+            });
+        });
+    }
+
+    // --- ส่วนฟังก์ชันจัดการข้อมูลเดิม ---
     function saveAdminChanges() {
         const id = document.getElementById('edit-id').value;
         const data = {
@@ -113,41 +138,15 @@
             password: document.getElementById('edit-password').value.trim(),
             role: document.getElementById('edit-role').value
         };
-
         if (!data.username || !data.password) return alert("กรุณากรอกข้อมูล");
-
-        if (id) {
-            db.ref('admins/' + id).update(data).then(() => closeModal());
-        } else {
-            db.ref('admins').push(data).then(() => closeModal());
-        }
+        if (id) db.ref('admins/' + id).update(data).then(() => closeModal());
+        else db.ref('admins').push(data).then(() => closeModal());
     }
 
-    function deleteAdmin(id) {
-        if (confirm("ลบแอดมินคนนี้?")) db.ref('admins/' + id).remove();
-    }
-
-    function openAddModal() {
-        document.getElementById('edit-id').value = "";
-        document.getElementById('edit-username').value = "";
-        document.getElementById('edit-password').value = "";
-        document.getElementById('edit-modal').style.display = 'flex';
-        setTimeout(() => document.getElementById('edit-modal').classList.add('active'), 10);
-    }
-
-    function openEditModal(id, admin) {
-        document.getElementById('edit-id').value = id;
-        document.getElementById('edit-username').value = admin.username;
-        document.getElementById('edit-password').value = admin.password;
-        document.getElementById('edit-role').value = admin.role;
-        document.getElementById('edit-modal').style.display = 'flex';
-        setTimeout(() => document.getElementById('edit-modal').classList.add('active'), 10);
-    }
-
-    function closeModal() {
-        document.getElementById('edit-modal').classList.remove('active');
-        setTimeout(() => document.getElementById('edit-modal').style.display = 'none', 400);
-    }
+    function deleteAdmin(id) { if (confirm("ต้องการลบแอดมินคนนี้?")) db.ref('admins/' + id).remove(); }
+    function openAddModal() { document.getElementById('edit-id').value = ""; document.getElementById('edit-username').value = ""; document.getElementById('edit-password').value = ""; document.getElementById('edit-modal').style.display = 'flex'; setTimeout(() => document.getElementById('edit-modal').classList.add('active'), 10); }
+    function openEditModal(id, admin) { document.getElementById('edit-id').value = id; document.getElementById('edit-username').value = admin.username; document.getElementById('edit-password').value = admin.password; document.getElementById('edit-role').value = admin.role; document.getElementById('edit-modal').style.display = 'flex'; setTimeout(() => document.getElementById('edit-modal').classList.add('active'), 10); }
+    function closeModal() { document.getElementById('edit-modal').classList.remove('active'); setTimeout(() => document.getElementById('edit-modal').style.display = 'none', 400); }
 
     window.onload = renderAdmins;
 </script>

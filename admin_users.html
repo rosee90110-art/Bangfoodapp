@@ -2,62 +2,93 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จัดการแอดมินออนไลน์ | BANGFOOD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Manage Access | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="admin_style.css">
+
     <style>
-        /* 📍 ส่วน Style คงเดิมที่น้าชอบครับ */
-        :root { --premium-gold: #c5a059; --bg-deep: #0a0a0a; --glass: rgba(255, 255, 255, 0.03); --border-dim: rgba(255, 255, 255, 0.08); --success: #4CAF50; }
-        body { background-color: var(--bg-deep); color: #fff; font-family: 'Kanit', sans-serif; margin: 0; background-image: radial-gradient(circle at 50% -20%, #252525 0%, #0a0a0a 70%); min-height: 100vh; }
-        .header { position: sticky; top: 0; z-index: 1000; background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(25px); padding: 22px 25px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-dim); }
-        .container { max-width: 450px; margin: 0 auto; padding: 25px; padding-bottom: 120px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .stat-item { background: var(--glass); padding: 25px 15px; border-radius: 32px; border: 1px solid var(--border-dim); text-align: center; }
-        .stat-item b { display: block; font-size: 2rem; color: var(--premium-gold); }
-        .btn-add-user { width: 100%; padding: 20px; background: rgba(197, 160, 89, 0.05); border: 1px dashed var(--premium-gold); border-radius: 28px; color: var(--premium-gold); font-size: 0.95rem; cursor: pointer; margin-bottom: 35px; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .user-card { background: var(--glass); border: 1px solid var(--border-dim); padding: 28px; border-radius: 35px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
-        .user-card.is-me { border-color: rgba(197, 160, 89, 0.3); background: rgba(197, 160, 89, 0.05); }
+        /* 📍 คงเหลือไว้เฉพาะโครงสร้าง Layout เฉพาะหน้า */
+        body { margin: 0; padding: 25px; min-height: 100vh; transition: 0.3s; }
+
+        .stats-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 15px; margin-bottom: 25px; max-width: 1200px; margin-left: auto; margin-right: auto;
+        }
+        .stat-item { 
+            padding: 20px; border-radius: 24px; text-align: center;
+        }
+        .stat-item b { display: block; font-size: 1.8rem; color: var(--premium-gold); }
+        .stat-item span { font-size: 0.65rem; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+        .btn-add-user { 
+            width: 100%; max-width: 400px; margin: 0 auto 30px;
+            padding: 18px; background: rgba(197, 160, 89, 0.05); 
+            border: 1px dashed var(--premium-gold); border-radius: 20px; 
+            color: var(--premium-gold); font-size: 0.9rem; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            transition: 0.3s; font-weight: 600;
+        }
+        .btn-add-user:hover { background: rgba(197, 160, 89, 0.1); transform: translateY(-2px); }
+
+        #admin-list-container {
+            display: grid; grid-template-columns: 1fr; gap: 15px;
+            max-width: 1200px; margin: 0 auto;
+        }
+        @media (min-width: 800px) { #admin-list-container { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+
+        .user-card { 
+            padding: 22px; border-radius: 28px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .user-card:hover { border-color: var(--premium-gold); transform: translateY(-3px); }
+        .user-card.is-me { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); }
         
-        /* 📍 จุดสถานะออนไลน์แบบใหม่ */
+        .user-info b { font-size: 1.1rem; display: flex; align-items: center; color: var(--text); }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 12px; background: #333; }
-        .online-glow { background: var(--success); box-shadow: 0 0 15px var(--success); }
+        .online-glow { background: var(--success); box-shadow: 0 0 12px var(--success); }
         
-        #edit-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(15px); }
-        .modal-content { background: #111; padding: 45px 35px; border-radius: 40px; width: 82%; max-width: 310px; border: 1px solid var(--border-dim); text-align: center; transform: scale(0.8); transition: 0.3s; }
-        #edit-modal.active .modal-content { transform: scale(1); }
-        input, select { width: 100%; padding: 18px; margin: 10px 0; border-radius: 20px; border: 1px solid #1a1a1a; background: #000; color: #fff; outline: none; font-family: inherit; box-sizing: border-box; }
-        .btn-save-modal { width: 100%; padding: 20px; background: var(--premium-gold); border: none; border-radius: 22px; color: #000; font-weight: 600; margin-top: 20px; cursor: pointer; }
+        /* Modal */
+        #edit-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .modal-content { padding: 35px; border-radius: 32px; width: 85%; max-width: 350px; text-align: center; color: var(--text); }
+        
+        input, select { 
+            width: 100%; padding: 15px; margin: 8px 0; border-radius: 15px; 
+            border: 1px solid var(--border); background: rgba(128,128,128,0.1); 
+            color: var(--text); outline: none; font-family: inherit; box-sizing: border-box; 
+        }
+        .btn-save-modal { width: 100%; padding: 18px; background: var(--premium-gold); border: none; border-radius: 15px; color: #000; font-weight: 700; margin-top: 15px; cursor: pointer; transition: 0.3s; }
     </style>
 </head>
-<body>
+<body onload="initializeUsers()">
 
-<div class="header">
-    <a href="admin_center.html" style="color:var(--premium-gold);"><i class="fas fa-arrow-left"></i></a>
-    <h2 style="font-size:1rem; letter-spacing:2px;">REAL-TIME ACCESS</h2>
-    <div style="width:25px;"></div>
-</div>
-
-<div class="container">
+<main>
     <div class="stats-grid">
-        <div class="stat-item"><b id="total-admins">0</b><span>All Admins</span></div>
-        <div class="stat-item"><b id="online-admins">0</b><span>Online Now</span></div>
+        <div class="stat-item"><b id="total-admins">0</b><span data-lang-en="Registered" data-lang-th="ลงทะเบียนแล้ว">Registered</span></div>
+        <div class="stat-item"><b id="online-admins">0</b><span data-lang-en="Live Online" data-lang-th="กำลังออนไลน์">Live Online</span></div>
     </div>
-    <button id="add-admin-btn" class="btn-add-user" onclick="openAddModal()">+ Create Account</button>
+
+    <button id="add-admin-btn" class="btn-add-user" onclick="openAddModal()">
+        <i class="fas fa-plus-circle"></i> <span data-lang-en="Create New Access" data-lang-th="สร้างสิทธิ์การเข้าถึงใหม่">Create New Access</span>
+    </button>
+
     <div id="admin-list-container"></div>
-</div>
+</main>
 
 <div id="edit-modal">
-    <div class="modal-content">
-        <h3 style="color:var(--premium-gold); font-weight:400; margin-bottom:20px;">MANAGE ACCOUNT</h3>
+    <div class="modal-content card-box">
+        <h3 style="color:var(--premium-gold); font-weight:600; margin-bottom:15px; letter-spacing:1px; text-transform:uppercase;" data-lang-en="Access Control" data-lang-th="ควบคุมการเข้าถึง">Access Control</h3>
         <input type="hidden" id="edit-id">
-        <input type="text" id="edit-username" placeholder="Username">
-        <input type="text" id="edit-password" placeholder="Password">
+        <input type="text" id="edit-username" placeholder="ชื่อผู้ใช้งาน (Username)">
+        <input type="text" id="edit-password" placeholder="รหัสพิน (Password/PIN)">
         <select id="edit-role">
-            <option value="Staff">พนักงาน (Staff)</option>
-            <option value="Super Admin">เจ้าของร้าน (Super Admin)</option>
+            <option value="Staff" data-lang-en="Staff" data-lang-th="พนักงาน (Staff)">พนักงาน (Staff)</option>
+            <option value="Super Admin" data-lang-en="Owner" data-lang-th="เจ้าของร้าน (Super Admin)">เจ้าของร้าน (Super Admin)</option>
         </select>
-        <button class="btn-save-modal" onclick="saveAdminChanges()">Save Account</button>
-        <button onclick="closeModal()" style="background:none; border:none; color:#444; margin-top:20px;">Cancel</button>
+        <button class="btn-save-modal" onclick="saveAdminChanges()" data-lang-en="Update Account" data-lang-th="อัปเดตบัญชี">Update Account</button>
+        <button onclick="closeModal()" style="background:none; border:none; color:var(--sub-text); margin-top:15px; cursor:pointer; font-weight:500;" data-lang-en="Discard" data-lang-th="ยกเลิก">Discard Changes</button>
     </div>
 </div>
 
@@ -65,36 +96,30 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-    const firebaseConfig = { 
-        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
-        authDomain: "bangfood-cb30f.firebaseapp.com", 
-        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
-        projectId: "bangfood-cb30f", 
-        storageBucket: "bangfood-cb30f.appspot.com", 
-        messagingSenderId: "390955623784", 
-        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" 
-    };
+    const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
-    // 📍 1. ระบบเช็คคนออนไลน์ (Presence System)
     const currentAdmin = sessionStorage.getItem('currentAdminName');
-    if (currentAdmin) {
-        const myPresenceRef = db.ref('online_admins/' + currentAdmin);
-        // เมื่อเชื่อมต่อสำเร็จ ให้ตั้งสถานะว่าออนไลน์
-        db.ref('.info/connected').on('value', snap => {
-            if (snap.val() === true) {
-                // เมื่อปิดหน้าจอหรือหลุด ให้ลบตัวเองออกจากรายชื่อออนไลน์อัตโนมัติ
-                myPresenceRef.onDisconnect().remove();
-                myPresenceRef.set(true);
-            }
-        });
+
+    function initializeUsers() {
+        handlePresence();
+        renderAdmins();
+    }
+
+    function handlePresence() {
+        if (currentAdmin) {
+            const myPresenceRef = db.ref('online_admins/' + currentAdmin);
+            db.ref('.info/connected').on('value', snap => {
+                if (snap.val() === true) {
+                    myPresenceRef.onDisconnect().remove();
+                    myPresenceRef.set(true);
+                }
+            });
+        }
     }
 
     function renderAdmins() {
-        // ดึงข้อมูลรายชื่อแอดมินทั้งหมด
         db.ref('admins').on('value', adminSnap => {
-            // ดึงข้อมูลคนออนไลน์ล่าสุด
             db.ref('online_admins').on('value', onlineSnap => {
                 const container = document.getElementById('admin-list-container');
                 const onlineUsers = onlineSnap.val() || {};
@@ -108,47 +133,60 @@
 
                     adminIds.forEach(id => {
                         const admin = admins[id];
-                        // 📍 เช็คว่าคนนี้กำลังออนไลน์อยู่หรือไม่
                         const isOnline = onlineUsers[admin.username] ? true : false;
                         const isMe = (admin.username === currentAdmin);
 
                         container.innerHTML += `
-                            <div class="user-card ${isMe ? 'is-me' : ''}">
+                            <div class="user-card stat-card ${isMe ? 'is-me' : ''}">
                                 <div class="user-info">
-                                    <span style="font-size:0.6rem; color:var(--premium-gold); letter-spacing:2px;">${admin.role}</span>
+                                    <span style="font-size:0.6rem; color:var(--premium-gold); letter-spacing:1px; text-transform:uppercase; font-weight:700;">${admin.role}</span>
                                     <b><span class="status-dot ${isOnline ? 'online-glow' : ''}"></span>${admin.username}</b>
-                                    <span style="font-size:0.75rem; color:#333; margin-top:10px; display:block;">Pass: ${admin.password}</span>
+                                    <small style="color:var(--sub-text); font-size:0.75rem; margin-top:5px; display:block;">Pin: ${admin.password}</small>
                                 </div>
                                 <div style="display:flex; gap:15px; font-size:1.1rem;">
-                                    <i class="fas fa-edit" style="color:#444; cursor:pointer;" onclick='openEditModal("${id}", ${JSON.stringify(admin)})'></i>
-                                    ${!isMe ? `<i class="fas fa-trash" style="color:#500; cursor:pointer;" onclick="deleteAdmin('${id}')"></i>` : ''}
+                                    <i class="fas fa-edit" style="color:var(--sub-text); cursor:pointer;" onclick='openEditModal("${id}", ${JSON.stringify(admin)})'></i>
+                                    ${!isMe ? `<i class="fas fa-trash-alt" style="color:#ff4757; cursor:pointer;" onclick="deleteAdmin('${id}')"></i>` : ''}
                                 </div>
                             </div>`;
                     });
+                    // สั่งให้เปลี่ยนภาษาใหม่หลัง render ข้อมูล
+                    if (window.applyGlobalLanguage) applyGlobalLanguage();
                 }
             });
         });
     }
 
-    // --- ส่วนฟังก์ชันจัดการข้อมูลเดิม ---
     function saveAdminChanges() {
         const id = document.getElementById('edit-id').value;
-        const data = {
-            username: document.getElementById('edit-username').value.trim(),
-            password: document.getElementById('edit-password').value.trim(),
-            role: document.getElementById('edit-role').value
+        const data = { 
+            username: document.getElementById('edit-username').value.trim(), 
+            password: document.getElementById('edit-password').value.trim(), 
+            role: document.getElementById('edit-role').value 
         };
-        if (!data.username || !data.password) return alert("กรุณากรอกข้อมูล");
+        if (!data.username || !data.password) return alert("กรุณากรอกข้อมูลให้ครบครับ");
+        
         if (id) db.ref('admins/' + id).update(data).then(() => closeModal());
         else db.ref('admins').push(data).then(() => closeModal());
     }
 
-    function deleteAdmin(id) { if (confirm("ต้องการลบแอดมินคนนี้?")) db.ref('admins/' + id).remove(); }
-    function openAddModal() { document.getElementById('edit-id').value = ""; document.getElementById('edit-username').value = ""; document.getElementById('edit-password').value = ""; document.getElementById('edit-modal').style.display = 'flex'; setTimeout(() => document.getElementById('edit-modal').classList.add('active'), 10); }
-    function openEditModal(id, admin) { document.getElementById('edit-id').value = id; document.getElementById('edit-username').value = admin.username; document.getElementById('edit-password').value = admin.password; document.getElementById('edit-role').value = admin.role; document.getElementById('edit-modal').style.display = 'flex'; setTimeout(() => document.getElementById('edit-modal').classList.add('active'), 10); }
-    function closeModal() { document.getElementById('edit-modal').classList.remove('active'); setTimeout(() => document.getElementById('edit-modal').style.display = 'none', 400); }
-
-    window.onload = renderAdmins;
+    function deleteAdmin(id) { if (confirm("ยืนยันการลบพนักงานคนนี้ไหมครับ?")) db.ref('admins/' + id).remove(); }
+    function openAddModal() { 
+        document.getElementById('edit-id').value = ""; 
+        document.getElementById('edit-username').value = ""; 
+        document.getElementById('edit-password').value = ""; 
+        document.getElementById('edit-modal').style.display = 'flex'; 
+    }
+    function openEditModal(id, admin) { 
+        document.getElementById('edit-id').value = id; 
+        document.getElementById('edit-username').value = admin.username; 
+        document.getElementById('edit-password').value = admin.password; 
+        document.getElementById('edit-role').value = admin.role; 
+        document.getElementById('edit-modal').style.display = 'flex'; 
+    }
+    function closeModal() { document.getElementById('edit-modal').style.display = 'none'; }
 </script>
+
+<script src="admin_script.js"></script>
+
 </body>
 </html>

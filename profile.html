@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Profile | BANGFOOD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="admin_style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* 📍 คงเหลือไว้เฉพาะโครงสร้าง Layout เฉพาะหน้า */
+        body { padding: 0; margin: 0; min-height: 100vh; transition: 0.3s; overflow-x: hidden; }
+
+        .main-wrapper {
+            display: grid; grid-template-columns: 1fr; gap: 20px;
+            padding: 15px; max-width: 1200px; margin: 0 auto;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @media (min-width: 1024px) {
+            .main-wrapper { grid-template-columns: 350px 1fr; padding: 40px 20px; align-items: start; gap: 30px; }
+            .profile-card { position: sticky; top: 20px; padding: 45px 30px; }
+        }
+
+        .profile-card { border-radius: 40px; padding: 35px 20px; text-align: center; backdrop-filter: blur(20px); }
+
+        .avatar-section { position: relative; display: inline-block; margin-bottom: 20px; cursor: pointer; }
+        .avatar-frame { 
+            width: 120px; height: 120px; border-radius: 50%; 
+            border: 3px solid var(--premium-gold); padding: 5px; object-fit: cover;
+            transition: 0.3s; box-shadow: 0 0 30px rgba(197, 160, 89, 0.2);
+        }
+        @media (min-width: 1024px) { .avatar-frame { width: 150px; height: 150px; } }
+
+        .avatar-section:hover .avatar-frame { filter: brightness(0.6); transform: scale(1.02); }
+        .edit-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: #fff; opacity: 0; transition: 0.3s; }
+        .avatar-section:hover .edit-overlay { opacity: 1; }
+
+        .profile-username { font-size: 1.5rem; font-weight: 600; margin-bottom: 5px; display: block; color: var(--text); }
+        .badge-admin { background: rgba(197, 160, 89, 0.1); color: var(--premium-gold); padding: 4px 15px; border-radius: 20px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(197, 160, 89, 0.2); font-weight: 700; }
+
+        .content-section { display: flex; flex-direction: column; gap: 20px; }
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        @media (min-width: 600px) { .info-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .stat-mini-box { padding: 20px; border-radius: 25px; display: flex; flex-direction: column; gap: 5px; text-align: center; }
+        .stat-mini-box span { font-size: 0.6rem; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .stat-mini-box b { font-size: 1.1rem; color: var(--premium-gold); }
+
+        .form-card { border-radius: 35px; padding: 25px; }
+        @media (min-width: 1024px) { .form-card { padding: 40px; } }
+
+        .input-group { margin-bottom: 18px; text-align: left; }
+        label { font-size: 0.75rem; color: var(--sub-text); margin-left: 12px; display: block; margin-bottom: 8px; font-weight: 600; }
+        .input-box { position: relative; }
+        .input-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--sub-text); font-size: 0.9rem; }
+        
+        input { 
+            width: 100%; padding: 16px 15px 16px 52px; background: rgba(128,128,128,0.05); 
+            border: 1px solid var(--border); border-radius: 18px; color: var(--text); 
+            outline: none; transition: 0.3s; font-family: inherit; font-size: 0.95rem; box-sizing: border-box;
+        }
+        input:focus { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); }
+
+        .save-button { 
+            width: 100%; padding: 18px; background: var(--premium-gold); border: none; 
+            border-radius: 20px; color: #000; font-weight: 700; cursor: pointer; 
+            margin-top: 10px; transition: 0.3s; font-size: 1rem; letter-spacing: 1px;
+        }
+
+        .activity-chart { border-radius: 35px; padding: 25px; height: 180px; }
+
+        .nav-footer { display: flex; justify-content: center; align-items: center; gap: 20px; padding: 10px 0 40px; }
+        .nav-link { color: var(--sub-text); font-size: 0.75rem; cursor: pointer; transition: 0.3s; text-decoration: none; font-weight: 600; }
+        .nav-link:hover { color: var(--premium-gold); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body onload="initializeProfile()">
+
+    <div class="main-wrapper">
+        <aside class="profile-card card-box">
+            <div class="avatar-section" onclick="document.getElementById('image-upload').click()">
+                <img id="avatar-preview" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="avatar-frame">
+                <div class="edit-overlay"><i class="fas fa-camera"></i></div>
+                <input type="file" id="image-upload" hidden accept="image/*" onchange="processImage(this)">
+                <input type="hidden" id="image-data-uri">
+            </div>
+            <b class="profile-username" id="display-name">Admin Account</b>
+            <span class="badge-admin" data-lang-en="Authorized Manager" data-lang-th="ผู้จัดการที่ได้รับอนุญาต">Authorized Manager</span>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 15px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                    <span style="color:var(--sub-text);" data-lang-en="Joined Date" data-lang-th="วันที่เข้าร่วม">Joined Date</span>
+                    <span id="join-date" style="color:var(--text);">--/--/--</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                    <span style="color:var(--sub-text);" data-lang-en="System Status" data-lang-th="สถานะระบบ">System Status</span>
+                    <span style="color:#43e97b;"><i class="fas fa-circle" style="font-size:0.5rem; margin-right:5px;"></i> Online</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                    <span style="color:var(--sub-text);" data-lang-en="Access Level" data-lang-th="ระดับการเข้าถึง">Access Level</span>
+                    <span style="color:var(--premium-gold);">Super Admin</span>
+                </div>
+            </div>
+        </aside>
+
+        <section class="content-section">
+            <div class="info-grid">
+                <div class="stat-mini-box stat-card">
+                    <span data-lang-en="Security Key" data-lang-th="กุญแจความปลอดภัย">Security Key</span>
+                    <b style="color:#43e97b;">Protected</b>
+                </div>
+                <div class="stat-mini-box stat-card">
+                    <span data-lang-en="Account Uptime" data-lang-th="ระยะเวลาใช้งาน">Account Uptime</span>
+                    <b>99.98%</b>
+                </div>
+                <div class="stat-mini-box stat-card">
+                    <span data-lang-en="Session Status" data-lang-th="สถานะเซสชัน">Session Status</span>
+                    <b style="color:#2196F3;">Authorized</b>
+                </div>
+            </div>
+
+            <div class="form-card card-box">
+                <div style="font-size:0.8rem; color:var(--premium-gold); margin-bottom:20px; text-transform:uppercase; letter-spacing:2px; font-weight:700;" data-lang-en="Security Identification" data-lang-th="การระบุตัวตนและความปลอดภัย">Security Identification</div>
+                <div class="form-content">
+                    <div class="input-group">
+                        <label data-lang-en="Contact Number" data-lang-th="เบอร์โทรศัพท์">Contact Number (เบอร์โทรศัพท์)</label>
+                        <div class="input-box"><i class="fas fa-phone-alt"></i><input type="text" id="admin-phone" placeholder="0xx-xxx-xxxx"></div>
+                    </div>
+                    <div class="input-group">
+                        <label data-lang-en="Mail Address" data-lang-th="อีเมล">Mail Address (อีเมล)</label>
+                        <div class="input-box"><i class="fas fa-envelope"></i><input type="email" id="admin-email" placeholder="admin@bangfood.com"></div>
+                    </div>
+                    <div class="input-group">
+                        <label data-lang-en="Access Password" data-lang-th="รหัสผ่านใหม่">Access Password (รหัสผ่านใหม่)</label>
+                        <div class="input-box"><i class="fas fa-key"></i><input type="password" id="admin-pass" placeholder="กรอกรหัสใหม่เพื่อเปลี่ยน"></div>
+                    </div>
+                </div>
+                <button class="save-button" onclick="submitProfileUpdate()" data-lang-en="CONFIRM CHANGES" data-lang-th="ยืนยันการเปลี่ยน">
+                    <i class="fas fa-save" style="margin-right: 12px;"></i> CONFIRM CHANGES
+                </button>
+            </div>
+
+            <div class="activity-chart stat-card">
+                <div style="font-size:0.7rem; color:var(--sub-text); margin-bottom:15px; text-transform:uppercase; letter-spacing:2px; font-weight:700;" data-lang-en="User Activity Visualization" data-lang-th="กราฟกิจกรรมการใช้งาน">User Activity Visualization</div>
+                <div style="height: 120px; position: relative;"><canvas id="profileChart"></canvas></div>
+            </div>
+
+            <div class="nav-footer">
+                <span class="nav-link" onclick="parent.loadContent('settings.html', null)" data-lang-en="SYSTEM SETTINGS" data-lang-th="ตั้งค่าระบบ">SYSTEM SETTINGS</span>
+                <span style="color:var(--border);">/</span>
+                <span class="nav-link" style="color:#ff4757;" onclick="parent.logoutAdmin()" data-lang-en="SIGN OUT" data-lang-th="ออกจากระบบ">SIGN OUT</span>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        let adminUid = "";
+
+        function initializeProfile() {
+            loadAdminData();
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'bf_theme') {
+                setTimeout(initMiniChart, 100); // วาดกราฟใหม่เมื่อธีมเปลี่ยน
+            }
+        });
+
+        function loadAdminData() {
+            const name = sessionStorage.getItem('currentAdminName') || "Admin User";
+            document.getElementById('display-name').innerText = name;
+
+            db.ref('admins').orderByChild('username').equalTo(name).once('value', snap => {
+                if(snap.exists()) {
+                    adminUid = Object.keys(snap.val())[0];
+                    const data = snap.val()[adminUid];
+                    document.getElementById('admin-phone').value = data.phone || "";
+                    document.getElementById('admin-email').value = data.email || "";
+                    document.getElementById('join-date').innerText = new Date(data.createdAt || Date.now()).toLocaleDateString();
+                    if(data.profileImg) {
+                        document.getElementById('avatar-preview').src = data.profileImg;
+                        document.getElementById('image-data-uri').value = data.profileImg;
+                    }
+                }
+            });
+            initMiniChart();
+        }
+
+        function processImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    document.getElementById('avatar-preview').src = e.target.result;
+                    document.getElementById('image-data-uri').value = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function submitProfileUpdate() {
+            if(!adminUid) return alert("Account verification failed");
+            const newImg = document.getElementById('image-data-uri').value;
+            const payload = {
+                phone: document.getElementById('admin-phone').value.trim(),
+                email: document.getElementById('admin-email').value.trim(),
+                profileImg: newImg
+            };
+            const newPass = document.getElementById('admin-pass').value.trim();
+            if(newPass) payload.password = newPass;
+
+            db.ref('admins/' + adminUid).update(payload).then(() => {
+                alert("Profile synchronized successfully!");
+                if (newImg) localStorage.setItem('admin_new_avatar', newImg);
+                window.location.reload();
+            });
+        }
+
+        function initMiniChart() {
+            const ctx = document.getElementById('profileChart').getContext('2d');
+            const isLight = document.body.classList.contains('light-theme');
+            if (window.profileChartInstance) window.profileChartInstance.destroy();
+            window.profileChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        data: [12, 18, 10, 25, 20, 30, 24],
+                        borderColor: '#c5a059',
+                        backgroundColor: isLight ? 'rgba(197, 160, 89, 0.08)' : 'rgba(197, 160, 89, 0.05)',
+                        tension: 0.4, borderWidth: 3, pointRadius: 0, fill: true
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { display: false } }
+                }
+            });
+        }
+    </script>
+
+    <script src="admin_script.js"></script>
+</body>
+</html>

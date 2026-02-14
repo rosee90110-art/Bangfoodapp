@@ -5,190 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตัวเลือกอาหาร | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin_style.css">
     <style>
-        :root {
-            --premium-gold: #c5a059;
-            --soft-gold: rgba(197, 160, 89, 0.12);
-            --bg-dark: #121110;;
-            --glass: rgba(255, 255, 255, 0.02);
-            --glass-border: rgba(255, 255, 255, 0.06);
-            --text-main: #e0e0e0;
-        }
+        :root { --premium-gold: #c5a059; --bg-deep: #0a0a0b; --glass: rgba(255, 255, 255, 0.02); --glass-border: rgba(255, 255, 255, 0.06); --drawer-bg: #0a0a0b; }
+        body.light-theme { --bg-deep: #f5f5f7; --drawer-bg: #ffffff; }
+        body::-webkit-scrollbar { display: none; }
+        body { background-color: var(--bg-deep); color: #f1f1f1; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; overflow-x: hidden; transition: 0.3s; }
+        
+        /* ✨ Page Wrapper */
+        .app-wrapper { width: 100%; max-width: 480px; min-height: 100vh; background: var(--bg-deep); position: relative; padding-bottom: 120px; box-shadow: 0 0 50px rgba(0,0,0,0.5); animation: fadeIn 0.8s ease-out; }
+        
+        /* 📍 Header แบบเดิม (เหมือนหน้าแรก) */
+        .app-header-sticky { position: sticky; top: 0; z-index: 2000; background: rgba(10, 10, 11, 0.9); backdrop-filter: blur(25px); border-bottom: 1px solid var(--glass-border); }
+        body.light-theme .app-header-sticky { background: rgba(245, 245, 247, 0.9); }
 
-        body { 
-            background-color: #000; color: var(--text-main); 
-            font-family: 'Kanit', sans-serif; margin: 0; 
-            overflow-x: hidden; letter-spacing: 0.1px;
-            display: flex; justify-content: center;
-        }
+        .header-main-row { padding: 15px 20px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .back-btn { position: absolute; left: 20px; cursor: pointer; color: #666; font-size: 1.1rem; }
+        .bangfood-logo { font-size: 1.1rem; font-weight: 600; letter-spacing: 4px; color: var(--premium-gold); margin: 0; text-transform: uppercase; }
 
-        .main-wrapper {
-            width: 100%; max-width: 480px; 
-            min-height: 100vh; background-color: var(--bg-dark);
-            position: relative; padding-bottom: 240px; /* เว้นที่ให้แถบเฟดมืด */
-            animation: fadeInPage 1s ease-out;
-        }
+        .hamburger-menu { position: absolute; right: 20px; z-index: 2500; width: 25px; height: 18px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; }
+        .hamburger-menu span { display: block; width: 100%; height: 2.5px; background: var(--premium-gold); border-radius: 10px; transition: 0.3s; }
 
-        /* 📍 Header - Slim & Shimmer */
-        .app-header {
-            background: rgba(10, 10, 11, 0.9); backdrop-filter: blur(20px);
-            padding: 18px 25px; display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 2000; border-bottom: 1px solid var(--glass-border);
-        }
-        .bangfood { 
-            font-size: 0.95rem; font-weight: 600; letter-spacing: 4px;
-            background: linear-gradient(90deg, #8e6d31, #fff, #c5a059);
-            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: shineText 4s linear infinite;
-        }
+        /* 📍 แถบราคารวมแบบที่ต้องการ */
+        .top-summary-bar { padding: 12px 25px; background: rgba(197, 160, 89, 0.04); display: flex; justify-content: space-between; align-items: center; }
+        .summary-label { font-size: 0.65rem; color: #666; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .summary-val { color: var(--premium-gold); font-weight: 700; font-size: 1.4rem; text-shadow: 0 0 15px rgba(197, 160, 89, 0.3); }
 
-        /* 📍 Hero Section - Floating Effect */
-        .item-hero-section { padding: 35px 20px 15px; text-align: center; }
-        .modal-image {
-            width: 70%; max-width: 200px; border-radius: 35px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.7); border: 1px solid var(--glass-border);
-            animation: imageFloat 3s ease-in-out infinite, popIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-        }
+        /* 📸 Hero Image Animation */
+        .item-hero { text-align:center; padding: 20px 0; }
+        .modal-image { width: 180px; height: 180px; border-radius: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.7); border: 1px solid var(--glass-border); object-fit: cover; animation: imagePop 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        /* 📋 Option List Animation */
+        .option-item { display: flex; align-items: center; padding: 15px 22px; background: var(--glass); border-radius: 20px; margin: 0 25px 12px; cursor: pointer; border: 1px solid var(--glass-border); transition: 0.4s; opacity: 0; transform: translateY(20px); animation: slideUp 0.5s forwards; }
+        .option-item:active { transform: scale(0.95); }
+        body.light-theme .option-item { background: #fff; color: #333; }
 
-        .section-label { 
-            color: #444; font-size: 0.65rem; margin: 30px 30px 10px; 
-            text-transform: uppercase; font-weight: 700; letter-spacing: 2px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .section-label::after { content: ""; flex: 1; height: 1px; background: var(--glass-border); }
+        .note-area { width: 90%; margin: 0 auto; display: block; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; color: #fff; padding: 15px; box-sizing: border-box; }
+        
+        .bottom-nav-fixed { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 100px; background: linear-gradient(to top, var(--bg-deep) 80%, transparent); z-index: 3000; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; }
+        .round-btn-center { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; background: #fff; border-radius: 50%; border: 7px solid var(--bg-deep); color: #000; font-size: 1.8rem; display: flex; justify-content: center; align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); cursor: pointer; z-index: 3100; pointer-events: auto; transition: 0.3s; }
+        .nav-buttons-bar { width: 92%; height: 60px; background: #121214; border-radius: 30px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; pointer-events: auto; margin-bottom: 15px; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
+        body.light-theme .nav-buttons-bar { background: #fff; }
+        .nav-icon { display: flex; flex-direction: column; align-items: center; color: #444; cursor: pointer; }
 
-        .option-item { 
-            display: flex; align-items: center; padding: 15px 22px; 
-            background: var(--glass); border-radius: 20px; 
-            margin: 0 25px 12px; cursor: pointer; border: 1px solid var(--glass-border);
-            transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            animation: slideUp 0.8s ease-out both;
-        }
-        .option-item:active { transform: scale(0.97); }
-        .option-item:has(input:checked) { 
-            background: var(--soft-gold); border-color: var(--premium-gold); 
-            box-shadow: 0 0 20px rgba(197, 160, 89, 0.1);
-        }
-        .option-item input { margin-right: 15px; accent-color: var(--premium-gold); width: 18px; height: 18px; }
+        @keyframes imagePop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 📍 แถบเฟดมืดด้านล่าง (Bottom Gradient Overlay) */
-        .bottom-fade-layer {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 220px;
-            background: linear-gradient(to top, #000 30%, rgba(0,0,0,0.8) 60%, transparent 100%);
-            z-index: 1400; pointer-events: none;
-        }
-
-        /* 📍 Floating Price - Stealth Glow */
-        .price-summary-float {
-            position: fixed; bottom: 105px; left: 8%; transform: translateX(-50%);
-            width: 82%; max-width: 340px;
-            background: rgba(20, 20, 22, 0.95); backdrop-filter: blur(30px);
-            border: 1px solid rgba(197, 160, 89, 0.5);
-            padding: 2px 2px; border-radius: 24px; z-index: 1500;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.9);
-            animation: slideUp 0.8s ease-out both 0.5s;
-        }
-        .price-label { font-size: 0.65rem; color: #666; font-weight: 700; letter-spacing: 1px; }
-        .price-amount { 
-            color: var(--premium-gold); font-weight: 700; font-size: 1.3rem; 
-            text-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
-        }
-
-        /* 📍 Bottom Nav - Balanced Curves */
-        .curved-nav-container {
-            position: fixed; bottom: 15px; left: 4.5%; transform: translateX(-50%);
-            width: 92%; max-width: 420px; height: 75px; z-index: 2000;
-            display: flex; justify-content: center; align-items: flex-end; pointer-events: none;
-            animation: slideUp 1s ease-out both 0.9s;
-        }
-        .nav-buttons-wrapper {
-            background: rgba(18, 18, 20, 0.98); width: 100%; height: 68px; border-radius: 34px;
-            border: 1px solid var(--glass-border); pointer-events: auto;
-            display: flex; justify-content: space-around; align-items: center;
-            -webkit-mask-image: radial-gradient(circle 60px at center -5px, transparent 52px, black 53px);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        }
-
-        /* 📍 Confirm Button - Premium Breath */
-        .round-btn.center {
-            position: absolute; top: -38px; left: 50%; transform: translateX(-50%);
-            width: 78px; height: 78px; z-index: 2100; pointer-events: auto;
-            background: linear-gradient(135deg, #40362340, #8e6d31b3);
-            border-radius: 50%; font-size: 2.2rem; color: #000000;
-            
-            display: flex; justify-content: center; align-items: center;
-            animation: confirmBreath 3s ease-in-out infinite;
-            box-shadow: 0 15px 35px rgba(197, 160, 89, 0.4);
-            cursor: pointer;
-        }
-
-        /* 📍 Keyframes */
-        @keyframes shineText { to { background-position: 200% center; } }
-        @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes imageFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        @keyframes confirmBreath { 
-            0%, 100% { transform: translateX(-50%) scale(1); filter: brightness(1); } 
-            50% { transform: translateX(-50%) scale(1.06); filter: brightness(1.2); box-shadow: 0 0 45px rgba(197, 160, 89, 0.6); } 
-        }
-
-        .side-btn { background: none; border: none; color: #444; font-size: 1.3rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: 0.4s; }
-        .side-btn:active { color: var(--premium-gold); transform: scale(0.9); }
-        .nav-text { font-size: 0.6rem; margin-top: 5px; font-weight: 700; letter-spacing: 1px; color: #333; }
-        .note-area { width: 100%; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 16px; color: #fff; padding: 15px; box-sizing: border-box; outline: none; font-size: 0.9rem; font-family: inherit; resize: none; transition: 0.3s; }
-        .note-area:focus { border-color: var(--premium-gold); background: rgba(255,255,255,0.05); }
+        .side-drawer { position: fixed; top: 70px; right: 20px; width: 180px; background: var(--drawer-bg); z-index: 4000; padding: 10px; border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform-origin: top right; transform: scale(0); opacity: 0; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        .side-drawer.active { transform: scale(1); opacity: 1; pointer-events: auto; }
+        .drawer-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(128,128,128,0.06); border-radius: 18px; margin-bottom: 5px; cursor: pointer; }
     </style>
 </head>
 <body onload="initializeMenuPage()">
 
-    <div class="bottom-fade-layer"></div>
-
-    <div class="main-wrapper">
-        <header class="app-header">
-            <a href="javascript:history.back()" style="color: #444; font-size: 1.2rem;"><i class="fas fa-arrow-left"></i></a>
-            <h1 class="bangfood">SELECTION</h1>
-            <div style="width: 25px;"></div>
-        </header>
-
-        <div class="item-hero-section">
-            <img id="modal-item-image" src="" alt="food" class="modal-image">
-            <h2 id="modal-item-name" style="margin: 25px 0 5px; font-size: 1.4rem; font-weight: 500; color: #fff;"></h2>
-            <p style="color: var(--premium-gold); font-size: 0.9rem; opacity: 0.7;">Starting from ฿<span id="modal-base-price">0.00</span></p>
+<div id="side-drawer" class="side-drawer">
+    <div class="drawer-content">
+        <div class="drawer-item" onclick="switchCustomerTheme(); toggleDrawer();">
+            <span data-lang-en="THEME" data-lang-th="เปลี่ยนธีม">เปลี่ยนธีม</span>
+            <i class="fas fa-adjust" style="color:var(--premium-gold);"></i>
         </div>
-
-        <form id="custom-order-form">
-            <div id="dynamic-sizes-container"></div>
-            <div id="dynamic-addons-container"></div>
-            <div style="padding: 10px 25px;">
-                <p class="section-label">Special Notes</p>
-                <textarea id="modal-notes" rows="2" class="note-area" placeholder="ระบุความต้องการของคุณ..."></textarea>
-            </div>
-        </form>
-
-        <div class="price-summary-float">
-            <div class="price-label">TOTAL AMOUNT</div>
-            <div class="price-amount">฿<span id="modal-final-price">0.00</span></div>
+        <div class="drawer-item" onclick="switchCustomerLanguage(); toggleDrawer();">
+            <span data-lang-en="LANGUAGE" data-lang-th="เปลี่ยนภาษา">เปลี่ยนภาษา</span>
+            <b id="drawer-lang-status" style="font-size: 0.7rem; color: var(--premium-gold);">TH</b>
         </div>
+    </div>
+</div>
+<div id="drawer-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:transparent; z-index:3500; display:none;" onclick="toggleDrawer()"></div>
 
-        <div class="curved-nav-container">
-            <div class="round-btn center" onclick="confirmOrder()">
-                <i class="fas fa-check"></i>
+<div class="app-wrapper">
+    <div class="app-header-sticky">
+        <div class="header-main-row">
+            <div class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i></div>
+            <h1 class="bangfood-logo">BANGFOOD</h1>
+            <div class="hamburger-menu" onclick="toggleDrawer()">
+                <span></span><span></span><span></span>
             </div>
-            <div class="nav-buttons-wrapper">
-                <button class="side-btn" onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-home"></i>
-                    <span class="nav-text">HOME</span>
-                </button>
-                <div style="width: 90px;"></div>
-                <button class="side-btn" onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span class="nav-text">CART</span>
-                </button>
+        </div>
+        <div class="top-summary-bar">
+            <div class="summary-label">STATION <span id="display-table">1</span> | <span data-lang-en="TOTAL" data-lang-th="ราคารวม">TOTAL</span></div>
+            <div class="summary-val">฿<span id="modal-final-price">0.00</span></div>
+        </div>
+    </div>
+
+    <div class="item-hero">
+        <img id="modal-item-image" src="" class="modal-image">
+        <h2 id="modal-item-name" style="margin: 20px 0 5px; font-size: 1.4rem; color:var(--premium-gold);"></h2>
+        <p style="color: var(--premium-gold); font-size: 0.85rem; opacity: 0.8;">
+            <span data-lang-en="Starting from" data-lang-th="ราคาเริ่มต้น">Starting from</span> ฿<span id="modal-base-price">0.00</span>
+        </p>
+    </div>
+
+    <form id="custom-order-form">
+        <div id="dynamic-sizes-container"></div>
+        <div id="dynamic-addons-container"></div>
+        <div style="padding: 10px 0;">
+            <p style="color:#666; font-size:0.65rem; margin:20px 30px 10px; text-transform:uppercase; font-weight:700;" data-lang-en="Special Notes" data-lang-th="บันทึกเพิ่มเติม">Special Notes</p>
+            <textarea id="modal-notes" rows="2" class="note-area" placeholder="ระบุความต้องการของคุณ..."></textarea>
+        </div>
+    </form>
+
+    <div class="bottom-nav-fixed">
+        <div class="round-btn-center" onclick="confirmOrder()">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="nav-buttons-bar">
+            <div class="nav-icon" style="display:flex; flex-direction:column; align-items:center; color:#444; cursor:pointer;" onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-home"></i><span style="font-size:0.6rem; font-weight:700;" data-lang-en="HOME" data-lang-th="หน้าแรก">HOME</span>
+            </div>
+            <div style="width: 90px;"></div>
+            <div class="nav-icon" style="display:flex; flex-direction:column; align-items:center; color:#444; cursor:pointer;" onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-shopping-basket"></i><span style="font-size:0.6rem; font-weight:700;" data-lang-en="CART" data-lang-th="ตะกร้า">CART</span>
             </div>
         </div>
     </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -197,47 +128,98 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function initializeMenuPage() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const nameParam = urlParams.get('name');
-        const tableNo = urlParams.get('table') || localStorage.getItem('selectedTable') || '1';
-        localStorage.setItem('selectedTable', tableNo);
-        if (!nameParam) return;
+    let rawProductData = null;
 
-        db.ref('products').orderByChild('name').equalTo(nameParam).once('value', snapshot => {
-            const data = snapshot.val();
+    function toggleDrawer() {
+        const d = document.getElementById('side-drawer');
+        const o = document.getElementById('drawer-overlay');
+        const active = d.classList.toggle('active');
+        o.style.display = active ? 'block' : 'none';
+        if(active) {
+            const table = localStorage.getItem('selectedTable') || '1';
+            const lang = localStorage.getItem(`lang_table_${table}`) || 'th';
+            document.getElementById('drawer-lang-status').innerText = lang.toUpperCase();
+        }
+    }
+
+    function switchCustomerTheme() {
+        const table = localStorage.getItem('selectedTable') || '1';
+        const key = `theme_table_${table}`;
+        const next = (localStorage.getItem(key) === 'light') ? 'dark' : 'light';
+        localStorage.setItem(key, next);
+        applyTheme(next);
+    }
+
+    function applyTheme(t) { document.body.classList.toggle('light-theme', t === 'light'); }
+
+    async function switchCustomerLanguage() {
+        const table = localStorage.getItem('selectedTable') || '1';
+        const langKey = `lang_table_${table}`;
+        const next = (localStorage.getItem(langKey) === 'en') ? 'th' : 'en';
+        localStorage.setItem(langKey, next);
+        document.getElementById('drawer-lang-status').innerText = next.toUpperCase();
+        
+        document.querySelectorAll('[data-lang-en]').forEach(el => {
+            el.innerText = (next === 'en') ? el.getAttribute('data-lang-en') : el.getAttribute('data-lang-th');
+        });
+
+        if (rawProductData) { await renderTranslatedContent(rawProductData, next); }
+    }
+
+    async function initializeMenuPage() {
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name');
+        const table = params.get('table') || localStorage.getItem('selectedTable') || '1';
+        localStorage.setItem('selectedTable', table);
+        document.getElementById('display-table').innerText = table;
+        
+        applyTheme(localStorage.getItem(`theme_table_${table}`) || 'dark');
+        const currentLang = localStorage.getItem(`lang_table_${table}`) || 'th';
+
+        if (!name) return;
+        db.ref('products').orderByChild('name').equalTo(name).once('value', async snap => {
+            const data = snap.val();
             if (data) {
-                const product = Object.values(data)[0];
-                document.getElementById('modal-item-name').innerText = product.name;
-                document.getElementById('modal-base-price').innerText = parseFloat(product.price).toFixed(2);
-                document.getElementById('modal-item-image').src = product.img;
-                renderOptions(product.config || {});
-                updatePrice();
+                rawProductData = Object.values(data)[0];
+                await renderTranslatedContent(rawProductData, currentLang);
+                document.querySelectorAll('[data-lang-en]').forEach(el => {
+                    el.innerText = (currentLang === 'en') ? el.getAttribute('data-lang-en') : el.getAttribute('data-lang-th');
+                });
             }
         });
     }
 
-    function renderOptions(config) {
-        const sizeContainer = document.getElementById('dynamic-sizes-container');
+    async function renderTranslatedContent(p, lang) {
+        const transSnap = await db.ref('menu_translations').once('value');
+        const dict = transSnap.val() || {};
+        const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
+        document.getElementById('modal-item-name').innerText = displayName;
+        document.getElementById('modal-item-name').setAttribute('data-raw', p.name);
+        document.getElementById('modal-base-price').innerText = parseFloat(p.price).toFixed(2);
+        document.getElementById('modal-item-image').src = p.img;
+        renderOptions(p.config || {}, lang, dict);
+        updatePrice();
+    }
+
+    function renderOptions(config, lang, dict) {
+        const sc = document.getElementById('dynamic-sizes-container');
+        sc.innerHTML = '';
         if (config.sizes) {
-            sizeContainer.innerHTML = `<h3 class="section-label">Selection Size</h3>`;
+            const title = (lang === 'en') ? "Select Size" : "เลือกขนาด";
+            sc.innerHTML = `<h3 style="color:#444; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;">${title}</h3>`;
             config.sizes.forEach((s, i) => {
-                const item = document.createElement('label');
-                item.className = 'option-item';
-                item.style.animationDelay = (0.4 + (i * 0.1)) + 's';
-                item.innerHTML = `<input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" ${i===0?'checked':''} onchange="updatePrice()"><span style="font-size: 0.95rem;">${s.name}</span><span style="margin-left:auto; color:var(--premium-gold); font-weight:500;">+${s.price}</span>`;
-                sizeContainer.appendChild(item);
+                const sName = (lang === 'en') ? (dict[s.name] || s.name) : s.name;
+                sc.innerHTML += `<label class="option-item" style="animation-delay: ${i * 0.1}s"><input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" ${i===0?'checked':''} onchange="updatePrice()"><span style="font-size: 0.95rem;">${sName}</span><span style="margin-left:auto; color:var(--premium-gold); font-weight:500;">+${s.price}</span></label>`;
             });
         }
-        const addonContainer = document.getElementById('dynamic-addons-container');
+        const ac = document.getElementById('dynamic-addons-container');
+        ac.innerHTML = '';
         if (config.addons) {
-            addonContainer.innerHTML = `<h3 class="section-label">Extra Add-ons</h3>`;
+            const title = (lang === 'en') ? "Extra Add-ons" : "ท็อปปิ้งเสริม";
+            ac.innerHTML = `<h3 style="color:#444; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;">${title}</h3>`;
             config.addons.forEach((a, i) => {
-                const item = document.createElement('label');
-                item.className = 'option-item';
-                item.style.animationDelay = (0.6 + (i * 0.1)) + 's';
-                item.innerHTML = `<input type="checkbox" name="addon" value="${a.name}" data-modifier="${a.price}" onchange="updatePrice()"><span style="font-size: 0.95rem;">${a.name}</span><span style="margin-left:auto; color:var(--premium-gold); font-weight:500;">+${a.price}</span>`;
-                addonContainer.appendChild(item);
+                const aName = (lang === 'en') ? (dict[a.name] || a.name) : a.name;
+                ac.innerHTML += `<label class="option-item" style="animation-delay: ${(i + 3) * 0.1}s"><input type="checkbox" name="addon" value="${a.name}" data-modifier="${a.price}" onchange="updatePrice()"><span style="font-size: 0.95rem;">${aName}</span><span style="margin-left:auto; color:var(--premium-gold); font-weight:500;">+${a.price}</span></label>`;
             });
         }
     }
@@ -245,44 +227,32 @@
     function updatePrice() {
         const base = parseFloat(document.getElementById('modal-base-price').innerText);
         let extra = 0;
-        const size = document.querySelector('input[name="size"]:checked');
-        if (size) extra += parseFloat(size.dataset.modifier);
+        const s = document.querySelector('input[name="size"]:checked');
+        if (s) extra += parseFloat(s.dataset.modifier);
         document.querySelectorAll('input[name="addon"]:checked').forEach(a => extra += parseFloat(a.dataset.modifier));
         document.getElementById('modal-final-price').innerText = (base + extra).toFixed(2);
     }
 
     function confirmOrder() {
-    const tableNo = localStorage.getItem('selectedTable');
-    const cartKey = `bangfood_cart_table_${tableNo}`;
-    let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-    
-    // 📍 สร้าง Array เก็บออฟชันพร้อมราคาแยกกัน
-    let selectedOptions = [];
-    
-    const size = document.querySelector('input[name="size"]:checked');
-    if (size) {
-        selectedOptions.push({ name: size.value, price: size.dataset.modifier });
+        const table = localStorage.getItem('selectedTable');
+        const cartKey = `bangfood_cart_table_${table}`;
+        let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
+        let opts = [];
+        const s = document.querySelector('input[name="size"]:checked');
+        if (s) opts.push({ name: s.value, price: s.dataset.modifier });
+        document.querySelectorAll('input[name="addon"]:checked').forEach(a => opts.push({ name: a.value, price: a.dataset.modifier }));
+        cart.items.push({ 
+            name: document.getElementById('modal-item-name').getAttribute('data-raw'), 
+            finalPrice: document.getElementById('modal-final-price').innerText, 
+            optionsArray: opts, 
+            notes: document.getElementById('modal-notes').value,
+            img: document.getElementById('modal-item-image').src, 
+            quantity: 1 
+        });
+        sessionStorage.setItem(cartKey, JSON.stringify(cart));
+        window.location.href = `index.html?table=${table}`;
     }
-    
-    document.querySelectorAll('input[name="addon"]:checked').forEach(a => {
-        selectedOptions.push({ name: a.value, price: a.dataset.modifier });
-    });
-
-    const notes = document.getElementById('modal-notes').value;
-    
-    cart.items.push({ 
-        name: document.getElementById('modal-item-name').innerText, 
-        finalPrice: document.getElementById('modal-final-price').innerText, 
-        // 📍 ส่งเป็น Array ของ Object ไปแทน String เดิม
-        optionsArray: selectedOptions, 
-        notes: notes,
-        img: document.getElementById('modal-item-image').src, 
-        quantity: 1 
-    });
-    
-    sessionStorage.setItem(cartKey, JSON.stringify(cart));
-    window.location.href = `index.html?table=${tableNo}`;
-}
 </script>
+<script src="guard.js"></script>
 </body>
 </html>

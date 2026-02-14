@@ -2,209 +2,235 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Center | BANGFOOD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Dashboard | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="admin_style.css">
+
     <style>
+        /* คงเหลือไว้เฉพาะสไตล์ที่เป็นโครงสร้างเฉพาะของหน้าหลักเท่านั้น */
         :root {
-            --bg-deep: #0a0a0a;
-            --glass-soft: rgba(255, 255, 255, 0.03);
-            --border-dim: rgba(255, 255, 255, 0.08);
-            
-            /* 📍 ชุดสีไล่เฉดแบบพรีเมียม */
-            --grad-admin: linear-gradient(135deg, #c5a059, #8e6d31);
-            --grad-order: linear-gradient(135deg, #4facfe, #00f2fe);
-            --grad-history: linear-gradient(135deg, #43e97b, #38f9d7);
-            --grad-trend: linear-gradient(135deg, #f9d423, #ff4e50);
-            --grad-product: linear-gradient(135deg, #f093fb, #f5576c);
-            --grad-revenue: linear-gradient(135deg, #667eea, #764ba2);
+            --sidebar-wide: 260px;
+            --sidebar-narrow: 80px;
+            --top-bar-height: 70px;
+            --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        body {
-            background-color: var(--bg-deep);
-            color: #ffffff;
-            font-family: 'Kanit', sans-serif;
-            margin: 0; padding: 0;
-            overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% -20%, #222 0%, #0a0a0a 80%);
-            min-height: 100vh;
+        body { font-family: 'Kanit', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        .top-bar {
+            height: var(--top-bar-height);
+            background: var(--top-bar-bg); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 25px; position: relative; z-index: 2500;
         }
 
-        .admin-header {
-            position: sticky; top: 0; z-index: 2000;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(25px);
-            padding: 25px; text-align: center;
-            border-bottom: 1px solid var(--border-dim);
-            animation: fadeInDown 0.8s ease-out;
+        .top-left { display: flex; align-items: center; gap: 20px; }
+        .mobile-toggle {
+            display: none; background: var(--border); color: var(--text);
+            width: 40px; height: 40px; border-radius: 10px;
+            justify-content: center; align-items: center; cursor: pointer;
         }
-        .admin-header h1 { 
-            font-size: 1rem; letter-spacing: 5px; margin: 0; font-weight: 500; 
-            text-transform: uppercase; color: #fff;
-        }
+        .system-logo { font-size: 1rem; letter-spacing: 3px; color: var(--premium-gold); font-weight: 600; text-transform: uppercase; }
 
-        .container { padding: 30px 20px 120px; max-width: 450px; margin: 0 auto; }
-        .admin-menu-list { display: flex; flex-direction: column; gap: 18px; }
+        .top-right { display: flex; align-items: center; gap: 25px; }
+        #top-clock { font-size: 0.95rem; color: var(--text); font-weight: 500; min-width: 80px; text-align: right; }
 
-        /* 📋 Menu Card - ปรับแต่งให้ยุบเฉพาะเนื้อหาภายใน */
-        .menu-card {
-            display: flex; align-items: center;
-            background: var(--glass-soft);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--border-dim);
-            padding: 24px 25px; border-radius: 30px;
-            text-decoration: none; color: white;
-            opacity: 0; transform: translateY(30px);
-            animation: slideUpPop 0.6s forwards;
-            position: relative; overflow: hidden;
-            
-            /* 📍 การตั้งค่าสีขอบให้คงที่ */
-            transition: border-color 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
+        .profile-container { position: relative; }
+        .user-profile-header {
+            display: flex; align-items: center; gap: 12px; cursor: pointer;
+            padding: 5px 10px; border-radius: 15px;
         }
 
-        /* 📍 ส่วนที่ทำให้ปุ่ม "ยุบลง" แต่แสงสียังเด่น */
-        .menu-card:active {
-            transform: scale(0.94); /* ตัวกล่องยุบลง */
-            filter: brightness(1.2); /* เพิ่มความสว่างของสี */
+        .user-info-text { text-align: right; }
+        .user-info-text b { display: block; font-size: 0.8rem; color: var(--text); }
+        .user-info-text span { font-size: 0.6rem; color: var(--premium-gold); text-transform: uppercase; }
+        
+        .user-avatar-circle {
+            width: 42px; height: 42px; border-radius: 50%;
+            border: 2px solid var(--premium-gold); overflow: hidden;
+        }
+        .user-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+        .profile-dropdown {
+            position: absolute; top: calc(100% + 15px); right: 0;
+            width: 220px; background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 10px; opacity: 0; visibility: hidden;
+            transform: translateY(-10px); transition: var(--transition); z-index: 3000;
+        }
+        .profile-dropdown.active { opacity: 1; visibility: visible; transform: translateY(0); }
+
+        .dropdown-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 15px; border-radius: 12px; color: var(--sub-text);
+            font-size: 0.85rem; cursor: pointer;
         }
 
-        /* 📍 กำหนดความหนาของขอบแยกตามประเภท (สีจะไม่ยุบหายไป) */
-        .btn-admin { border-left: 6px solid #c5a059; }
-        .btn-order { border-left: 6px solid #4facfe; }
-        .btn-history { border-left: 6px solid #43e97b; }
-        .btn-trend { border-left: 6px solid #f9d423; }
-        .btn-product { border-left: 6px solid #f093fb; }
-        .btn-revenue { border-left: 6px solid #667eea; }
-
-        /* การไล่เฉดสีที่ไอคอน */
-        .btn-admin .menu-icon i { background: var(--grad-admin); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-order .menu-icon i { background: var(--grad-order); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-history .menu-icon i { background: var(--grad-history); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-trend .menu-icon i { background: var(--grad-trend); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-product .menu-icon i { background: var(--grad-product); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .btn-revenue .menu-icon i { background: var(--grad-revenue); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        /* การโผล่แบบไล่ลำดับ */
-        .menu-card:nth-child(1) { animation-delay: 0.1s; }
-        .menu-card:nth-child(2) { animation-delay: 0.2s; }
-        .menu-card:nth-child(3) { animation-delay: 0.3s; }
-        .menu-card:nth-child(4) { animation-delay: 0.4s; }
-        .menu-card:nth-child(5) { animation-delay: 0.5s; }
-        .menu-card:nth-child(6) { animation-delay: 0.6s; }
-
-        .menu-icon { font-size: 1.5rem; margin-right: 22px; width: 40px; display: flex; justify-content: center; }
-        .menu-info { flex: 1; }
-        .menu-info b { display: block; font-size: 1.05rem; font-weight: 500; margin-bottom: 4px; letter-spacing: 0.5px; }
-        .menu-info small { color: #555; font-size: 0.75rem; letter-spacing: 0.5px; }
-
-        .bottom-nav-logout {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(25px);
-            padding: 25px 0; border-top: 1px solid var(--border-dim);
-            display: flex; justify-content: center; z-index: 2000;
+        .layout-body { display: flex; flex: 1; overflow: hidden; }
+        .sidebar {
+            width: var(--sidebar-narrow); background: var(--top-bar-bg); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; transition: var(--transition); overflow: hidden;
         }
-        .exit-btn {
-            color: #ff4444; font-size: 0.75rem; letter-spacing: 4px; font-weight: 500;
-            text-transform: uppercase; display: flex; align-items: center; gap: 10px; cursor: pointer;
-        }
+        @media (min-width: 901px) { .sidebar:hover { width: var(--sidebar-wide); } }
 
-        @keyframes slideUpPop {
-            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+        .nav-list { flex: 1; padding: 20px 10px; display: flex; flex-direction: column; gap: 6px; }
+        .nav-item {
+            display: flex; align-items: center; height: 50px; border-radius: 14px;
+            cursor: pointer; transition: var(--transition); color: var(--sub-text);
         }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .nav-item i { min-width: 60px; font-size: 1.2rem; display: flex; justify-content: center; }
+        .nav-item span { font-size: 0.85rem; white-space: nowrap; opacity: 0; transform: translateX(-10px); transition: 0.3s; }
+        .sidebar:hover .nav-item span { opacity: 1; transform: translateX(0); margin-left: 10px; }
+        .nav-item.active { background: linear-gradient(90deg, rgba(197, 160, 89, 0.15), transparent); border: 1px solid rgba(197, 160, 89, 0.3); color: var(--premium-gold); }
+
+        .main-content { flex: 1; position: relative; background: var(--bg); overflow: hidden; }
+        .content-frame { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 900px) {
+            .mobile-toggle { display: flex; }
+            .sidebar { position: fixed; left: -100%; top: var(--top-bar-height); height: calc(100% - var(--top-bar-height)); width: 280px !important; z-index: 2000; background: var(--bg); }
+            .sidebar.open { left: 0; }
+            .sidebar .nav-item span { opacity: 1 !important; display: inline-block !important; transform: none !important; margin-left: 12px !important; font-size: 0.9rem; color: var(--text); }
+            .sidebar-overlay { display: none; position: fixed; top: var(--top-bar-height); left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1500; }
+            .sidebar-overlay.show { display: block; }
         }
     </style>
 </head>
-<body>
+<body onload="initializeCommandCenter()">
 
-    <header class="admin-header">
-        <h1>Admin Control</h1>
+    <header class="top-bar">
+        <div class="top-left">
+            <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+            <div class="system-logo" data-lang-en="Bangfood Command Center" data-lang-th="ระบบจัดการ Bangfood">Bangfood Command Center</div>
+        </div>
+        
+        <div class="top-right">
+            <div id="top-clock">00:00:00</div>
+            <div class="profile-container">
+                <div class="user-profile-header" onclick="toggleProfileDropdown()">
+                    <div class="user-info-text">
+                        <b id="admin-name-display">Admin User</b>
+                        <span data-lang-en="Manager" data-lang-th="ผู้จัดการ">Manager <i class="fas fa-chevron-down" style="font-size:0.5rem;"></i></span>
+                    </div>
+                    <div class="user-avatar-circle">
+                        <img src="https://i.pinimg.com/736x/8b/11/18/8b111848484848484848484848484848.jpg" id="top-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                    </div>
+                </div>
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <div class="dropdown-item" onclick="loadContent('profile.html', null); toggleProfileDropdown();" data-lang-en="Profile" data-lang-th="ข้อมูลส่วนตัว">
+                        <i class="fas fa-user-circle"></i> ข้อมูลส่วนตัว
+                    </div>
+                    <div class="dropdown-item" onclick="loadContent('settings.html', null); toggleProfileDropdown();" data-lang-en="Settings" data-lang-th="ตั้งค่าระบบ">
+                        <i class="fas fa-cog"></i> ตั้งค่าระบบ & การเงิน
+                    </div>
+                    <div class="dropdown-item" style="color:#ff4444;" onclick="logoutAdmin()" data-lang-en="Logout" data-lang-th="ออกจากระบบ">
+                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <div class="container">
-        <div class="admin-menu-list">
-            
-            <a href="admin.html" class="menu-card btn-order">
-                <div class="menu-icon"><i class="fas fa-receipt"></i></div>
-                <div class="menu-info">
-                    <b>จัดการคำสั่งซื้อ</b>
-                    <small>ออเดอร์และการทำอาหาร</small>
+    <div class="layout-body">
+        <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+        <aside class="sidebar" id="main-sidebar">
+            <nav class="nav-list">
+                <div class="nav-item active" onclick="loadContent('admin_dashboard.html', this)">
+                    <i class="fas fa-th-large"></i><span data-lang-en="DASHBOARD" data-lang-th="แผงควบคุม">DASHBOARD</span>
                 </div>
-                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
-            </a>
-
-            <a href="history.html" class="menu-card btn-history">
-                <div class="menu-icon"><i class="fas fa-clock-rotate-left"></i></div>
-                <div class="menu-info">
-                    <b>ประวัติการสั่งซื้อ</b>
-                    <small>ตรวจสอบบิลย้อนหลัง</small>
+                <div class="nav-item" onclick="loadContent('admin.html', this)">
+                    <i class="fas fa-receipt"></i><span data-lang-en="ORDERS" data-lang-th="จัดการออเดอร์">จัดการออเดอร์</span>
                 </div>
-                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
-            </a>
-
-            <a href="admin_users.html" class="menu-card btn-admin">
-                <div class="menu-icon"><i class="fas fa-user-shield"></i></div>
-                <div class="menu-info">
-                    <b>จัดการแอดมิน</b>
-                    <small>การเข้าถึงและความปลอดภัย</small>
+                <div class="nav-item" onclick="loadContent('history.html', this)">
+                    <i class="fas fa-history"></i><span data-lang-en="HISTORY" data-lang-th="ประวัติการสั่งซื้อ">ประวัติการสั่งซื้อ</span>
                 </div>
-                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
-            </a>
-
-            <a href="trending.html" class="menu-card btn-trend">
-                <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
-                <div class="menu-info">
-                    <b>อันดับเมนูยอดฮิต</b>
-                    <small>เมนูขายดีประจำสัปดาห์</small>
+                <div class="nav-item" onclick="loadContent('admin_users.html', this)">
+                    <i class="fas fa-user-shield"></i><span data-lang-en="STAFF" data-lang-th="จัดการแอดมิน">จัดการแอดมิน</span>
                 </div>
-                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
-            </a>
-
-            <a href="edit_products.html" class="menu-card btn-product">
-                <div class="menu-icon"><i class="fas fa-box-open"></i></div>
-                <div class="menu-info">
-                    <b>จัดการรายการอาหาร</b>
-                    <small>ปรับแต่งเมนูและราคา</small>
+                <div class="nav-item" onclick="loadContent('trending.html', this)">
+                    <i class="fas fa-fire"></i><span data-lang-en="TRENDING" data-lang-th="อันดับยอดฮิต">อันดับยอดฮิต</span>
                 </div>
-                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
-            </a>
-            
-            <a href="revenue_report.html" class="menu-card btn-revenue">
-                <div class="menu-icon"><i class="fas fa-wallet"></i></div>
-                <div class="menu-info">
-                    <b>ข้อมูลรายได้สรุป</b>
-                    <small>สถิติและยอดขายทั้งหมด</small>
+                <div class="nav-item" onclick="loadContent('edit_products.html', this)">
+                    <i class="fas fa-utensils"></i><span data-lang-en="MENU" data-lang-th="จัดการเมนู">จัดการเมนู</span>
                 </div>
-                <i class="fas fa-chevron-right" style="opacity:0.05; font-size:0.8rem;"></i>
-            </a>
+                <div class="nav-item" onclick="loadContent('revenue_report.html', this)">
+                    <i class="fas fa-chart-bar"></i><span data-lang-en="REVENUE" data-lang-th="ข้อมูลรายได้">ข้อมูลรายได้</span>
+                </div>
+            </nav>
+        </aside>
 
-        </div>
-    </div>
-
-    <div class="bottom-nav-logout">
-        <div onclick="logoutAdmin()" class="exit-btn">
-            <i class="fas fa-sign-out-alt"></i> Sign Out
-        </div>
+        <main class="main-content">
+            <iframe src="" id="content-frame" class="content-frame"></iframe>
+        </main>
     </div>
 
 <script>
-    function checkLoginStatus() {
-        const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn');
-        if (isLoggedIn !== 'true') { window.location.href = "start.html"; }
+    /* โค้ดส่วนนี้คงไว้เฉพาะการจัดการ Iframe และ UI ของหน้าหลัก */
+    setInterval(() => { document.getElementById('top-clock').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
+
+    function toggleProfileDropdown() { document.getElementById('profile-dropdown').classList.toggle('active'); }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.profile-container')) {
+            document.getElementById('profile-dropdown').classList.remove('active');
+        }
     }
+
+    function initializeCommandCenter() {
+        checkLoginStatus();
+        checkInitialAvatar(); 
+        document.getElementById('admin-name-display').innerText = sessionStorage.getItem('currentAdminName') || "Admin User";
+        loadContent('admin_dashboard.html', document.querySelector('.nav-item')); 
+    }
+
+    function toggleSidebar() {
+        document.getElementById('main-sidebar').classList.toggle('open');
+        document.getElementById('overlay').classList.toggle('show');
+    }
+
+    function loadContent(url, element) {
+        const frame = document.getElementById('content-frame');
+        if(element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
+        frame.src = url;
+        
+        if (window.innerWidth <= 900) {
+            document.getElementById('main-sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
+    }
+
+    function checkLoginStatus() { if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') window.location.href = "start.html"; }
 
     function logoutAdmin() {
         if(confirm("ยืนยันการออกจากระบบ?")) {
             sessionStorage.removeItem('isAdminLoggedIn');
-            sessionStorage.removeItem('currentAdminName');
             window.location.href = "start.html";
         }
     }
-    window.onload = checkLoginStatus;
+
+    function syncAvatar(img) {
+        if (img && document.getElementById('top-avatar')) {
+            document.getElementById('top-avatar').src = img;
+        }
+    }
+
+    function checkInitialAvatar() {
+        const savedImg = localStorage.getItem('admin_new_avatar');
+        syncAvatar(savedImg);
+    }
+
+    // ฟังการเปลี่ยนรูปโปรไฟล์แบบข้ามหน้า
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'admin_new_avatar') syncAvatar(e.newValue);
+    });
 </script>
+
+<script src="admin_script.js"></script>
+
 </body>
 </html>

@@ -3,104 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ประวัติการขาย - BANGFOOD</title>
+    <title>Sales History | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="admin_style.css">
+
     <style>
-        :root {
-            --premium-gold: #c5a059;
-            --bg-deep: #0a0a0a;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border-dim: rgba(255, 255, 255, 0.08);
-            --success-green: #4CAF50;
-        }
+        /* 📍 คงเหลือไว้เฉพาะโครงสร้าง Layout เฉพาะหน้า */
+        body { margin: 0; padding: 25px; min-height: 100vh; animation: fadeInPage 0.8s ease-out; }
 
-        body { background-color: var(--bg-deep); color: #f5f5f5; font-family: 'Kanit', sans-serif; margin: 0; overflow-x: hidden; }
-        .history-app-container { padding: 20px; max-width: 600px; margin: 0 auto; animation: fadeIn 0.8s ease-out; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { padding: 22px; border-radius: 28px; text-align: center; }
+        .stat-card:hover { border-color: var(--premium-gold); transform: translateY(-5px); }
+        .stat-label { font-size: 0.65rem; color: var(--sub-text); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; display: block; font-weight: 700; }
+        .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--text); }
+
+        .filter-section { border-radius: 24px; padding: 20px; margin-bottom: 25px; }
+        .filter-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+        .filter-group label { font-size: 0.7rem; color: var(--sub-text); margin-bottom: 5px; display: block; padding-left: 5px; text-transform: uppercase; font-weight: 600; }
         
-        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .history-header h1 { font-size: 1.2rem; color: var(--premium-gold); margin: 0; letter-spacing: 2px; }
-        .btn-back-admin { background: var(--glass); color: #888; padding: 10px 18px; border-radius: 12px; text-decoration: none; font-size: 0.8rem; border: 1px solid var(--border-dim); transition: 0.3s; }
-
-        .summary-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--glass); padding: 18px; border-radius: 22px; text-align: center; border: 1px solid var(--border-dim); }
-        .stat-label { display: block; font-size: 0.65rem; color: #666; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
-        .stat-value { font-size: 1.4rem; font-weight: bold; color: #fff; }
-
-        .filter-toggle-btn { background: var(--glass); padding: 15px; border-radius: 18px; border: 1px solid var(--border-dim); margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
-        .filter-panel { display: none; background: #111; padding: 20px; border-radius: 22px; border: 1px dashed var(--premium-gold); margin-bottom: 20px; }
-
-        /* 📜 รายการการ์ดประวัติ */
-        .order-card { 
-            background: var(--glass); padding: 20px; border-radius: 24px; 
-            border: 1px solid var(--border-dim); margin-bottom: 15px; transition: 0.3s;
+        input { 
+            background: rgba(128,128,128,0.1); border: 1px solid var(--border); padding: 12px; 
+            border-radius: 14px; color: var(--text); width: 100%; box-sizing: border-box; 
+            outline: none; transition: 0.3s; font-size: 0.9rem; 
         }
-        .order-card.active { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); }
+        input:focus { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); }
 
-        /* 📍 ส่วนแสดงรายการอาหารแบบละเอียด */
-        .item-block { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .food-main-row { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 500; color: #fff; }
-        .addon-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: #777; margin-top: 4px; padding-left: 10px; }
-        .addon-p { color: var(--premium-gold); }
-        
-        .item-sum-box { 
-            text-align: right; margin-top: 12px; font-size: 0.85rem; color: #aaa; 
-            padding: 6px 12px; background: rgba(255,255,255,0.02); border-radius: 10px;
+        .btn-search { 
+            background: var(--premium-gold); color: #000; border: none; padding: 14px; 
+            border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; 
+            width: 100%; transition: 0.3s; font-size: 0.85rem; letter-spacing: 1px; 
         }
 
-        .action-btn { flex: 1; border: none; padding: 12px; border-radius: 14px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: 0.3s; }
-        .btn-print { background: #2196F3; color: white; }
-        .btn-delete { background: rgba(255, 71, 87, 0.1); color: #ff4757; }
+        .order-card { border-radius: 24px; margin-bottom: 12px; cursor: pointer; overflow: hidden; }
+        .order-card:hover { border-color: var(--premium-gold); }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        input { padding: 12px; border-radius: 12px; border: 1px solid var(--border-dim); background: #1a1a1a; color: #fff; width: 100%; box-sizing: border-box; outline: none; margin-top: 5px; }
+        .card-collapsed-part { padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; }
+        .order-brief { display: flex; align-items: center; gap: 15px; }
+        .station-tag { background: var(--premium-gold); color: #000; padding: 4px 14px; border-radius: 10px; font-size: 0.7rem; font-weight: 800; }
+        .order-date-brief { font-size: 0.8rem; color: var(--sub-text); }
+        .total-brief { font-size: 1.15rem; color: var(--premium-gold); font-weight: 700; }
+
+        .card-expanded-part {
+            max-height: 0; padding: 0 25px; background: rgba(128,128,128,0.02);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); opacity: 0; border-top: 1px solid transparent;
+        }
+        .order-card.active .card-expanded-part { max-height: 1000px; padding: 20px 25px 25px; opacity: 1; border-top: 1px solid var(--border); }
+
+        .item-row { padding: 14px 0; border-bottom: 1px solid rgba(128,128,128,0.1); }
+        .food-line { display: flex; justify-content: space-between; color: var(--text); font-size: 0.9rem; font-weight: 500; }
+        .addon-item { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--sub-text); margin-top: 4px; padding-left: 15px; }
+
+        .btn-group { display: flex; gap: 8px; margin-top: 20px; }
+        .btn-action { flex: 1; border: none; padding: 12px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 0.75rem; }
+        .btn-print { background: rgba(128,128,128,0.1); color: var(--sub-text); border: 1px solid var(--border); }
+        .btn-del { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.2); }
+        .btn-del:hover { background: #ff4757; color: #fff; }
+
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media print { .filter-section, .btn-group, .stats-grid { display: none; } body { background: white; color: black; } .order-card { border: 1px solid #ddd; page-break-inside: avoid; } .card-expanded-part { max-height: none !important; opacity: 1 !important; } }
     </style>
 </head>
 <body onload="initializeHistory()">
 
-    <div class="history-app-container">
-        <header class="history-header">
-            <h1>📜 ประวัติการขาย</h1>
-            <a href="admin_center.html" class="btn-back-admin">⬅ กลับแอดมิน</a>
-        </header>
-
-        <main>
-            <div class="filter-toggle-btn" onclick="toggleFilterPanel()">
-                <span style="color: var(--premium-gold);"><i class="fas fa-search"></i> ค้นหาตามวันที่/เวลา</span>
-                <i id="filter-icon" class="fas fa-chevron-down" style="color: #444;"></i>
+    <main>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label" data-lang-en="Total Bills" data-lang-th="จำนวนบิลทั้งหมด">Total Bills</span>
+                <span id="total-bills" class="stat-value">0</span>
             </div>
-
-            <div id="filter-panel" class="filter-panel">
-                <div style="display: grid; gap: 15px;">
-                    <div><label class="stat-label">วันที่ขาย</label><input type="date" id="search-date"></div>
-                    <div style="display: flex; gap: 10px;">
-                        <div style="flex: 1;"><label class="stat-label">ตั้งแต่</label><input type="time" id="start-time" value="00:00"></div>
-                        <div style="flex: 1;"><label class="stat-label">ถึง</label><input type="time" id="end-time" value="23:59"></div>
-                    </div>
-                    <button onclick="filterHistoryByDateTime()" style="background: var(--premium-gold); color: black; border: none; padding: 15px; border-radius: 14px; cursor: pointer; font-weight: bold;">ค้นหาข้อมูล</button>
-                </div>
+            <div class="stat-card" style="border-bottom: 4px solid #27ae60;">
+                <span class="stat-label" data-lang-en="Revenue View" data-lang-th="ยอดขายรวม">Revenue View</span>
+                <span class="stat-value">฿<span id="total-revenue">0.00</span></span>
             </div>
+        </div>
 
-            <div class="summary-dashboard">
-                <div class="stat-card"><span class="stat-label">จำนวนบิล</span><span id="total-bills" class="stat-value">0</span></div>
-                <div class="stat-card" style="border-color: var(--success-green);"><span class="stat-label">รายได้รวม</span><span id="total-revenue" class="stat-value">0.00</span></div>
+        <section class="filter-section">
+            <div class="filter-row">
+                <div class="filter-group"><label data-lang-en="Date" data-lang-th="วันที่">วันที่</label><input type="date" id="search-date"></div>
+                <div class="filter-group"><label data-lang-en="Start" data-lang-th="เริ่ม">เริ่ม</label><input type="time" id="start-time" value="00:00"></div>
+                <div class="filter-group"><label data-lang-en="To" data-lang-th="ถึง">ถึง</label><input type="time" id="end-time" value="23:59"></div>
             </div>
+            <button onclick="filterHistoryByDateTime()" class="btn-search" data-lang-en="FILTER RECORDS" data-lang-th="ค้นหาประวัติ">FILTER RECORDS</button>
+        </section>
 
-            <div id="history-list">
-                <p style="text-align:center; padding:50px; color:#333;">กำลังโหลดข้อมูล...</p>
+        <div id="history-list">
+            <div style="text-align:center; padding:80px 0; opacity:0.3;">
+                <i class="fas fa-circle-notch fa-spin fa-2x"></i>
+                <p>Loading records...</p>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    const firebaseConfig = { apiKey: "AIzaSyCY...", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.firebasestorage.app", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
+    const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.firebasestorage.app", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let allHistoryData = [];
 
     function initializeHistory() {
+        loadHistoryRealtime();
+    }
+
+    function loadHistoryRealtime() {
         db.ref('history').on('value', (snapshot) => {
             allHistoryData = [];
             if (snapshot.exists()) {
@@ -110,97 +119,74 @@
         });
     }
 
+    function toggleCard(element) {
+        element.classList.toggle('active');
+    }
+
     function renderHistory(data) {
         const list = document.getElementById('history-list');
         const billsEl = document.getElementById('total-bills');
         const revEl = document.getElementById('total-revenue');
         let html = ''; let totalSum = 0;
-        data.sort((a, b) => b.archivedAt - a.archivedAt);
+        data.sort((a, b) => (b.archivedAt || 0) - (a.archivedAt || 0));
 
         data.forEach((order) => {
             totalSum += parseFloat(order.total || 0);
-            
-            // 📍 ประมวลผลแยกราคาออฟชันเสริม
-            let itemsHtml = order.items ? order.items.map(item => {
-                const finalP = parseFloat(item.finalPrice || 0);
-                let optHtml = ''; let optSum = 0;
+            const orderId = order.id ? order.id.substring(order.id.length - 7).toUpperCase() : 'N/A';
 
-                if (item.optionsArray && item.optionsArray.length > 0) {
-                    optHtml = item.optionsArray.map(opt => {
-                        const op = parseFloat(opt.price || 0);
-                        optSum += op;
-                        return `<div class="addon-row"><span>+ ${opt.name}</span><span class="addon-p">฿${op.toFixed(2)}</span></div>`;
-                    }).join('');
-                }
-
-                const baseP = finalP - optSum;
-                return `
-                    <div class="item-block">
-                        <div class="food-main-row"><span>${item.quantity || 1}x ${item.name}</span><span>฿${baseP.toFixed(2)}</span></div>
-                        <div class="addon-list">${optHtml}</div>
-                        <div class="item-sum-box">รวมรายการนี้: ฿${finalP.toFixed(2)}</div>
-                    </div>`;
-            }).join('') : '';
+            let itemsHtml = order.items ? order.items.map(item => `
+                <div class="item-row">
+                    <div class="food-line"><span>${item.quantity || 1}x ${item.name}</span><b>฿${parseFloat(item.finalPrice).toFixed(2)}</b></div>
+                    ${item.optionsArray ? item.optionsArray.map(opt => `<div class="addon-item"><span>+ ${opt.name}</span><span>฿${parseFloat(opt.price).toFixed(2)}</span></div>`).join('') : ''}
+                </div>`).join('') : '';
 
             html += `
-                <div class="order-card" id="card-${order.id}">
-                    <div onclick="toggleDetails('${order.id}')" style="cursor:pointer;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="background:var(--premium-gold); color:#000; padding:4px 12px; border-radius:10px; font-size:0.75rem; font-weight:bold;">โต๊ะ ${order.tableNumber || 'N/A'}</span>
-                            <b style="font-size:1.2rem; color:var(--premium-gold);">฿${order.total}</b>
+                <div class="order-card" onclick="toggleCard(this)">
+                    <div class="card-collapsed-part">
+                        <div class="order-brief">
+                            <span class="station-tag">ST ${order.tableNumber || '?' }</span>
+                            <span style="font-size: 0.7rem; color: var(--premium-gold); font-family: monospace; font-weight:700;">#${orderId}</span>
+                            <span class="order-date-brief">🕒 ${new Date(order.archivedAt).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</span>
                         </div>
-                        <div style="color:#444; font-size:0.7rem; margin-top:10px; letter-spacing:1px;">
-                            <i class="far fa-clock"></i> ${new Date(order.archivedAt).toLocaleString('th-TH')}
-                        </div>
+                        <b class="total-brief">฿${parseFloat(order.total).toLocaleString()}</b>
                     </div>
-                    <div id="details-${order.id}" style="display:none;">
-                        ${itemsHtml}
-                        <div style="display:flex; gap:10px; margin-top:20px;">
-                            <button onclick="alert('กำลังพิมพ์...')" class="action-btn btn-print"><i class="fas fa-print"></i> พิมพ์ใบเสร็จ</button>
-                            <button onclick="deleteEntry('${order.id}')" class="action-btn btn-delete"><i class="fas fa-trash-alt"></i> ลบประวัติ</button>
+                    <div class="card-expanded-part">
+                        <div style="font-size:0.65rem; color:var(--sub-text); margin-bottom:15px; border-bottom: 1px solid var(--border); padding-bottom:10px;">
+                            ORDER REF: ${order.id} | DATE: ${new Date(order.archivedAt).toLocaleString('th-TH')}
+                        </div>
+                        <div class="items-area">${itemsHtml}</div>
+                        <div class="btn-group">
+                            <button onclick="event.stopPropagation(); window.print()" class="btn-action btn-print"><i class="fas fa-print"></i> PRINT</button>
+                            <button onclick="event.stopPropagation(); deleteEntry('${order.id}')" class="btn-action btn-del"><i class="fas fa-trash-alt"></i> DELETE</button>
                         </div>
                     </div>
                 </div>`;
         });
 
-        list.innerHTML = data.length ? html : '<p style="text-align:center; padding:50px; color:#444;">ไม่มีข้อมูลประวัติครับน้า</p>';
+        list.innerHTML = data.length ? html : '<div style="text-align:center; padding:100px; color:var(--sub-text); font-size:0.9rem;">ไม่พบประวัติการขาย</div>';
         billsEl.textContent = data.length;
         revEl.textContent = totalSum.toLocaleString('th-TH', { minimumFractionDigits: 2 });
     }
 
-    window.toggleDetails = function(id) {
-        const el = document.getElementById(`details-${id}`);
-        const card = document.getElementById(`card-${id}`);
-        const isOpen = el.style.display === "block";
-        el.style.display = isOpen ? "none" : "block";
-        if (!isOpen) card.classList.add('active'); else card.classList.remove('active');
-    };
-
-    window.filterHistoryByDateTime = function() {
+    function filterHistoryByDateTime() {
         const searchDate = document.getElementById('search-date').value;
         const startTime = document.getElementById('start-time').value;
         const endTime = document.getElementById('end-time').value;
-        if (!searchDate) return alert("เลือกวันที่ก่อนครับน้า");
+        if (!searchDate) return alert("กรุณาเลือกวันที่ก่อนครับน้า");
 
         const filtered = allHistoryData.filter(order => {
             const d = new Date(order.archivedAt);
-            const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const dateStr = d.toISOString().split('T')[0];
             const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
             return dateStr === searchDate && timeStr >= startTime && timeStr <= endTime;
         });
         renderHistory(filtered);
-        toggleFilterPanel();
-    };
+    }
 
-    window.toggleFilterPanel = function() {
-        const panel = document.getElementById('filter-panel');
-        const icon = document.getElementById('filter-icon');
-        const isOpen = panel.style.display === "block";
-        panel.style.display = isOpen ? "none" : "block";
-        icon.className = isOpen ? "fas fa-chevron-down" : "fas fa-chevron-up";
-    };
-
-    window.deleteEntry = (id) => confirm("ลบประวัตินี้ถาวรเลยนะน้า?") && db.ref(`history/${id}`).remove();
+    window.deleteEntry = (id) => confirm("น้าแน่ใจนะว่าจะลบประวัตินี้ถาวร?") && db.ref(`history/${id}`).remove();
 </script>
+
+<script src="admin_script.js"></script>
+
 </body>
 </html>

@@ -1,0 +1,135 @@
+/* =========================================
+   1. HEAD & ROOT (ส่วนการตั้งค่าพื้นฐาน)
+   ========================================= */
+:root {
+    /* 🎨 ตัวแปรสีมาตรฐานโหมดมืด */
+    --premium-gold: #c5a059;
+    --bg: #0f0f0f;
+    --card-bg: rgba(255, 255, 255, 0.03); 
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #a5a5a5;
+    --sub-text: #666;
+    --shadow: none;
+    --transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ☁️ Executive Platinum Theme (โหมดสว่าง) */
+body.light-theme {
+    --premium-gold: #333333;
+    --bg: #ffffff; 
+    --text: #202124; 
+    --card-bg: #ffffff; 
+    --border: rgba(197, 160, 89, 0.4); 
+    --sub-text: #000000;
+    --shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+/* ตั้งค่าพื้นฐานให้ Body ของทุกหน้า */
+body { 
+    background-color: var(--bg) !important; 
+    color: var(--text) !important; 
+    font-family: 'Kanit', sans-serif;
+    transition: var(--transition);
+    margin: 0;
+}
+
+/* =========================================
+   2. BODY & COMPONENTS (ส่วนกล่องและเนื้อหา)
+   ========================================= */
+
+/* 📦 บังคับสไตล์กล่องพื้นฐานให้แสดงผลทุกหน้า */
+.stat-card, .card-box, .stat-item, .summary-box, 
+.insight-box, .order-card, .rank-card, .product-card {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: var(--shadow) !important;
+    color: var(--text) !important;
+    transition: var(--transition);
+}
+
+/* ตกแต่งตัวเลขหรือหัวข้อเน้นสีทอง */
+.stat-card b, .stat-item b, .summary-box b, .total-brief {
+    color: var(--premium-gold) !important;
+}
+
+/* สไตล์ปุ่มมาตรฐานระดับพรีเมียม */
+.btn-main, .btn-search, .save-button {
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+}
+
+/* ปรับปรุง Input ให้เข้ากับธีม */
+input, select {
+    background-color: rgba(128, 128, 128, 0.05) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    border-radius: 12px;
+}
+
+/* 🔘 สไตล์ปุ่ม High Contrast */
+.btn-main { color: #fff !important; font-weight: 700; border: none; cursor: pointer; transition: 0.3s; }
+.btn-pending { background: #f39c12 !important; }
+.btn-success { background: #27ae60 !important; }
+.btn-info { background: #2980b9 !important; }
+.btn-archive { background: #8e44ad !important; }
+
+
+
+/* 📍 ปรับปรุงสไตล์ปุ่มให้ชัดเจนที่สุด */
+.order-actions { 
+    display: flex; 
+    gap: 10px; 
+    margin-top: 15px; 
+}
+
+.btn-main { 
+    flex: 1; 
+    padding: 15px; 
+    border: none; 
+    border-radius: 16px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    color: #fff !important; /* บังคับตัวหนังสือขาวให้เด่นชัด */
+    transition: 0.3s; 
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* เพิ่มเงาให้ปุ่มดูลอยออกมา */
+}
+
+/* 🎨 กำหนดสีปุ่มตามสถานะให้เข้มข้นขึ้น */
+.btn-pending { background: #f39c12 !important; } /* ส้มสว่าง (เริ่มทำ) */
+.btn-success { background: #27ae60 !important; } /* เขียวสด (แจ้งรับอาหาร) */
+.btn-info { background: #2980b9 !important; }    /* น้ำเงินเข้ม (เก็บเงิน) */
+.btn-archive { background: #8e44ad !important; } /* ม่วงเข้ม (ลงประวัติ) */
+
+.btn-main:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.btn-cancel { 
+    width: 55px; 
+    background: #ebedef; 
+    color: #e74c3c; 
+    border: 1px solid #dcdfe3; 
+    border-radius: 16px; 
+    cursor: pointer; 
+    transition: 0.3s; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* เมื่ออยู่ในโหมดมืด ปรับปุ่มถังขยะให้เด่นขึ้น */
+body:not(.light-theme) .btn-cancel {
+    background: #1a1a1a;
+    border-color: #333;
+}
+
+.btn-cancel:hover { background: #e74c3c; color: #fff; }

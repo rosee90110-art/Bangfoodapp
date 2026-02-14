@@ -1,116 +1,212 @@
 {
+  "admins": {
+    "admin_01": {
+      "username": "bangfood",
+      "password": "admin"
+    }
+  },
   "products": {
     "item_K001": {
       "name": "ข้าวผัด",
       "price": 50,
       "category": "อาหาร",
       "status": "available",
-      "img": "menu/kpad.jpg"
+      "img": "menu/kpad.jpg",
+      "config": {
+        "sizes": [
+          {"name": "ธรรมดา", "price": 0},
+          {"name": "พิเศษ", "price": 10}
+        ],
+        "addons": [
+          {"name": "ไข่ดาว", "price": 10},
+          {"name": "ไข่เจียว", "price": 10}
+        ]
+      }
     },
     "item_K002": {
       "name": "ข้าวผัดไข่",
       "price": 50,
       "category": "อาหาร",
       "status": "available",
-      "img": "menu/kpadkai.jpg"
+      "img": "menu/kpadkai.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 10}],
+        "addons": [{"name": "ไข่ดาวเพิ่ม", "price": 10}]
+      }
     },
     "item_K003": {
       "name": "ข้าวผัดเนื้อ",
       "price": 50,
       "category": "อาหาร",
       "status": "available",
-      "img": "menu/kpadner.jpg"
+      "img": "menu/kpadner.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 15}],
+        "addons": [{"name": "ไข่ดาว", "price": 10}]
+      }
     },
     "item_K004": {
       "name": "ข้าวผัดปู",
       "price": 50,
       "category": "อาหาร",
       "status": "available",
-      "img": "menu/kpadpu.jpg"
+      "img": "menu/kpadpu.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 20}],
+        "addons": [{"name": "ไข่ดาว", "price": 10}]
+      }
     },
     "item_K005": {
       "name": "ข้าวผัดทะเล",
       "price": 50,
       "category": "อาหาร",
       "status": "available",
-      "img": "menu/kpadtale.jpg"
+      "img": "menu/kpadtale.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 20}],
+        "addons": [{"name": "ไข่ดาว", "price": 10}]
+      }
     },
     "item_K006": {
       "name": "ข้าวผัดต้มยำ",
       "price": 50,
       "category": "อาหาร",
       "status": "available",
-      "img": "menu/kpadtom.jpg"
+      "img": "menu/kpadtom.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 15}],
+        "addons": [{"name": "ไข่ดาว", "price": 10}]
+      }
     },
     "item_N001": {
-      "name": "ก๋วยเตี๋ยวเรีอ",
+      "name": "ก๋วยเตี๋ยวเรือ",
       "price": 50,
       "category": "ก๋วยเตี๋ยว",
       "status": "available",
-      "img": "noodle/noodle.jpg"
+      "img": "noodle/noodle.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 10}],
+        "addons": [{"name": "ลูกชิ้นเพิ่ม", "price": 10}, {"name": "กากหมู", "price": 10}]
+      }
     },
     "item_N002": {
-      "name": "ก๋วยเตี๋ยวเนื่อ",
+      "name": "ก๋วยเตี๋ยวเนื้อ",
       "price": 50,
       "category": "ก๋วยเตี๋ยว",
       "status": "available",
-      "img": "noodle/noodlenea.jpg"
+      "img": "noodle/noodlenea.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 15}],
+        "addons": [{"name": "เอ็นแก้ว", "price": 20}]
+      }
     },
     "item_N003": {
       "name": "ก๋วยเตี๋ยวไก่",
       "price": 50,
       "category": "ก๋วยเตี๋ยว",
       "status": "available",
-      "img": "noodle/noodlekai.jpg"
+      "img": "noodle/noodlekai.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 10}],
+        "addons": [{"name": "น่องไก่เพิ่ม", "price": 15}]
+      }
     },
     "item_N004": {
       "name": "ก๋วยเตี๋ยวเป็ด",
       "price": 50,
       "category": "ก๋วยเตี๋ยว",
       "status": "available",
-      "img": "noodle/noodleped.jpg"
+      "img": "noodle/noodleped.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 15}],
+        "addons": [{"name": "เนื้อเป็ดเพิ่ม", "price": 20}]
+      }
     },
     "item_N005": {
       "name": "ก๋วยเตี๋ยวเย็นตาโฟ",
       "price": 50,
       "category": "ก๋วยเตี๋ยว",
       "status": "available",
-      "img": "noodle/noodleice.jpg"
+      "img": "noodle/noodleice.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 10}],
+        "addons": [{"name": "เกี๊ยวกรอบ", "price": 5}]
+      }
     },
-     "item_N006": {
-      "name": "ก๋วยจัํบ",
+    "item_N006": {
+      "name": "ก๋วยจั๊บ",
       "price": 50,
       "category": "ก๋วยเตี๋ยว",
       "status": "available",
-      "img": "noodle/noodlerea.jpg"
+      "img": "noodle/noodlerea.jpg",
+      "config": {
+        "sizes": [{"name": "ธรรมดา", "price": 0}, {"name": "พิเศษ", "price": 10}],
+        "addons": [{"name": "ไข่ต้ม", "price": 10}, {"name": "หมูกรอบเพิ่ม", "price": 20}]
+      }
     },
     "item_W001": {
       "name": "ชาไทย",
       "price": 25,
       "category": "เครื่องดื่ม",
       "status": "available",
-      "img": "dring/chatai.png"
+      "img": "dring/chatai.png",
+      "config": {
+        "sizes": [{"name": "แก้วปกติ", "price": 0}, {"name": "ใส่ถุง", "price": 5}],
+        "addons": [{"name": "ไข่มุก", "price": 5}]
+      }
     },
     "item_W002": {
       "name": "ชาเขียว",
       "price": 25,
       "category": "เครื่องดื่ม",
       "status": "available",
-      "img": "dring/chagreen.png"
+      "img": "dring/chagreen.png",
+      "config": {
+        "sizes": [{"name": "แก้วปกติ", "price": 0}],
+        "addons": [{"name": "ไข่มุก", "price": 5}, {"name": "วิปครีม", "price": 10}]
+      }
     },
     "item_W003": {
       "name": "โกโก้ปั่น",
       "price": 30,
       "category": "เครื่องดื่ม",
       "status": "available",
-      "img": "dring/gogopan.png"
+      "img": "dring/gogopan.png",
+      "config": {
+        "addons": [{"name": "วิปครีม", "price": 10}, {"name": "ซอสช็อกโกแลต", "price": 5}]
+      }
     },
     "item_W004": {
       "name": "โอริโอ้ปั่น",
       "price": 30,
       "category": "เครื่องดื่ม",
       "status": "available",
-      "img": "dring/oriopan.png"
+      "img": "dring/oriopan.png",
+      "config": {
+        "addons": [{"name": "โอริโอ้เพิ่ม", "price": 10}, {"name": "วิปครีม", "price": 10}]
+      }
     }
+  },
+  "menu_translations": {
+    "ข้าวผัด": "Fried Rice",
+    "ข้าวผัดไข่": "Egg Fried Rice",
+    "ข้าวผัดเนื้อ": "Beef Fried Rice",
+    "ข้าวผัดปู": "Crab Fried Rice",
+    "ข้าวผัดทะเล": "Seafood Fried Rice",
+    "ข้าวผัดต้มยำ": "Tom Yum Fried Rice",
+    "ก๋วยเตี๋ยวเรือ": "Boat Noodles",
+    "ก๋วยเตี๋ยวเนื้อ": "Beef Noodles",
+    "ก๋วยเตี๋ยวไก่": "Chicken Noodles",
+    "ก๋วยเตี๋ยวเป็ด": "Duck Noodles",
+    "ก๋วยเตี๋ยวเย็นตาโฟ": "Yentafo Noodles",
+    "ก๋วยจั๊บ": "Rolled Noodles Soup",
+    "ชาไทย": "Thai Tea",
+    "ชาเขียว": "Green Tea",
+    "โกโก้ปั่น": "Cocoa Frappe",
+    "โอริโอ้ปั่น": "Oreo Frappe",
+    "ธรรมดา": "Regular",
+    "พิเศษ": "Extra",
+    "ไข่ดาว": "Fried Egg",
+    "ไข่มุก": "Pearl"
   }
 }

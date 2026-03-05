@@ -171,26 +171,31 @@
                 return alert("กรุณากรอกข้อมูลให้ครบครับน้า!");
             }
 
-            // แสดงสถานะการโหลด
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังตรวจสอบ...';
             btn.disabled = true;
 
             db.ref('admins').once('value', snap => {
-                let authenticated = false;
+                let userFound = null;
                 
                 if (snap.exists()) {
                     const admins = snap.val();
                     for (let id in admins) {
                         if (admins[id].username === userInput && admins[id].password === passInput) {
-                            authenticated = true;
+                            userFound = admins[id]; // เก็บข้อมูลพนักงานทั้งก้อนไว้ตรงนี้
                             break;
                         }
                     }
                 }
 
-                if (authenticated || (userInput === "admin" && passInput === "bang")) {
+                // 🚩 เงื่อนไขตรวจสอบความสำเร็จ
+                if (userFound || (userInput === "admin" && passInput === "bang")) {
                     sessionStorage.setItem('isAdminLoggedIn', 'true');
                     sessionStorage.setItem('currentAdminName', userInput);
+                    
+                    // ✨ บรรทัดสำคัญ: บันทึกสิทธิ์ลงเครื่อง เพื่อให้ปุ่ม "เพิ่มแอดมิน" โผล่ครับ!
+                    const roleToSave = userFound ? userFound.role : "Super Admin";
+                    sessionStorage.setItem('currentAdminRole', roleToSave); 
+                    
                     alert("ยินดีต้อนรับครับน้า!");
                     window.location.href = "admin_center.html";
                 } else {

@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Dashboard | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="admin_style.css">
 
     <style>
-        /* คงเหลือไว้เฉพาะสไตล์ที่เป็นโครงสร้างเฉพาะของหน้าหลักเท่านั้น */
         :root {
             --sidebar-wide: 260px;
             --sidebar-narrow: 80px;
@@ -33,10 +31,10 @@
             width: 40px; height: 40px; border-radius: 10px;
             justify-content: center; align-items: center; cursor: pointer;
         }
-        .system-logo { font-size: 1rem; letter-spacing: 3px; color: var(--premium-gold); font-weight: 600; text-transform: uppercase; }
+        /* 📍 ชื่อแบรนด์ที่จะเปลี่ยนตามหน้าเมนูครับน้า */
+        .system-logo { font-size: 1.1rem; letter-spacing: 3px; color: var(--premium-gold); font-weight: 700; text-transform: uppercase; transition: 0.3s; }
 
         .top-right { display: flex; align-items: center; gap: 25px; }
-        #top-clock { font-size: 0.95rem; color: var(--text); font-weight: 500; min-width: 80px; text-align: right; }
 
         .profile-container { position: relative; }
         .user-profile-header {
@@ -51,6 +49,7 @@
         .user-avatar-circle {
             width: 42px; height: 42px; border-radius: 50%;
             border: 2px solid var(--premium-gold); overflow: hidden;
+            background: #222;
         }
         .user-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -85,6 +84,28 @@
         .sidebar:hover .nav-item span { opacity: 1; transform: translateX(0); margin-left: 10px; }
         .nav-item.active { background: linear-gradient(90deg, rgba(197, 160, 89, 0.15), transparent); border: 1px solid rgba(197, 160, 89, 0.3); color: var(--premium-gold); }
 
+        .sidebar-footer {
+            padding: 20px 10px;
+            border-top: 1px solid var(--border);
+            display: flex; align-items: center;
+            min-height: 70px;
+        }
+        #top-clock-container {
+            display: flex; align-items: center;
+            color: var(--text); gap: 10px;
+            width: 100%; transition: 0.3s;
+        }
+        #top-clock-container i {
+            min-width: 60px; display: flex; justify-content: center;
+            font-size: 1.2rem; color: var(--premium-gold);
+            text-shadow: 0 0 10px var(--premium-gold);
+        }
+        #top-clock {
+            font-size: 0.95rem; font-weight: 700; font-family: 'Courier New', monospace;
+            opacity: 0; transform: translateX(-10px); transition: 0.3s;
+        }
+        .sidebar:hover #top-clock { opacity: 1; transform: translateX(0); }
+
         .main-content { flex: 1; position: relative; background: var(--bg); overflow: hidden; }
         .content-frame { width: 100%; height: 100%; border: none; }
 
@@ -103,11 +124,10 @@
     <header class="top-bar">
         <div class="top-left">
             <div class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
-            <div class="system-logo" data-lang-en="Bangfood Command Center" data-lang-th="ระบบจัดการ Bangfood">Bangfood Command Center</div>
+            <div class="system-logo" id="main-brand-text">BANGFOOD CENTER</div>
         </div>
         
         <div class="top-right">
-            <div id="top-clock">00:00:00</div>
             <div class="profile-container">
                 <div class="user-profile-header" onclick="toggleProfileDropdown()">
                     <div class="user-info-text">
@@ -115,7 +135,7 @@
                         <span data-lang-en="Manager" data-lang-th="ผู้จัดการ">Manager <i class="fas fa-chevron-down" style="font-size:0.5rem;"></i></span>
                     </div>
                     <div class="user-avatar-circle">
-                        <img src="https://i.pinimg.com/736x/8b/11/18/8b111848484848484848484848484848.jpg" id="top-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" id="top-avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
                     </div>
                 </div>
                 <div class="profile-dropdown" id="profile-dropdown">
@@ -159,6 +179,13 @@
                     <i class="fas fa-chart-bar"></i><span data-lang-en="REVENUE" data-lang-th="ข้อมูลรายได้">ข้อมูลรายได้</span>
                 </div>
             </nav>
+
+            <div class="sidebar-footer">
+                <div id="top-clock-container">
+                    <i class="far fa-clock"></i>
+                    <span id="top-clock">00:00:00</span>
+                </div>
+            </div>
         </aside>
 
         <main class="main-content">
@@ -166,23 +193,85 @@
         </main>
     </div>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 <script>
-    /* โค้ดส่วนนี้คงไว้เฉพาะการจัดการ Iframe และ UI ของหน้าหลัก */
-    setInterval(() => { document.getElementById('top-clock').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
+    const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    function toggleProfileDropdown() { document.getElementById('profile-dropdown').classList.toggle('active'); }
+    function applyMainTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.classList.toggle('light-theme', savedTheme === 'light');
+    }
+    applyMainTheme();
 
-    window.onclick = function(event) {
-        if (!event.target.closest('.profile-container')) {
-            document.getElementById('profile-dropdown').classList.remove('active');
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'theme') {
+            applyMainTheme();
+            const frame = document.getElementById('content-frame');
+            if(frame && frame.contentWindow) {
+                frame.contentWindow.postMessage({ type: 'THEME_CHANGE', theme: e.newValue }, '*');
+            }
         }
+    });
+
+    setInterval(() => { 
+        const clockEl = document.getElementById('top-clock');
+        if(clockEl) clockEl.innerText = new Date().toLocaleTimeString('en-GB'); 
+    }, 1000);
+
+    function startGlobalPresence() {
+        const currentAdmin = sessionStorage.getItem('currentAdminName');
+        if (!currentAdmin) return;
+        const myPresenceRef = db.ref('online_admins/' + currentAdmin);
+        db.ref('.info/connected').on('value', snap => {
+            if (snap.val() === true) {
+                myPresenceRef.onDisconnect().remove();
+                myPresenceRef.set({ status: "online", last_seen: firebase.database.ServerValue.TIMESTAMP });
+            }
+        });
     }
 
     function initializeCommandCenter() {
         checkLoginStatus();
-        checkInitialAvatar(); 
-        document.getElementById('admin-name-display').innerText = sessionStorage.getItem('currentAdminName') || "Admin User";
+        const currentName = sessionStorage.getItem('currentAdminName') || "Admin User";
+        document.getElementById('admin-name-display').innerText = currentName;
+        startGlobalPresence(); 
+        db.ref('admins').orderByChild('username').equalTo(currentName).on('value', snap => {
+            if(snap.exists()) {
+                const data = Object.values(snap.val())[0];
+                const avatarEl = document.getElementById('top-avatar');
+                if(avatarEl) avatarEl.src = data.profileImg || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+            }
+        });
         loadContent('admin_dashboard.html', document.querySelector('.nav-item')); 
+    }
+
+    // 🔄 ฟังก์ชันสลับหน้าและเปลี่ยนชื่อซ้ายบนแบบเรียลไทม์
+    function loadContent(url, element) {
+        const frame = document.getElementById('content-frame');
+        const brandText = document.getElementById('main-brand-text');
+        
+        if(element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            
+            // 📍 เปลี่ยนชื่อซ้ายบนตามเมนูที่กดครับน้า
+            const menuName = element.querySelector('span').innerText;
+            brandText.style.opacity = 0;
+            setTimeout(() => {
+                brandText.innerText = "BANGFOOD | " + menuName;
+                brandText.style.opacity = 1;
+            }, 150);
+        }
+        
+        if(frame) frame.src = url;
+        if (window.innerWidth <= 900) {
+            document.getElementById('main-sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+        }
     }
 
     function toggleSidebar() {
@@ -190,47 +279,27 @@
         document.getElementById('overlay').classList.toggle('show');
     }
 
-    function loadContent(url, element) {
-        const frame = document.getElementById('content-frame');
-        if(element) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-        }
-        frame.src = url;
-        
-        if (window.innerWidth <= 900) {
-            document.getElementById('main-sidebar').classList.remove('open');
-            document.getElementById('overlay').classList.remove('show');
-        }
+    function toggleProfileDropdown() { 
+        const dropdown = document.getElementById('profile-dropdown');
+        if(dropdown) dropdown.classList.toggle('active'); 
     }
 
     function checkLoginStatus() { if (sessionStorage.getItem('isAdminLoggedIn') !== 'true') window.location.href = "start.html"; }
 
-    function logoutAdmin() {
-        if(confirm("ยืนยันการออกจากระบบ?")) {
-            sessionStorage.removeItem('isAdminLoggedIn');
-            window.location.href = "start.html";
+    function logoutAdmin() { 
+        if(confirm("ยืนยันการออกจากระบบ?")) { 
+            sessionStorage.clear(); 
+            window.location.href = "start.html"; 
+        } 
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.profile-container')) {
+            const dropdown = document.getElementById('profile-dropdown');
+            if(dropdown) dropdown.classList.remove('active');
         }
     }
-
-    function syncAvatar(img) {
-        if (img && document.getElementById('top-avatar')) {
-            document.getElementById('top-avatar').src = img;
-        }
-    }
-
-    function checkInitialAvatar() {
-        const savedImg = localStorage.getItem('admin_new_avatar');
-        syncAvatar(savedImg);
-    }
-
-    // ฟังการเปลี่ยนรูปโปรไฟล์แบบข้ามหน้า
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'admin_new_avatar') syncAvatar(e.newValue);
-    });
 </script>
-
-<script src="admin_script.js"></script>
 
 </body>
 </html>

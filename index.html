@@ -9,82 +9,180 @@
     <link rel="stylesheet" href="global_style.css">
 
     <style>
+        /* 📍 เพิ่มฟอนต์ Google Font เพื่อความน่ารักและอ่านง่าย */
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
 
-        /* 📍 ปรับปรุง Header ให้สวยงามตามแบบ */
-.app-header-sticky {
-    position: sticky;
-    top: 0;
-    z-index: 2000;
-    background: rgba(10, 10, 11, 0.95);
-    backdrop-filter: blur(25px);
-    border-bottom: 1px solid var(--glass-border);
-}
+        :root {
+            --bg-deep: #0a0a0b;
+            --premium-gold: #c5a059;
+            --cartoon-orange: #ff7f50;
+        }
 
-.header-main-row {
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    min-height: 55px;
-}
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
 
-/* 🖤 แถบ STATION และ TOTAL (จุดที่แก้ไข) */
-.top-summary-bar {
-    padding: 10px 25px;
-    background: rgba(197, 160, 89, 0.05);
-    display: flex;
-    justify-content: space-between; /* แยกซ้าย-ขวา */
-    align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.02);
-}
+        /* 📍 Header */
+        .app-header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            background: rgb(7 7 7 / 95%);
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: background 0.3s;
+        }
 
-.summary-label {
-    font-size: 0.6rem;
-    color: #666;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-}
+        body.light-theme .app-header-sticky {
+            background: rgb(255 253 245 / 95%); /* สีครีมนวล */
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
 
-.summary-val {
-    color: var(--premium-gold);
-    font-weight: 700;
-    font-size: 1.3rem; /* ขนาดตัวเลขราคา */
-    text-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
-}
+        body.light-theme .top-summary-bar {
+            background: rgba(0, 0, 0, 0.02);
+            border-top: 1px solid rgba(0, 0, 0, 0.03);
+        }
 
-.hamburger-menu {
-    position: absolute;
-    right: 20px;
-}
-        /* CSS เฉพาะส่วนของหน้าแรก (Slider และ Tabs) */
-        .bangfood-logo { font-size: 1.1rem; font-weight: 600; letter-spacing: 4px; background: linear-gradient(90deg, #c5a059, #fff, #c5a059); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite; margin: 0; }
-        
+        body.light-theme .bangfood-logo {
+            background: none;
+            -webkit-text-fill-color: var(--premium-gold);
+            color: var(--premium-gold);
+        }
+
+        .header-main-row {
+            padding: 1px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 55px;
+        }
+
+        .top-summary-bar {
+            padding: 10px 25px;
+            background: rgba(197, 160, 89, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .summary-label {
+            font-size: 0.6rem;
+            color: #666;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .summary-val {
+            color: var(--premium-gold);
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .hamburger-menu {
+            position: absolute;
+            right: 20px;
+        }
+
+        .bangfood-logo { 
+            font-size: 1.1rem; font-weight: 600; letter-spacing: 4px; 
+            background: linear-gradient(90deg, #c5a059, #fff, #c5a059); 
+            background-size: 200% auto; -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite; margin: 0; 
+        }
+
+        /* ✨ Slider */
         .slider-container { width: 100%; margin-top: 10px; overflow: hidden; position: relative; }
         .image-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 15px 35px 25px; scrollbar-width: none; scroll-behavior: smooth; flex-wrap: nowrap; }
         .image-slider::-webkit-scrollbar { display: none; }
-        .slide-card { flex: 0 0 82%; scroll-snap-align: center; border-radius: 28px; height: 185px; transition: 0.6s; transform: scale(0.9); opacity: 0.5; overflow: hidden; }
-        .slide-card.is-active { transform: scale(1); opacity: 1; }
-        .slide-card img { width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--glass-border); border-radius: 28px; }
+        
+        .slide-card {
+            position: relative;
+            flex: 0 0 82%;
+            scroll-snap-align: center;
+            border-radius: 35px; /* มนมากขึ้นแบบการ์ตูน */
+            height: 185px;
+            transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: scale(0.9);
+            opacity: 0.5;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid transparent;
+        }
+
+        .slide-card.is-active { transform: scale(1); opacity: 1; border-color: var(--premium-gold); }
+
+        .slide-info-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: #fff; display: flex; flex-direction: column; pointer-events: none;
+            transform: translateY(20px); opacity: 0; transition: 0.5s 0.2s ease-out;
+        }
+
+        .slide-card.is-active .slide-info-overlay { transform: translateY(0); opacity: 1; }
+
+        .slide-food-name { font-size: 1rem; font-weight: 600; margin: 0; color: var(--premium-gold); text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .slide-food-price { font-size: 0.75rem; opacity: 0.9; letter-spacing: 1px; }
+        .slide-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 35px; }
 
         .middle-indicator-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 5px auto 20px; height: 40px; width: 100%; }
-        .indicator-item { width: 10px; height: 4px; background: #333; border-radius: 10px; transition: 0.4s; display: flex; justify-content: center; align-items: center; }
-        .indicator-item.active { width: 35px; height: 35px; background: transparent; color: var(--premium-gold); font-size: 1.6rem; font-weight: 900; text-shadow: 0 0 20px rgba(197, 160, 89, 0.6); }
+        .indicator-item { width: 10px; height: 4px; background: #333; border-radius: 10px; transition: 0.4s; }
+        .indicator-item.active { width: 35px; height: 35px; background: transparent; color: var(--premium-gold); font-size: 1.6rem; font-weight: 900; }
 
-        .menu-tabs { display: flex; gap: 12px; padding: 10px 20px 20px; overflow-x: auto; scrollbar-width: none; }
-        .menu-tab { padding: 10px 18px; background: var(--glass); border-radius: 12px; color: #555; font-size: 0.75rem; border: 1px solid var(--glass-border); white-space: nowrap; cursor: pointer; transition: 0.3s; }
-        .menu-tab.active { background: #fff; color: #000; font-weight: 600; }
+        /* 🍛 Tabs เมนูแบบการ์ตูน */
+        .menu-tabs { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; scrollbar-width: none; }
+        .menu-tab { 
+            padding: 10px 18px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; 
+            color: #888; font-size: 0.8rem; border: 1px solid var(--glass-border); 
+            white-space: nowrap; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        body.light-theme .menu-tab { background: #eee; color: #666; }
+        .menu-tab.active { background: var(--premium-gold); color: #fff; font-weight: 600; transform: scale(1.05); box-shadow: 0 5px 15px rgba(197, 160, 89, 0.3); }
 
-        .menu-item { background: var(--glass); border: 1px solid var(--glass-border); margin: 0 20px 12px; padding: 14px; border-radius: 24px; display: flex; align-items: center; gap: 15px; text-decoration: none; color: inherit; animation: slideUpFade 0.6s both; }
-        body.light-theme .menu-item { background: #fff; color: #333; }
-        .item-img-thumb { width: 65px; height: 65px; border-radius: 16px; object-fit: cover; }
+        /* 🍱 รายการเมนูอาหาร */
+        .menu-item {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border);
+            margin: 0 20px 15px; padding: 14px; border-radius: 30px; 
+            display: flex; align-items: center; gap: 15px; text-decoration: none;
+            color: inherit; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
 
+        body.light-theme .menu-item { background: #ffffff; color: #333; border: 1px solid rgba(0, 0, 0, 0.04); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
+
+        .menu-item:active { transform: scale(0.96); background: rgba(197, 160, 89, 0.08); }
+
+        .item-img-thumb { width: 75px; height: 75px; border-radius: 22px; object-fit: cover; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .menu-item h3 { margin: 0 0 5px; font-size: 1.0rem; font-weight: 500; }
+
+        /* 🔘 ปุ่ม "เลือก" แบบเด้งดึ๋ง */
+        .select-btn {
+            padding: 8px 20px; background: var(--premium-gold); border-radius: 18px;
+            color: #fff; font-size: 0.75rem; font-weight: 700; transition: 0.2s;
+            box-shadow: 0 4px 0 #8e7340; border: none;
+        }
+
+        .select-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #8e7340; }
+
+        /* 📍 Bottom Nav & Refresh */
         .bottom-nav-fixed { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 100px; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; z-index: 3000; }
         .nav-bar { width: 92%; height: 60px; background: #121214; border-radius: 30px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; pointer-events: auto; margin-bottom: 15px; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
-        body.light-theme .nav-bar { background: #ffffff; }
+        body.light-theme .nav-bar { background: #ffffff; border-color: #eee; }
 
-        .round-refresh { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 75px; height: 75px; background: #fff; border-radius: 50%; border: 7px solid var(--bg-deep); color: #000; font-size: 1.6rem; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 2600; pointer-events: auto; }
+        :root { --bg-deep: #0a0a0b; --btn-bg: #ffffff; --btn-text: #000000; }
+        body.light-theme { --bg-deep: #fffdf5; --btn-bg: #000000; --btn-text: #ffffff; }
+
+        .round-refresh {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            width: 75px; height: 75px; border-radius: 50%;
+            background: var(--btn-bg); color: var(--btn-text); 
+            border: 7px solid var(--bg-deep); font-size: 1.6rem;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 2600; pointer-events: auto; transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body onload="initializeApp()">
@@ -102,6 +200,7 @@
     </div>
 </div>
 <div id="drawer-overlay" onclick="toggleDrawer()" style="position:fixed; top:0; left:0; width:100%; height:100%; background:transparent; z-index:3500; display:none;"></div>
+
 <div class="app-header-sticky">
     <div class="header-main-row">
         <h1 class="bangfood-logo">BANGFOOD</h1>
@@ -121,35 +220,40 @@
     </div>
 </div>
 
-    <main>
-        <div style="padding: 25px 20px 0;"><h2 style="font-size: 0.85rem; color: var(--premium-gold); letter-spacing: 2.5px; margin: 0; text-transform: uppercase;"><i class="fas fa-crown"></i> <span data-lang-en="Signature Menu" data-lang-th="เมนูแนะนำ">Signature Menu</span></h2></div>
-        <div class="slider-container">
-            <div class="image-slider" id="hero-best-seller-slider"></div>
-        </div>
-        <div class="middle-indicator-container" id="indicator-container"></div>
+<main>
+    <div style="padding: 25px 20px 0;">
+        <h2 style="font-size: 1rem; color: var(--premium-gold); letter-spacing: 1px; margin: 0; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.3rem;">🍱</span> 
+            <span data-lang-en="Signature Menu" data-lang-th="เมนูเด็ดที่ต้องลอง!">เมนูเด็ดที่ต้องลอง!</span>
+        </h2>
+    </div>
 
-        <div class="menu-tabs" id="category-tabs"> 
-            <div class="menu-tab active" data-cat="ทั้งหมด" onclick="switchCategory('ทั้งหมด')" data-lang-en="ALL" data-lang-th="ทั้งหมด">ทั้งหมด</div>
-            <div class="menu-tab" data-cat="อาหาร" onclick="switchCategory('อาหาร')" data-lang-en="MAIN" data-lang-th="อาหาร">อาหาร</div>
-            <div class="menu-tab" data-cat="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว')" data-lang-en="NOODLES" data-lang-th="ก๋วยเตี๋ยว">ก๋วยเตี๋ยว</div>
-            <div class="menu-tab" data-cat="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม')" data-lang-en="DRINKS" data-lang-th="น้ำ">น้ำ</div>
-        </div>
-        <div id="menu-main-container"></div>
-    </main>
+    <div class="slider-container">
+        <div class="image-slider" id="hero-best-seller-slider"></div>
+    </div>
+    <div class="middle-indicator-container" id="indicator-container"></div>
 
-    <div class="bottom-nav-fixed">
-        <div class="round-refresh" onclick="window.location.reload()"><i class="fas fa-sync-alt"></i></div>
-        <div class="nav-bar">
-            <div onclick="goToPage('cart.html')" style="text-align:center; position:relative; cursor:pointer; color:#444;">
-                <i class="fas fa-shopping-basket"></i>
-                <div id="cart-count-badge" style="position:absolute; top:-5px; right:-8px; background:#ff4b2b; color:#fff; font-size:0.5rem; padding:2px 5px; border-radius:8px; display:none;">0</div>
-                <span style="display:block; font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
-            </div>
-            <div style="width: 80px;"></div>
-            <div onclick="goToPage('track.html')" style="text-align:center; cursor:pointer; color:#444;">
-                <i class="fas fa-receipt"></i>
-                <span style="display:block; font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="ORDERS" data-lang-th="รายการที่สั่ง">ORDERS</span>
-            </div>
+    <div class="menu-tabs" id="category-tabs"> 
+        <div class="menu-tab active" data-cat="ทั้งหมด" onclick="switchCategory('ทั้งหมด')">🏠 ทั้งหมด</div>
+        <div class="menu-tab" data-cat="อาหาร" onclick="switchCategory('อาหาร')">🍛 ข้าว</div>
+        <div class="menu-tab" data-cat="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว')">🍜 </div>
+        <div class="menu-tab" data-cat="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม')">🥤 </div>
+    </div>
+    <div id="menu-main-container"></div>
+</main>
+
+<div class="bottom-nav-fixed">
+    <div class="round-refresh" onclick="window.location.reload()"><i class="fas fa-sync-alt"></i></div>
+    <div class="nav-bar">
+        <div onclick="goToPage('cart.html')" style="text-align:center; position:relative; cursor:pointer; color:#444;">
+            <i class="fas fa-shopping-basket"></i>
+            <div id="cart-count-badge" style="position:absolute; top:-5px; right:-8px; background:#ff4b2b; color:#fff; font-size:0.5rem; padding:2px 5px; border-radius:8px; display:none;">0</div>
+            <span style="display:block; font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
+        </div>
+        <div style="width: 80px;"></div>
+        <div onclick="goToPage('track.html')" style="text-align:center; cursor:pointer; color:#444;">
+            <i class="fas fa-receipt"></i>
+            <span style="display:block; font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="ORDERS" data-lang-th="รายการที่สั่ง">ORDERS</span>
         </div>
     </div>
 </div>
@@ -169,71 +273,73 @@
         appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" 
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    // 📍 ตั้งค่า window.db เพื่อให้ global_script.js เรียกใช้ได้
     window.db = firebase.database();
 
     async function loadMenuFromFirebase() {
         const tableNo = getTableNo();
-        const currentLang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
-        
-        const [transSnap, prodSnap] = await Promise.all([
-            window.db.ref('menu_translations').once('value'),
-            window.db.ref('products').once('value')
-        ]);
-
+        const transSnap = await window.db.ref('menu_translations').once('value');
         const translations = transSnap.val() || {};
-        const products = prodSnap.val() || {};
-        if(!products) return;
 
-        const hero = document.getElementById('hero-best-seller-slider');
-        const indicators = document.getElementById('indicator-container');
-        const menuMain = document.getElementById('menu-main-container');
-        
-        let heroHTML = '', indHTML = '', mainHTML = '';
-        let productList = Object.values(products);
+        window.db.ref('products').on('value', (prodSnap) => {
+            const currentLang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
+            const products = prodSnap.val() || {};
+            if(!products) return;
 
-        productList.forEach((p, idx) => {
-            const isOut = p.status === 'out_of_stock' || p.status === 'sold_out';
-            const displayName = (currentLang === 'en') ? (translations[p.name] || p.name) : p.name;
+            const hero = document.getElementById('hero-best-seller-slider');
+            const indicators = document.getElementById('indicator-container');
+            const menuMain = document.getElementById('menu-main-container');
+            
+            let heroHTML = '', indHTML = '', mainHTML = '';
+            let productList = Object.values(products);
 
-            if(idx < 5) {
-                heroHTML += `<div class="slide-card" data-index="${idx}" onclick="location.href='menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}'"><img src="${p.img}" loading="lazy"></div>`;
-                indHTML += `<div class="indicator-item"></div>`;
-            }
+            productList.forEach((p, idx) => {
+                const isOut = p.status === 'out_of_stock' || p.status === 'sold_out';
+                const displayName = (currentLang === 'en') ? (translations[p.name] || p.name) : p.name;
 
-            mainHTML += `
-                <a href="${isOut ? '#' : `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`}" 
-                   class="menu-item" data-category="${p.category}" style="${isOut ? 'opacity:0.5; pointer-events:none;' : ''}">
-                    <img src="${p.img}" class="item-img-thumb" loading="lazy">
-                    <div style="flex:1;">
-                        <h3>${displayName}</h3>
-                        <div style="color:var(--premium-gold);">฿${p.price}</div>
-                    </div>
-                    <div class="select-btn" data-lang-en="${isOut?'OUT':'ADD'}" data-lang-th="${isOut?'หมด':'เลือก'}">
-                         ${(currentLang === 'en') ? (isOut?'OUT':'ADD') : (isOut?'หมด':'เลือก')}
-                    </div>
-                </a>`;
+                if(idx < 5) {
+                    heroHTML += `
+                        <div class="slide-card ${isOut ? 'sold-out-gray' : ''}" data-index="${idx}" onclick="${isOut ? '' : `location.href='menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}'`}">
+                            <img src="${p.img}" loading="lazy" style="width:100%; height:100%; object-fit:cover; ${isOut ? 'filter: grayscale(1);' : ''}">
+                            <div class="slide-info-overlay">
+                                <h3 class="slide-food-name">${displayName} ${isOut ? '(หมด)' : ''}</h3>
+                                <span class="slide-food-price">฿${p.price}</span>
+                            </div>
+                        </div>`;
+                    indHTML += `<div class="indicator-item"></div>`;
+                }
+
+                mainHTML += `
+                    <a href="${isOut ? '#' : `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`}" 
+                       class="menu-item" data-category="${p.category}" 
+                       style="${isOut ? 'opacity:0.5; pointer-events:none; filter: grayscale(0.8);' : ''}">
+                        <img src="${p.img}" class="item-img-thumb" loading="lazy">
+                        <div style="flex:1;">
+                            <h3>${displayName}</h3>
+                            <div style="color:var(--premium-gold); font-weight:700;">฿${p.price}</div>
+                        </div>
+                        <div class="select-btn">
+                             ${(currentLang === 'en') ? (isOut?'OUT':'ADD') : (isOut?'หมด':'เลือก')}
+                        </div>
+                    </a>`;
+            });
+
+            hero.innerHTML = heroHTML;
+            indicators.innerHTML = indHTML;
+            menuMain.innerHTML = mainHTML;
+
+            initInfiniteSlider(); 
+            updateCartUI();
         });
-
-        hero.innerHTML = heroHTML;
-        indicators.innerHTML = indHTML;
-        menuMain.innerHTML = mainHTML;
-
-        initInfiniteSlider();
-        translatePage(currentLang);
-        updateCartUI();
     }
 
     function goToPage(page) { window.location.href = `${page}?table=${getTableNo()}`; }
 
     let autoPlayInterval;
-
     function initInfiniteSlider() {
         const slider = document.getElementById('hero-best-seller-slider');
         const indicators = document.querySelectorAll('.indicator-item');
         const cards = slider.querySelectorAll('.slide-card');
         
-        // 1. ระบบตรวจจับตำแหน่ง (Intersection Observer)
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -255,29 +361,19 @@
         }, { root: slider, threshold: 0.7 });
 
         cards.forEach(card => observer.observe(card));
-
-        // 2. ⚡ เริ่มการเลื่อนอัตโนมัติ (Auto-play)
         startAutoPlay(slider, cards.length);
-
-        // 3. หยุดเลื่อนเมื่อผู้ใช้เอามือไปแตะ/ลากเอง
         slider.addEventListener('touchstart', () => clearInterval(autoPlayInterval));
-        slider.addEventListener('mousedown', () => clearInterval(autoPlayInterval));
     }
 
     function startAutoPlay(slider, count) {
         if (autoPlayInterval) clearInterval(autoPlayInterval);
-        
         let currentIndex = 0;
         autoPlayInterval = setInterval(() => {
             currentIndex++;
             if (currentIndex >= count) currentIndex = 0;
-
-            const cardWidth = slider.querySelector('.slide-card').offsetWidth + 15; // 15 คือระยะ gap
-            slider.scrollTo({
-                left: currentIndex * cardWidth,
-                behavior: 'smooth'
-            });
-        }, 4000); // ⏱️ เลื่อนทุกๆ 4 วินาที
+            const cardWidth = slider.querySelector('.slide-card').offsetWidth + 15;
+            slider.scrollTo({ left: currentIndex * cardWidth, behavior: 'smooth' });
+        }, 4000);
     }
 
     function switchCategory(cat) {

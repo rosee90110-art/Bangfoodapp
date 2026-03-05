@@ -13,24 +13,47 @@
     --transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* ☁️ Executive Platinum Theme (โหมดสว่าง) */
+/* ☁️ Executive Platinum Theme (โหมดสว่าง - Version สดใส) */
 body.light-theme {
-    --premium-gold: #333333;
-    --bg: #ffffff; 
-    --text: #202124; 
-    --card-bg: #ffffff; 
-    --border: rgba(197, 160, 89, 0.4); 
-    --sub-text: #000000;
-    --shadow: 0 8px 30px rgba(0,0,0,0.08);
+    /* โทนสีหลัก: ขาวและฟ้าพรีเมียม */
+    --bg: #f0f4f8 !important;             /* พื้นหลังสีเทาอมฟ้าจางๆ ดูสะอาดตา */
+    --card-bg: #ffffff !important;        /* การ์ดสีขาวบริสุทธิ์ */
+    --premium-gold: #c5a059 !important;    /* เปลี่ยนจากทองเป็นสี Blue Sapphire เพื่อความสดใส */
+    
+    /* ตัวหนังสือและความชัดเจน */
+    --text: #1d1d1f !important;           /* ตัวหนังสือสีดำเข้มแบบแอป Apple */
+    --sub-text: #6e6e73 !important;       /* ตัวหนังสือรองสีเทาเข้มอ่านง่าย */
+    
+    /* เส้นขอบและเงา (เพิ่มมิติด้วยสีฟ้าอ่อน) */
+    --border: rgba(255, 179, 80, 0.185)!important; /* เส้นขอบสีฟ้าจางๆ */
+    --shadow: 0 12px 40px rgba(255, 206, 101, 0.137) !important; /* เงาสีฟ้าบางๆ ให้ความรู้สึกโปร่งแสง */
 }
-
-/* ตั้งค่าพื้นฐานให้ Body ของทุกหน้า */
 body { 
-    background-color: var(--bg) !important; 
-    color: var(--text) !important; 
+    background-color: var(--bg); 
+    color: var(--text); 
     font-family: 'Kanit', sans-serif;
     transition: var(--transition);
     margin: 0;
+}
+
+/* 📍 ปรับแต่งปุ่มและองค์ประกอบในโหมดสว่างให้สดใสขึ้น */
+body.light-theme .tile-card {
+    background: linear-gradient(145deg, #c59f595e, #ffffff63) !important; /* ไล่เฉดขาว-ฟ้าอ่อน */
+}
+
+body.light-theme .tile-card i {
+    color: #c5a059 !important; /* ไอคอนสีฟ้าสดใส */
+}
+
+body.light-theme input, body.light-theme select {
+    background-color: #fff2da21 !important;
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+}
+
+body.light-theme .btn-add-menu {
+    background: #c5a059 !important; /* ปุ่มเพิ่มเมนูสีน้ำเงินไฟฟ้า */
+    color: #ffffff !important;
 }
 
 /* =========================================

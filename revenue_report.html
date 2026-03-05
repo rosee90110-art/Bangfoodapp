@@ -3,119 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Executive Insights | BANGFOOD</title>
+    <title>Revenue Insights | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="admin_style.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        /* 📍 คงเหลือไว้เฉพาะโครงสร้าง LayoutMaster */
-        .page-container {
-            padding: 15px; max-width: 1400px; margin: 0 auto;
-            animation: fadeInPage 0.8s ease-out;
-            display: flex; flex-direction: column; gap: 20px;
-        }
-        @media (min-width: 1024px) { .page-container { padding: 30px; } }
+        /* 📍 Global UI Base */
+        body { margin: 0; padding: 25px; min-height: 100vh; background-color: var(--bg); color: var(--text); font-family: 'Kanit', sans-serif; transition: 0.5s ease; }
+        .page-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; animation: fadeIn 0.8s ease; }
 
-        .filter-tabs { 
-            display: flex; justify-content: center; gap: 8px; 
-            overflow-x: auto; padding: 5px 10px 10px; scrollbar-width: none;
+        /* 📅 Smart Filter Hub */
+        .filter-hub {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 30px;
+            padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
+        .mode-toggle { background: rgba(128,128,128,0.1); padding: 4px; border-radius: 12px; display: flex; gap: 4px; }
+        .mode-btn { border: none; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; cursor: pointer; transition: 0.3s; background: transparent; color: var(--sub-text); }
+        .mode-btn.active { background: var(--premium-gold); color: #000; }
+        .select-input { background: rgba(128,128,128,0.08); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 10px; font-size: 0.8rem; outline: none; font-weight: 600; }
+
+        /* 💰 Main Revenue Display */
+        .revenue-hero { 
+            background: linear-gradient(135deg, var(--card-bg), rgba(197, 160, 89, 0.05));
+            border: 1px solid var(--premium-gold); border-radius: 35px; padding: 40px; 
+            text-align: center; box-shadow: 0 15px 40px rgba(197, 160, 89, 0.1);
+        }
+        .revenue-hero span { font-size: 0.8rem; color: var(--premium-gold); text-transform: uppercase; letter-spacing: 3px; font-weight: 800; }
+        .revenue-hero b { font-size: 3.5rem; display: block; letter-spacing: -2px; margin: 10px 0; color: var(--text); }
         
-        .filter-btn { 
-            background: var(--card-bg); border: 1px solid var(--border); color: var(--sub-text); 
-            padding: 12px 20px; border-radius: 16px; cursor: pointer; white-space: nowrap; 
-            font-size: 0.85rem; font-weight: 600; transition: 0.3s;
-        }
-        .filter-btn.active { background: var(--premium-gold); color: #000; border-color: var(--premium-gold); }
+        .sub-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 500px; margin: 20px auto 0; padding-top: 20px; border-top: 1px solid var(--border); }
+        .sub-stat-item i { color: var(--premium-gold); margin-right: 8px; }
+        .sub-stat-item div { font-size: 0.7rem; color: var(--sub-text); font-weight: 700; text-transform: uppercase; }
+        .sub-stat-item b { font-size: 1.2rem; }
 
-        .stats-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; 
-        }
-        @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+        /* 📈 Charts & Tables */
+        .revenue-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 1024px) { .revenue-grid { grid-template-columns: 1.5fr 1fr; } }
 
-        .stat-card { 
-            padding: 15px; border-radius: 24px; 
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        @media (min-width: 1024px) { .stat-card { padding: 22px; border-radius: 28px; } }
+        .content-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 35px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .card-head { font-size: 0.85rem; font-weight: 800; color: var(--sub-text); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 
-        .stat-card span { font-size: 0.6rem; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; font-weight: 700; }
-        .stat-card b { display: block; font-size: 1rem; color: var(--text); letter-spacing: 0.5px; white-space: nowrap; }
-        @media (min-width: 1024px) { .stat-card b { font-size: 1.4rem; } }
+        /* 🏆 Income Table */
+        .income-row { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(128,128,128,0.1); align-items: center; }
+        .income-row:last-child { border-bottom: none; }
+        .income-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+        .income-val { font-weight: 800; color: var(--premium-gold); }
 
-        .insights-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 1024px) {
-            .insights-grid { grid-template-columns: 1.6fr 1fr; }
-            .span-full { grid-column: span 2; }
-        }
-
-        .card-box { border-radius: 32px; padding: 20px; min-height: 300px; }
-        @media (min-width: 1024px) { .card-box { padding: 30px; } }
-        
-        .card-title { font-size: 0.9rem; color: var(--premium-gold); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; font-weight: 600; }
-
-        .table-container { width: 100%; overflow-x: auto; }
-        .table-row { 
-            display: grid; grid-template-columns: 2fr 1fr 1.2fr; padding: 16px 10px; 
-            border-bottom: 1px solid rgba(128,128,128,0.1); font-size: 0.85rem; transition: 0.3s;
-            align-items: center;
-        }
-        .table-row b { color: var(--text); font-weight: 500; }
-        .table-row .qty { text-align: center; color: var(--sub-text); font-weight: 600; }
-        .table-row .price { text-align: right; color: var(--premium-gold); font-weight: 700; }
-
-        @keyframes fadeInPage { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        .value-pop { animation: valuePop 0.5s ease-out; }
-        @keyframes valuePop { 0% { opacity: 0.5; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .pop { animation: pop 0.4s ease-out; }
+        @keyframes pop { 0% { transform: scale(0.95); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
-<body onload="initializeDashboard()">
+<body onload="setupAndInit()">
 
     <div class="page-container">
-        <div class="filter-tabs">
-            <button class="filter-btn active" onclick="updateView('day', this)" data-lang-en="Today" data-lang-th="วันนี้">วันนี้</button>
-            <button class="filter-btn" onclick="updateView('week', this)" data-lang-en="Last 7 Days" data-lang-th="7 วันล่าสุด">7 วันล่าสุด</button>
-            <button class="filter-btn" onclick="updateView('month', this)" data-lang-en="This Month" data-lang-th="เดือนนี้">เดือนนี้</button>
-            <button class="filter-btn" onclick="updateView('year', this)" data-lang-en="This Year" data-lang-th="ปีนี้">ปีนี้</button>
-        </div>
+        <header class="filter-hub">
+            <div class="mode-toggle">
+                <button id="m-daily" class="mode-btn active" onclick="switchView('daily')">DAILY</button>
+                <button id="m-monthly" class="mode-btn" onclick="switchView('monthly')">MONTHLY</button>
+                <button id="m-yearly" class="mode-btn" onclick="switchView('yearly')">YEARLY</button>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <input type="date" id="in-date" class="select-input" onchange="refresh()">
+                <select id="in-month" class="select-input" onchange="refresh()" style="display:none;">
+                    <option value="0">มกราคม</option><option value="1">กุมภาพันธ์</option><option value="2">มีนาคม</option>
+                    <option value="3">เมษายน</option><option value="4">พฤษภาคม</option><option value="5">มิถุนายน</option>
+                    <option value="6">กรกฎาคม</option><option value="7">สิงหาคม</option><option value="8">กันยายน</option>
+                    <option value="9">ตุลาคม</option><option value="10">พฤศจิกายน</option><option value="11">ธันวาคม</option>
+                </select>
+                <select id="in-year" class="select-input" onchange="refresh()">
+                    <option value="2024">2567</option><option value="2025">2568</option><option value="2026">2569</option>
+                </select>
+            </div>
+        </header>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span data-lang-en="Revenue" data-lang-th="รายได้รวม">Revenue</span>
-                <b id="total-revenue">฿0.00</b>
-            </div>
-            <div class="stat-card">
-                <span data-lang-en="Orders" data-lang-th="จำนวนออเดอร์">Orders</span>
-                <b id="total-orders">0</b>
-            </div>
-            <div class="stat-card">
-                <span data-lang-en="Avg / Ticket" data-lang-th="เฉลี่ยต่อบิล">Avg / Ticket</span>
-                <b id="avg-order">฿0.00</b>
-            </div>
-            <div class="stat-card">
-                <span data-lang-en="Items Sold" data-lang-th="สินค้าที่ขายได้">Items Sold</span>
-                <b id="total-qty">0</b>
-            </div>
-        </div>
-
-        <div class="insights-grid">
-            <div class="card-box">
-                <div class="card-title"><i class="fas fa-chart-line" style="color:var(--info)"></i> <span data-lang-en="Revenue Trend" data-lang-th="แนวโน้มรายได้">Revenue Trend</span></div>
-                <div style="height: 250px; width: 100%; position: relative;"><canvas id="mainChart"></canvas></div>
-            </div>
-
-            <div class="card-box">
-                <div class="card-title"><i class="fas fa-chart-pie"></i> <span data-lang-en="Distribution" data-lang-th="สัดส่วนการขาย">Distribution</span></div>
-                <div style="height: 250px; width: 100%; position: relative;"><canvas id="donutChart"></canvas></div>
-            </div>
-
-            <div class="card-box span-full">
-                <div class="card-title"><i class="fas fa-list-ul"></i> <span data-lang-en="Product Ranking" data-lang-th="อันดับเมนูขายดี">Product Ranking</span></div>
-                <div class="table-container">
-                    <div id="table-body"></div>
+        <section class="revenue-hero">
+            <span>สรุปรายได้ตามช่วงเวลา</span>
+            <b id="main-rev">฿0.00</b>
+            <div class="sub-stats">
+                <div class="sub-stat-item">
+                    <div><i class="fas fa-file-invoice"></i> จำนวนบิล</div>
+                    <b id="sub-orders">0</b>
                 </div>
+                <div class="sub-stat-item">
+                    <div><i class="fas fa-hand-holding-usd"></i> เฉลี่ยต่อบิล</div>
+                    <b id="sub-avg">฿0.00</b>
+                </div>
+            </div>
+        </section>
+
+        <div class="revenue-grid">
+            <div class="content-card">
+                <div class="card-head"><i class="fas fa-chart-line"></i> แนวโน้มรายได้ (REVENUE TREND)</div>
+                <div style="height: 300px;"><canvas id="revChart"></canvas></div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-head"><i class="fas fa-trophy"></i> เมนูทำเงินสูงสุด (TOP REVENUE)</div>
+                <div id="income-list"></div>
             </div>
         </div>
     </div>
@@ -128,135 +115,109 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let rawHistory = [];
-        let mainChart, donutChart;
+        let history = [];
+        let chart;
+        let mode = 'daily';
 
-        function initializeDashboard() {
-            initDashboard();
-        }
+        function setupAndInit() {
+            const now = new Date();
+            document.getElementById('in-date').value = now.toISOString().split('T')[0];
+            document.getElementById('in-month').value = now.getMonth();
+            document.getElementById('in-year').value = now.getFullYear();
+            
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.body.classList.toggle('light-theme', theme === 'light');
 
-        function initDashboard() {
             db.ref('history').on('value', snap => {
                 if (snap.exists()) {
-                    rawHistory = Object.values(snap.val());
-                    updateView('day');
+                    history = Object.values(snap.val());
+                    refresh();
                 }
             });
         }
 
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'bf_theme') {
-                setTimeout(() => updateView('day'), 100); // วาดกราฟใหม่เมื่อธีมเปลี่ยน
-            }
-        });
+        function switchView(m) {
+            mode = m;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`m-${m}`).classList.add('active');
+            document.getElementById('in-date').style.display = (m === 'daily') ? 'block' : 'none';
+            document.getElementById('in-month').style.display = (m === 'monthly') ? 'block' : 'none';
+            refresh();
+        }
 
-        function updateView(mode, btn) {
-            if(btn) {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            }
+        function refresh() {
+            const selD = document.getElementById('in-date').value;
+            const selM = parseInt(document.getElementById('in-month').value);
+            const selY = parseInt(document.getElementById('in-year').value);
+            
+            let total = 0, count = 0, products = {}; let trendData = {};
 
-            const now = new Date();
-            let totalRev = 0, totalOrders = 0, totalQty = 0;
-            let productMap = {}; let timeGroups = {};
+            history.forEach(order => {
+                if (!order || !order.archivedAt) return;
+                const d = new Date(order.archivedAt);
+                let match = false; let key = "";
 
-            rawHistory.forEach(order => {
-                if (!order || !order.timestamp) return;
-                const date = new Date(order.timestamp);
-                let isMatch = false; let key = "";
+                if (mode === 'daily' && d.toISOString().split('T')[0] === selD) { match = true; key = d.getHours() + ":00"; }
+                else if (mode === 'monthly' && d.getMonth() === selM && d.getFullYear() === selY) { match = true; key = d.getDate(); }
+                else if (mode === 'yearly' && d.getFullYear() === selY) { match = true; key = (d.getMonth() + 1); }
 
-                if (mode === 'day' && date.toDateString() === now.toDateString()) { isMatch = true; key = date.getHours() + ":00"; }
-                else if (mode === 'week') {
-                    const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(now.getDate() - 7);
-                    if (date >= sevenDaysAgo) { isMatch = true; key = date.toLocaleDateString('th-TH', {weekday: 'short'}); }
-                }
-                else if (mode === 'month' && date.getMonth() === now.getMonth()) { isMatch = true; key = date.getDate().toString(); }
-                else if (mode === 'year' && date.getFullYear() === now.getFullYear()) { isMatch = true; key = date.toLocaleDateString('th-TH', {month: 'short'}); }
-
-                if (isMatch) {
+                if (match) {
                     const amt = parseFloat(order.total || 0);
-                    totalRev += amt; totalOrders++;
-                    timeGroups[key] = (timeGroups[key] || 0) + amt;
+                    total += amt; count++;
+                    trendData[key] = (trendData[key] || 0) + amt;
                     if(order.items) {
                         order.items.forEach(i => {
-                            const q = parseInt(i.quantity || 1); const p = parseFloat(i.finalPrice || 0);
-                            totalQty += q;
-                            if(!productMap[i.name]) productMap[i.name] = { qty: 0, price: 0 };
-                            productMap[i.name].qty += q; productMap[i.name].price += p;
+                            if(!products[i.name]) products[i.name] = 0;
+                            products[i.name] += parseFloat(i.finalPrice || 0);
                         });
                     }
                 }
             });
 
-            const updateText = (id, val) => {
-                const el = document.getElementById(id);
-                el.innerText = val;
-                el.classList.remove('value-pop');
-                void el.offsetWidth;
-                el.classList.add('value-pop');
-            };
+            // Update UI
+            const up = (id, v) => { const el = document.getElementById(id); el.innerText = v; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); };
+            up('main-rev', "฿" + total.toLocaleString(undefined, {minimumFractionDigits: 2}));
+            up('sub-orders', count.toLocaleString() + " บิล");
+            up('sub-avg', "฿" + (total / (count || 1)).toLocaleString(undefined, {minimumFractionDigits: 2}));
 
-            updateText('total-revenue', "฿" + totalRev.toLocaleString(undefined, {minimumFractionDigits: 1}));
-            updateText('total-orders', totalOrders.toLocaleString());
-            updateText('total-qty', totalQty.toLocaleString());
-            updateText('avg-order', "฿" + (totalRev / (totalOrders || 1)).toLocaleString(undefined, {minimumFractionDigits: 1}));
-
-            const sorted = Object.entries(productMap).sort((a,b) => b[1].price - a[1].price);
-            renderTable(sorted);
-            renderMainChart(timeGroups);
-            renderDonutChart(sorted.slice(0, 5));
-        }
-
-        function renderTable(data) {
-            document.getElementById('table-body').innerHTML = data.map(([name, info]) => `
-                <div class="table-row">
-                    <b>${name}</b>
-                    <div class="qty">x${info.qty}</div>
-                    <div class="price">฿${info.price.toLocaleString()}</div>
+            const sorted = Object.entries(products).sort((a,b) => b[1] - a[1]).slice(0, 8);
+            document.getElementById('income-list').innerHTML = sorted.map(([n, v]) => `
+                <div class="income-row">
+                    <span class="income-name">${n}</span>
+                    <span class="income-val">฿${v.toLocaleString()}</span>
                 </div>`).join('');
+
+            renderChart(trendData);
         }
 
-        function renderMainChart(data) {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            if (mainChart) mainChart.destroy();
-            const isLight = document.body.classList.contains('light-theme');
-            mainChart = new Chart(ctx, {
+        function renderChart(data) {
+            const ctx = document.getElementById('revChart').getContext('2d');
+            if (chart) chart.destroy();
+            const isL = document.body.classList.contains('light-theme');
+            const keys = Object.keys(data).sort((a, b) => (mode === 'daily' ? parseInt(a) : a) - (mode === 'daily' ? parseInt(b) : b));
+            const labels = keys.map(k => mode === 'daily' ? k : (mode === 'monthly' ? `วันที่ ${k}` : `เดือน ${k}`));
+
+            chart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: Object.keys(data),
+                    labels: labels,
                     datasets: [{ 
-                        data: Object.values(data), 
+                        data: keys.map(k => data[k]), 
                         borderColor: '#c5a059', 
-                        backgroundColor: isLight ? 'rgba(197, 160, 89, 0.08)' : 'rgba(197, 160, 89, 0.05)',
-                        fill: true, tension: 0.4, borderWidth: 3, pointRadius: 3, pointBackgroundColor: '#c5a059'
+                        backgroundColor: 'rgba(197, 160, 89, 0.1)',
+                        fill: true, tension: 0.4, borderWidth: 3, pointRadius: 4
                     }]
                 },
                 options: { 
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: { 
-                        y: { beginAtZero: true, grid: { color: isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.03)' }, ticks: { color: isLight ? '#5f6368' : '#e0e0e0', font: { size: 9 } } },
-                        x: { grid: { display: false }, ticks: { color: isLight ? '#5f6368' : '#e0e0e0', font: { size: 9 } } }
+                        y: { grid: { color: 'rgba(128,128,128,0.05)' }, ticks: { color: isL ? '#555' : '#aaa', font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { color: isL ? '#555' : '#aaa', font: { size: 10 } } }
                     }
                 }
             });
         }
-
-        function renderDonutChart(data) {
-            const ctx = document.getElementById('donutChart').getContext('2d');
-            if (donutChart) donutChart.destroy();
-            const isLight = document.body.classList.contains('light-theme');
-            donutChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: { labels: data.map(d => d[0]), datasets: [{ data: data.map(d => d[1].price), backgroundColor: ['#c5a059', '#a6874b', '#876e3d', '#69552f', '#4a3c21'], borderWidth: 0 }] },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, cutout: '75%',
-                    plugins: { legend: { position: 'bottom', labels: { color: isLight ? '#5f6368' : '#e0e0e0', font: { size: 9 }, boxWidth: 10, padding: 10 } } }
-                }
-            });
-        }
     </script>
-
-    <script src="admin_script.js"></script>
 </body>
 </html>

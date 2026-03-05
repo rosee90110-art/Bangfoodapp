@@ -1,0 +1,3 @@
+git add .
+git commit -m "Fix: Make customization-group responsive and max-width 800px"
+git push -u origin main

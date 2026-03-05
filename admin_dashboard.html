@@ -3,179 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Dashboard | BANGFOOD</title>
+    <title>Executive Hub | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="admin_style.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* 📍 จัดระเบียบหน้าจอแบบ Balanced & Layered */
-        body::-webkit-scrollbar { display: none; }
-        body { margin: 0; padding: 40px 20px; min-height: 100vh; scrollbar-width: none; }
+        /* 📍 Global UI Base */
+        body { margin: 0; padding: 0; min-height: 100vh; background-color: var(--bg); color: var(--text); font-family: 'Kanit', sans-serif; transition: 0.5s ease; display: flex; align-items: center; justify-content: center; }
+        .dashboard-container { width: 100%; max-width: 1000px; padding: 40px; display: flex; flex-direction: column; gap: 40px; animation: fadeIn 0.8s ease; }
 
-        .dashboard-container {
-            max-width: 1400px; /* ขยายกว้างขึ้นนิดหน่อยให้ดูอลังการ */
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 35px;
-            animation: fadeIn 0.8s ease-out;
-        }
+        /* 👑 Premium Header */
+        header { text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 30px; }
+        header h1 { font-size: 2.2rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        header p { color: var(--sub-text); font-size: 0.8rem; margin: 8px 0 0; text-transform: uppercase; letter-spacing: 3px; font-weight: 700; }
 
-        /* 👑 Brand Header Central */
-        .brand-header { text-align: center; margin-bottom: 20px; position: relative; }
-        .brand-logo-circle {
-            width: 110px; height: 110px;
-            background: linear-gradient(145deg, #c5a059, #8e6d2f);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.8rem; color: #fff;
-            box-shadow: 0 15px 40px rgba(197, 160, 89, 0.4);
-            border: 5px solid rgba(255,255,255,0.15);
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* 📊 Large Stat Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .stat-card { 
+            background: linear-gradient(145deg, var(--card-bg), rgba(197, 160, 89, 0.03));
+            border: 1px solid var(--border); padding: 40px; border-radius: 45px;
+            display: flex; align-items: center; gap: 30px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .brand-logo-circle:hover { transform: rotate(15deg) scale(1.05); }
-        .brand-name {
-            font-size: 2.2rem; font-weight: 900; letter-spacing: 8px;
-            color: var(--premium-gold); text-transform: uppercase;
-            margin: 0; text-shadow: 0 0 25px rgba(197, 160, 89, 0.3);
-        }
+        
+        /* ✨ Light Theme Styling */
+        body.light-theme .stat-card { background: #ffffff; box-shadow: 0 15px 40px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.05); }
+        body.light-theme .stat-icon { background: rgba(197, 160, 89, 0.15); color: #8e6d2f; }
 
-        /* 📊 Premium Stats Cards */
-        .stats-row { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 25px; 
-        }
+        .stat-card:hover { transform: translateY(-10px); border-color: var(--premium-gold); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .stat-icon { width: 75px; height: 75px; border-radius: 25px; background: rgba(197, 160, 89, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--premium-gold); }
+        .stat-info span { font-size: 0.75rem; color: var(--sub-text); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; display: block; margin-bottom: 6px; }
+        .stat-info b { font-size: 2.5rem; font-weight: 900; color: var(--text); line-height: 1; letter-spacing: -1px; }
 
-        .stat-mini-card { 
-            padding: 35px; 
-            border-radius: 40px; 
-            display: flex;
-            align-items: center;
-            gap: 25px;
-            position: relative;
-            overflow: hidden;
-        }
-        /* ลายน้ำจางๆ หลังกล่อง */
-        .stat-mini-card::after {
-            content: "\f0d6"; font-family: "Font Awesome 5 Free"; font-weight: 900;
-            position: absolute; right: -15px; bottom: -15px;
-            font-size: 5rem; opacity: 0.03; color: var(--premium-gold);
-        }
-
-        .stat-icon-circle {
-            width: 70px; height: 70px; border-radius: 24px;
-            background: rgba(197, 160, 89, 0.12);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; color: var(--premium-gold);
-            border: 1px solid rgba(197, 160, 89, 0.3);
-            box-shadow: inset 0 0 15px rgba(197, 160, 89, 0.1);
-        }
-
-        /* 📡 ระบบ Pulse สถานะ */
-        .pulse-dot {
-            width: 10px; height: 10px; background: #27ae60; border-radius: 50%;
-            display: inline-block; margin-right: 8px;
-            box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7);
-            animation: pulse-green 2s infinite;
-        }
-        @keyframes pulse-green {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
-        }
-
-        /* 📈 Chart & Insight Box */
-        .chart-box { border-radius: 45px; padding: 40px; height: 400px; }
-        .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px; }
-        .insight-box { border-radius: 45px; padding: 40px; min-height: 500px; }
-
-        .status-pill { font-size: 0.65rem; padding: 8px 18px; border-radius: 30px; background: rgba(197, 160, 89, 0.1); color: var(--premium-gold); font-weight: 900; border: 1px solid rgba(197, 160, 89, 0.2); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body onload="initializeDashboard()">
 
     <div class="dashboard-container">
-        
-        <header class="brand-header">
-            <div class="brand-logo-circle">
-                <i class="fas fa-crown"></i>
-            </div>
-            <h1 class="brand-name">BANGFOOD</h1>
-            <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 10px;">
-                <div class="pulse-dot"></div>
-                <div style="font-size: 0.7rem; color: var(--sub-text); text-transform: uppercase; letter-spacing: 4px; font-weight: 700;">
-                    LIVE CONTROL SYSTEM ACTIVE
-                </div>
-            </div>
+        <header>
+            <h1 data-lang-th="ศูนย์ควบคุมบริหาร" data-lang-en="Executive Hub">ศูนย์ควบคุมบริหาร</h1>
+            <p data-lang-th="ภาพรวมประสิทธิภาพร้านวันนี้" data-lang-en="Snapshot Performance Today">ภาพรวมประสิทธิภาพร้านวันนี้</p>
         </header>
 
-        <div class="stats-row">
-            <div class="stat-mini-card stat-card">
-                <div class="stat-icon-circle"><i class="fas fa-receipt"></i></div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-coins"></i></div>
                 <div class="stat-info">
-                    <span data-lang-en="Orders Collected" data-lang-th="จำนวนบิลวันนี้">Orders Collected</span>
+                    <span data-lang-th="รายได้รวมวันนี้" data-lang-en="Revenue Today">รายได้รวมวันนี้</span>
+                    <b id="dash-revenue">฿0</b>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <span data-lang-th="ออเดอร์รอเริ่มทำ" data-lang-en="Pending Orders">ออเดอร์รอเริ่มทำ</span>
                     <b id="dash-orders-count">0</b>
                 </div>
             </div>
-            <div class="stat-mini-card stat-card">
-                <div class="stat-icon-circle"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-card">
+                <div class="stat-icon" style="color:#43e97b;"><i class="fas fa-broadcast-tower"></i></div>
                 <div class="stat-info">
-                    <span data-lang-en="Daily Gross" data-lang-th="รายได้โดยประมาณ">Daily Gross</span>
-                    <b id="dash-revenue">฿0.00</b>
-                </div>
-            </div>
-            <div class="stat-mini-card stat-card">
-                <div class="stat-icon-circle"><i class="fas fa-boxes"></i></div>
-                <div class="stat-info">
-                    <span data-lang-en="Active Inventory" data-lang-th="รายการอาหารพร้อมขาย">Active Inventory</span>
-                    <b id="dash-menu-count">0</b>
-                </div>
-            </div>
-            <div class="stat-mini-card stat-card">
-                <div class="stat-icon-circle" style="color:#2196F3;"><i class="fas fa-user-shield"></i></div>
-                <div class="stat-info">
-                    <span data-lang-en="Manager Access" data-lang-th="ระดับการเข้าถึง">Manager Access</span>
-                    <b style="color: #2196F3; font-size: 1.2rem;">AUTHORIZED</b>
+                    <span data-lang-th="พนักงานที่ออนไลน์" data-lang-en="Active Staff">พนักงานที่ออนไลน์</span>
+                    <b id="dash-online-count" style="color:#43e97b;">0</b>
                 </div>
             </div>
         </div>
 
-        <div class="chart-box card-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
-                <div style="font-size: 1rem; color: var(--premium-gold); font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">
-                    <i class="fas fa-database" style="margin-right:10px;"></i> Revenue Performance
-                </div>
-                <div style="font-size: 0.7rem; color: var(--sub-text); font-weight: 700; border: 1px solid var(--border); padding: 5px 15px; border-radius: 10px;">
-                    REAL-TIME SYNC
-                </div>
-            </div>
-            <canvas id="revenueChart"></canvas>
-        </div>
-
-        <div class="insight-grid">
-            <div class="insight-box card-box">
-                <div class="box-title">
-                    <h3 data-lang-en="Transaction Stream" data-lang-th="ความเคลื่อนไหวล่าสุด"><i class="fas fa-bolt"></i> ความเคลื่อนไหวล่าสุด</h3>
-                </div>
-                <div id="mini-order-list"></div>
-            </div>
-
-            <div class="insight-box card-box">
-                <div class="box-title">
-                    <h3 data-lang-en="Elite Performance" data-lang-th="อันดับเมนูขายดี"><i class="fas fa-star"></i> อันดับเมนูขายดี</h3>
-                </div>
-                <div id="mini-trending-list"></div>
-            </div>
-        </div>
-
-        <footer style="text-align:center; padding:40px; opacity:0.2; font-size:0.6rem; letter-spacing:5px; text-transform: uppercase;">
-            Executive Command Console v2.0 &bull; Secure Connection
+        <footer style="text-align: center; margin-top: 20px;">
+            <div id="live-time" style="font-size: 1rem; font-weight: 800; color: var(--premium-gold); opacity: 0.8;">00:00:00</div>
+            <p style="font-size: 0.6rem; opacity: 0.3; letter-spacing: 2px; margin-top: 10px;" data-lang-th="ระบบวิเคราะห์ข้อมูลปลอดภัย" data-lang-en="SECURE ANALYTICS CONNECTION">ระบบวิเคราะห์ข้อมูลปลอดภัย</p>
         </footer>
     </div>
 
@@ -185,94 +80,60 @@
         const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        let revenueChart;
 
-        function initializeDashboard() { loadDashboardData(); }
+        function initializeDashboard() {
+            // ดึงธีมและภาษามาใช้ทันที
+            const user = sessionStorage.getItem('currentAdminName');
+            if (user) {
+                const theme = localStorage.getItem(`bf_theme_${user}`) || 'dark';
+                document.body.classList.toggle('light-theme', theme === 'light');
+            }
+            
+            // เรียกใช้ฟังก์ชันเปลี่ยนภาษาจาก admin_script.js
+            if (window.applyGlobalLanguage) applyGlobalLanguage();
 
-        function loadDashboardData() {
-            const todayStr = new Date().toLocaleDateString();
-            db.ref('orders').on('value', snapshot => {
-                let orderCount = 0; let totalRev = 0;
-                let miniOrderHtml = ''; const orders = [];
-                if(snapshot.exists()) {
-                    snapshot.forEach(child => {
-                        const data = child.val(); orders.push(data);
-                        if(new Date(data.timestamp).toLocaleDateString() === todayStr) {
-                            orderCount++; totalRev += parseFloat(data.total || 0);
-                        }
-                    });
-                }
-                document.getElementById('dash-orders-count').innerText = orderCount;
-                document.getElementById('dash-revenue').innerText = "฿" + totalRev.toLocaleString(undefined, {minimumFractionDigits: 1});
-                
-                orders.reverse().slice(0, 5).forEach(o => {
-                    miniOrderHtml += `
-                        <div class="mini-list-item" style="padding: 22px 0;">
-                            <div class="mini-text">
-                                <b style="font-size:1.1rem;">Station ${o.tableNumber}</b>
-                                <small style="letter-spacing:1px; color:#555;">ID: ${o.timestamp.toString().slice(-6)} &bull; ${new Date(o.timestamp).toLocaleTimeString()}</small>
-                            </div>
-                            <span class="status-pill">PROCESSED</span>
-                        </div>`;
-                });
-                document.getElementById('mini-order-list').innerHTML = miniOrderHtml || '<p style="text-align:center; padding:50px; opacity:0.4;">Waiting for transactions...</p>';
-                renderChart(orders);
-            });
+            // นาฬิกาแบบไทย/สากล
+            setInterval(() => {
+                document.getElementById('live-time').innerText = new Date().toLocaleTimeString('th-TH');
+            }, 1000);
 
-            db.ref('products').once('value', snapshot => {
-                document.getElementById('dash-menu-count').innerText = snapshot.numChildren();
-                let trendingHtml = '';
-                if(snapshot.exists()){
-                    let products = Object.values(snapshot.val());
-                    products.slice(0, 5).forEach((p, i) => {
-                        trendingHtml += `
-                            <div class="mini-list-item" style="border-radius: 20px;">
-                                <div style="display:flex; align-items:center; gap:20px;">
-                                    <img src="${p.img}" class="mini-img" style="width:60px; height:60px; border-radius:20px;">
-                                    <div class="mini-text">
-                                        <b style="font-size:1rem;">${p.name}</b>
-                                        <small style="color:var(--premium-gold); font-weight:700;">PREMIUM SELECTION #${i+1}</small>
-                                    </div>
-                                </div>
-                                <b style="color:var(--premium-gold); font-size:1.2rem;">฿${p.price}</b>
-                            </div>`;
-                    });
-                }
-                document.getElementById('mini-trending-list').innerHTML = trendingHtml;
-                if (window.applyGlobalLanguage) applyGlobalLanguage();
-            });
+            loadData();
         }
 
-        function renderChart(allOrders) {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            if (revenueChart) revenueChart.destroy();
-            const isLight = document.body.classList.contains('light-theme');
+        function loadData() {
+            const today = new Date().toDateString();
             
-            // สร้าง Gradient สำหรับกราฟ
-            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(197, 160, 89, 0.2)');
-            gradient.addColorStop(1, 'rgba(197, 160, 89, 0)');
+            db.ref().on('value', snap => {
+                const data = snap.val() || {};
+                let totalRevenue = 0;
+                let pendingCount = 0;
 
-            revenueChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
-                    datasets: [{
-                        data: [500, 1200, 3500, 2800, 4200, 5800, 4900],
-                        borderColor: '#c5a059',
-                        backgroundColor: gradient,
-                        borderWidth: 6, tension: 0.45, fill: true, pointRadius: 4, pointHoverRadius: 8,
-                        pointBackgroundColor: '#c5a059', pointBorderColor: '#fff', pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { grid: { color: 'rgba(128,128,128,0.08)' }, ticks: { color: '#666', font: { weight: 'bold' } } },
-                        x: { grid: { display: false }, ticks: { color: '#666', font: { weight: 'bold' } } }
-                    }
+                // 1. กรองออเดอร์ที่ "รอดำเนินการ" และบวกยอดเงิน
+                if (data.orders) {
+                    Object.values(data.orders).forEach(o => {
+                        if (o.status === 'รอดำเนินการ') pendingCount++;
+                        const d = new Date(o.timestamp);
+                        if(d.toDateString() === today) totalRevenue += parseFloat(o.total || 0);
+                    });
                 }
+
+                // 2. บวกยอดเงินจากประวัติที่จบแล้ว
+                if (data.history) {
+                    Object.values(data.history).forEach(o => {
+                        const d = new Date(o.archivedAt || o.timestamp);
+                        if(d.toDateString() === today) totalRevenue += parseFloat(o.total || 0);
+                    });
+                }
+
+                document.getElementById('dash-revenue').innerText = "฿" + totalRevenue.toLocaleString();
+                document.getElementById('dash-orders-count').innerText = pendingCount;
+            });
+
+            // ดึงคนออนไลน์
+            db.ref('presence').on('value', s => {
+                let online = 0;
+                if(s.exists()) Object.values(s.val()).forEach(ss => online += Object.keys(ss).length);
+                document.getElementById('dash-online-count').innerText = online;
             });
         }
     </script>

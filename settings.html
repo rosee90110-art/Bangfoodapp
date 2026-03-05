@@ -5,109 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Settings | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="admin_style.css">
 
     <style>
-        /* 📍 คงเหลือไว้เฉพาะสไตล์ปุ่มเลื่อน (Switch) และการจัดวางเฉพาะหน้า */
-        body { margin: 0; padding: 20px; min-height: 100vh; }
-
-        .settings-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 20px; max-width: 1000px; margin: 0 auto; 
-        }
-
+        body { margin: 0; padding: 20px; min-height: 100vh; transition: background 0.3s; }
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
         .set-box { padding: 25px; border-radius: 28px; }
-
-        .set-title { 
-            font-size: 0.9rem; color: var(--premium-gold); margin-bottom: 20px; 
-            display: flex; align-items: center; gap: 10px; letter-spacing: 1px; 
-            text-transform: uppercase; font-weight: 700;
-        }
-
-        .control-row { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 15px; padding-bottom: 15px; 
-            border-bottom: 1px solid var(--border); 
-        }
+        .set-title { font-size: 0.9rem; color: var(--premium-gold); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+        .control-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
         .control-row:last-child { border-bottom: none; }
-
         .label-text b { display: block; font-size: 0.9rem; font-weight: 500; }
         .label-text small { font-size: 0.65rem; color: var(--sub-text); }
-        
-        .select-mini, .input-mini {
-            background: rgba(128,128,128,0.1); border: 1px solid var(--border);
-            color: var(--text); padding: 10px; border-radius: 12px;
-            font-family: inherit; outline: none;
-        }
+        .select-mini, .input-mini { background: rgba(128,128,128,0.1); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 12px; outline: none; }
 
         /* 🔘 Custom Switch */
         .switch { position: relative; width: 50px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { 
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; 
-            background-color: #333; transition: .4s; border-radius: 34px; 
-        }
-        .slider:before { 
-            position: absolute; content: ""; height: 18px; width: 18px; 
-            left: 4px; bottom: 4px; background-color: #fff; transition: .4s; border-radius: 50%; 
-        }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: #fff; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--premium-gold); }
         input:checked + .slider:before { transform: translateX(24px); }
         
-        .btn-save {
-            width: 100%; padding: 16px; background: var(--premium-gold); border: none; 
-            border-radius: 18px; font-weight: 700; cursor: pointer; margin-top: 10px;
-            transition: 0.3s; font-size: 0.9rem; color: #000;
-        }
+        .btn-save { width: 100%; padding: 16px; background: var(--premium-gold); border: none; border-radius: 18px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.3s; font-size: 0.9rem; color: #000; }
     </style>
 </head>
 <body onload="initializeSettings()">
 
     <div class="settings-grid">
         <div class="set-box card-box">
-            <div class="set-title"><i class="fas fa-wallet"></i> <span data-lang-en="FINANCIAL CONFIG" data-lang-th="การตั้งค่าการเงิน">FINANCIAL CONFIG</span></div>
+            <div class="set-title"><i class="fas fa-wallet"></i> <span>FINANCIAL CONFIG</span></div>
             <div class="control-row">
                 <div class="label-text">
-                    <b data-lang-en="VAT (%)" data-lang-th="ภาษีมูลค่าเพิ่ม (VAT %)">ภาษีมูลค่าเพิ่ม (VAT %)</b>
-                    <small data-lang-en="Auto calculate in receipt" data-lang-th="คำนวณในใบเสร็จอัตโนมัติ">คำนวณในใบเสร็จอัตโนมัติ</small>
+                    <b>ภาษีมูลค่าเพิ่ม (VAT %)</b>
+                    <small>คำนวณในใบเสร็จอัตโนมัติ</small>
                 </div>
                 <input type="number" class="input-mini" id="set-vat" style="width: 80px;">
             </div>
             <div class="control-row">
                 <div class="label-text">
-                    <b data-lang-en="Service Charge (%)" data-lang-th="ค่าบริการเสริม (%)">Service Charge (%)</b>
-                    <small data-lang-en="Extra fee per order" data-lang-th="ค่าบริการเสริมต่อออเดอร์">ค่าบริการเสริมต่อออเดอร์</small>
+                    <b>Service Charge (%)</b>
+                    <small>ค่าบริการเสริมต่อออเดอร์</small>
                 </div>
                 <input type="number" class="input-mini" id="set-service" style="width: 80px;">
             </div>
-            <button class="btn-save" onclick="saveFinance()" data-lang-en="Save Finance" data-lang-th="บันทึกข้อมูลการเงิน">บันทึกข้อมูลการเงิน</button>
+            <button class="btn-save" onclick="saveFinance()">บันทึกข้อมูลการเงิน</button>
         </div>
 
         <div class="set-box card-box">
-            <div class="set-title"><i class="fas fa-server"></i> <span data-lang-en="STORE OPERATION" data-lang-th="การดำเนินงานร้าน">STORE OPERATION</span></div>
+            <div class="set-title"><i class="fas fa-server"></i> <span>STORE OPERATION</span></div>
             <div class="control-row">
                 <div class="label-text">
-                    <b data-lang-en="Store Status" data-lang-th="สถานะการเปิดร้าน">สถานะการเปิดร้าน</b>
-                    <small data-lang-en="Stop receiving orders" data-lang-th="ปิดเพื่อหยุดรับออเดอร์ชั่วคราว">ปิดเพื่อหยุดรับออเดอร์ชั่วคราว</small>
+                    <b>สถานะการเปิดร้าน</b>
+                    <small>ปิดเพื่อหยุดรับออเดอร์ชั่วคราว</small>
                 </div>
                 <label class="switch"><input type="checkbox" id="store-status"><span class="slider"></span></label>
             </div>
             <div class="control-row">
                 <div class="label-text">
-                    <b data-lang-en="Self-Order Mode" data-lang-th="โหมดสั่งอาหารเอง">โหมดสั่งอาหารเอง</b>
-                    <small data-lang-en="Allow customers to scan & order" data-lang-th="เปิดให้ลูกค้าสแกนสั่งเองที่โต๊ะ">เปิดให้ลูกค้าสแกนสั่งเองที่โต๊ะ</small>
+                    <b>โหมดสั่งอาหารเอง</b>
+                    <small>เปิดให้ลูกค้าสแกนสั่งเองที่โต๊ะ</small>
                 </div>
                 <label class="switch"><input type="checkbox" id="self-order"><span class="slider"></span></label>
             </div>
         </div>
 
         <div class="set-box card-box">
-            <div class="set-title"><i class="fas fa-adjust"></i> <span data-lang-en="PREFERENCE" data-lang-th="ความชอบส่วนตัว">PREFERENCE</span></div>
+            <div class="set-title"><i class="fas fa-adjust"></i> <span>PREFERENCE</span></div>
             <div class="control-row">
                 <div class="label-text">
-                    <b data-lang-en="System Language" data-lang-th="ภาษาของระบบ">ภาษาของระบบ</b>
-                    <small data-lang-en="Choose your preferred language" data-lang-th="เลือกภาษาที่ต้องการใช้งาน">เลือกภาษาที่ต้องการใช้งาน</small>
+                    <b>ภาษาของระบบ</b>
+                    <small>เลือกภาษาที่ต้องการใช้งาน</small>
                 </div>
                 <select class="select-mini" id="set-lang" onchange="updateLanguage(this.value)">
                     <option value="th">ไทย (TH)</option>
@@ -116,8 +83,8 @@
             </div>
             <div class="control-row">
                 <div class="label-text">
-                    <b data-lang-en="Appearance Theme" data-lang-th="ธีมการแสดงผล">ธีมการแสดงผล</b>
-                    <small data-lang-en="Switch between Dark and Light" data-lang-th="สลับระหว่างโหมดมืดและโหมดสว่าง">สลับระหว่างโหมดมืดและโหมดสว่าง</small>
+                    <b>ธีมการแสดงผล</b>
+                    <small>สลับระหว่างโหมดมืดและโหมดสว่าง</small>
                 </div>
                 <select class="select-mini" id="set-theme" onchange="updateTheme(this.value)">
                     <option value="dark">Dark Mode</option>
@@ -134,11 +101,16 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        const currentAdmin = sessionStorage.getItem('currentAdminName') || 'guest';
+
         function initializeSettings() {
             loadSettings();
-            // ซิงค์ค่าเมนูเลือก (Select) ให้ตรงกับค่าปัจจุบันใน localStorage
-            document.getElementById('set-lang').value = localStorage.getItem('bf_lang') || 'th';
-            document.getElementById('set-theme').value = localStorage.getItem('bf_theme') || 'dark';
+            // ดึงค่าธีมและภาษาปัจจุบันจาก LocalStorage
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.getElementById('set-theme').value = savedTheme;
+            document.getElementById('set-lang').value = localStorage.getItem(`bf_lang_${currentAdmin}`) || 'th';
+            
+            applyTheme(savedTheme);
         }
 
         function loadSettings() {
@@ -157,25 +129,41 @@
             db.ref('system_settings').update({
                 vat: parseFloat(document.getElementById('set-vat').value),
                 serviceCharge: parseFloat(document.getElementById('set-service').value)
-            }).then(() => alert("Settings Saved!"));
+            }).then(() => alert("บันทึกการตั้งค่าการเงินสำเร็จ!"));
         }
 
-        // 🌐 เปลี่ยนภาษาผ่าน localStorage เพื่อให้ไฟล์กลางตรวจจับ
         function updateLanguage(lang) {
-            localStorage.setItem('bf_lang', lang);
-            if (window.applyGlobalLanguage) applyGlobalLanguage();
+            localStorage.setItem(`bf_lang_${currentAdmin}`, lang);
+            window.parent.postMessage({ type: 'LANG_CHANGE', admin: currentAdmin, lang: lang }, '*');
         }
 
-        // 🌓 เปลี่ยนธีมผ่าน localStorage (ไฟล์กลางจะตรวจจับ storage event และเปลี่ยนให้เอง)
+        // 🌗 ฟังก์ชันอัปเดตธีม (บันทึกค่ากลาง)
         function updateTheme(theme) {
-            localStorage.setItem('bf_theme', theme);
-            if (window.applyGlobalTheme) applyGlobalTheme();
+            // 1. บันทึกค่าลงคีย์ 'theme' เป็นค่ากลางสำหรับทุกหน้า
+            localStorage.setItem('theme', theme);
+            
+            // 2. บันทึกแยกตามบัญชีแอดมิน (ตามโค้ดเดิมของน้า)
+            localStorage.setItem(`bf_theme_${currentAdmin}`, theme);
+            
+            // 3. เปลี่ยนสีหน้าตัวเองทันที
+            applyTheme(theme);
+            
+            // 4. ส่งสัญญาณบอกหน้าหลัก (ถ้ามี iframe)
+            window.parent.postMessage({ type: 'THEME_CHANGE', theme: theme }, '*');
+        }
+
+        // ฟังก์ชันเปลี่ยน Class ที่ Body
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+            }
         }
 
         document.getElementById('store-status').onchange = (e) => db.ref('system_settings').update({ isStoreOpen: e.target.checked });
         document.getElementById('self-order').onchange = (e) => db.ref('system_settings').update({ allowSelfOrder: e.target.checked });
     </script>
-
     <script src="admin_script.js"></script>
 </body>
 </html>

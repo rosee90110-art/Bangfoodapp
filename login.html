@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Login | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -24,14 +24,15 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
-            overflow: hidden;
             background-image: radial-gradient(circle at 50% -20%, #222 0%, #0a0a0a 80%);
+            /* ป้องกันการเลื่อนหน้าจอบนมือถือถ้าไม่จำเป็น */
+            touch-action: manipulation;
         }
 
         .login-card {
             background: var(--glass);
-            padding: 50px 30px;
-            border-radius: 40px;
+            padding: 40px 25px;
+            border-radius: 35px;
             border: 1px solid var(--border-dim);
             backdrop-filter: blur(25px);
             width: 100%;
@@ -42,16 +43,16 @@
         }
 
         .logo-icon {
-            font-size: 3rem;
+            font-size: 2.8rem;
             color: var(--primary-gold);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             filter: drop-shadow(0 0 15px rgba(197, 160, 89, 0.2));
         }
 
         h2 { 
-            margin-bottom: 35px; 
-            font-size: 1.4rem;
-            letter-spacing: 5px; 
+            margin-bottom: 30px; 
+            font-size: 1.2rem;
+            letter-spacing: 4px; 
             font-weight: 500; 
             color: #fff;
             text-transform: uppercase;
@@ -64,53 +65,62 @@
 
         input {
             width: 100%;
-            padding: 18px 25px;
+            padding: 16px 20px;
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-dim);
-            border-radius: 20px;
+            border-radius: 18px;
             color: white;
             box-sizing: border-box;
             outline: none;
             font-family: inherit;
-            font-size: 1rem;
-            transition: 0.4s;
+            font-size: 16px; /* ป้องกัน iOS Auto-zoom เมื่อคลิกช่องกรอก */
+            transition: 0.3s;
         }
 
         input:focus {
             border-color: var(--primary-gold);
             background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 25px rgba(197, 160, 89, 0.15);
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.15);
         }
 
         button {
             width: 100%;
-            padding: 18px;
-            border-radius: 20px;
+            padding: 16px;
+            border-radius: 18px;
             border: none;
             background: var(--primary-gold);
             color: #000;
-            font-weight: 600;
-            font-size: 1.1rem;
+            font-weight: 700;
+            font-size: 1.05rem;
             cursor: pointer;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-top: 20px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 15px;
+            /* เพิ่มเงาปุ่มให้กดง่ายบนมือถือ */
+            box-shadow: 0 8px 15px rgba(197, 160, 89, 0.2);
         }
 
-        button:active { transform: scale(0.95); }
+        button:active { transform: scale(0.96); }
 
         .cancel-btn {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-decoration: none;
             display: inline-block;
-            margin-top: 35px;
+            margin-top: 30px;
             transition: 0.3s;
             letter-spacing: 1px;
         }
         .cancel-btn:hover { color: #fff; }
 
+        /* ปรับปรุงให้หน้าจอมือถือขนาดเล็กแสดงผลได้สวย */
+        @media (max-height: 600px) {
+            .login-card { padding: 30px 20px; }
+            .logo-icon { font-size: 2rem; }
+            h2 { margin-bottom: 20px; }
+        }
+
         @keyframes cardEntrance {
-            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
     </style>
@@ -121,13 +131,15 @@
         <h2>Admin Login</h2>
 
         <div class="input-group">
-            <input type="text" id="user" placeholder="ชื่อผู้ใช้">
+            <input type="text" id="user" placeholder="ชื่อผู้ใช้" autocomplete="username" 
+                   onkeydown="if(event.key === 'Enter') document.getElementById('pass').focus()">
         </div>
         <div class="input-group">
-            <input type="password" id="pass" placeholder="รหัสผ่าน">
+            <input type="password" id="pass" placeholder="รหัสผ่าน" autocomplete="current-password"
+                   onkeydown="if(event.key === 'Enter') handleLogin()">
         </div>
 
-        <button onclick="handleLogin()">เข้าสู่ระบบ</button>
+        <button id="login-btn" onclick="handleLogin()">เข้าสู่ระบบ</button>
         
         <a href="admin_center.html" class="cancel-btn">ยกเลิก</a>
     </div>
@@ -136,7 +148,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // 📍 2. ตั้งค่า Firebase (ใช้ Config ชุดเดิมของน้า)
+        // 📍 1. Firebase Config
         const firebaseConfig = { 
             apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
             authDomain: "bangfood-cb30f.firebaseapp.com", 
@@ -149,14 +161,20 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // 📍 3. ฟังก์ชันล็อกอินแบบเช็คผ่าน Firebase
+        // 📍 2. ฟังก์ชัน Login
         function handleLogin() {
             const userInput = document.getElementById('user').value.trim();
             const passInput = document.getElementById('pass').value;
+            const btn = document.getElementById('login-btn');
 
-            if (!userInput || !passInput) return alert("กรุณากรอกข้อมูลให้ครบครับน้า!");
+            if (!userInput || !passInput) {
+                return alert("กรุณากรอกข้อมูลให้ครบครับน้า!");
+            }
 
-            // ดึงข้อมูลแอดมินทั้งหมดจาก Firebase มาเทียบ
+            // แสดงสถานะการโหลด
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังตรวจสอบ...';
+            btn.disabled = true;
+
             db.ref('admins').once('value', snap => {
                 let authenticated = false;
                 
@@ -170,7 +188,6 @@
                     }
                 }
 
-                // ตรวจสอบ (ให้สิทธิ์รหัสหลัก admin/bang ด้วย)
                 if (authenticated || (userInput === "admin" && passInput === "bang")) {
                     sessionStorage.setItem('isAdminLoggedIn', 'true');
                     sessionStorage.setItem('currentAdminName', userInput);
@@ -178,6 +195,8 @@
                     window.location.href = "admin_center.html";
                 } else {
                     alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องครับน้า!");
+                    btn.innerHTML = 'เข้าสู่ระบบ';
+                    btn.disabled = false;
                 }
             });
         }

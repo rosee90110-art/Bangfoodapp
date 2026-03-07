@@ -74,7 +74,7 @@
         }
         .order-card.active .card-expanded-part { max-height: 1200px; padding: 25px 30px; opacity: 1; border-top: 1px solid var(--border); }
 
-        .item-row { padding: 15px 0; border-bottom: 1px solid var(--border); transition: 0.3s; }
+        .item-row { padding: 10px 0; border-bottom: 1px solid var(--border); transition: 0.3s; }
         .item-row:last-child { border-bottom: none; }
         .food-line { display: flex; justify-content: space-between; color: var(--text); font-weight: 600; font-size: 1rem; }
         .addon-item { font-size: 0.8rem; color: var(--sub-text); margin-top: 5px; padding-left: 15px; display: flex; justify-content: space-between; }
@@ -86,17 +86,93 @@
 
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ========================================================== */
+        /* 🖨️ โค้ดปรับปรุงใหม่: เปลี่ยนเป็นรูปแบบ "ใบเสร็จสลิป" (Receipt Style) */
+        /* ========================================================== */
+        @media print {
+            /* ซ่อนทุกอย่างยกเว้นบิลที่จะพิมพ์ */
+            body * { visibility: hidden; background: white !important; }
+            #history-list .order-card.active, 
+            #history-list .order-card.active * { visibility: visible; }
+
+            /* ปรับแต่งตำแหน่งและขนาดกระดาษ (ให้เหมือนสลิป 80mm หรือ 58mm) */
+            #history-list .order-card.active {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 300px; /* ขนาดหน้ากว้างสลิปโดยประมาณ */
+                border: none !important;
+                box-shadow: none !important;
+                padding: 10px !important;
+                margin: 0 !important;
+                background: white !important;
+                font-family: 'Courier New', Courier, monospace; /* ใช้ฟอนต์แนวเครื่องพิมใบเสร็จ */
+                color: black !important;
+            }
+
+            /* จัดการหัวข้อสลิป */
+            .card-collapsed-part {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                padding: 10px 0 !important;
+                border-bottom: 2px dashed #000 !important;
+            }
+
+            .station-tag { 
+                background: none !important; 
+                border: none !important; 
+                font-size: 1.2rem !important; 
+                padding: 0 !important; 
+                font-weight: bold !important;
+            }
+            
+            .order-id-label { margin: 5px 0 !important; display: block; font-size: 0.8rem !important; }
+
+            /* รายการอาหาร */
+            .card-expanded-part { 
+                padding: 10px 0 !important; 
+                opacity: 1 !important; 
+                max-height: none !important; 
+            }
+
+            .item-row { border-bottom: 1px dashed #ccc !important; padding: 5px 0 !important; }
+            .food-line span, .food-line b { color: black !important; font-size: 0.9rem !important; }
+
+            /* ยอดรวมท้ายสลิป */
+            .total-brief {
+                display: block !important;
+                text-align: right !important;
+                font-size: 1.5rem !important;
+                border-top: 2px solid #000 !important;
+                margin-top: 10px !important;
+                padding-top: 5px !important;
+            }
+
+            /* ซ่อนสิ่งที่ไม่จำเป็นบนใบเสร็จ */
+            .btn-group, .filter-section, .stats-grid, .btn-action { display: none !important; }
+            
+            /* เพิ่มข้อความขอบคุณท้ายสลิป (ถ้าต้องการ) */
+            #history-list .order-card.active::after {
+                content: "--- THANK YOU ---";
+                display: block;
+                text-align: center;
+                margin-top: 20px;
+                font-size: 0.8rem;
+                letter-spacing: 2px;
+            }
+        }
     </style>
 </head>
 <body onload="initializeHistory()">
 
     <div class="stats-grid">
         <div class="stat-card">
-            <span class="stat-label" data-lang-en="Total Orders" data-lang-th="บิลทั้งหมด">บิลทั้งหมด</span>
+            <span class="stat-label">บิลทั้งหมด</span>
             <span id="total-bills" class="stat-value">0</span>
         </div>
         <div class="stat-card" style="border-bottom: 5px solid #2ecc71;">
-            <span class="stat-label" data-lang-en="Revenue" data-lang-th="รายได้รวม">รายได้รวม</span>
+            <span class="stat-label">รายได้รวม</span>
             <span class="stat-value">฿<span id="total-revenue">0.00</span></span>
         </div>
     </div>
@@ -124,11 +200,7 @@
     </section>
 
     <div id="history-list">
-        <div style="text-align:center; padding:100px 0; opacity:0.5;">
-            <i class="fas fa-spinner fa-spin fa-3x" style="color:var(--premium-gold);"></i>
-            <p style="margin-top:15px; letter-spacing:1px;">กำลังเตรียมข้อมูลประวัติการขายครับน้า...</p>
         </div>
-    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -144,7 +216,6 @@
         document.body.classList.toggle('light-theme', theme === 'light');
     }
     applySharedTheme();
-    window.addEventListener('storage', (e) => { if (e.key === 'theme') applySharedTheme(); });
 
     function initializeHistory() { loadHistoryRealtime(); }
 
@@ -164,6 +235,17 @@
         if(!isActive) element.classList.add('active');
     }
 
+    function printReceipt(btn) {
+        const card = btn.closest('.order-card');
+        document.querySelectorAll('.order-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        
+        // หน่วงเวลาให้ UI อัปเดตก่อนสั่งพิมพ์
+        setTimeout(() => {
+            window.print();
+        }, 250);
+    }
+
     function renderHistory(data) {
         const list = document.getElementById('history-list');
         const billsEl = document.getElementById('total-bills');
@@ -174,20 +256,43 @@
         data.forEach((order, index) => {
             totalSum += parseFloat(order.total || 0);
             const shortId = order.id.substring(order.id.length - 6).toUpperCase();
-            let itemsHtml = order.items ? order.items.map(item => `<div class="item-row"><div class="food-line"><span>${item.quantity || 1}x ${item.name}</span><b>฿${parseFloat(item.finalPrice).toFixed(2)}</b></div>${item.optionsArray ? item.optionsArray.map(opt => `<div class="addon-item"><span>+ ${opt.name}</span><span>฿${parseFloat(opt.price).toFixed(2)}</span></div>`).join('') : ''}</div>`).join('') : '';
+            let itemsHtml = order.items ? order.items.map(item => `
+                <div class="item-row">
+                    <div class="food-line">
+                        <span>${item.quantity || 1}x ${item.name}</span>
+                        <b>฿${parseFloat(item.finalPrice).toFixed(2)}</b>
+                    </div>
+                    ${item.optionsArray ? item.optionsArray.map(opt => `
+                        <div class="addon-item">
+                            <span>+ ${opt.name}</span>
+                            <span>฿${parseFloat(opt.price).toFixed(2)}</span>
+                        </div>`).join('') : ''}
+                </div>`).join('') : '';
 
             html += `
-                <div class="order-card" onclick="toggleCard(this)" style="animation-delay: ${index * 0.05}s">
+                <div class="order-card" onclick="toggleCard(this)">
                     <div class="card-collapsed-part">
-                        <div><span class="station-tag">โต๊ะ ${order.tableNumber || '?'}</span><span class="order-id-label">#${shortId}</span></div>
-                        <div style="display:flex; align-items:center; gap:20px;"><span style="font-size:0.85rem; color:var(--sub-text);">🕒 ${new Date(order.archivedAt).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</span><b class="total-brief">฿${parseFloat(order.total).toLocaleString()}</b></div>
+                        <div>
+                            <span class="station-tag">โต๊ะ ${order.tableNumber || '?'}</span>
+                            <span class="order-id-label">#${shortId}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:20px;">
+                            <span style="font-size:0.85rem; color:var(--sub-text);">🕒 ${new Date(order.archivedAt).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</span>
+                            <b class="total-brief">฿${parseFloat(order.total).toLocaleString()}</b>
+                        </div>
                     </div>
                     <div class="card-expanded-part">
-                        <div style="font-size:0.7rem; color:var(--premium-gold); margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:12px;">ID: ${order.id} | วันที่: ${new Date(order.archivedAt).toLocaleString('th-TH')}</div>
+                        <div style="font-size:0.7rem; color:var(--premium-gold); margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+                            ID: ${order.id} | วันที่: ${new Date(order.archivedAt).toLocaleString('th-TH')}
+                        </div>
                         <div class="items-area">${itemsHtml}</div>
                         <div class="btn-group">
-                            <button onclick="event.stopPropagation(); window.print()" class="btn-action btn-print"><i class="fas fa-print"></i> พิมพ์ใบเสร็จ</button>
-                            <button onclick="event.stopPropagation(); deleteEntry('${order.id}')" class="btn-action btn-del"><i class="fas fa-trash-alt"></i> ลบข้อมูล</button>
+                            <button onclick="event.stopPropagation(); printReceipt(this)" class="btn-action btn-print">
+                                <i class="fas fa-print"></i> พิมพ์ใบเสร็จ
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteEntry('${order.id}')" class="btn-action btn-del">
+                                <i class="fas fa-trash-alt"></i> ลบข้อมูล
+                            </button>
                         </div>
                     </div>
                 </div>`;

@@ -166,6 +166,175 @@
 
         .select-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #8e7340; }
 
+        /* 📍 ปรับ Container ให้รองรับการลอยของปุ่ม */
+        .section-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 20px 10px;
+            position: relative; /* สำคัญ: เพื่อให้ตัวค้นหาอิงตำแหน่งกับกรอบนี้ */
+            min-height: 60px; /* เพิ่มความสูงเผื่อไว้กันเบียด */
+        }
+
+        .search-wrapper {
+            position: absolute; /* เปลี่ยนเป็น absolute */
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%); /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+            z-index: 100; /* ให้อยู่เหนือข้อความ */
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input-container {
+            width: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #1a1a1a; /* เปลี่ยนเป็นสีเข้มทึบ */
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            height: 42px;
+        }
+
+        body.light-theme .search-input-container {
+            background: #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-wrapper.active .search-input-container {
+            width: 220px;
+            opacity: 1;
+            padding: 0 15px;
+            border: 1.5px solid var(--premium-gold);
+            margin-right: 8px;
+        }
+
+        /* ⌨️ ช่องพิมพ์ด้านบน (เดิม) */
+        #menuSearchInput {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Kanit', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            width: 100%;
+        }
+        body.light-theme #menuSearchInput { color: #333; }
+
+        .search-trigger-btn {
+            width: 38px;
+            height: 38px;
+            background: rgba(197, 160, 89, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: var(--premium-gold);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .search-wrapper.active .search-trigger-btn { background: var(--premium-gold); color: #fff; transform: rotate(90deg); }
+        .search-trigger-btn:active { transform: scale(0.9); }
+
+
+        /* ========================================= */
+        /* ✨ ส่วนที่แก้ไขใหม่สำหรับปุ่มค้นหาด้านล่างให้เด้งไปข้างบน */
+        /* ========================================= */
+
+        /* 📍 ปรับตำแหน่งให้ปุ่มลอยอมทับกึ่งกลางของแถบนำทางด้านล่าง */
+.round-search-parent {
+    position: fixed;
+    bottom: 35px; /* ลดระยะจาก 85px เป็น 35px เพื่อให้ทับขอบบนของแถบล่างพอดี */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75px; /* ขยายขนาดความกว้าง */
+    height: 75px; /* ขยายขนาดความสูง */
+}
+
+/* ปรับปุ่มวงกลมให้ดูเป็น "ปุ่มค้นหา" เริ่มต้น */
+.search-main-btn {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #000;
+    border: 6px solid var(--bg-deep);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    z-index: 4001;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-size: 1.5rem;
+}
+
+/* ปรับให้หมุนตอนกด (ของคุณมีอยู่แล้ว) */
+.round-search-parent.active .search-main-btn {
+    transform: rotate(90deg);
+}
+
+/* รองรับ Light Theme (ถ้าเปลี่ยนเป็นธีมสว่าง ให้สลับปุ่มเป็นสีดำ) */
+body.light-theme .search-main-btn {
+    background: #000000;
+    color: #ffffff;
+    border-color: var(--bg-deep); /* สลับขอบเป็นสีครีมนวลตามตัวแปร */
+}
+
+        .top-search-overlay {
+    position: fixed;
+    bottom: -100px; /* ซ่อนไว้ใต้จอ */
+    top: auto;      /* ยกเลิกของเดิม */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 440px;
+    height: 60px; 
+    background: rgba(18, 18, 20, 0.98); 
+    backdrop-filter: blur(15px);
+    z-index: 3500; /* ให้อยู่เหนือ Nav-bar เล็กน้อย */
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-radius: 20px; /* ทำมุมมนให้เข้ากับธีม */
+    border: 1.5px solid var(--premium-gold);
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+    transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-sizing: border-box;
+}
+
+        body.light-theme .top-search-overlay {
+    background: #ffffff;
+    border-color: var(--premium-gold);
+}
+        /* เมื่อสั่งให้แสดง (Active) */
+.top-search-overlay.active {
+    bottom: 110px; /* ตำแหน่งที่ลอยอยู่เหนือแถบ Nav-bar */
+}
+
+        /* ช่อง Input ในแถบด้านบน */
+        #bottomSearchInput {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.1rem;
+        }
+        body.light-theme #bottomSearchInput { color: #333; }
+
+        /* ========================================= */
+
+
         /* 📍 Bottom Nav & Refresh */
         .bottom-nav-fixed { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 100px; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; z-index: 3000; }
         .nav-bar { width: 92%; height: 60px; background: #121214; border-radius: 30px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; pointer-events: auto; margin-bottom: 15px; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
@@ -186,6 +355,10 @@
     </style>
 </head>
 <body onload="initializeApp()">
+
+<div class="top-search-overlay" id="topSearchOverlay">
+    <input type="text" id="bottomSearchInput" placeholder="พิมพ์ชื่อเมนูที่ต้องการ..." oninput="handleSearchBottom()">
+</div>
 
 <div id="side-drawer" class="side-drawer">
     <div class="drawer-content">
@@ -221,12 +394,21 @@
 </div>
 
 <main>
-    <div style="padding: 25px 20px 0;">
+    <div class="section-header-container">
         <h2 style="font-size: 1rem; color: var(--premium-gold); letter-spacing: 1px; margin: 0; display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 1.3rem;">🍱</span> 
             <span data-lang-en="Signature Menu" data-lang-th="เมนูเด็ดที่ต้องลอง!">เมนูเด็ดที่ต้องลอง!</span>
         </h2>
-    </div>
+
+        <div class="search-wrapper" id="searchWrapper">
+            <div class="search-input-container">
+                <input type="text" id="topMenuSearchInput" placeholder="ค้นหาเมนูอาหาร..." oninput="handleSearch('topMenuSearchInput')">
+            </div>
+            <div class="search-trigger-btn" onclick="toggleSearchField()">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+    </div> 
 
     <div class="slider-container">
         <div class="image-slider" id="hero-best-seller-slider"></div>
@@ -242,16 +424,20 @@
     <div id="menu-main-container"></div>
 </main>
 
+<div class="round-search-parent" id="searchParent">
+    <div class="search-main-btn" onclick="toggleBottomSearch()">
+        <i class="fas fa-search" id="searchIcon"></i> 
+    </div>
+</div>
+
 <div class="bottom-nav-fixed">
-    <div class="round-refresh" onclick="window.location.reload()"><i class="fas fa-sync-alt"></i></div>
     <div class="nav-bar">
         <div onclick="goToPage('cart.html')" style="text-align:center; position:relative; cursor:pointer; color:#444;">
             <i class="fas fa-shopping-basket"></i>
             <div id="cart-count-badge" style="position:absolute; top:-5px; right:-8px; background:#ff4b2b; color:#fff; font-size:0.5rem; padding:2px 5px; border-radius:8px; display:none;">0</div>
             <span style="display:block; font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
         </div>
-        <div style="width: 80px;"></div>
-        <div onclick="goToPage('track.html')" style="text-align:center; cursor:pointer; color:#444;">
+        <div style="width: 80px;"></div> <div onclick="goToPage('track.html')" style="text-align:center; cursor:pointer; color:#444;">
             <i class="fas fa-receipt"></i>
             <span style="display:block; font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="ORDERS" data-lang-th="รายการที่สั่ง">ORDERS</span>
         </div>
@@ -263,6 +449,28 @@
 <script src="global_script.js"></script>
 
 <script>
+    function toggleSearchField() {
+        const wrapper = document.getElementById('searchWrapper');
+        const input = document.getElementById('topMenuSearchInput');
+        wrapper.classList.toggle('active');
+        if (wrapper.classList.contains('active')) {
+            input.focus();
+        } else {
+            input.value = '';
+            handleSearch('topMenuSearchInput');
+        }
+    }
+
+    // 🔍 ฟังก์ชัน ค้นหาชื่ออาหารในรายการ
+    function handleSearch(inputId) {
+        const keyword = document.getElementById(inputId).value.toLowerCase();
+        const items = document.querySelectorAll('.menu-item');
+        items.forEach(item => {
+            const name = item.querySelector('h3').innerText.toLowerCase();
+            item.style.display = name.includes(keyword) ? 'flex' : 'none';
+        });
+    }
+
     const firebaseConfig = { 
         apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
         authDomain: "bangfood-cb30f.firebaseapp.com", 
@@ -364,6 +572,7 @@
         startAutoPlay(slider, cards.length);
         slider.addEventListener('touchstart', () => clearInterval(autoPlayInterval));
     }
+    
 
     function startAutoPlay(slider, count) {
         if (autoPlayInterval) clearInterval(autoPlayInterval);
@@ -375,6 +584,48 @@
             slider.scrollTo({ left: currentIndex * cardWidth, behavior: 'smooth' });
         }, 4000);
     }
+
+    // ✨ JS ที่ถูกแก้: ควบคุมแถบด้านบน แทนที่จะขยายกล่องล่าง
+    function toggleBottomSearch() {
+    const searchBar = document.getElementById('topSearchOverlay'); 
+    const parentBtn = document.getElementById('searchParent'); 
+    const input = document.getElementById('bottomSearchInput');
+    const icon = document.getElementById('searchIcon');
+    
+    searchBar.classList.toggle('active');
+    parentBtn.classList.toggle('active'); 
+    
+    if (searchBar.classList.contains('active')) {
+        // เมื่อเปิด: ให้โฟกัสที่ช่องพิมพ์
+        setTimeout(() => {
+            input.focus();
+        }, 300); 
+        icon.className = 'fas fa-times'; // เปลี่ยนเป็นกากบาทเพื่อปิด
+    } else {
+        // เมื่อปิด: ล้างค่าและรีเซ็ตไอคอน
+        input.value = '';
+        handleSearchBottom(); 
+        icon.className = 'fas fa-search'; // กลับเป็นแว่นขยาย
+    }
+}
+
+    function handleSearchBottom() {
+        const keyword = document.getElementById('bottomSearchInput').value.toLowerCase();
+        const items = document.querySelectorAll('.menu-item');
+        items.forEach(item => {
+            const name = item.querySelector('h3').innerText.toLowerCase();
+            item.style.display = name.includes(keyword) ? 'flex' : 'none';
+        });
+    }
+    // แก้ไขฟังก์ชันปิดเมื่อคลิกข้างนอก เพื่อให้สัมพันธ์กับตำแหน่งล่าง
+document.addEventListener('click', function(event) {
+    const searchBar = document.getElementById('topSearchOverlay');
+    const searchBtn = document.getElementById('searchParent'); 
+    
+    if (!searchBar.contains(event.target) && !searchBtn.contains(event.target) && searchBar.classList.contains('active')) {
+        toggleBottomSearch();
+    }
+}, true);
 
     function switchCategory(cat) {
         document.querySelectorAll('.menu-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));

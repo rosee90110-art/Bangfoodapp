@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="admin_style.css">
     <link rel="stylesheet" href="global_style.css">
     <style>
-        /* 📍 ส่วนที่น้าชอบคงเดิม แต่ปรับปรุงความสมูท */
         body { background-color: var(--bg-deep); color: #e0e0e0; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; overflow-x: hidden; transition: 0.3s; }
         .app-wrapper { width: 100%; max-width: 480px; min-height: 100vh; background: var(--bg-deep); position: relative; padding-bottom: 120px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
         
@@ -26,28 +25,66 @@
         .status-box { text-align: center; padding: 20px; background: var(--glass); border-radius: 24px; margin: 20px; border: 1px solid var(--glass-border); }
         body.light-theme .status-box { background: #fff; }
 
-        .order-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 28px; padding: 22px; margin: 0 20px 20px; animation: slideUpFade 0.6s ease-out both; }
+        .order-card { background: var(--glass); border: 2px solid var(--glass-border); border-radius: 28px; padding: 22px; margin: 0 20px 20px; animation: slideUpFade 0.6s ease-out both; transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; }
         body.light-theme .order-card { background: #fff; color: #333; }
-        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .order-card.selected-order { border: 2px solid var(--premium-gold); box-shadow: 0 5px 20px rgba(197, 160, 89, 0.2); transform: scale(1.01); }
+        .order-card.selected-order::before { content: "\f00c"; font-family: "Font Awesome 5 Free"; font-weight: 900; position: absolute; top: 15px; right: 20px; color: var(--premium-gold); font-size: 1.2rem; opacity: 0.8; }
 
-        .item-row { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed rgba(255,255,255,0.03); }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .item-row { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed rgba(255,255,255,0.03); }
         .item-main { display: flex; gap: 15px; align-items: flex-start; }
         .item-img { width: 55px; height: 55px; border-radius: 14px; object-fit: cover; border: 1px solid var(--glass-border); }
         .food-name { font-size: 0.95rem; color: #fff; font-weight: 500; margin: 0; }
         body.light-theme .food-name { color: #000; }
-        .addon-line { display: flex; justify-content: space-between; color: #777; font-size: 0.75rem; margin-top: 3px; }
+        
+        .addon-line { display: flex; justify-content: space-between; align-items: center; color: #888; font-size: 0.75rem; margin-top: 4px; padding-left: 5px; }
+        .addon-line b { background: rgba(197, 160, 89, 0.1); color: var(--premium-gold); padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; margin-left: 4px; }
+        .addon-price { font-weight: 500; color: #aaa; min-width: 60px; text-align: right; }
 
-        .item-total-badge { text-align: right; margin-top: 12px; padding: 6px 12px; background: rgba(255,255,255,0.02); border-radius: 10px; font-size: 0.85rem; font-weight: 600; color: var(--premium-gold); }
+        /* --- Bottom Nav Style --- */
+        .bottom-nav-fixed { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 100px; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; z-index: 5000; }
+        .nav-bar { width: 75%; height: 65px; background: #121214; border-radius: 35px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; padding: 0 35px; pointer-events: auto; margin-bottom: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
+        body.light-theme .nav-bar { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .nav-item { text-align: center; color: #666; cursor: pointer; transition: 0.3s; }
+        .nav-item:active { transform: scale(0.9); }
+        .nav-item.active { color: var(--premium-gold); }
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item span { display: block; font-size: 0.55rem; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
 
-        /* 📍 Bottom Nav */
-        .bottom-nav-fixed { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 100px; background: linear-gradient(to top, var(--bg-deep) 70%, transparent); z-index: 2500; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; }
-        .nav-buttons-bar { width: 92%; height: 60px; background: #121214; border-radius: 30px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; pointer-events: auto; margin-bottom: 15px; }
-        body.light-theme .nav-buttons-bar { background: #fff; }
-        .round-refresh { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 72px; height: 72px; background: #fff; border-radius: 50%; border: 6px solid var(--bg-deep); color: #000; font-size: 1.8rem; display: flex; justify-content: center; align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); cursor: pointer; z-index: 2600; pointer-events: auto; transition: 0.3s; }
-        .nav-icon { color: #666; cursor: pointer; display: flex; flex-direction: column; align-items: center; text-decoration: none; }
+        .round-refresh { position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%); width: 70px; height: 70px; border-radius: 50%; background: var(--bg-deep); border: 4px solid var(--premium-gold); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 5100; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: var(--premium-gold); pointer-events: auto; }
+        body.light-theme .round-refresh { background: #fff; }
+
+        /* --- Receipt UI --- */
+        .receipt-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .receipt-paper { background: #fff; color: #333; width: 100%; max-width: 350px; padding: 30px 20px; border-radius: 4px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.4); font-family: 'Courier New', Courier, monospace; }
+        .receipt-paper::after { content: ""; position: absolute; bottom: -10px; left: 0; width: 100%; height: 10px; background: linear-gradient(-45deg, #fff 5px, transparent 0), linear-gradient(45deg, #fff 5px, transparent 0); background-size: 10px 10px; }
+        .receipt-header { text-align: center; border-bottom: 2px dashed #eee; padding-bottom: 15px; margin-bottom: 15px; }
+        .receipt-logo { font-size: 1.5rem; font-weight: 800; color: #000; letter-spacing: 2px; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem; }
+        .receipt-total { border-top: 2px dashed #eee; margin-top: 15px; padding-top: 10px; font-weight: bold; font-size: 1.1rem; }
+        .close-receipt { position: absolute; top: -50px; right: 0; color: #fff; font-size: 1.5rem; cursor: pointer; }
+        .print-btn { margin-top: 25px; width: 100%; background: #000; color: #fff; border: none; padding: 12px; border-radius: 8px; font-family: 'Kanit'; cursor: pointer; }
+        .receipt-status-stamp { text-align: center; margin: 10px 0; font-weight: bold; border: 2px solid #333; padding: 5px; display: inline-block; width: 100%; box-sizing: border-box; text-transform: uppercase; }
     </style>
 </head>
 <body onload="initializeTrackPage()"> 
+
+<div id="receipt-overlay" class="receipt-overlay">
+    <div class="receipt-paper">
+        <div class="close-receipt" onclick="closeReceipt()"><i class="fas fa-times"></i></div>
+        <div class="receipt-header">
+            <div class="receipt-logo">BANGFOOD</div>
+            <p style="margin: 5px 0; font-size: 0.7rem;">ขอบคุณที่ใช้บริการครับ</p>
+            <p id="receipt-date" style="font-size: 0.65rem; color: #888;"></p>
+        </div>
+        <div id="receipt-content"></div>
+        <div class="receipt-total receipt-row">
+            <span>TOTAL / ยอดสุทธิ</span>
+            <span id="receipt-total-amount">฿0.00</span>
+        </div>
+        <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> พิมพ์ใบเสร็จ</button>
+    </div>
+</div>
 
 <div id="side-drawer" class="side-drawer">
     <div class="drawer-content">
@@ -86,17 +123,19 @@
     <div id="items-list-container"></div>
     
     <div class="bottom-nav-fixed">
-        <div class="round-refresh" onclick="window.location.reload()"><i class="fas fa-sync-alt"></i></div>
-        <div class="nav-buttons-bar">
-            <div class="nav-icon" onclick="goToCart()">
+        <div class="nav-bar">
+            <div class="nav-item" onclick="goToCart()">
                 <i class="fas fa-shopping-basket"></i>
-                <span style="font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
+                <span data-lang-en="BASKET" data-lang-th="ตะกร้า">ตะกร้า</span>
             </div>
-            <div style="width: 80px;"></div>
-            <div class="nav-icon" onclick="goBackToIndex()">
+            <div style="flex: 0.5;"></div>
+            <div class="nav-item" onclick="goBackToIndex()">
                 <i class="fas fa-plus"></i>
-                <span style="font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="ADD MENU" data-lang-th="สั่งเพิ่ม">ADD MENU</span>
+                <span data-lang-en="ADD MENU" data-lang-th="สั่งเพิ่ม">สั่งเพิ่ม</span>
             </div>
+        </div>
+        <div class="round-refresh" id="center-action-btn" onclick="handleCenterAction()">
+            <i id="center-icon" class="fas fa-sync-alt" style="font-size: 1.8rem;"></i>
         </div>
     </div>
 </div>
@@ -104,11 +143,16 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="global_script.js"></script>
+<audio id="notification-sound" src="sound/warn.mp3" preload="auto"></audio>
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    window.db = firebase.database(); 
+    window.db = firebase.database();
+
+   let currentSelectedOrderId = null;
+    let currentSelectedStatus = null;
+    let lastOrderStatuses = {};
 
     async function initializeTrackPage() {
         const table = getTableNo();
@@ -120,87 +164,119 @@
         document.getElementById('drawer-lang-status').innerText = lang.toUpperCase();
 
         startLiveTracking();
-        updatePageText(lang); // เรียกแปลภาษาครั้งแรก
+        updatePageText(lang);
     }
 
-    // 🔄 ฟังก์ชันสลับภาษาแบบเรียลไทม์
-    function switchLanguageRealtime() {
-        const table = getTableNo();
-        const langKey = `lang_table_${table}`;
-        const currentLang = localStorage.getItem(langKey) || 'th';
-        const nextLang = currentLang === 'en' ? 'th' : 'en';
-        
-        localStorage.setItem(langKey, nextLang);
-        document.getElementById('drawer-lang-status').innerText = nextLang.toUpperCase();
-        
-        updatePageText(nextLang); // แปลข้อความนิ่ง
-        startLiveTracking(); // โหลดรายการอาหารใหม่เพื่อแปลชื่อเมนู
+    function requestNotificationPermission() {
+        if ("Notification" in window) Notification.requestPermission();
     }
 
-    function updatePageText(lang) {
-        document.querySelectorAll('[data-lang-en]').forEach(el => {
-            el.innerText = (lang === 'en') ? el.getAttribute('data-lang-en') : el.getAttribute('data-lang-th');
-        });
+    function playAlert(orderId, newStatus) {
+        const sound = document.getElementById('notification-sound');
+        if (sound) sound.play().catch(e => console.log("Audio play blocked"));
+        
+        if (Notification.permission === "granted") {
+            new Notification("อัปเดตสถานะอาหาร - BANGFOOD", {
+                body: `ออเดอร์ ID: ${orderId.slice(-6).toUpperCase()} เปลี่ยนเป็น: ${newStatus}`,
+                icon: "logo.png"
+            });
+        }
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
     }
 
     function startLiveTracking() {
+        requestNotificationPermission();
         const tableNo = getTableNo();
+        
         window.db.ref('orders').orderByChild('tableNumber').equalTo(tableNo).on('value', async (snapshot) => {
             const listContainer = document.getElementById('items-list-container');
             const currentLang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
-            
             const transSnap = await window.db.ref('menu_translations').once('value');
             const dict = transSnap.val() || {};
 
-            let mainHtml = ''; let grandTotal = 0;
+            let mainHtml = ''; 
+            let grandTotal = 0;
 
             if (snapshot.exists()) {
                 snapshot.forEach(orderChild => {
                     const order = orderChild.val();
+                    const orderId = orderChild.key;
+                    
+                    if (lastOrderStatuses[orderId] && lastOrderStatuses[orderId] !== order.status) {
+                        playAlert(orderId, order.status);
+                    }
+                    lastOrderStatuses[orderId] = order.status;
+
                     let orderItemsHtml = '';
-                    let statusColor = order.status === 'เสร็จสมบูรณ์' ? '#4CAF50' : '#ff9800';
+                    let statusColor = '#ff9800'; 
+                    if (order.status === 'เสร็จสมบูรณ์') statusColor = '#4CAF50'; 
+                    if (order.status === 'ชำระเงินแล้ว') statusColor = '#2980b9'; 
+
                     let statusLabel = (currentLang === 'en') 
-                        ? (order.status === 'เสร็จสมบูรณ์' ? 'Completed' : 'Pending') 
+                        ? (order.status === 'เสร็จสมบูรณ์' ? 'Ready' : (order.status === 'ชำระเงินแล้ว' ? 'Paid' : 'Pending')) 
                         : (order.status || 'รอดำเนินการ');
 
                     if (order.items) {
                         order.items.forEach((item) => {
-                            const finalP = parseFloat(item.finalPrice || 0);
-                            grandTotal += finalP;
-                            const displayName = (currentLang === 'en') ? (dict[item.name] || item.name) : item.name;
+                            const mainQty = parseInt(item.quantity || 1);
                             
+                            // ดึงราคาพื้นฐานของเมนูหลัก (Base Price) โดยลองดึงจากหลายฟิลด์ที่อาจเป็นไปได้
+                            const basePrice = parseFloat(item.price || item.unitPrice || item.basePrice || 0); 
+                            const displayName = (currentLang === 'en') ? (dict[item.name] || item.name) : item.name;
+
+                            // คำนวณราคาส่วนเสริมแยกต่างหาก
                             let optionsHtml = '';
                             if (item.optionsArray) {
                                 optionsHtml = item.optionsArray.map(opt => {
+                                    const optPrice = parseFloat(opt.price || 0);
+                                    const optQty = parseInt(opt.qty || 1);
+                                    const totalOptPrice = optPrice * optQty;
                                     const optName = (currentLang === 'en') ? (dict[opt.name] || opt.name) : opt.name;
-                                    return `<div class="addon-line"><span>+ ${optName}</span><span>฿${parseFloat(opt.price).toFixed(2)}</span></div>`;
+                                    
+                                    return `
+                                        <div class="addon-line">
+                                            <span>
+                                                <i class="fas fa-plus-circle" style="font-size:0.6rem; color:var(--premium-gold); opacity:0.6;"></i> 
+                                                ${optName} <b>x${optQty}</b>
+                                            </span>
+                                            <span class="addon-price">+฿${totalOptPrice.toFixed(2)}</span>
+                                        </div>`;
                                 }).join('');
                             }
 
-                            const baseP = finalP - (item.optionsArray ? item.optionsArray.reduce((s,o)=>s+parseFloat(o.price),0) : 0);
+                            // ราคารวมสุทธิของรายการนี้ (เมนูหลัก + ทุกส่วนเสริม)
+                            const finalP = parseFloat(item.finalPrice || 0);
+                            grandTotal += finalP;
+
                             orderItemsHtml += `
                                 <div class="item-row">
                                     <div class="item-main">
-                                        <img src="${item.img || ''}" class="item-img" onerror="this.src='https://via.placeholder.com/100'">
+                                        <div style="position: relative;">
+                                            <img src="${item.img || ''}" class="item-img" onerror="this.src='https://via.placeholder.com/100'">
+                                            <div style="position: absolute; top: -8px; right: -8px; background: var(--premium-gold); color: #000; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.65rem; border: 2px solid var(--bg-deep);">${mainQty}</div>
+                                        </div>
                                         <div style="flex:1;">
-                                            <div style="display:flex; justify-content:space-between;">
-                                                <p class="food-name">${displayName}</p>
-                                                <span>฿${baseP.toFixed(2)}</span>
+                                            <div style="display:flex; justify-content:space-between; align-items: flex-start;">
+                                                <div>
+                                                    <p class="food-name">${displayName}</p>
+                                                    <span style="font-size: 0.7rem; color: #888;">฿${basePrice.toFixed(2)}</span>
+                                                </div>
+                                                <div style="text-align: right;">
+                                                    <span style="font-weight: 600; color: var(--premium-gold);">฿${finalP.toFixed(2)}</span>
+                                                </div>
                                             </div>
                                             <div class="addon-area">${optionsHtml}</div>
-                                            <div class="item-total-badge">
-                                                <span>${currentLang === 'en' ? 'Total' : 'รวม'}: ฿${finalP.toFixed(2)}</span>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>`;
                         });
                     }
 
+                    const isSelected = (currentSelectedOrderId === orderId) ? 'selected-order' : '';
                     mainHtml += `
-                        <div class="order-card">
+                        <div class="order-card ${isSelected}" id="order-card-${orderId}" onclick="selectOrder('${orderId}', '${order.status}')">
                             <div class="order-header">
-                                <span style="font-size: 0.75rem; color: #666; font-weight: 600;">ID: ${orderChild.key.slice(-6).toUpperCase()}</span>
+                                <span style="font-size: 0.75rem; color: #666;">ID: ${orderId.slice(-6).toUpperCase()}</span>
                                 <span style="color: ${statusColor}; border: 1px solid ${statusColor}44; padding: 3px 10px; border-radius: 8px; font-size: 0.65rem; font-weight: 700;">● ${statusLabel}</span>
                             </div>
                             ${orderItemsHtml}
@@ -209,15 +285,124 @@
                 listContainer.innerHTML = mainHtml;
                 document.getElementById('final-total-amount').textContent = grandTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 });
             } else {
-                listContainer.innerHTML = `<div style="text-align:center; padding:100px 0; opacity:0.3;"><i class="fas fa-receipt" style="font-size:3.5rem;"></i><p>${currentLang === 'en' ? 'No orders yet' : 'ยังไม่มีรายการสั่งครับน้า'}</p></div>`;
-                document.getElementById('final-total-amount').textContent = "0.00";
+                listContainer.innerHTML = `<div style="text-align:center; padding:100px 0; opacity:0.3;"><i class="fas fa-receipt" style="font-size:3.5rem;"></i><p>ยังไม่มีรายการสั่งครับ</p></div>`;
             }
         });
     }
 
+    function selectOrder(orderId, status) {
+        if (currentSelectedOrderId === orderId) {
+            currentSelectedOrderId = null;
+            currentSelectedStatus = null;
+        } else {
+            currentSelectedOrderId = orderId;
+            currentSelectedStatus = status;
+        }
+        document.querySelectorAll('.order-card').forEach(card => card.classList.remove('selected-order'));
+        if (currentSelectedOrderId) {
+            const card = document.getElementById('order-card-' + currentSelectedOrderId);
+            if(card) card.classList.add('selected-order');
+        }
+        updateCenterButtonUI();
+    }
+
+    function updateCenterButtonUI() {
+        const btn = document.getElementById('center-action-btn');
+        const icon = document.getElementById('center-icon');
+        
+        if (currentSelectedOrderId) {
+            if (currentSelectedStatus === 'เสร็จสมบูรณ์') {
+                btn.style.background = "#e74c3c"; 
+                btn.style.borderColor = "#c0392b";
+                btn.style.color = "#fff";
+                icon.className = "fas fa-hand-holding-usd"; 
+            } else if (currentSelectedStatus === 'ชำระเงินแล้ว') {
+                btn.style.background = "#2980b9";
+                btn.style.borderColor = "#2980b9";
+                btn.style.color = "#fff";
+                icon.className = "fas fa-file-invoice";
+            } else {
+                resetCenterButton();
+            }
+        } else {
+            resetCenterButton();
+        }
+    }
+
+    function resetCenterButton() {
+        const btn = document.getElementById('center-action-btn');
+        const icon = document.getElementById('center-icon');
+        btn.style.background = "var(--bg-deep)";
+        btn.style.borderColor = "var(--premium-gold)";
+        btn.style.color = "var(--premium-gold)";
+        icon.className = "fas fa-sync-alt";
+    }
+
+    function handleCenterAction() {
+        if (currentSelectedOrderId && (currentSelectedStatus === 'ชำระเงินแล้ว' || currentSelectedStatus === 'เสร็จสมบูรณ์')) {
+            generateReceiptPopup(currentSelectedOrderId);
+        } else {
+            window.location.reload();
+        }
+    }
+
+    async function generateReceiptPopup(orderId) {
+        const snapshot = await window.db.ref('orders/' + orderId).once('value');
+        if (!snapshot.exists()) return;
+
+        const order = snapshot.val();
+        const content = document.getElementById('receipt-content');
+        const dateEl = document.getElementById('receipt-date');
+        const totalEl = document.getElementById('receipt-total-amount');
+
+        const now = new Date();
+        dateEl.innerText = `ID: ${orderId.toUpperCase()}\nDate: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+
+        let statusText = (order.status === 'ชำระเงินแล้ว') ? "ชำระเงินแล้ว / PAID" : "ยังไม่ชำระ / UNPAID";
+        let statusColor = (order.status === 'ชำระเงินแล้ว') ? "#2980b9" : "#e74c3c";
+
+        let html = `
+            <div style="margin: 10px 0; border-top: 1px solid #eee; padding-top: 10px; font-weight:bold;">STATION: ${order.tableNumber}</div>
+            <div class="receipt-status-stamp" style="border-color: ${statusColor}; color: ${statusColor};">${statusText}</div>
+            <div style="border-bottom: 1px dashed #eee; margin-bottom: 10px; padding-bottom: 5px; font-size: 0.7rem; color: #666;">รายการอาหาร (DETAILS)</div>
+        `;
+
+        let grandTotal = 0;
+        order.items.forEach(item => {
+            html += `<div class="receipt-row" style="font-weight: bold; margin-top: 5px;"><span>${item.name} x${item.quantity}</span><span>฿${parseFloat(item.finalPrice).toFixed(2)}</span></div>`;
+            grandTotal += parseFloat(item.finalPrice);
+            if (item.optionsArray) {
+                item.optionsArray.forEach(opt => {
+                    const optPrice = parseFloat(opt.price || 0) * parseInt(opt.qty || 1);
+                    html += `<div class="receipt-row" style="font-size: 0.7rem; color: #555; padding-left: 15px;"><span>- ${opt.name} (x${opt.qty})</span><span>+ ฿${optPrice.toFixed(2)}</span></div>`;
+                });
+            }
+        });
+
+        content.innerHTML = html;
+        totalEl.innerText = `฿${grandTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 })}`;
+        document.getElementById('receipt-overlay').style.display = 'flex';
+    }
+
+    function closeReceipt() { document.getElementById('receipt-overlay').style.display = 'none'; }
+    function switchLanguageRealtime() {
+        const table = getTableNo();
+        const currentLang = localStorage.getItem(`lang_table_${table}`) || 'th';
+        localStorage.setItem(`lang_table_${table}`, currentLang === 'en' ? 'th' : 'en');
+        location.reload();
+    }
+    function updatePageText(lang) {
+        document.querySelectorAll('[data-lang-en]').forEach(el => {
+            el.innerText = (lang === 'en') ? el.getAttribute('data-lang-en') : el.getAttribute('data-lang-th');
+        });
+    }
     function goBackToIndex() { window.location.href = `index.html?table=${getTableNo()}`; }
     function goToCart() { window.location.href = `cart.html?table=${getTableNo()}`; }
-    function toggleDrawer() { document.getElementById('side-drawer').classList.toggle('active'); document.getElementById('drawer-overlay').style.display = document.getElementById('side-drawer').classList.contains('active') ? 'block' : 'none'; }
+    function toggleDrawer() { 
+        const drawer = document.getElementById('side-drawer');
+        drawer.classList.toggle('active'); 
+        document.getElementById('drawer-overlay').style.display = drawer.classList.contains('active') ? 'block' : 'none'; 
+    }
     function applyTheme(t) { document.body.classList.toggle('light-theme', t === 'light'); }
 </script>
 </body>

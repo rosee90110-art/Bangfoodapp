@@ -256,18 +256,42 @@
         data.forEach((order, index) => {
             totalSum += parseFloat(order.total || 0);
             const shortId = order.id.substring(order.id.length - 6).toUpperCase();
-            let itemsHtml = order.items ? order.items.map(item => `
+            
+            // 📍 ส่วนที่ปรับปรุง: วนลูปรายการอาหารและท็อปปิ้งพร้อมแสดงจำนวน xN
+            let itemsHtml = order.items ? order.items.map(item => {
+                let optionsHtml = '';
+                let optionsPriceTotal = 0;
+
+                if (item.optionsArray) {
+                    optionsHtml = item.optionsArray.map(opt => {
+                        const optPrice = parseFloat(opt.price || 0);
+                        const optQty = parseInt(opt.qty || 1); // ดึงจำนวน x2, x3
+                        const totalPerOpt = optPrice * optQty;
+                        optionsPriceTotal += totalPerOpt;
+
+                        return `
+                            <div class="addon-item" style="display: flex; justify-content: space-between; width: 100%;">
+                                <span>+ ${opt.name} <b style="color:var(--premium-gold); margin-left:4px;">x${optQty}</b></span>
+                                <span>฿${totalPerOpt.toFixed(2)}</span>
+                            </div>`;
+                    }).join('');
+                }
+
+                // คำนวณราคาอาหารหลัก (ราคาเต็ม - ราคาท็อปปิ้งรวม)
+                const finalP = parseFloat(item.finalPrice || 0);
+                const baseP = finalP - optionsPriceTotal;
+
+                return `
                 <div class="item-row">
                     <div class="food-line">
                         <span>${item.quantity || 1}x ${item.name}</span>
-                        <b>฿${parseFloat(item.finalPrice).toFixed(2)}</b>
+                        <b>฿${baseP.toFixed(2)}</b>
                     </div>
-                    ${item.optionsArray ? item.optionsArray.map(opt => `
-                        <div class="addon-item">
-                            <span>+ ${opt.name}</span>
-                            <span>฿${parseFloat(opt.price).toFixed(2)}</span>
-                        </div>`).join('') : ''}
-                </div>`).join('') : '';
+                    <div class="addon-area" style="padding-left: 10px; border-left: 1px dashed var(--border); margin-top: 5px;">
+                        ${optionsHtml}
+                    </div>
+                </div>`;
+            }).join('') : '';
 
             html += `
                 <div class="order-card" onclick="toggleCard(this)">
@@ -306,7 +330,7 @@
         const searchDate = document.getElementById('search-date').value;
         const startTime = document.getElementById('start-time').value;
         const endTime = document.getElementById('end-time').value;
-        if (!searchDate) return alert("กรุณาเลือกวันที่ก่อนครับน้า!");
+        if (!searchDate) return alert("กรุณาเลือกวันที่ก่อนครับ!");
         const filtered = allHistoryData.filter(order => {
             const d = new Date(order.archivedAt);
             const dateStr = d.toISOString().split('T')[0];
@@ -316,7 +340,7 @@
         renderHistory(filtered);
     }
 
-    window.deleteEntry = (id) => confirm("ลบรายการนี้ถาวรเลยนะน้า?") && db.ref(`history/${id}`).remove();
+    window.deleteEntry = (id) => confirm("ลบรายการนี้ถาวรเลยนะ?") && db.ref(`history/${id}`).remove();
 </script>
 </body>
 </html>

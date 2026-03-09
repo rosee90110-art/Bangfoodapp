@@ -74,11 +74,13 @@ function syncOnlineStatus() {
 }
 
 /* =========================================
-   🖼️ ฟังก์ชันช่วยจัดการ UI อื่นๆ
+   📋 ฟังก์ชัน Render ออเดอร์ (เน้นจำนวนจานชัดเจน)
    ========================================= */
 
 function renderCard(container, id, data, status) {
     let btn = '';
+    
+    // จัดการปุ่มตามสถานะ (คงเดิม)
     if (['รอดำเนินการ'].includes(status)) {
         btn = `<button onclick="updateStatus('${id}', 'กำลังทำ')" class="btn-main btn-pending" data-lang-en="START COOKING" data-lang-th="เริ่มทำอาหาร">เริ่มทำอาหาร</button>`;
     } else if (status === 'กำลังทำ') {
@@ -89,11 +91,47 @@ function renderCard(container, id, data, status) {
         btn = `<button onclick="archive('${id}')" class="btn-main btn-archive" data-lang-en="ARCHIVE ORDER" data-lang-th="ลงประวัติออเดอร์">ลงประวัติออเดอร์</button>`;
     }
 
-    const itemsHtml = data.items.map(item => `
-        <div class="item-block">
-            <div class="main-food-row"><span>${item.quantity}x ${item.name}</span><span>฿${parseFloat(item.finalPrice || 0).toFixed(2)}</span></div>
-            ${item.optionsArray ? item.optionsArray.map(opt => `<div class="addon-row"><span>• ${opt.name}</span><span style="color:var(--premium-gold);">+฿${parseFloat(opt.price || 0).toFixed(2)}</span></div>`).join('') : ''}
-        </div>`).join('');
+    // วนลูปรายการอาหาร
+    const itemsHtml = data.items.map(item => {
+        let optionsHtml = '';
+        let optionsPriceTotal = 0;
+
+        // จัดการท็อปปิ้ง
+        if (item.optionsArray) {
+            optionsHtml = item.optionsArray.map(opt => {
+                const optPrice = parseFloat(opt.price || 0);
+                const optQty = parseInt(opt.qty || 1);
+                const totalPerOpt = optPrice * optQty;
+                optionsPriceTotal += totalPerOpt;
+
+                return `
+                    <div class="addon-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span>• ${opt.name} <b style="color:var(--premium-gold); margin-left:4px; font-size:0.75rem; background:rgba(197,160,89,0.1); padding:0 6px; border-radius:4px;">x${optQty}</b></span>
+                        <span style="color:var(--premium-gold); font-size:0.75rem;">+฿${totalPerOpt.toFixed(2)}</span>
+                    </div>`;
+            }).join('');
+        }
+
+        const finalP = parseFloat(item.finalPrice || 0);
+        const baseP = finalP - optionsPriceTotal;
+
+        return `
+            <div class="item-block" style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                <div class="main-food-row" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="background: var(--premium-gold); color: #000; min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 800; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3);">
+                            ${item.quantity || 1}
+                        </span>
+                        <span style="font-size: 1.05rem; font-weight: 600;">${item.name}</span>
+                    </div>
+                    <span style="font-weight: 500; opacity: 0.8;">฿${baseP.toFixed(2)}</span>
+                </div>
+                <div class="addon-area" style="padding-left: 42px; margin-top: 5px;">
+                    ${optionsHtml}
+                </div>
+                ${item.notes ? `<div style="margin-left: 42px; font-size: 0.75rem; color: #ff4757; margin-top: 6px;">📝 ${item.notes}</div>` : ''}
+            </div>`;
+    }).join('');
 
     const time = data.timestamp ? new Date(data.timestamp).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) : '--:--';
     const displayId = id.length > 7 ? id.substring(id.length - 7).toUpperCase() : id.toUpperCase();
@@ -106,10 +144,13 @@ function renderCard(container, id, data, status) {
                     <span class="table-no"><span data-lang-en="Table" data-lang-th="โต๊ะ">โต๊ะ</span> ${data.tableNumber}</span>
                     <div class="order-time">🕒 ${time}</div>
                 </div>
-                <span style="font-size:0.65rem; color:var(--premium-gold); font-weight:700; text-transform:uppercase;">${status}</span>
+                <span style="font-size:0.65rem; color:var(--premium-gold); font-weight:700; text-transform:uppercase; border:1px solid var(--premium-gold); padding:2px 8px; border-radius:6px; height:fit-content;">${status}</span>
             </div>
             <div class="item-list">${itemsHtml}</div>
-            <div class="order-total-block"><span data-lang-en="Total" data-lang-th="ยอดรวม">ยอดรวม</span> ฿${parseFloat(data.total).toLocaleString(undefined, {minimumFractionDigits:2})}</div>
+            <div class="order-total-block" style="display:flex; justify-content:space-between; align-items:center;">
+                <span data-lang-en="Total" data-lang-th="ยอดรวม" style="font-size:0.8rem; opacity:0.7;">ยอดรวม</span> 
+                <span>฿${parseFloat(data.total).toLocaleString(undefined, {minimumFractionDigits:2})}</span>
+            </div>
             <div class="order-actions">${btn}<button class="btn-cancel" onclick="cancelOrder('${id}')"><i class="fas fa-trash"></i></button></div>
         </div>`;
 }

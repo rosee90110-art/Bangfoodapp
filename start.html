@@ -209,11 +209,11 @@
 
 function goToOrder() {
     if (!navigator.geolocation) {
-        alert("มือถือน้าไม่รองรับระบบระบุตำแหน่งครับ");
+        alert("มือถือคุณไม่รองรับระบบระบุตำแหน่งครับ");
         return;
     }
 
-    alert("กำลังตรวจสอบพิกัดว่าน้าอยู่ที่ร้านจริงไหม...");
+    alert("กำลังตรวจสอบพิกัดว่าคุณอยู่ที่ร้านจริงไหม...");
 
     navigator.geolocation.getCurrentPosition((pos) => {
         const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, SHOP_LAT, SHOP_LNG);
@@ -224,10 +224,10 @@ function goToOrder() {
             window.location.href = `index.html?table=${tableNo}`;
         } else {
             // ❌ อยู่ไกลเกินไป
-            alert(`น้าอยู่ห่างจากร้านเกินไป (${dist.toFixed(0)} ม.) แอบสั่งจากบ้านไม่ได้นะจ๊ะ!`);
+            alert(`คุณอยู่ห่างจากร้านเกินไป (${dist.toFixed(0)} ม.) แอบสั่งจากบ้านไม่ได้นะจ๊ะ!`);
         }
     }, () => {
-        alert("กรุณาเปิด GPS และอนุญาตสิทธิ์ เพื่อสั่งอาหารครับน้า");
+        alert("กรุณาเปิด GPS และอนุญาตสิทธิ์ เพื่อสั่งอาหารครับ");
     });
 }
 

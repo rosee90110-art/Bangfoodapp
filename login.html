@@ -168,7 +168,7 @@
             const btn = document.getElementById('login-btn');
 
             if (!userInput || !passInput) {
-                return alert("กรุณากรอกข้อมูลให้ครบครับน้า!");
+                return alert("กรุณากรอกข้อมูลให้ครบครับ!");
             }
 
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> กำลังตรวจสอบ...';
@@ -196,10 +196,10 @@
                     const roleToSave = userFound ? userFound.role : "Super Admin";
                     sessionStorage.setItem('currentAdminRole', roleToSave); 
                     
-                    alert("ยินดีต้อนรับครับน้า!");
+                    alert("ยินดีต้อนรับครับ!");
                     window.location.href = "admin_center.html";
                 } else {
-                    alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องครับน้า!");
+                    alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องครับ!");
                     btn.innerHTML = 'เข้าสู่ระบบ';
                     btn.disabled = false;
                 }

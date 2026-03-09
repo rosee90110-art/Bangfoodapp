@@ -124,7 +124,7 @@ window.updateOrderStatus = function(orderId, newStatus) {
             db.ref('history').push(data).then(() => {
                 // 2. เมื่อส่งสำเร็จแล้ว ให้ลบออกจากหน้าจัดการ (orders)
                 db.ref(`orders/${orderId}`).remove();
-                alert("บันทึกลงประวัติเรียบร้อยครับน้า!");
+                alert("บันทึกลงประวัติเรียบร้อยครับ!");
             }).catch(err => {
                 alert("เกิดข้อผิดพลาด: " + err.message);
             });

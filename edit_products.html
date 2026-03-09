@@ -298,7 +298,7 @@
         const price = parseFloat(document.getElementById('p-price').value);
         const img = document.getElementById('p-img').value;
         const category = document.getElementById('p-category').value;
-        if(!nameTH || isNaN(price) || !img) return alert("ข้อมูลไม่ครบครับน้า!");
+        if(!nameTH || isNaN(price) || !img) return alert("ข้อมูลไม่ครบครับ!");
         db.ref('category_addons/' + category).once('value', snap => {
             const addons = snap.val() || { sizes: [], extras: [] };
             const data = { name: nameTH, price: price, img: img, category: category, status: 'instock', config: { sizes: addons.sizes || [], addons: addons.extras || [] } };

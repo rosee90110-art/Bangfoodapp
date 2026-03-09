@@ -206,7 +206,7 @@
                 profileImg: document.getElementById('edit-avatar-preview').src 
             };
 
-            if (!data.username || !data.password) return alert("กรุณากรอกข้อมูลให้ครบครับน้า");
+            if (!data.username || !data.password) return alert("กรุณากรอกข้อมูลให้ครบครับ");
 
             if (id) {
                 db.ref('admins/' + id).update(data).then(closeModal).catch(err => alert(err.message));
@@ -236,7 +236,7 @@
         }
 
         function deleteAdmin(id) {
-            if (confirm("น้าจะลบพนักงานคนนี้จริงเหรอครับ? ข้อมูลจะหายถาวรเลยนะ")) {
+            if (confirm("จะลบพนักงานคนนี้จริงเหรอครับ? ข้อมูลจะหายถาวรเลยนะ")) {
                 db.ref('admins/' + id).remove();
             }
         }

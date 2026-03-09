@@ -180,65 +180,91 @@
         }
 
         async function renderCartItems() {
-            const tableNo = getTableNo();
-            const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
-            const cartKey = `bangfood_cart_table_${tableNo}`;
-            const cartData = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-            
-            const transSnap = await window.db.ref('menu_translations').once('value');
-            const dict = transSnap.val() || {};
+    const tableNo = getTableNo();
+    const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
+    const cartKey = `bangfood_cart_table_${tableNo}`;
+    const cartData = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
+    
+    const transSnap = await window.db.ref('menu_translations').once('value');
+    const dict = transSnap.val() || {};
 
-            const listContainer = document.getElementById('cart-items-list');
-            listContainer.innerHTML = '';
-            let grandTotal = 0;
+    const listContainer = document.getElementById('cart-items-list');
+    listContainer.innerHTML = '';
+    let grandTotal = 0;
 
-            if (cartData.items.length === 0) {
-                listContainer.innerHTML = `<div style="text-align:center; padding:120px 0; opacity:0.2;"><i class="fas fa-shopping-basket" style="font-size:4rem; margin-bottom:20px;"></i><p>ตะกร้ายังไม่มีรายการครับน้า</p></div>`;
-                document.getElementById('final-total-amount').textContent = '0.00';
-                return;
-            }
+    if (cartData.items.length === 0) {
+        listContainer.innerHTML = `<div style="text-align:center; padding:120px 0; opacity:0.2;"><i class="fas fa-shopping-basket" style="font-size:4rem; margin-bottom:20px;"></i><p>ตะกร้ายังไม่มีรายการครับ</p></div>`;
+        document.getElementById('final-total-amount').textContent = '0.00';
+        return;
+    }
 
-            cartData.items.forEach((item, index) => {
-                const finalP = parseFloat(item.finalPrice || 0);
-                grandTotal += finalP;
-                const displayName = (lang === 'en') ? (dict[item.name] || item.name) : item.name;
+    cartData.items.forEach((item, index) => {
+        const finalP = parseFloat(item.finalPrice || 0);
+        const mainQty = parseInt(item.quantity || 1); // 🔢 ดึงจำนวนจานหลักที่สั่ง (เช่น สั่ง 2 จาน)
+        grandTotal += finalP;
+        
+        const displayName = (lang === 'en') ? (dict[item.name] || item.name) : item.name;
+        
+        // --- ส่วนการสร้าง HTML สำหรับ Options/Addons ---
+        let optionsHtml = '';
+        if (item.optionsArray && item.optionsArray.length > 0) {
+            optionsHtml = item.optionsArray.map(opt => {
+                const op = parseFloat(opt.price || 0);
+                const oQty = parseInt(opt.qty || 1); 
+                const optName = (lang === 'en') ? (dict[opt.name] || opt.name) : opt.name;
                 
-                let optionsHtml = '';
-                let optionsPriceTotal = 0;
-                if (item.optionsArray) {
-                    optionsHtml = item.optionsArray.map(opt => {
-                        const op = parseFloat(opt.price || 0);
-                        optionsPriceTotal += op;
-                        const optName = (lang === 'en') ? (dict[opt.name] || opt.name) : opt.name;
-                        return `<div class="addon-line"><span>+ ${optName}</span><span>฿${op.toFixed(2)}</span></div>`;
-                    }).join('');
-                }
+                // ราคาของท็อปปิ้ง (ยังไม่คูณจำนวนจานหลัก เพื่อให้ลูกค้าเห็นราคาต่อหน่วยชัดเจน)
+                const linePrice = op * oQty;
 
-                const baseP = finalP - optionsPriceTotal;
-
-                listContainer.innerHTML += `
-                    <div class="cart-item" style="animation-delay: ${index * 0.1}s">
-                        <div class="item-main-row">
-                            <img src="${item.img}" class="item-img">
-                            <div style="flex:1;">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <p class="food-name">${displayName}</p>
-                                    <span style="color:#888; font-size:0.8rem; font-weight:700;">฿${baseP.toFixed(2)}</span>
-                                </div>
-                                <div class="addon-area">${optionsHtml}</div>
-                                ${item.notes ? `<div style="font-size:0.7rem; color:var(--premium-gold); margin-top:10px; font-weight:700;">📝 ${item.notes}</div>` : ''}
-                            </div>
-                        </div>
-                        <div class="item-footer">
-                            <button class="remove-btn" onclick="removeItem(${index})">ลบรายการ</button>
-                            <span style="font-weight:900; color:var(--premium-gold); font-size:1.4rem;">฿${finalP.toFixed(2)}</span>
-                        </div>
+                return `
+                    <div class="addon-line" style="margin-bottom: 2px;">
+                        <span style="color: rgba(255,255,255,0.6);">
+                            <i class="fas fa-plus-circle" style="font-size: 0.6rem; color: var(--premium-gold); margin-right: 5px;"></i>
+                            ${optName} 
+                            ${oQty > 1 ? `<b style="color: var(--premium-gold); margin-left: 5px;">x${oQty}</b>` : ''}
+                        </span>
+                        <span style="font-weight: 600;">฿${linePrice.toFixed(2)}</span>
                     </div>`;
-            });
-            document.getElementById('final-total-amount').textContent = grandTotal.toFixed(2);
-            document.getElementById('display-table').innerText = tableNo;
+            }).join('');
         }
 
+        // คำนวณหาค่าอาหารต่อหน่วย (Price per Unit) เพื่อแสดงให้ลูกค้าดู
+        // เปลี่ยนจากการคำนวณราคารวม (finalP) มาใช้ราคาพื้นฐาน (item.price) แทน
+const basePricePerUnit = parseFloat(item.price || 0);
+
+listContainer.innerHTML += `
+    <div class="cart-item" style="animation-delay: ${index * 0.1}s">
+        <div class="item-main-row">
+            <div style="position: relative;">
+                <img src="${item.img}" class="item-img">
+                <div style="position: absolute; top: -10px; right: -10px; background: var(--premium-gold); color: #000; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; border: 3px solid var(--bg-deep); box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                    ${mainQty}
+                </div>
+            </div>
+            <div style="flex:1;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <p class="food-name">${displayName}</p>
+                        <p style="font-size: 0.65rem; color: #666; margin: 0;">@฿${basePricePerUnit.toFixed(2)} / unit</p>
+                    </div>
+                </div>
+                <div class="addon-area" style="margin-top: 8px;">${optionsHtml}</div>
+                ${item.notes ? `<div style="font-size:0.7rem; color:var(--premium-gold); margin-top:10px; font-weight:700; background: rgba(197, 160, 89, 0.05); padding: 5px 10px; border-radius: 10px;">📝 ${item.notes}</div>` : ''}
+            </div>
+        </div>
+        <div class="item-footer">
+            <button class="remove-btn" onclick="removeItem(${index})">ลบรายการ</button>
+            <div style="text-align: right;">
+                <span style="display: block; font-size: 0.6rem; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Subtotal</span>
+                <span style="font-weight:900; color:var(--premium-gold); font-size:1.6rem; text-shadow: 0 0 15px var(--gold-glow);">฿${finalP.toFixed(2)}</span>
+            </div>
+        </div>
+    </div>`;
+    });
+    
+    document.getElementById('final-total-amount').textContent = grandTotal.toFixed(2);
+    document.getElementById('display-table').innerText = tableNo;
+}
         window.removeItem = function(index) {
             const tableNo = getTableNo();
             const cartKey = `bangfood_cart_table_${tableNo}`;
@@ -253,7 +279,7 @@
             const cartKey = `bangfood_cart_table_${tableNo}`;
             const cartData = JSON.parse(sessionStorage.getItem(cartKey));
             if (!cartData || cartData.items.length === 0) return;
-            if (!confirm("ยืนยันการส่งรายการเข้าครัวครับน้า?")) return;
+            if (!confirm("ยืนยันการส่งรายการเข้าครัวครับ?")) return;
 
             const orderData = {
                 tableNumber: tableNo,

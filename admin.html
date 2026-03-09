@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>จัดการออเดอร์ | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="admin_style.css">
 
     <style>
-        /* 📍 โครงสร้าง Layout หลักเพื่อให้ข้อมูลอยู่ในกล่องสวยงาม */
-        body { margin: 0; padding: 0; overflow-x: hidden; transition: 0.3s; }
+        /* 📍 โครงสร้าง Layout หลัก */
+        body { margin: 0; padding: 0; overflow-x: hidden; transition: 0.3s; background: var(--bg); color: var(--text); font-family: 'Kanit', sans-serif; }
 
-        /* แถบสรุปยอดออเดอร์แบบติดหนึบ (Sticky Filter Bar) */
+        /* แถบสรุปยอดออเดอร์แบบติดหนึบ */
         .sticky-top-area {
             position: sticky; top: 0; z-index: 2000;
             background: var(--bg); backdrop-filter: blur(20px);
@@ -25,7 +24,6 @@
             padding: 0 15px; max-width: 1200px; margin: 0 auto;
         }
 
-        /* กล่องตัวเลขสรุปด้านบน */
         .summary-box {
             background: var(--card-bg); border: 1px solid var(--border);
             border-radius: 16px; padding: 12px 5px; text-align: center;
@@ -36,22 +34,20 @@
         .summary-box span { font-size: 0.6rem; color: var(--sub-text); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
 
         /* ส่วนรายการออเดอร์ */
-        .main-content { padding: 20px 15px; max-width: 1450px; margin: 0 auto; }
+        .main-content { padding: 20px 15px; max-width: 1450px; margin: 0 auto; min-height: 80vh; }
         #main-orders-container { display: grid; grid-template-columns: 1fr; gap: 15px; }
 
         @media (min-width: 768px) {
             #main-orders-container { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-            .main-content { padding: 25px; }
         }
 
-        /* 📋 การ์ดออเดอร์ (Order Card Design) */
+        /* 📋 การ์ดออเดอร์ */
         .order-card {
             background: var(--card-bg); border-radius: 24px; padding: 20px;
             border: 1px solid var(--border); display: flex; flex-direction: column;
             animation: popIn 0.4s ease-out; transition: 0.3s;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow); position: relative;
         }
-        /* ไฮไลท์ออเดอร์ใหม่ด้วยสีส้มเข้ม */
         .order-card.new-order { border-color: #f39c12; box-shadow: 0 5px 20px rgba(243, 156, 18, 0.15); }
 
         .card-header { display: flex; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px dashed var(--border); padding-bottom: 15px; }
@@ -60,7 +56,7 @@
 
         .item-list { flex-grow: 1; margin-bottom: 20px; }
         .item-block { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(128,128,128,0.08); }
-        .main-food-row { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 500; color: var(--text); }
+        .main-food-row { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text); }
         .addon-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--sub-text); margin-top: 3px; padding-left: 10px; }
 
         .order-total-block { 
@@ -68,29 +64,25 @@
             padding: 12px; background: rgba(197, 160, 89, 0.05); border-radius: 14px; color: var(--premium-gold);
         }
 
-        /* 📍 สไตล์ปุ่มแบบเน้นความชัดเจน (High Contrast) สำหรับทุกโหมด */
+        /* 📍 ปุ่มกด */
         .order-actions { display: flex; gap: 10px; margin-top: 15px; }
-        
         .btn-main { 
             flex: 1; padding: 15px; border: none; border-radius: 16px; 
             font-weight: 700; cursor: pointer; color: #fff !important; 
             transition: 0.3s; font-size: 0.85rem; text-transform: uppercase;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .btn-main:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-        /* 🎨 สีปุ่มที่ชัดเข้ม (แก้ปัญหาปุ่มจางในโหมดสว่าง) */
-        .btn-pending { background: #f39c12 !important; } /* ส้มเข้ม (เริ่มทำ) */
-        .btn-success { background: #27ae60 !important; } /* เขียวสด (แจ้งรับ) */
-        .btn-info { background: #2980b9 !important; }    /* น้ำเงินเข้ม (เก็บเงิน) */
-        .btn-archive { background: #8e44ad !important; } /* ม่วงเข้ม (ลงประวัติ) */
+        .btn-pending { background: #f39c12 !important; } 
+        .btn-success { background: #27ae60 !important; } 
+        .btn-info { background: #2980b9 !important; }    
+        .btn-archive { background: #8e44ad !important; } 
 
         .btn-cancel { 
             width: 55px; background: #ebedef; color: #e74c3c; 
             border: 1px solid #dcdfe3; border-radius: 16px; cursor: pointer; 
             transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
         }
-        /* ปรับสีปุ่มยกเลิกในโหมดมืด */
         body:not(.light-theme) .btn-cancel { background: #1a1a1a; border-color: #333; }
         .btn-cancel:hover { background: #e74c3c; color: #fff; }
 
@@ -121,12 +113,25 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-    const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.firebasestorage.app", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
+        authDomain: "bangfood-cb30f.firebaseapp.com", 
+        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
+        projectId: "bangfood-cb30f", 
+        storageBucket: "bangfood-cb30f.firebasestorage.app", 
+        messagingSenderId: "390955623784", 
+        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" 
+    };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database(); 
     let currentTab = 'all';
 
     function initializeOrders() {
+        // ตรวจสอบชื่อแอดมิน (ถ้าไม่มีให้ไปหน้า Login)
+        if (!sessionStorage.getItem('currentAdminName')) {
+            window.location.href = 'admin_login.html';
+            return;
+        }
         loadOrdersRealtime();
     }
 
@@ -151,38 +156,45 @@
             snapshot.forEach(child => {
                 const order = child.val();
                 const status = order.status || 'รอดำเนินการ';
+                
+                // นับจำนวนสถานะ
                 counts.t++;
                 if (['รอดำเนินการ', 'กำลังทำ'].includes(status)) counts.p++;
                 else counts.c++;
 
+                // กรองข้อมูลตาม Tab
                 let show = currentTab === 'all' || 
                            (currentTab === 'pending' && ['รอดำเนินการ', 'กำลังทำ'].includes(status)) ||
                            (currentTab === 'completed' && !['รอดำเนินการ', 'กำลังทำ'].includes(status));
 
+                // 🚀 เรียกฟังก์ชัน renderCard จาก admin_script.js
                 if (show) renderCard(container, child.key, order, status);
             });
+            
             updateCounters(counts.t, counts.p, counts.c);
+            
+            // แปลภาษาทันทีที่โหลดข้อมูลเสร็จ
+            if (typeof applyGlobalLanguage === 'function') applyGlobalLanguage();
         });
     }
 
-    // 📍 ฟังก์ชันจัดการแสดงผลการ์ดออเดอร์ (อัปเกรดปุ่มสีเข้มและรองรับ 2 ภาษา)
-    
-    
     function updateCounters(t,p,c) {
         document.getElementById('count-all').innerText = t;
         document.getElementById('count-pending').innerText = p;
         document.getElementById('count-done').innerText = c;
     }
 
+    // ฟังก์ชันจัดการ Firebase
     window.updateStatus = (id, s) => db.ref('orders').child(id).update({ status: s });
     window.archive = (id) => {
         db.ref('orders').child(id).once('value', s => {
             if(s.exists()) {
-                db.ref('history').push({...s.val(), archivedAt: Date.now()}).then(() => db.ref('orders').child(id).remove());
+                db.ref('history').push({...s.val(), archivedAt: Date.now()})
+                    .then(() => db.ref('orders').child(id).remove());
             }
         });
     };
-    window.cancelOrder = (id) => confirm("ต้องการลบออเดอร์นี้ไหมน้า?") && db.ref('orders').child(id).remove();
+    window.cancelOrder = (id) => confirm("ต้องการลบออเดอร์นี้ไหม?") && db.ref('orders').child(id).remove();
 </script>
 
 <script src="admin_script.js"></script>

@@ -2,362 +2,230 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>เมนูอาหาร | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="admin_style.css">
     <link rel="stylesheet" href="global_style.css">
 
     <style>
-        /* 📍 เพิ่มฟอนต์ Google Font เพื่อความน่ารักและอ่านง่าย */
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
 
         :root {
             --bg-deep: #0a0a0b;
             --premium-gold: #c5a059;
-            --cartoon-orange: #ff7f50;
+            --premium-gold-light: #e0c28d;
+            --glass-white: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --btn-bg: #ffffff;
+            --btn-text: #000000;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --drawer-bg: #0a0a0b;
+        }
+
+        body.light-theme {
+            --bg-deep: #fffdf5;
+            --glass-white: rgba(0, 0, 0, 0.03);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --btn-bg: #000000;
+            --btn-text: #ffffff;
+            --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            --drawer-bg: #ffffff;
         }
 
         body {
             font-family: 'Kanit', sans-serif;
-        }
-
-        /* 📍 Header */
-        .app-header-sticky {
-            position: sticky;
-            top: 0;
-            z-index: 2000;
-            background: rgb(7 7 7 / 95%);
-            backdrop-filter: blur(25px);
-            border-bottom: 1px solid var(--glass-border);
+            background-color: var(--bg-deep);
+            color: #fff;
+            margin: 0;
+            overflow-x: hidden;
             transition: background 0.3s;
         }
 
-        body.light-theme .app-header-sticky {
-            background: rgb(255 253 245 / 95%); /* สีครีมนวล */
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
+        body.light-theme { color: #333; }
 
-        body.light-theme .top-summary-bar {
-            background: rgba(0, 0, 0, 0.02);
-            border-top: 1px solid rgba(0, 0, 0, 0.03);
+        /* ✨ HEADER */
+        .app-header-sticky {
+            position: sticky; top: 0; z-index: 2000;
+            background: rgba(10, 10, 11, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
         }
-
-        body.light-theme .bangfood-logo {
-            background: none;
-            -webkit-text-fill-color: var(--premium-gold);
-            color: var(--premium-gold);
-        }
+        body.light-theme .app-header-sticky { background: rgba(255, 253, 245, 0.9); }
 
         .header-main-row {
-            padding: 1px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            min-height: 55px;
+            padding: 1px 20px; display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .bangfood-logo {
+            font-size: 1.4rem; font-weight: 800; letter-spacing: 2px;
+            background: linear-gradient(90deg, #c5a059, #fff, #c5a059);
+            background-size: 200% auto; -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite;
+        }
+
+        @keyframes shineText { to { background-position: 200% center; } }
+
+        /* 🍔 Hamburger Menu */
+        .hamburger-menu { cursor: pointer; z-index: 4600; }
+
+        /* 📁 Side Drawer */
+        .side-drawer { 
+            position: fixed; top: 70px; right: 20px; width: 180px; 
+            background: var(--drawer-bg); z-index: 4500; padding: 10px; 
+            border-radius: 24px; border: 1px solid var(--glass-border); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            transform-origin: top right; transform: scale(0); 
+            opacity: 0; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            pointer-events: none; 
+        }
+        .side-drawer.active { transform: scale(1); opacity: 1; pointer-events: auto; }
+        .drawer-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 15px; background: rgba(128,128,128,0.06); 
+            border-radius: 18px; margin-bottom: 5px; cursor: pointer; 
         }
 
         .top-summary-bar {
-            padding: 10px 25px;
-            background: rgba(197, 160, 89, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 8px 25px; background: rgba(197, 160, 89, 0.08);
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .summary-label {
-            font-size: 0.6rem;
-            color: #666;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+        .item-img-container { position: relative; }
+        .item-badge {
+            position: absolute; top: -8px; right: -8px;
+            background: #ff4b2b; color: #fff; font-size: 0.7rem;
+            min-width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; border: 2px solid var(--bg-deep);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;
         }
 
-        .summary-val {
-            color: var(--premium-gold);
-            font-weight: 700;
-            font-size: 1.3rem;
-            text-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
-        }
+        .summary-label { font-size: 0.65rem; font-weight: 700; color: #888; letter-spacing: 1px; }
+        .summary-val { color: var(--premium-gold); font-weight: 700; font-size: 1.2rem; }
 
-        .hamburger-menu {
-            position: absolute;
-            right: 20px;
+        /* 🖼️ SLIDER */
+        .slider-container { width: 100%; margin-top: 15px; }
+        .image-slider {
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+            gap: 15px; padding: 10px 40px 25px; scrollbar-width: none;
+            scroll-padding: 0 40px;
         }
+        .image-slider::after { content: ''; flex: 0 0 7.5%; }
 
-        .bangfood-logo { 
-            font-size: 1.1rem; font-weight: 600; letter-spacing: 4px; 
-            background: linear-gradient(90deg, #c5a059, #fff, #c5a059); 
-            background-size: 200% auto; -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite; margin: 0; 
-        }
-
-        /* ✨ Slider */
-        .slider-container { width: 100%; margin-top: 10px; overflow: hidden; position: relative; }
-        .image-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 15px 35px 25px; scrollbar-width: none; scroll-behavior: smooth; flex-wrap: nowrap; }
-        .image-slider::-webkit-scrollbar { display: none; }
-        
         .slide-card {
-            position: relative;
-            flex: 0 0 82%;
-            scroll-snap-align: center;
-            border-radius: 35px; /* มนมากขึ้นแบบการ์ตูน */
-            height: 185px;
-            transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            transform: scale(0.9);
-            opacity: 0.5;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 3px solid transparent;
+            flex: 0 0 85%; scroll-snap-align: center; border-radius: 30px;
+            height: 200px; position: relative; overflow: hidden;
+            transform: scale(0.92); transition: transform 0.4s;
+            box-shadow: var(--card-shadow); border: 2px solid transparent;
         }
 
-        .slide-card.is-active { transform: scale(1); opacity: 1; border-color: var(--premium-gold); }
+        .slide-card.is-active { transform: scale(1); border-color: var(--premium-gold); }
 
         .slide-info-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 20px;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            color: #fff; display: flex; flex-direction: column; pointer-events: none;
-            transform: translateY(20px); opacity: 0; transition: 0.5s 0.2s ease-out;
+            position: absolute; bottom: 0; width: 100%; padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            color: #fff; transform: translateY(10px); opacity: 0; transition: 0.5s;
         }
-
         .slide-card.is-active .slide-info-overlay { transform: translateY(0); opacity: 1; }
 
-        .slide-food-name { font-size: 1rem; font-weight: 600; margin: 0; color: var(--premium-gold); text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .slide-food-price { font-size: 0.75rem; opacity: 0.9; letter-spacing: 1px; }
-        .slide-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 35px; }
+        .indicator-item {
+            width: 8px; height: 8px; background: #444; border-radius: 50%; transition: 0.3s;
+        }
+        .indicator-item.active {
+            width: 25px; height: 10px; border-radius: 10px; background: var(--premium-gold);
+        }
 
-        .middle-indicator-container { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 5px auto 20px; height: 40px; width: 100%; }
-        .indicator-item { width: 10px; height: 4px; background: #333; border-radius: 10px; transition: 0.4s; }
-        .indicator-item.active { width: 35px; height: 35px; background: transparent; color: var(--premium-gold); font-size: 1.6rem; font-weight: 900; }
-
-        /* 🍛 Tabs เมนูแบบการ์ตูน */
+        /* 🍛 MENU CATEGORY & ITEMS */
         .menu-tabs { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; scrollbar-width: none; }
-        .menu-tab { 
-            padding: 10px 18px; background: rgba(255, 255, 255, 0.05); border-radius: 20px; 
-            color: #888; font-size: 0.8rem; border: 1px solid var(--glass-border); 
-            white-space: nowrap; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        .menu-tab {
+            padding: 10px 22px; background: var(--glass-white); border-radius: 25px;
+            color: #888; font-size: 0.85rem; border: 1px solid var(--glass-border);
+            white-space: nowrap; transition: var(--transition);
         }
-        body.light-theme .menu-tab { background: #eee; color: #666; }
-        .menu-tab.active { background: var(--premium-gold); color: #fff; font-weight: 600; transform: scale(1.05); box-shadow: 0 5px 15px rgba(197, 160, 89, 0.3); }
+        .menu-tab.active {
+            background: var(--premium-gold); color: #fff; font-weight: 600;
+            box-shadow: 0 8px 15px rgba(197, 160, 89, 0.3);
+        }
 
-        /* 🍱 รายการเมนูอาหาร */
         .menu-item {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border);
-            margin: 0 20px 15px; padding: 14px; border-radius: 30px; 
+            background: var(--glass-white); border: 1px solid var(--glass-border);
+            margin: 0 20px 15px; padding: 12px; border-radius: 25px;
             display: flex; align-items: center; gap: 15px; text-decoration: none;
-            color: inherit; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            color: inherit; transition: var(--transition);
         }
+        .menu-item:active { transform: scale(0.96); }
+        .item-img-thumb { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; }
 
-        body.light-theme .menu-item { background: #ffffff; color: #333; border: 1px solid rgba(0, 0, 0, 0.04); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
-
-        .menu-item:active { transform: scale(0.96); background: rgba(197, 160, 89, 0.08); }
-
-        .item-img-thumb { width: 75px; height: 75px; border-radius: 22px; object-fit: cover; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
-        .menu-item h3 { margin: 0 0 5px; font-size: 1.0rem; font-weight: 500; }
-
-        /* 🔘 ปุ่ม "เลือก" แบบเด้งดึ๋ง */
         .select-btn {
-            padding: 8px 20px; background: var(--premium-gold); border-radius: 18px;
-            color: #fff; font-size: 0.75rem; font-weight: 700; transition: 0.2s;
-            box-shadow: 0 4px 0 #8e7340; border: none;
+            padding: 8px 18px; background: var(--premium-gold); border-radius: 15px;
+            color: #fff; font-size: 0.75rem; font-weight: 700; border: none;
+            box-shadow: 0 4px 0 #8e7340;
         }
+        .select-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #8e7340; }
 
-        .select-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #8e7340; }
-
-        /* 📍 ปรับ Container ให้รองรับการลอยของปุ่ม */
-        .section-header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 25px 20px 10px;
-            position: relative; /* สำคัญ: เพื่อให้ตัวค้นหาอิงตำแหน่งกับกรอบนี้ */
-            min-height: 60px; /* เพิ่มความสูงเผื่อไว้กันเบียด */
+        /* 🔍 SEARCH */
+        .round-search-parent {
+            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
+            z-index: 4000; display: flex; align-items: center;
+            width: 70px; height: 70px; background: var(--btn-bg);
+            border-radius: 35px; border: 6px solid var(--bg-deep);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            transition: var(--transition); overflow: hidden;
         }
-
-        .search-wrapper {
-            position: absolute; /* เปลี่ยนเป็น absolute */
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%); /* จัดให้อยู่กึ่งกลางแนวตั้ง */
-            z-index: 100; /* ให้อยู่เหนือข้อความ */
-            display: flex;
-            align-items: center;
+        .round-search-parent.active { width: 90%; max-width: 400px; padding: 0 5px; }
+        .search-main-btn {
+            width: 70px; height: 58px; flex-shrink: 0; display: flex;
+            justify-content: center; align-items: center; cursor: pointer;
+            color: var(--btn-text); font-size: 1.4rem;
         }
-
-        .search-input-container {
-            width: 0;
-            opacity: 0;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: #1a1a1a; /* เปลี่ยนเป็นสีเข้มทึบ */
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            height: 42px;
-        }
-
-        body.light-theme .search-input-container {
-            background: #ffffff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .search-wrapper.active .search-input-container {
-            width: 220px;
-            opacity: 1;
-            padding: 0 15px;
-            border: 1.5px solid var(--premium-gold);
-            margin-right: 8px;
-        }
-
-        /* ⌨️ ช่องพิมพ์ด้านบน (เดิม) */
-        #menuSearchInput {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-family: 'Kanit', sans-serif;
-            font-size: 0.9rem;
-            outline: none;
-            width: 100%;
-        }
-        body.light-theme #menuSearchInput { color: #333; }
-
-        .search-trigger-btn {
-            width: 38px;
-            height: 38px;
-            background: rgba(197, 160, 89, 0.1);
-            border: 1px solid var(--glass-border);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            color: var(--premium-gold);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-        .search-wrapper.active .search-trigger-btn { background: var(--premium-gold); color: #fff; transform: rotate(90deg); }
-        .search-trigger-btn:active { transform: scale(0.9); }
-
-
-        /* ========================================= */
-        /* ✨ ส่วนที่แก้ไขใหม่สำหรับปุ่มค้นหาด้านล่างให้เด้งไปข้างบน */
-        /* ========================================= */
-
-        /* 📍 ปรับตำแหน่งให้ปุ่มลอยอมทับกึ่งกลางของแถบนำทางด้านล่าง */
-.round-search-parent {
-    position: fixed;
-    bottom: 35px; /* ลดระยะจาก 85px เป็น 35px เพื่อให้ทับขอบบนของแถบล่างพอดี */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 4000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 75px; /* ขยายขนาดความกว้าง */
-    height: 75px; /* ขยายขนาดความสูง */
-}
-
-/* ปรับปุ่มวงกลมให้ดูเป็น "ปุ่มค้นหา" เริ่มต้น */
-.search-main-btn {
-    width: 75px;
-    height: 75px;
-    border-radius: 50%;
-    background: #ffffff;
-    color: #000;
-    border: 6px solid var(--bg-deep);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    z-index: 4001;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    font-size: 1.5rem;
-}
-
-/* ปรับให้หมุนตอนกด (ของคุณมีอยู่แล้ว) */
-.round-search-parent.active .search-main-btn {
-    transform: rotate(90deg);
-}
-
-/* รองรับ Light Theme (ถ้าเปลี่ยนเป็นธีมสว่าง ให้สลับปุ่มเป็นสีดำ) */
-body.light-theme .search-main-btn {
-    background: #000000;
-    color: #ffffff;
-    border-color: var(--bg-deep); /* สลับขอบเป็นสีครีมนวลตามตัวแปร */
-}
-
-        .top-search-overlay {
-    position: fixed;
-    bottom: -100px; /* ซ่อนไว้ใต้จอ */
-    top: auto;      /* ยกเลิกของเดิม */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 440px;
-    height: 60px; 
-    background: rgba(18, 18, 20, 0.98); 
-    backdrop-filter: blur(15px);
-    z-index: 3500; /* ให้อยู่เหนือ Nav-bar เล็กน้อย */
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    border-radius: 20px; /* ทำมุมมนให้เข้ากับธีม */
-    border: 1.5px solid var(--premium-gold);
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-    transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-sizing: border-box;
-}
-
-        body.light-theme .top-search-overlay {
-    background: #ffffff;
-    border-color: var(--premium-gold);
-}
-        /* เมื่อสั่งให้แสดง (Active) */
-.top-search-overlay.active {
-    bottom: 110px; /* ตำแหน่งที่ลอยอยู่เหนือแถบ Nav-bar */
-}
-
-        /* ช่อง Input ในแถบด้านบน */
         #bottomSearchInput {
-            width: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #fff;
-            font-family: 'Kanit', sans-serif;
-            font-size: 1.1rem;
+            flex: 1; border: none; outline: none; background: transparent;
+            font-family: 'Kanit', sans-serif; font-size: 1rem; color: var(--btn-text);
+            width: 0; opacity: 0; transition: 0.3s; padding-left: 10px;
         }
-        body.light-theme #bottomSearchInput { color: #333; }
+        .round-search-parent.active #bottomSearchInput { width: 100%; opacity: 1; }
 
-        /* ========================================= */
+        /* 📱 BOTTOM NAV */
+        .bottom-nav-fixed {
+            position: fixed; bottom: 0; left: 10px; width: 95%; height: 90px;
+            display: flex; justify-content: center; align-items: flex-end;
+            pointer-events: none; z-index: 3000;
+        }
+        .nav-bar {
+            width: 92%; height: 65px; background: #121214; border-radius: 35px;
+            border: 1px solid var(--glass-border); display: flex;
+            justify-content: space-between; align-items: center;
+            padding: 0 30px; pointer-events: auto; margin-bottom: 15px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+        body.light-theme .nav-bar { background: #fff; }
 
-
-        /* 📍 Bottom Nav & Refresh */
-        .bottom-nav-fixed { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 100px; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; z-index: 3000; }
-        .nav-bar { width: 92%; height: 60px; background: #121214; border-radius: 30px; border: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; pointer-events: auto; margin-bottom: 15px; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
-        body.light-theme .nav-bar { background: #ffffff; border-color: #eee; }
-
-        :root { --bg-deep: #0a0a0b; --btn-bg: #ffffff; --btn-text: #000000; }
-        body.light-theme { --bg-deep: #fffdf5; --btn-bg: #000000; --btn-text: #ffffff; }
-
-        .round-refresh {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            width: 75px; height: 75px; border-radius: 50%;
-            background: var(--btn-bg); color: var(--btn-text); 
-            border: 7px solid var(--bg-deep); font-size: 1.6rem;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; z-index: 2600; pointer-events: auto; transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        .nav-item { text-align: center; color: #666; cursor: pointer; position: relative; }
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item span { display: block; font-size: 0.6rem; font-weight: 700; margin-top: 4px; }
+        #cart-count-badge {
+            position: absolute; top: -8px; right: -10px;
+            background: #ff4b2b; color: #fff; font-size: 0.6rem;
+            min-width: 18px; height: 18px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
         }
     </style>
 </head>
 <body onload="initializeApp()">
 
-<div class="top-search-overlay" id="topSearchOverlay">
-    <input type="text" id="bottomSearchInput" placeholder="พิมพ์ชื่อเมนูที่ต้องการ..." oninput="handleSearchBottom()">
+<div class="app-header-sticky">
+    <div class="header-main-row">
+        <h1 class="bangfood-logo">BANGFOOD</h1>
+        <div class="hamburger-menu" onclick="toggleDrawer()">
+            <i class="fas fa-bars" style="color:var(--premium-gold); font-size:1.5rem;"></i>
+        </div>
+    </div>
+    <div class="top-summary-bar">
+        <div class="summary-label">STATION <span id="display-table" style="color:var(--premium-gold);">1</span> | <span data-lang-en="TOTAL" data-lang-th="ราคารวม">TOTAL</span></div>
+        <div class="summary-val">฿<span id="floating-total">0.00</span></div>
+    </div>
 </div>
 
 <div id="side-drawer" class="side-drawer">
@@ -368,109 +236,59 @@ body.light-theme .search-main-btn {
         </div>
         <div class="drawer-item" onclick="switchCustomerLanguage(); toggleDrawer();">
             <span data-lang-en="LANGUAGE" data-lang-th="เปลี่ยนภาษา">เปลี่ยนภาษา</span>
-            <b id="drawer-lang-status">TH</b>
+            <b id="drawer-lang-status" style="font-size: 0.7rem; color: var(--premium-gold);">TH</b>
         </div>
     </div>
 </div>
-<div id="drawer-overlay" onclick="toggleDrawer()" style="position:fixed; top:0; left:0; width:100%; height:100%; background:transparent; z-index:3500; display:none;"></div>
+<div id="drawer-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:transparent; z-index:4200; display:none;" onclick="toggleDrawer()"></div>
 
-<div class="app-header-sticky">
-    <div class="header-main-row">
-        <h1 class="bangfood-logo">BANGFOOD</h1>
-        <div class="hamburger-menu" onclick="toggleDrawer()">
-            <span></span><span></span><span></span>
-        </div>
-    </div>
-    
-    <div class="top-summary-bar">
-        <div class="summary-label">
-            STATION <span id="display-table" style="color:var(--premium-gold);">1</span> | 
-            <span data-lang-en="TOTAL" data-lang-th="ราคารวม">TOTAL</span>
-        </div>
-        <div class="summary-val">
-            ฿<span id="floating-total">0.00</span>
-        </div>
-    </div>
-</div>
-
-<main>
-    <div class="section-header-container">
-        <h2 style="font-size: 1rem; color: var(--premium-gold); letter-spacing: 1px; margin: 0; display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.3rem;">🍱</span> 
-            <span data-lang-en="Signature Menu" data-lang-th="เมนูเด็ดที่ต้องลอง!">เมนูเด็ดที่ต้องลอง!</span>
+<main style="padding-bottom: 120px;">
+    <div style="padding: 25px 20px 10px;">
+        <h2 style="font-size: 1.1rem; color: var(--premium-gold); margin: 0; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-star"></i> <span data-lang-en="Recommended" data-lang-th="เมนูแนะนำ">เมนูแนะนำ</span>
         </h2>
-
-        <div class="search-wrapper" id="searchWrapper">
-            <div class="search-input-container">
-                <input type="text" id="topMenuSearchInput" placeholder="ค้นหาเมนูอาหาร..." oninput="handleSearch('topMenuSearchInput')">
-            </div>
-            <div class="search-trigger-btn" onclick="toggleSearchField()">
-                <i class="fas fa-search"></i>
-            </div>
-        </div>
-    </div> 
+    </div>
 
     <div class="slider-container">
         <div class="image-slider" id="hero-best-seller-slider"></div>
     </div>
-    <div class="middle-indicator-container" id="indicator-container"></div>
+    <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;" id="indicator-container"></div>
 
-    <div class="menu-tabs" id="category-tabs"> 
-        <div class="menu-tab active" data-cat="ทั้งหมด" onclick="switchCategory('ทั้งหมด')">🏠 ทั้งหมด</div>
-        <div class="menu-tab" data-cat="อาหาร" onclick="switchCategory('อาหาร')">🍛 ข้าว</div>
-        <div class="menu-tab" data-cat="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว')">🍜 </div>
-        <div class="menu-tab" data-cat="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม')">🥤 </div>
+    <div class="menu-tabs" id="category-tabs">
+        <div class="menu-tab active" data-cat="ทั้งหมด" onclick="switchCategory('ทั้งหมด')">🏠 <span data-lang-en="ALL" data-lang-th="ทั้งหมด">ทั้งหมด</span></div>
+        <div class="menu-tab" data-cat="อาหาร" onclick="switchCategory('อาหาร')">🍛 <span data-lang-en="MAIN" data-lang-th="จานหลัก">จานหลัก</span></div>
+        <div class="menu-tab" data-cat="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว')">🍜 <span data-lang-en="NOODLES" data-lang-th="เส้น">เส้น</span></div>
+        <div class="menu-tab" data-cat="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม')">🥤 <span data-lang-en="DRINKS" data-lang-th="เครื่องดื่ม">เครื่องดื่ม</span></div>
     </div>
+
     <div id="menu-main-container"></div>
 </main>
 
 <div class="round-search-parent" id="searchParent">
     <div class="search-main-btn" onclick="toggleBottomSearch()">
-        <i class="fas fa-search" id="searchIcon"></i> 
+        <i class="fas fa-search" id="searchIcon"></i>
     </div>
+    <input type="text" id="bottomSearchInput" placeholder="ค้นหาเมนูอร่อย..." oninput="handleSearchBottom()">
 </div>
 
 <div class="bottom-nav-fixed">
     <div class="nav-bar">
-        <div onclick="goToPage('cart.html')" style="text-align:center; position:relative; cursor:pointer; color:#444;">
-            <i class="fas fa-shopping-basket"></i>
-            <div id="cart-count-badge" style="position:absolute; top:-5px; right:-8px; background:#ff4b2b; color:#fff; font-size:0.5rem; padding:2px 5px; border-radius:8px; display:none;">0</div>
-            <span style="display:block; font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
+        <div class="nav-item" onclick="goToPage('cart.html')">
+            <i class="fas fa-shopping-cart"></i>
+            <div id="cart-count-badge" style="display:none;">0</div>
+            <span data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
         </div>
-        <div style="width: 80px;"></div> <div onclick="goToPage('track.html')" style="text-align:center; cursor:pointer; color:#444;">
-            <i class="fas fa-receipt"></i>
-            <span style="display:block; font-size:0.55rem; font-weight:700; margin-top:3px;" data-lang-en="ORDERS" data-lang-th="รายการที่สั่ง">ORDERS</span>
+        <div style="width: 60px;"></div>
+        <div class="nav-item" onclick="goToPage('track.html')">
+            <i class="fas fa-list-ul"></i>
+            <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">ORDERS</span>
         </div>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-<script src="global_script.js"></script>
-
 <script>
-    function toggleSearchField() {
-        const wrapper = document.getElementById('searchWrapper');
-        const input = document.getElementById('topMenuSearchInput');
-        wrapper.classList.toggle('active');
-        if (wrapper.classList.contains('active')) {
-            input.focus();
-        } else {
-            input.value = '';
-            handleSearch('topMenuSearchInput');
-        }
-    }
-
-    // 🔍 ฟังก์ชัน ค้นหาชื่ออาหารในรายการ
-    function handleSearch(inputId) {
-        const keyword = document.getElementById(inputId).value.toLowerCase();
-        const items = document.querySelectorAll('.menu-item');
-        items.forEach(item => {
-            const name = item.querySelector('h3').innerText.toLowerCase();
-            item.style.display = name.includes(keyword) ? 'flex' : 'none';
-        });
-    }
-
     const firebaseConfig = { 
         apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
         authDomain: "bangfood-cb30f.firebaseapp.com", 
@@ -481,173 +299,244 @@ body.light-theme .search-main-btn {
         appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" 
     };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    window.db = firebase.database();
+    const db = firebase.database();
 
-    async function loadMenuFromFirebase() {
-        const tableNo = getTableNo();
-        const transSnap = await window.db.ref('menu_translations').once('value');
-        const translations = transSnap.val() || {};
+    async function initializeApp() {
+        const tableNo = new URLSearchParams(window.location.search).get('table') || localStorage.getItem('selectedTable') || '1';
+        localStorage.setItem('selectedTable', tableNo);
+        document.getElementById('display-table').innerText = tableNo;
+        
+        applyTheme(localStorage.getItem(`theme_table_${tableNo}`) || 'dark');
+        const currentLang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
+        updateLanguageUI(currentLang);
 
-        window.db.ref('products').on('value', (prodSnap) => {
-            const currentLang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
-            const products = prodSnap.val() || {};
-            if(!products) return;
+        loadMenuFromFirebase();
+    }
 
-            const hero = document.getElementById('hero-best-seller-slider');
-            const indicators = document.getElementById('indicator-container');
-            const menuMain = document.getElementById('menu-main-container');
-            
-            let heroHTML = '', indHTML = '', mainHTML = '';
-            let productList = Object.values(products);
+    // --- 🔹 Load Data (Real-time Version) 🔹 ---
+    function loadMenuFromFirebase() {
+        const tableNo = localStorage.getItem('selectedTable');
+        
+        // 1. Listen for Translations
+        db.ref('menu_translations').on('value', (transSnap) => {
+            const dict = transSnap.val() || {};
+            const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
 
-            productList.forEach((p, idx) => {
-                const isOut = p.status === 'out_of_stock' || p.status === 'sold_out';
-                const displayName = (currentLang === 'en') ? (translations[p.name] || p.name) : p.name;
+            // 2. Listen for Products (Real-time)
+            db.ref('products').on('value', async (prodSnap) => {
+                const products = prodSnap.val();
+                if (!products) return;
 
-                if(idx < 5) {
-                    heroHTML += `
-                        <div class="slide-card ${isOut ? 'sold-out-gray' : ''}" data-index="${idx}" onclick="${isOut ? '' : `location.href='menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}'`}">
-                            <img src="${p.img}" loading="lazy" style="width:100%; height:100%; object-fit:cover; ${isOut ? 'filter: grayscale(1);' : ''}">
-                            <div class="slide-info-overlay">
-                                <h3 class="slide-food-name">${displayName} ${isOut ? '(หมด)' : ''}</h3>
-                                <span class="slide-food-price">฿${p.price}</span>
-                            </div>
-                        </div>`;
-                    indHTML += `<div class="indicator-item"></div>`;
-                }
+                // 3. Get Stats for Ranking
+                const [ordersSnap, historySnap] = await Promise.all([
+                    db.ref('orders').once('value'),
+                    db.ref('history').once('value')
+                ]);
 
-                mainHTML += `
-                    <a href="${isOut ? '#' : `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`}" 
-                       class="menu-item" data-category="${p.category}" 
-                       style="${isOut ? 'opacity:0.5; pointer-events:none; filter: grayscale(0.8);' : ''}">
-                        <img src="${p.img}" class="item-img-thumb" loading="lazy">
-                        <div style="flex:1;">
-                            <h3>${displayName}</h3>
-                            <div style="color:var(--premium-gold); font-weight:700;">฿${p.price}</div>
-                        </div>
-                        <div class="select-btn">
-                             ${(currentLang === 'en') ? (isOut?'OUT':'ADD') : (isOut?'หมด':'เลือก')}
-                        </div>
-                    </a>`;
+                const stats = {};
+                const processItems = (snap) => {
+                    if (snap.exists()) {
+                        snap.forEach(child => {
+                            const order = child.val();
+                            if (order.items) {
+                                order.items.forEach(item => {
+                                    const qty = parseInt(item.quantity || 1);
+                                    stats[item.name] = (stats[item.name] || 0) + qty;
+                                });
+                            }
+                        });
+                    }
+                };
+                processItems(ordersSnap);
+                processItems(historySnap);
+
+                let items = Object.values(products).map(p => ({
+                    ...p,
+                    realSold: stats[p.name] || 0 
+                }));
+
+                // 4. Render Components
+                const topSellers = [...items].sort((a, b) => b.realSold - a.realSold).slice(0, 5);
+                renderSlider(topSellers, lang, dict, tableNo);
+                renderMainMenu(items, lang, dict, tableNo);
+                
+                // Re-apply current category filter
+                const activeTab = document.querySelector('.menu-tab.active');
+                if (activeTab) switchCategory(activeTab.dataset.cat);
+
+                updateCartUI();
             });
-
-            hero.innerHTML = heroHTML;
-            indicators.innerHTML = indHTML;
-            menuMain.innerHTML = mainHTML;
-
-            initInfiniteSlider(); 
-            updateCartUI();
         });
     }
 
-    function goToPage(page) { window.location.href = `${page}?table=${getTableNo()}`; }
+    function renderSlider(topSellers, lang, dict, tableNo) {
+        const heroContainer = document.getElementById('hero-best-seller-slider');
+        const indicatorContainer = document.getElementById('indicator-container');
+        let heroHTML = ''; let indHTML = '';
 
-    let autoPlayInterval;
-    function initInfiniteSlider() {
+        topSellers.forEach((p, idx) => {
+            const isOut = p.status === 'out_of_stock';
+            const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
+            const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
+            
+            heroHTML += `
+                <div class="slide-card ${idx === 0 ? 'is-active' : ''}" data-index="${idx}" 
+                     onclick="${isOut ? '' : `location.href='${link}'`}">
+                    <img src="${p.img}" style="width:100%; height:100%; object-fit:cover; ${isOut ? 'filter:grayscale(1) brightness(0.5);' : ''}">
+                    <div class="slide-info-overlay">
+                        <div style="font-size:0.7rem; color:var(--premium-gold); margin-bottom:2px; font-weight:bold;">
+                            <i class="fas fa-chart-line"></i> ${lang === 'en' ? 'Best Seller #' : 'ขายดีอันดับที่ '}${idx + 1}
+                        </div>
+                        <h3 style="margin:0; font-size:1rem;">${displayName} ${isOut ? (lang === 'en' ? '(Out)' : '(หมด)') : ''}</h3>
+                        <span style="color:var(--premium-gold);">฿${p.price}</span>
+                    </div>
+                </div>`;
+            indHTML += `<div class="indicator-item ${idx === 0 ? 'active' : ''}"></div>`;
+        });
+        heroContainer.innerHTML = heroHTML;
+        indicatorContainer.innerHTML = indHTML;
+        initSliderLogic();
+    }
+
+    function renderMainMenu(items, lang, dict, tableNo) {
+        const menuContainer = document.getElementById('menu-main-container');
+        let menuHTML = '';
+
+        items.forEach((p) => {
+            const isOut = p.status === 'out_of_stock';
+            const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
+            const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
+
+            menuHTML += `
+                <a href="${isOut ? 'javascript:void(0)' : link}" class="menu-item" data-name="${p.name}" data-category="${p.category}" 
+                   style="${isOut ? 'opacity:0.5; filter:grayscale(1); pointer-events: none;' : ''}">
+                    <div class="item-img-container">
+                        <img src="${p.img}" class="item-img-thumb">
+                        <div class="item-badge" style="display:none;">0</div>
+                    </div>
+                    <div style="flex:1;">
+                        <h3 style="margin:0 0 5px; font-size:0.95rem;">${displayName}</h3>
+                        <div style="color:var(--premium-gold); font-weight:700;">฿${p.price}</div>
+                    </div>
+                    <button class="select-btn" style="${isOut ? 'background:#555; box-shadow:none;' : ''}">
+                        ${isOut ? (lang === 'en' ? 'Sold' : 'หมด') : (lang === 'en' ? 'Select' : 'เลือก')}
+                    </button>
+                </a>`;
+        });
+        menuContainer.innerHTML = menuHTML;
+    }
+
+    // --- 🔹 UI Logic 🔹 ---
+    function toggleDrawer() {
+        const d = document.getElementById('side-drawer');
+        const o = document.getElementById('drawer-overlay');
+        const active = d.classList.toggle('active');
+        o.style.display = active ? 'block' : 'none';
+        if(active) {
+            const table = localStorage.getItem('selectedTable');
+            const lang = localStorage.getItem(`lang_table_${table}`) || 'th';
+            document.getElementById('drawer-lang-status').innerText = lang.toUpperCase();
+        }
+    }
+
+    function switchCustomerTheme() {
+        const table = localStorage.getItem('selectedTable');
+        const key = `theme_table_${table}`;
+        const next = (localStorage.getItem(key) === 'light') ? 'dark' : 'light';
+        localStorage.setItem(key, next);
+        applyTheme(next);
+    }
+
+    function applyTheme(t) { document.body.classList.toggle('light-theme', t === 'light'); }
+
+    function switchCustomerLanguage() {
+        const table = localStorage.getItem('selectedTable');
+        const langKey = `lang_table_${table}`;
+        const next = (localStorage.getItem(langKey) === 'en') ? 'th' : 'en';
+        localStorage.setItem(langKey, next);
+        document.getElementById('drawer-lang-status').innerText = next.toUpperCase();
+        updateLanguageUI(next);
+        // Translation updates automatically via Firebase .on() listener
+    }
+
+    function updateLanguageUI(lang) {
+        document.querySelectorAll('[data-lang-en]').forEach(el => {
+            el.innerText = (lang === 'en') ? el.getAttribute('data-lang-en') : el.getAttribute('data-lang-th');
+        });
+    }
+
+    function initSliderLogic() {
         const slider = document.getElementById('hero-best-seller-slider');
-        const indicators = document.querySelectorAll('.indicator-item');
-        const cards = slider.querySelectorAll('.slide-card');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-active');
-                    const idx = entry.target.dataset.index;
-                    indicators.forEach((ind, i) => {
-                        if (i == idx) { 
-                            ind.classList.add('active'); 
-                            ind.innerText = `${parseInt(i) + 1}`; 
-                        } else { 
-                            ind.classList.remove('active'); 
-                            ind.innerText = ''; 
-                        }
-                    });
-                } else {
-                    entry.target.classList.remove('is-active');
-                }
+        if (!slider) return;
+        slider.addEventListener('scroll', () => {
+            const cards = document.querySelectorAll('.slide-card');
+            const indicators = document.querySelectorAll('.indicator-item');
+            let index = Math.round(slider.scrollLeft / (slider.offsetWidth * 0.8));
+            cards.forEach((c, i) => {
+                c.classList.toggle('is-active', i === index);
+                if(indicators[i]) indicators[i].classList.toggle('active', i === index);
             });
-        }, { root: slider, threshold: 0.7 });
-
-        cards.forEach(card => observer.observe(card));
-        startAutoPlay(slider, cards.length);
-        slider.addEventListener('touchstart', () => clearInterval(autoPlayInterval));
-    }
-    
-
-    function startAutoPlay(slider, count) {
-        if (autoPlayInterval) clearInterval(autoPlayInterval);
-        let currentIndex = 0;
-        autoPlayInterval = setInterval(() => {
-            currentIndex++;
-            if (currentIndex >= count) currentIndex = 0;
-            const cardWidth = slider.querySelector('.slide-card').offsetWidth + 15;
-            slider.scrollTo({ left: currentIndex * cardWidth, behavior: 'smooth' });
-        }, 4000);
+        });
     }
 
-    // ✨ JS ที่ถูกแก้: ควบคุมแถบด้านบน แทนที่จะขยายกล่องล่าง
     function toggleBottomSearch() {
-    const searchBar = document.getElementById('topSearchOverlay'); 
-    const parentBtn = document.getElementById('searchParent'); 
-    const input = document.getElementById('bottomSearchInput');
-    const icon = document.getElementById('searchIcon');
-    
-    searchBar.classList.toggle('active');
-    parentBtn.classList.toggle('active'); 
-    
-    if (searchBar.classList.contains('active')) {
-        // เมื่อเปิด: ให้โฟกัสที่ช่องพิมพ์
-        setTimeout(() => {
-            input.focus();
-        }, 300); 
-        icon.className = 'fas fa-times'; // เปลี่ยนเป็นกากบาทเพื่อปิด
-    } else {
-        // เมื่อปิด: ล้างค่าและรีเซ็ตไอคอน
-        input.value = '';
-        handleSearchBottom(); 
-        icon.className = 'fas fa-search'; // กลับเป็นแว่นขยาย
+        const parent = document.getElementById('searchParent');
+        const input = document.getElementById('bottomSearchInput');
+        const icon = document.getElementById('searchIcon');
+        parent.classList.toggle('active');
+        if (parent.classList.contains('active')) {
+            setTimeout(() => input.focus(), 300);
+            icon.className = 'fas fa-times';
+        } else {
+            input.value = '';
+            handleSearchBottom();
+            icon.className = 'fas fa-search';
+        }
     }
-}
 
     function handleSearchBottom() {
-        const keyword = document.getElementById('bottomSearchInput').value.toLowerCase();
-        const items = document.querySelectorAll('.menu-item');
-        items.forEach(item => {
+        const val = document.getElementById('bottomSearchInput').value.toLowerCase();
+        document.querySelectorAll('.menu-item').forEach(item => {
             const name = item.querySelector('h3').innerText.toLowerCase();
-            item.style.display = name.includes(keyword) ? 'flex' : 'none';
+            item.style.display = name.includes(val) ? 'flex' : 'none';
         });
     }
-    // แก้ไขฟังก์ชันปิดเมื่อคลิกข้างนอก เพื่อให้สัมพันธ์กับตำแหน่งล่าง
-document.addEventListener('click', function(event) {
-    const searchBar = document.getElementById('topSearchOverlay');
-    const searchBtn = document.getElementById('searchParent'); 
-    
-    if (!searchBar.contains(event.target) && !searchBtn.contains(event.target) && searchBar.classList.contains('active')) {
-        toggleBottomSearch();
-    }
-}, true);
 
     function switchCategory(cat) {
         document.querySelectorAll('.menu-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
-        document.querySelectorAll('.menu-item').forEach(item => item.style.display = (cat === 'ทั้งหมด' || item.dataset.category === cat) ? 'flex' : 'none');
+        document.querySelectorAll('.menu-item').forEach(item => {
+            const isMatch = (cat === 'ทั้งหมด' || item.dataset.category === cat);
+            item.style.display = isMatch ? 'flex' : 'none';
+        });
+    }
+
+    function goToPage(page) {
+        const table = localStorage.getItem('selectedTable');
+        window.location.href = `${page}?table=${table}`;
     }
 
     function updateCartUI() {
-        const cartKey = 'bangfood_cart_table_' + getTableNo();
-        const cartData = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-        const total = cartData.items.reduce((s, i) => s + parseFloat(i.finalPrice || 0), 0);
-        document.getElementById('floating-total').innerText = total.toLocaleString('th-TH', {minimumFractionDigits:2});
+        const table = localStorage.getItem('selectedTable');
+        const cart = JSON.parse(sessionStorage.getItem('bangfood_cart_table_' + table)) || {items: []};
         const badge = document.getElementById('cart-count-badge');
-        badge.innerText = cartData.items.length;
-        badge.style.display = cartData.items.length > 0 ? 'block' : 'none';
-    }
+        if (badge) {
+            badge.innerText = cart.items.length;
+            badge.style.display = cart.items.length > 0 ? 'flex' : 'none';
+        }
+        const total = cart.items.reduce((sum, item) => sum + (parseFloat(item.finalPrice) || 0), 0);
+        const totalDisplay = document.getElementById('floating-total');
+        if (totalDisplay) totalDisplay.innerText = total.toLocaleString();
 
-    function initializeApp() { 
-        const tableNo = getTableNo();
-        applyTheme(localStorage.getItem(`theme_table_${tableNo}`) || 'dark');
-        loadMenuFromFirebase(); 
+        document.querySelectorAll('.menu-item').forEach(itemCard => {
+            const itemName = itemCard.getAttribute('data-name');
+            const itemBadge = itemCard.querySelector('.item-badge');
+            if (itemBadge) {
+                const itemCount = cart.items.filter(i => i.name === itemName).length;
+                itemBadge.innerText = itemCount;
+                itemBadge.style.display = itemCount > 0 ? 'flex' : 'none';
+            }
+        });
     }
 </script>
-<script src="guard.js"></script>
 </body>
 </html>

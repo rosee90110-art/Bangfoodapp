@@ -10,6 +10,23 @@
 
     <style>
         /* 📍 Global UI Base */
+        :root {
+            --premium-gold: #c5a059;
+            --bg: #080809;
+            --card-bg: #141416;
+            --text: #ffffff;
+            --sub-text: #888;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body.light-theme {
+            --bg: #f1f3f6;
+            --card-bg: #ffffff;
+            --text: #1a1d23;
+            --sub-text: #666;
+            --border: rgba(0, 0, 0, 0.06);
+        }
+
         body { margin: 0; padding: 25px; min-height: 100vh; background-color: var(--bg); color: var(--text); font-family: 'Kanit', sans-serif; transition: 0.5s ease; }
         .page-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; animation: fadeIn 0.8s ease; }
 
@@ -18,42 +35,64 @@
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 30px;
             padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;
             flex-wrap: wrap; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: sticky; top: 10px; z-index: 100; backdrop-filter: blur(10px);
         }
-        .mode-toggle { background: rgba(128,128,128,0.1); padding: 4px; border-radius: 12px; display: flex; gap: 4px; }
-        .mode-btn { border: none; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; cursor: pointer; transition: 0.3s; background: transparent; color: var(--sub-text); }
-        .mode-btn.active { background: var(--premium-gold); color: #000; }
-        .select-input { background: rgba(128,128,128,0.08); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 10px; font-size: 0.8rem; outline: none; font-weight: 600; }
+        .mode-toggle { 
+            background: rgba(128,128,128,0.1); padding: 4px; border-radius: 15px; 
+            display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+        }
+        .mode-toggle::-webkit-scrollbar { display: none; }
+        .mode-btn { border: none; padding: 10px 20px; border-radius: 12px; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: 0.3s; background: transparent; color: var(--sub-text); white-space: nowrap; }
+        .mode-btn.active { background: var(--premium-gold); color: #000; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3); }
+        .select-input { background: rgba(128,128,128,0.08); border: 1px solid var(--border); color: var(--text); padding: 10px 15px; border-radius: 12px; font-size: 0.85rem; outline: none; font-weight: 600; cursor: pointer; }
 
         /* 💰 Main Revenue Display */
         .revenue-hero { 
-            background: linear-gradient(135deg, var(--card-bg), rgba(197, 160, 89, 0.05));
-            border: 1px solid var(--premium-gold); border-radius: 35px; padding: 40px; 
-            text-align: center; box-shadow: 0 15px 40px rgba(197, 160, 89, 0.1);
+            background: linear-gradient(145deg, var(--card-bg), rgba(197, 160, 89, 0.03));
+            border: 1px solid var(--border); border-left: 5px solid var(--premium-gold); border-radius: 35px; padding: 40px; 
+            text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
         .revenue-hero span { font-size: 0.8rem; color: var(--premium-gold); text-transform: uppercase; letter-spacing: 3px; font-weight: 800; }
-        .revenue-hero b { font-size: 3.5rem; display: block; letter-spacing: -2px; margin: 10px 0; color: var(--text); }
+        .revenue-hero b { font-size: 4rem; display: block; letter-spacing: -2px; margin: 15px 0; color: var(--text); transition: 0.3s; }
         
-        .sub-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 500px; margin: 20px auto 0; padding-top: 20px; border-top: 1px solid var(--border); }
-        .sub-stat-item i { color: var(--premium-gold); margin-right: 8px; }
-        .sub-stat-item div { font-size: 0.7rem; color: var(--sub-text); font-weight: 700; text-transform: uppercase; }
-        .sub-stat-item b { font-size: 1.2rem; }
+        .sub-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 600px; margin: 30px auto 0; padding-top: 25px; border-top: 1px solid var(--border); }
+        .sub-stat-item div { font-size: 0.7rem; color: var(--sub-text); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .sub-stat-item b { font-size: 1.4rem; color: var(--text); }
+        .sub-stat-item i { color: var(--premium-gold); margin-right: 5px; }
 
         /* 📈 Charts & Tables */
         .revenue-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 1024px) { .revenue-grid { grid-template-columns: 1.5fr 1fr; } }
+        @media (min-width: 1024px) { .revenue-grid { grid-template-columns: 1.6fr 1fr; } }
 
-        .content-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 35px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .card-head { font-size: 0.85rem; font-weight: 800; color: var(--sub-text); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .content-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 35px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .card-head { font-size: 0.9rem; font-weight: 800; color: var(--premium-gold); margin-bottom: 25px; display: flex; align-items: center; gap: 12px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* 🏆 Income Table */
-        .income-row { display: flex; justify-content: space-between; padding: 12px 5px; border-bottom: 1px solid rgba(128,128,128,0.1); align-items: center; }
+        .income-list-container { max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .income-list-container::-webkit-scrollbar { width: 4px; }
+        .income-list-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        
+        .income-row { display: flex; justify-content: space-between; padding: 18px 10px; border-bottom: 1px solid var(--border); align-items: center; transition: 0.3s; }
+        .income-row:hover { background: rgba(197, 160, 89, 0.03); border-radius: 15px; }
         .income-row:last-child { border-bottom: none; }
-        .income-name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-        .income-val { font-weight: 800; color: var(--premium-gold); }
+        .income-name { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+        .income-val { font-weight: 800; color: var(--premium-gold); font-size: 1.1rem; }
+
+        /* 📱 Mobile Adjustments */
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .filter-hub { padding: 15px; border-radius: 20px; justify-content: center; }
+            .mode-toggle { width: 100%; justify-content: flex-start; }
+            .revenue-hero { padding: 30px 20px; border-radius: 25px; }
+            .revenue-hero b { font-size: 2.2rem; }
+            .sub-stats { grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+            .content-card { padding: 20px; border-radius: 25px; }
+            .chart-container { height: 250px !important; }
+        }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .pop { animation: pop 0.4s ease-out; }
-        @keyframes pop { 0% { transform: scale(0.95); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+        .pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body onload="setupAndInit()">
@@ -62,33 +101,40 @@
         <header class="filter-hub">
             <div class="mode-toggle">
                 <button id="m-daily" class="mode-btn active" onclick="switchView('daily')">DAILY</button>
+                <button id="m-range" class="mode-btn" onclick="switchView('range')">RANGE</button>
                 <button id="m-monthly" class="mode-btn" onclick="switchView('monthly')">MONTHLY</button>
                 <button id="m-yearly" class="mode-btn" onclick="switchView('yearly')">YEARLY</button>
             </div>
-            <div style="display:flex; gap:10px;">
+            <div style="display:flex; gap:8px; align-items: center; flex-wrap: wrap; justify-content: center;">
                 <input type="date" id="in-date" class="select-input" onchange="refresh()">
+                
+                <input type="date" id="start-date" class="select-input" onchange="refresh()" style="display:none;">
+                <span id="range-to" style="display:none; color:var(--sub-text); font-size:0.7rem; font-weight:800;">TO</span>
+                <input type="date" id="end-date" class="select-input" onchange="refresh()" style="display:none;">
+
                 <select id="in-month" class="select-input" onchange="refresh()" style="display:none;">
                     <option value="0">มกราคม</option><option value="1">กุมภาพันธ์</option><option value="2">มีนาคม</option>
                     <option value="3">เมษายน</option><option value="4">พฤษภาคม</option><option value="5">มิถุนายน</option>
                     <option value="6">กรกฎาคม</option><option value="7">สิงหาคม</option><option value="8">กันยายน</option>
                     <option value="9">ตุลาคม</option><option value="10">พฤศจิกายน</option><option value="11">ธันวาคม</option>
                 </select>
-                <select id="in-year" class="select-input" onchange="refresh()">
+                <select id="in-year" class="select-input" onchange="refresh()" style="display:none;">
                     <option value="2024">2567</option><option value="2025">2568</option><option value="2026">2569</option>
+                    <option value="2027">2570</option>
                 </select>
             </div>
         </header>
 
         <section class="revenue-hero">
-            <span>สรุปรายได้ตามช่วงเวลา</span>
+            <span>Net Revenue Overview</span>
             <b id="main-rev">฿0.00</b>
             <div class="sub-stats">
                 <div class="sub-stat-item">
-                    <div><i class="fas fa-file-invoice"></i> จำนวนบิล</div>
-                    <b id="sub-orders">0</b>
+                    <div><i class="fas fa-receipt"></i> Total Orders</div>
+                    <b id="sub-orders">0 บิล</b>
                 </div>
                 <div class="sub-stat-item">
-                    <div><i class="fas fa-hand-holding-usd"></i> เฉลี่ยต่อบิล</div>
+                    <div><i class="fas fa-chart-pie"></i> Average Ticket</div>
                     <b id="sub-avg">฿0.00</b>
                 </div>
             </div>
@@ -96,13 +142,14 @@
 
         <div class="revenue-grid">
             <div class="content-card">
-                <div class="card-head"><i class="fas fa-chart-line"></i> แนวโน้มรายได้ (REVENUE TREND)</div>
-                <div style="height: 300px;"><canvas id="revChart"></canvas></div>
+                <div class="card-head"><i class="fas fa-chart-line"></i> Revenue Trend Analysis</div>
+                <div class="chart-container" style="height: 320px; position: relative;"><canvas id="revChart"></canvas></div>
             </div>
 
             <div class="content-card">
-                <div class="card-head"><i class="fas fa-trophy"></i> เมนูทำเงินสูงสุด (TOP REVENUE)</div>
-                <div id="income-list"></div>
+                <div class="card-head"><i class="fas fa-crown"></i> Best Sellers (By Revenue)</div>
+                <div class="income-list-container" id="income-list">
+                    </div>
             </div>
         </div>
     </div>
@@ -121,12 +168,19 @@
 
         function setupAndInit() {
             const now = new Date();
-            document.getElementById('in-date').value = now.toISOString().split('T')[0];
+            const todayStr = now.toISOString().split('T')[0];
+            
+            document.getElementById('in-date').value = todayStr;
+            document.getElementById('start-date').value = todayStr;
+            document.getElementById('end-date').value = todayStr;
+            
             document.getElementById('in-month').value = now.getMonth();
             document.getElementById('in-year').value = now.getFullYear();
             
             const theme = localStorage.getItem('theme') || 'dark';
             document.body.classList.toggle('light-theme', theme === 'light');
+
+            switchView('daily');
 
             db.ref('history').on('value', snap => {
                 if (snap.exists()) {
@@ -139,14 +193,27 @@
         function switchView(m) {
             mode = m;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`m-${m}`).classList.add('active');
+            const activeBtn = document.getElementById(`m-${m}`);
+            activeBtn.classList.add('active');
+            
+            // เลื่อนปุ่มให้มาอยู่ตรงกลางถ้าล้นหน้าจอ (Mobile)
+            activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            
             document.getElementById('in-date').style.display = (m === 'daily') ? 'block' : 'none';
+            document.getElementById('start-date').style.display = (m === 'range') ? 'block' : 'none';
+            document.getElementById('range-to').style.display = (m === 'range') ? 'block' : 'none';
+            document.getElementById('end-date').style.display = (m === 'range') ? 'block' : 'none';
+            
             document.getElementById('in-month').style.display = (m === 'monthly') ? 'block' : 'none';
+            document.getElementById('in-year').style.display = (m === 'monthly' || m === 'yearly') ? 'block' : 'none';
+            
             refresh();
         }
 
         function refresh() {
             const selD = document.getElementById('in-date').value;
+            const startD = document.getElementById('start-date').value;
+            const endD = document.getElementById('end-date').value;
             const selM = parseInt(document.getElementById('in-month').value);
             const selY = parseInt(document.getElementById('in-year').value);
             
@@ -155,11 +222,21 @@
             history.forEach(order => {
                 if (!order || !order.archivedAt) return;
                 const d = new Date(order.archivedAt);
+                const dateStr = d.toISOString().split('T')[0];
                 let match = false; let key = "";
 
-                if (mode === 'daily' && d.toISOString().split('T')[0] === selD) { match = true; key = d.getHours() + ":00"; }
-                else if (mode === 'monthly' && d.getMonth() === selM && d.getFullYear() === selY) { match = true; key = d.getDate(); }
-                else if (mode === 'yearly' && d.getFullYear() === selY) { match = true; key = (d.getMonth() + 1); }
+                if (mode === 'daily' && dateStr === selD) { 
+                    match = true; key = d.getHours() + ":00"; 
+                }
+                else if (mode === 'range' && dateStr >= startD && dateStr <= endD) {
+                    match = true; key = dateStr;
+                }
+                else if (mode === 'monthly' && d.getMonth() === selM && d.getFullYear() === selY) { 
+                    match = true; key = d.getDate(); 
+                }
+                else if (mode === 'yearly' && d.getFullYear() === selY) { 
+                    match = true; key = (d.getMonth() + 1); 
+                }
 
                 if (match) {
                     const amt = parseFloat(order.total || 0);
@@ -175,17 +252,24 @@
             });
 
             // Update UI
-            const up = (id, v) => { const el = document.getElementById(id); el.innerText = v; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); };
-            up('main-rev', "฿" + total.toLocaleString(undefined, {minimumFractionDigits: 2}));
+            const up = (id, v) => { 
+                const el = document.getElementById(id); 
+                el.innerText = v; 
+                el.classList.remove('pop'); 
+                void el.offsetWidth; 
+                el.classList.add('pop'); 
+            };
+            
+            up('main-rev', total === 0 ? "฿0.00" : "฿" + total.toLocaleString(undefined, {minimumFractionDigits: 2}));
             up('sub-orders', count.toLocaleString() + " บิล");
-            up('sub-avg', "฿" + (total / (count || 1)).toLocaleString(undefined, {minimumFractionDigits: 2}));
+            up('sub-avg', count === 0 ? "฿0.00" : "฿" + (total / count).toLocaleString(undefined, {minimumFractionDigits: 2}));
 
-            const sorted = Object.entries(products).sort((a,b) => b[1] - a[1]).slice(0, 8);
-            document.getElementById('income-list').innerHTML = sorted.map(([n, v]) => `
+            const sorted = Object.entries(products).sort((a,b) => b[1] - a[1]).slice(0, 15);
+            document.getElementById('income-list').innerHTML = sorted.length > 0 ? sorted.map(([n, v]) => `
                 <div class="income-row">
                     <span class="income-name">${n}</span>
                     <span class="income-val">฿${v.toLocaleString()}</span>
-                </div>`).join('');
+                </div>`).join('') : '<div style="text-align:center; padding:40px; color:var(--sub-text); font-weight:bold;">ไม่มีข้อมูลรายได้ในช่วงนี้</div>';
 
             renderChart(trendData);
         }
@@ -194,8 +278,22 @@
             const ctx = document.getElementById('revChart').getContext('2d');
             if (chart) chart.destroy();
             const isL = document.body.classList.contains('light-theme');
-            const keys = Object.keys(data).sort((a, b) => (mode === 'daily' ? parseInt(a) : a) - (mode === 'daily' ? parseInt(b) : b));
-            const labels = keys.map(k => mode === 'daily' ? k : (mode === 'monthly' ? `วันที่ ${k}` : `เดือน ${k}`));
+            
+            const keys = Object.keys(data).sort((a, b) => {
+                if (mode === 'range') return a.localeCompare(b);
+                return parseInt(a) - parseInt(b);
+            });
+
+            const labels = keys.map(k => {
+                if (mode === 'daily') return k;
+                if (mode === 'range') {
+                    const parts = k.split('-');
+                    return `${parts[2]}/${parts[1]}`;
+                }
+                if (mode === 'monthly') return k;
+                const months = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+                return months[k-1];
+            });
 
             chart = new Chart(ctx, {
                 type: 'line',
@@ -205,18 +303,30 @@
                         data: keys.map(k => data[k]), 
                         borderColor: '#c5a059', 
                         backgroundColor: 'rgba(197, 160, 89, 0.1)',
-                        fill: true, tension: 0.4, borderWidth: 3, pointRadius: 4
+                        fill: true, tension: 0.4, borderWidth: 3, 
+                        pointRadius: 4, pointBackgroundColor: '#c5a059'
                     }]
                 },
                 options: { 
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: { 
-                        y: { grid: { color: 'rgba(128,128,128,0.05)' }, ticks: { color: isL ? '#555' : '#aaa', font: { size: 10 } } },
-                        x: { grid: { display: false }, ticks: { color: isL ? '#555' : '#aaa', font: { size: 10 } } }
+                        y: { 
+                            beginAtZero: true,
+                            grid: { color: isL ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }, 
+                            ticks: { color: varColor('--sub-text'), font: { size: 10, weight: 'bold' } } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: varColor('--sub-text'), font: { size: 10, weight: 'bold' } } 
+                        }
                     }
                 }
             });
+        }
+
+        function varColor(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
         }
     </script>
 </body>

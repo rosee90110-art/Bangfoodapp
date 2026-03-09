@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Premium Manage Menu | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="admin_style.css">
-
+    
     <style>
         /* 📍 Premium Global Config */
         :root {
@@ -18,20 +17,23 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --shadow-pos: 0 25px 50px rgba(0,0,0,0.7);
             --transition-spring: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --input-bg: rgba(128,128,128,0.08);
         }
 
+        /* ☀️ Light Theme Overrides */
         body.light-theme {
             --bg-dark: #f1f3f6;
             --bg-card: #ffffff;
             --text-main: #1a1d23;
-            --glass-border: rgba(0, 0, 0, 0.06);
+            --glass-border: rgba(0, 0, 0, 0.08);
             --shadow-pos: 0 15px 40px rgba(0,0,0,0.06);
             --gold-glow: rgba(197, 160, 89, 0.15);
+            --input-bg: #f9f9f9;
         }
 
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; outline: none; }
         body::-webkit-scrollbar { display: none; }
-        body { margin: 0; padding: 25px; min-height: 100vh; background-color: var(--bg-dark); color: var(--text-main); transition: background 0.8s ease; position: relative; overflow-x: hidden; }
+        body { margin: 0; padding: 25px; min-height: 100vh; background-color: var(--bg-dark); color: var(--text-main); transition: 0.5s ease; position: relative; overflow-x: hidden; }
 
         /* 📊 Premium Tiles Layout */
         .dashboard-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1400px; margin: 0 auto 40px; animation: slideDown 0.8s ease; }
@@ -41,177 +43,169 @@
             transition: var(--transition-spring); cursor: pointer; box-shadow: var(--shadow-pos);
             backdrop-filter: blur(15px);
         }
-        .tile-card:hover { transform: translateY(-15px); border-color: var(--premium-gold); box-shadow: 0 30px 60px var(--gold-glow); }
-        .tile-card.active { border-color: var(--premium-gold); background: linear-gradient(145deg, var(--bg-card), var(--gold-glow)); transform: scale(1.08); }
-        .tile-card i { font-size: 2.2rem; color: var(--premium-gold); margin-bottom: 15px; transition: 0.3s; }
-        body:not(.light-theme) .tile-card i { text-shadow: 0 0 15px var(--premium-gold); }
+        .tile-card:hover { transform: translateY(-10px); border-color: var(--premium-gold); }
+        .tile-card.active { border-color: var(--premium-gold); background: linear-gradient(145deg, var(--bg-card), var(--gold-glow)); transform: scale(1.05); }
+        .tile-card i { font-size: 2.2rem; color: var(--premium-gold); margin-bottom: 15px; }
         .tile-card b { display: block; font-size: 2.6rem; margin: 5px 0; font-weight: 800; letter-spacing: -1.5px; }
         .tile-card span { font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: 700; letter-spacing: 2px; }
 
-        /* 🔍 Modern Control Bar */
-        .top-control-bar { display: flex; gap: 20px; align-items: center; max-width: 1400px; margin: 0 auto 45px; position: sticky; top: 0; z-index: 100; background: var(--bg-dark); padding: 10px 0; }
-        .search-wrapper { flex: 1; position: relative; }
+        /* 🔍 Control Bar */
+        .top-control-bar { display: flex; gap: 20px; align-items: center; max-width: 1400px; margin: 0 auto 45px; flex-wrap: wrap; }
+        .search-wrapper { flex: 2; position: relative; min-width: 250px; }
         .search-wrapper input { 
             width: 100%; padding: 20px 25px 20px 75px; border-radius: 60px; 
             border: 1.5px solid var(--glass-border); background: var(--bg-card); 
             color: var(--text-main); font-size: 1.1rem; box-shadow: var(--shadow-pos); transition: 0.3s;
         }
-        .search-wrapper input:focus { border-color: var(--premium-gold); box-shadow: 0 0 30px var(--gold-glow); transform: scale(1.01); }
         .search-wrapper i { position: absolute; left: 30px; top: 50%; transform: translateY(-50%); color: var(--premium-gold); font-size: 1.5rem; }
 
-        .btn-action { padding: 18px 35px; border-radius: 60px; border: 1.5px solid var(--glass-border); font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.3s; font-size: 1rem; box-shadow: var(--shadow-pos); }
+        .button-group { display: flex; gap: 10px; flex: 1; min-width: max-content; }
+        .btn-action { padding: 18px 30px; border-radius: 60px; border: 1.5px solid var(--glass-border); font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; font-size: 1rem; box-shadow: var(--shadow-pos); color: var(--text-main); background: var(--bg-card); white-space: nowrap; }
         .btn-add-menu { background: var(--premium-gold); color: #000; border: none; }
-        .btn-add-menu:hover { transform: scale(1.1); box-shadow: 0 0 35px var(--premium-gold); }
-        .btn-manage-addons { background: rgba(128,128,128,0.1); color: var(--text-main); }
 
-        /* 🍱 High-End Product Cards */
+        /* 🍱 Product Cards */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; max-width: 1400px; margin: 0 auto; }
         .product-card { 
             background: var(--bg-card); border-radius: 55px; border: 1px solid var(--glass-border); 
             overflow: hidden; transition: var(--transition-spring); cursor: pointer; position: relative; 
-            box-shadow: var(--shadow-pos); animation: fadeInUp 0.8s backwards;
+            box-shadow: var(--shadow-pos);
         }
-        .product-card:hover { transform: translateY(-20px) rotate(1deg); border-color: var(--premium-gold); }
+        .product-card:hover { transform: translateY(-15px); border-color: var(--premium-gold); }
         .p-thumb-wrapper { height: 260px; overflow: hidden; position: relative; }
-        .p-thumb { width: 100%; height: 100%; object-fit: cover; transition: 1s ease; }
-        .product-card:hover .p-thumb { transform: scale(1.2); }
-        .cat-badge { position: absolute; top: 25px; left: 25px; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); color: var(--premium-gold); padding: 8px 18px; border-radius: 20px; font-size: 0.65rem; font-weight: 900; border: 1px solid var(--premium-gold); z-index: 5; }
+        .p-thumb { width: 100%; height: 100%; object-fit: cover; }
+        .cat-badge { position: absolute; top: 25px; left: 25px; background: rgba(0,0,0,0.7); color: var(--premium-gold); padding: 8px 18px; border-radius: 20px; font-size: 0.65rem; font-weight: 900; z-index: 5; }
 
         .p-info { padding: 35px; }
-        .p-info b { display: block; font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; color: var(--text-main); }
-        .p-info span { color: var(--premium-gold); font-weight: 900; font-size: 1.7rem; text-shadow: 0 0 10px var(--gold-glow); }
+        .p-info b { display: block; font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; }
+        .p-info span { color: var(--premium-gold); font-weight: 900; font-size: 1.7rem; }
 
         .card-actions { padding: 0 35px 35px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-status { padding: 12px 25px; border-radius: 22px; border: none; font-size: 0.8rem; font-weight: 900; cursor: pointer; transition: 0.3s; }
-        .status-open { background: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.3); }
-        .status-soldout { background: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); }
-        .btn-delete { color: #555; transition: 0.3s; font-size: 1.6rem; cursor: pointer; }
-        .btn-delete:hover { color: #ff4757; transform: rotate(-15deg) scale(1.3); }
+        .btn-status { padding: 12px 25px; border-radius: 22px; border: none; font-size: 0.8rem; font-weight: 900; cursor: pointer; }
+        .status-open { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
+        .status-soldout { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
+        .btn-delete { color: #888; font-size: 1.5rem; cursor: pointer; }
 
-        /* 📍 Global Addons: จัดแถวคู่สวยงาม */
-        .option-row { 
-            display: flex; gap: 15px; margin-bottom: 15px; 
-            background: rgba(128,128,128,0.1); padding: 15px 25px; 
-            border-radius: 25px; align-items: center; 
-            border: 1px solid var(--glass-border); transition: 0.3s;
+        /* 📍 Modal */
+        #editor-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; }
+        #editor-container { width: 100%; max-width: 900px; max-height: 90vh; background: var(--bg-card); border: 2px solid var(--premium-gold); border-radius: 60px; overflow-y: auto; padding: 50px; color: var(--text-main); }
+
+        .upload-box { width: 100%; height: 300px; background: var(--input-bg); border: 2px dashed var(--premium-gold); border-radius: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 30px; cursor: pointer; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 18px 25px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); margin-bottom: 15px; font-size: 1rem; }
+
+        /* 📱 Optimized Mobile (Small & Easy) */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .dashboard-tiles { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+            .tile-card { padding: 15px 10px; border-radius: 25px; }
+            .tile-card i { font-size: 1.4rem; margin-bottom: 5px; }
+            .tile-card b { font-size: 1.6rem; }
+            .tile-card span { font-size: 0.55rem; letter-spacing: 1px; }
+
+            .top-control-bar { gap: 10px; margin-bottom: 20px; flex-direction: column; align-items: stretch; }
+            .search-wrapper { flex: none; min-width: 100%; }
+            .search-wrapper input { padding: 14px 20px 14px 50px; font-size: 0.95rem; border-radius: 30px; }
+            .search-wrapper i { left: 20px; font-size: 1.1rem; }
+            
+            .button-group { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 8px; }
+            .btn-action { padding: 12px 10px; font-size: 0.85rem; border-radius: 25px; width: 100%; }
+            .btn-action i { font-size: 0.9rem; }
+
+            .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .product-card { border-radius: 25px; }
+            .p-thumb-wrapper { height: 140px; }
+            .cat-badge { top: 10px; left: 10px; padding: 4px 10px; font-size: 0.5rem; }
+            .p-info { padding: 15px; }
+            .p-info b { font-size: 0.95rem; margin-bottom: 4px; }
+            .p-info span { font-size: 1.1rem; }
+            .card-actions { padding: 0 15px 15px; }
+            .btn-status { padding: 6px 12px; font-size: 0.7rem; border-radius: 12px; }
+            .btn-delete { font-size: 1.1rem; }
+
+            #editor-container { padding: 25px 20px; border-radius: 35px; max-height: 95vh; }
+            .upload-box { height: 180px; border-radius: 25px; margin-bottom: 15px; }
+            input[type="text"], input[type="number"], select { padding: 12px 18px; font-size: 0.9rem; border-radius: 15px; margin-bottom: 10px; }
         }
-        .option-row:hover { border-color: var(--premium-gold); background: rgba(128,128,128,0.15); }
-        .option-row input[type="text"] { flex: 2.5; margin: 0; background: transparent; border: none; font-weight: 600; font-size: 1.1rem; }
-        .option-row input[type="number"] { flex: 1; margin: 0; background: transparent; border: none; color: var(--premium-gold); text-align: right; font-weight: 900; font-size: 1.3rem; }
 
-        /* 📍 Modal Layers */
-        #editor-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(25px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 25px; pointer-events: none; opacity: 0; transition: 0.5s; }
-        #editor-overlay.active { display: flex; opacity: 1; pointer-events: all; }
-        #editor-container { width: 100%; max-width: 1000px; max-height: 94vh; background: var(--bg-card); border: 2.5px solid var(--premium-gold); border-radius: 75px; overflow-y: auto; box-shadow: 0 60px 120px rgba(0,0,0,0.9); transform: scale(0.8) translateY(100px); transition: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); padding: 60px; }
-        #editor-overlay.active #editor-container { transform: scale(1) translateY(0); }
-
-        input, select { background: rgba(128,128,128,0.08); border: 2px solid var(--glass-border); border-radius: 25px; color: var(--text-main); padding: 22px; width: 100%; font-size: 1.1rem; margin-bottom: 20px; transition: 0.4s; }
-        input:focus { border-color: var(--premium-gold); transform: scale(1.02); }
-        
-        .upload-box { width: 100%; height: 400px; background: rgba(128,128,128,0.08); border: 3px dashed var(--premium-gold); border-radius: 55px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; transition: 0.5s; }
-        .upload-box:hover { background: rgba(197, 160, 89, 0.12); transform: scale(0.98); }
-
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(60px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body onload="initializeMenu()">
 
 <div class="dashboard-tiles">
     <div class="tile-card active" id="tile-all" onclick="filterByCategory('all', 'tile-all')">
-        <i class="fas fa-boxes"></i> </i><b id="count-all">0</b><span>พรีเมียมคอลเลกชัน</span>
+        <i class="fas fa-boxes"></i><b id="count-all">0</b><span id="txt-tile-all">พรีเมียมทั้งหมด</span>
     </div>
     <div class="tile-card" id="tile-food" onclick="filterByCategory('อาหาร', 'tile-food')">
-        <i>🍜</i><b id="count-food">0</b><span>อาหารจานหลัก</span>
+        <i>🍜</i><b id="count-food">0</b><span id="txt-tile-food">อาหารหลัก</span>
     </div>
     <div class="tile-card" id="tile-noodle" onclick="filterByCategory('ก๋วยเตี๋ยว', 'tile-noodle')">
-        <i>🥣 </i><b id="count-noodle">0</b><span>ก๋วยเตี๋ยวรสเด็ด</span>
+        <i>🥣</i><b id="count-noodle">0</b><span id="txt-tile-noodle">ก๋วยเตี๋ยว</span>
     </div>
     <div class="tile-card" id="tile-drink" onclick="filterByCategory('เครื่องดื่ม', 'tile-drink')">
-        <i>🍹 </i><b id="count-drink">0</b><span>เครื่องดื่มคลายร้อน</span>
+        <i>🍹</i><b id="count-drink">0</b><span id="txt-tile-drink">เครื่องดื่ม</span>
     </div>
 </div>
 
 <div class="top-control-bar">
     <div class="search-wrapper">
         <i class="fas fa-search"></i>
-        <input type="text" id="menu-search" placeholder="ค้นหาเมนูพรีเมียมของคุณ..." oninput="filterMenu()">
+        <input type="text" id="menu-search" placeholder="ค้นหาเมนู..." oninput="filterMenu()">
     </div>
-    <button class="btn-action btn-manage-addons" onclick="openGlobalAddons()">
-        <i class="fas fa-layer-group"></i> จัดการส่วนเสริม
-    </button>
-    <button class="btn-action btn-add-menu" onclick="openMenuEditor()">
-        <i class="fas fa-plus-circle"></i> เพิ่มเมนูใหม่
-    </button>
+    <div class="button-group">
+        <button class="btn-action" onclick="openGlobalAddons()">
+            <i class="fas fa-layer-group"></i> <span id="txt-btn-addon">ส่วนเสริม</span>
+        </button>
+        <button class="btn-action btn-add-menu" onclick="openMenuEditor()">
+            <i class="fas fa-plus-circle"></i> <span id="txt-btn-add">เพิ่มเมนู</span>
+        </button>
+    </div>
 </div>
 
 <div id="editor-overlay" onclick="if(event.target.id==='editor-overlay') closeEditor()">
     <div id="editor-container">
         <div id="view-menu-editor">
-            <div style="display: flex; gap: 50px; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 350px;">
-                    <div style="font-size: 0.9rem; color: var(--premium-gold); font-weight: 900; margin-bottom: 25px; letter-spacing: 3px;">IMAGE PREVIEW</div>
-                    <div class="upload-box" onclick="document.getElementById('file-input').click()">
-                        <img id="p-img-preview" src="" style="display:none; width: 100%; height: 100%; object-fit: cover;">
-                        <div id="upload-hint" style="text-align:center; color:#666;">
-                            <i class="fas fa-camera-retro" style="font-size:4.5rem; color:var(--premium-gold); margin-bottom:25px;"></i><br>
-                            <span style="font-weight:800; font-size:1.1rem;">อัปโหลดรูปภาพ 4K</span>
-                        </div>
-                        <input type="file" id="file-input" hidden accept="image/*" onchange="handleFileUpload(this)">
-                        <input type="hidden" id="p-img">
-                    </div>
+            <div class="upload-box" onclick="document.getElementById('file-input').click()">
+                <img id="p-img-preview" src="" style="display:none; width: 100%; height: 100%; object-fit: cover;">
+                <div id="upload-hint" style="text-align:center;">
+                    <i class="fas fa-camera-retro" style="font-size:2rem; color:var(--premium-gold); margin-bottom:10px;"></i><br>
+                    <b id="txt-upload" style="font-size: 0.8rem;">อัปโหลดรูปภาพ</b>
                 </div>
-                <div style="flex: 1.3; min-width: 350px;">
-                    <div style="background:rgba(128,128,128,0.06); padding:45px; border-radius:55px; border:1px solid var(--border-glass);">
-                        <div style="font-size: 0.9rem; color: var(--premium-gold); font-weight: 900; margin-bottom: 30px; letter-spacing: 3px;">PRODUCT DETAILS</div>
-                        <input type="text" id="p-name" placeholder="ชื่อภาษาไทย">
-                        <input type="text" id="p-name-en" placeholder="English Menu Label">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <input type="number" id="p-price" placeholder="ราคา (฿)">
-                            <select id="p-category">
-                                <option value="อาหาร">จานหลัก</option>
-                                <option value="ก๋วยเตี๋ยว">เส้น/ก๋วยเตี๋ยว</option>
-                                <option value="เครื่องดื่ม">เครื่องดื่ม</option>
-                            </select>
-                        </div>
-                        <div style="margin-top:25px; padding: 25px; border-radius: 35px; background: rgba(197, 160, 89, 0.08); border: 1px solid rgba(197, 160, 89, 0.2); font-size: 0.9rem; line-height: 1.8; color: #999;">
-                            <i class="fas fa-sparkles" style="color: var(--premium-gold); margin-right: 12px;"></i> ส่วนเสริมจะถูกผูกมัดให้อัตโนมัติครับ
-                        </div>
-                    </div>
-                </div>
+                <input type="file" id="file-input" hidden accept="image/*" onchange="handleFileUpload(this)">
+                <input type="hidden" id="p-img">
             </div>
-            <div style="display: flex; gap: 25px; margin-top: 60px;">
-                <button class="btn-action btn-add-menu" style="flex:3; justify-content:center; padding:30px; font-size:1.2rem;" onclick="saveMenuData()">
-                    <i class="fas fa-check-circle"></i> บันทึกข้อมูลและปิดหน้าต่าง
-                </button>
-                <button class="btn-action" style="flex:1; justify-content:center; background:rgba(255,255,255,0.05); color:var(--text-main);" onclick="closeEditor()">ยกเลิก</button>
+            
+            <input type="text" id="p-name" placeholder="ชื่อภาษาไทย">
+            <input type="text" id="p-name-en" placeholder="English Label">
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="p-price" placeholder="ราคา (฿)">
+                <select id="p-category">
+                    <option value="อาหาร">จานหลัก / Main</option>
+                    <option value="ก๋วยเตี๋ยว">ก๋วยเตี๋ยว / Noodle</option>
+                    <option value="เครื่องดื่ม">เครื่องดื่ม / Drink</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-action btn-add-menu" style="flex:2;" onclick="saveMenuData()">SAVE</button>
+                <button class="btn-action" style="flex:1;" onclick="closeEditor()">CANCEL</button>
             </div>
         </div>
 
         <div id="view-global-addons" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 45px;">
-                <b style="font-size: 2.2rem; color: var(--premium-gold); letter-spacing: 1px;">SYSTEM ADDONS</b>
-                <select id="addon-category-filter" style="width: 350px; margin: 0; background:#000; border-radius: 25px;" onchange="loadAddonsByCategory(this.value)">
-                    <option value="อาหาร">หมวด: อาหารจานเดียว</option>
-                    <option value="ก๋วยเตี๋ยว">หมวด: ก๋วยเตี๋ยว/เส้น</option>
-                    <option value="เครื่องดื่ม">หมวด: เครื่องดื่ม</option>
-                </select>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
-                <div style="background:rgba(0,0,0,0.35); padding:40px; border-radius:55px; border:1px solid var(--border-glass);">
-                    <div style="color:var(--premium-gold); font-weight:900; margin-bottom:30px; font-size:1rem; letter-spacing:3px;">SIZE OPTIONS</div>
-                    <div id="global-sizes-container"></div>
-                    <button class="btn-action" style="width:100%; border:2px dashed var(--premium-gold); background:none; color:var(--premium-gold);" onclick="addOptionRow('global-sizes-container')">+ เพิ่มตัวเลือก</button>
-                </div>
-                <div style="background:rgba(0,0,0,0.35); padding:40px; border-radius:55px; border:1px solid var(--border-glass);">
-                    <div style="color:var(--premium-gold); font-weight:900; margin-bottom:30px; font-size:1rem; letter-spacing:3px;">TOPPING EXTRAS</div>
-                    <div id="global-addons-container"></div>
-                    <button class="btn-action" style="width:100%; border:2px dashed var(--premium-gold); background:none; color:var(--premium-gold);" onclick="addOptionRow('global-addons-container')">+ เพิ่มท็อปปิ้ง</button>
-                </div>
-            </div>
-            <div style="display: flex; gap: 25px; margin-top: 55px;">
-                <button class="btn-action btn-add-menu" style="flex:2.5; justify-content:center; padding:28px;" onclick="saveGlobalAddons()">อัปเดตระบบสากล</button>
-                <button class="btn-action" style="flex:1; justify-content:center; background:rgba(255,255,255,0.05);" onclick="closeEditor()">ปิด</button>
+            <b style="font-size: 1.2rem; color: var(--premium-gold);">ADDONS CONFIG</b>
+            <select id="addon-category-filter" style="margin-top: 10px;" onchange="loadAddonsByCategory(this.value)">
+                <option value="อาหาร">หมวด: อาหาร</option>
+                <option value="ก๋วยเตี๋ยว">หมวด: ก๋วยเตี๋ยว</option>
+                <option value="เครื่องดื่ม">หมวด: เครื่องดื่ม</option>
+            </select>
+            <div id="global-sizes-container" style="margin-top: 15px;"></div>
+            <button class="btn-action" style="width:100%; border:1px dashed var(--premium-gold); margin-bottom:15px; padding: 10px;" onclick="addOptionRow('global-sizes-container')">+ Size</button>
+            <div id="global-addons-container"></div>
+            <button class="btn-action" style="width:100%; border:1px dashed var(--premium-gold); padding: 10px;" onclick="addOptionRow('global-addons-container')">+ Topping</button>
+            
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn-action btn-add-menu" style="flex:2;" onclick="saveGlobalAddons()">UPDATE</button>
+                <button class="btn-action" style="flex:1;" onclick="closeEditor()">CLOSE</button>
             </div>
         </div>
         <input type="hidden" id="edit-id">
@@ -230,15 +224,64 @@
 
     let activeCategory = 'all';
 
-    function applySharedTheme() {
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') document.body.classList.add('light-theme');
-        else document.body.classList.remove('light-theme');
+    function applySettings() {
+        const isLight = localStorage.getItem('theme') === 'light';
+        document.body.classList.toggle('light-theme', isLight);
+        const lang = localStorage.getItem('bf_lang') || 'th';
+        const dict = {
+            th: { search: "ค้นหา...", all: "พรีเมียมทั้งหมด", food: "อาหารหลัก", noodle: "ก๋วยเตี๋ยว", drink: "เครื่องดื่ม", addon: "ส่วนเสริม", add: "เพิ่มเมนู", upload: "อัปโหลด", instock: "ขายอยู่", out: "หมด" },
+            en: { search: "Search...", all: "ALL", food: "MAIN", noodle: "NOODLE", drink: "DRINK", addon: "ADDON", add: "ADD", upload: "UPLOAD", instock: "ACTIVE", out: "SOLD OUT" }
+        };
+        const d = dict[lang];
+        document.getElementById('menu-search').placeholder = d.search;
+        document.getElementById('txt-tile-all').innerText = d.all;
+        document.getElementById('txt-tile-food').innerText = d.food;
+        document.getElementById('txt-tile-noodle').innerText = d.noodle;
+        document.getElementById('txt-tile-drink').innerText = d.drink;
+        document.getElementById('txt-btn-addon').innerText = d.addon;
+        document.getElementById('txt-btn-add').innerText = d.add;
+        document.getElementById('txt-upload').innerText = d.upload;
+        return d;
     }
-    applySharedTheme();
-    window.addEventListener('storage', (e) => { if (e.key === 'theme') applySharedTheme(); });
 
-    function initializeMenu() { loadProducts(); }
+    window.addEventListener('storage', () => { applySettings(); loadProducts(); });
+    function initializeMenu() { applySettings(); loadProducts(); }
+
+    function loadProducts() {
+        db.ref('products').on('value', snap => {
+            const list = document.getElementById('product-list');
+            const data = snap.val(); list.innerHTML = '';
+            const d = applySettings();
+            let counts = { all: 0, food: 0, noodle: 0, drink: 0 };
+            for (let id in data) {
+                const p = data[id];
+                counts.all++;
+                if(p.category === 'อาหาร') counts.food++;
+                if(p.category === 'ก๋วยเตี๋ยว') counts.noodle++;
+                if(p.category === 'เครื่องดื่ม') counts.drink++;
+                const div = document.createElement('div');
+                div.className = 'product-card';
+                div.setAttribute('data-category', p.category);
+                div.onclick = () => openEdit(id, p);
+                div.innerHTML = `
+                    <div class="cat-badge">${p.category}</div>
+                    <div class="p-thumb-wrapper"><img src="${p.img}" class="p-thumb"></div>
+                    <div class="p-info"><b>${p.name}</b><span>฿${p.price}</span></div>
+                    <div class="card-actions">
+                        <button class="btn-status ${p.status=='out_of_stock'?'status-soldout':'status-open'}" onclick="event.stopPropagation(); toggleStatus('${id}', '${p.status}')">
+                            ${p.status=='out_of_stock' ? d.out : d.instock}
+                        </button>
+                        <i class="fas fa-trash-can btn-delete" onclick="event.stopPropagation(); deleteProduct('${id}')"></i>
+                    </div>`;
+                list.appendChild(div);
+            }
+            document.getElementById('count-all').innerText = counts.all;
+            document.getElementById('count-food').innerText = counts.food;
+            document.getElementById('count-noodle').innerText = counts.noodle;
+            document.getElementById('count-drink').innerText = counts.drink;
+            filterMenu();
+        });
+    }
 
     function filterByCategory(cat, tileId) {
         activeCategory = cat;
@@ -247,19 +290,39 @@
         filterMenu();
     }
 
-    function openMenuEditor() { document.getElementById('view-menu-editor').style.display = 'block'; document.getElementById('view-global-addons').style.display = 'none'; const overlay = document.getElementById('editor-overlay'); overlay.style.display = 'flex'; setTimeout(() => overlay.classList.add('active'), 10); }
-    function openGlobalAddons() { document.getElementById('view-menu-editor').style.display = 'none'; document.getElementById('view-global-addons').style.display = 'block'; loadAddonsByCategory(document.getElementById('addon-category-filter').value); const overlay = document.getElementById('editor-overlay'); overlay.style.display = 'flex'; setTimeout(() => overlay.classList.add('active'), 10); }
-    function closeEditor() { const overlay = document.getElementById('editor-overlay'); overlay.classList.remove('active'); setTimeout(() => { overlay.style.display = 'none'; resetForm(); }, 400); }
+    function filterMenu() {
+        const q = document.getElementById('menu-search').value.toLowerCase();
+        document.querySelectorAll('.product-card').forEach(card => {
+            const cat = card.getAttribute('data-category');
+            const matchesSearch = card.innerText.toLowerCase().includes(q);
+            const matchesCategory = (activeCategory === 'all' || cat === activeCategory);
+            card.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
+        });
+    }
+
+    function openMenuEditor() { 
+        document.getElementById('view-menu-editor').style.display = 'block'; 
+        document.getElementById('view-global-addons').style.display = 'none'; 
+        document.getElementById('editor-overlay').style.display = 'flex'; 
+    }
+
+    function openGlobalAddons() { 
+        document.getElementById('view-menu-editor').style.display = 'none'; 
+        document.getElementById('view-global-addons').style.display = 'block'; 
+        loadAddonsByCategory(document.getElementById('addon-category-filter').value); 
+        document.getElementById('editor-overlay').style.display = 'flex'; 
+    }
+
+    function closeEditor() { document.getElementById('editor-overlay').style.display = 'none'; resetForm(); }
 
     function addOptionRow(containerId, name = "", price = "0") {
         const container = document.getElementById(containerId);
-        if (!container) return;
         const div = document.createElement('div');
-        div.className = 'option-row';
+        div.style = "display:flex; gap:8px; margin-bottom:8px; background:var(--input-bg); padding:8px; border-radius:12px;";
         div.innerHTML = `
-            <input type="text" placeholder="ชื่อตัวเลือก" value="${name}"> 
-            <input type="number" placeholder="฿" value="${price}"> 
-            <i class="fas fa-trash-can" style="color:#e74c3c; cursor:pointer; padding:10px;" onclick="this.parentElement.remove()"></i>`;
+            <input type="text" placeholder="Name" value="${name}" style="flex:2; margin:0; padding:8px 12px; font-size:0.85rem;"> 
+            <input type="number" placeholder="฿" value="${price}" style="flex:1; margin:0; padding:8px 12px; font-size:0.85rem;"> 
+            <i class="fas fa-times-circle" style="color:#ff4757; align-self:center; cursor:pointer;" onclick="this.parentElement.remove()"></i>`;
         container.appendChild(div);
     }
 
@@ -276,20 +339,16 @@
     async function saveGlobalAddons() {
         const category = document.getElementById('addon-category-filter').value;
         const addonData = { sizes: [], extras: [] };
-        document.querySelectorAll('#global-sizes-container .option-row').forEach(row => {
+        document.querySelectorAll('#global-sizes-container > div').forEach(row => {
             const i = row.querySelectorAll('input');
             if(i[0].value) addonData.sizes.push({ name: i[0].value, price: parseFloat(i[1].value)||0 });
         });
-        document.querySelectorAll('#global-addons-container .option-row').forEach(row => {
+        document.querySelectorAll('#global-addons-container > div').forEach(row => {
             const i = row.querySelectorAll('input');
             if(i[0].value) addonData.extras.push({ name: i[0].value, price: parseFloat(i[1].value)||0 });
         });
         await db.ref('category_addons/' + category).set(addonData);
-        db.ref('products').once('value', snap => {
-            const products = snap.val();
-            for (let id in products) { if (products[id].category === category) { db.ref(`products/${id}/config`).set({ sizes: addonData.sizes, addons: addonData.extras }); } }
-            alert(`ระบบอัปเดตสากลเรียบร้อย!`); closeEditor();
-        });
+        alert("Updated!");
     }
 
     function saveMenuData() {
@@ -298,7 +357,7 @@
         const price = parseFloat(document.getElementById('p-price').value);
         const img = document.getElementById('p-img').value;
         const category = document.getElementById('p-category').value;
-        if(!nameTH || isNaN(price) || !img) return alert("ข้อมูลไม่ครบครับ!");
+        if(!nameTH || isNaN(price) || !img) return alert("Fill all fields!");
         db.ref('category_addons/' + category).once('value', snap => {
             const addons = snap.val() || { sizes: [], extras: [] };
             const data = { name: nameTH, price: price, img: img, category: category, status: 'instock', config: { sizes: addons.sizes || [], addons: addons.extras || [] } };
@@ -306,70 +365,53 @@
             ref.set(data).then(() => {
                 const nameEN = document.getElementById('p-name-en').value.trim();
                 if (nameEN) db.ref('menu_translations').update({ [nameTH]: nameEN });
-                alert("บันทึกพรีเมียมสำเร็จ!"); closeEditor();
+                closeEditor();
             });
         });
     }
 
-    function loadProducts() {
-        db.ref('products').on('value', snap => {
-            const list = document.getElementById('product-list');
-            const data = snap.val(); list.innerHTML = '';
-            let counts = { all: 0, food: 0, noodle: 0, drink: 0 };
-            let index = 0;
-            for (let id in data) {
-                const p = data[id];
-                counts.all++;
-                if(p.category === 'อาหาร') counts.food++;
-                if(p.category === 'ก๋วยเตี๋ยว') counts.noodle++;
-                if(p.category === 'เครื่องดื่ม') counts.drink++;
-
-                const div = document.createElement('div');
-                div.className = 'product-card';
-                div.setAttribute('data-category', p.category);
-                div.style.animationDelay = `${index * 0.05}s`;
-                div.onclick = () => openEdit(id, p);
-                div.innerHTML = `
-                    <div class="cat-badge">${p.category}</div>
-                    <div class="p-thumb-wrapper"><img src="${p.img}" class="p-thumb"></div>
-                    <div class="p-info"><b>${p.name}</b><span>฿${p.price}</span></div>
-                    <div class="card-actions">
-                        <button class="btn-status ${p.status=='out_of_stock'?'status-soldout':'status-open'}" onclick="event.stopPropagation(); db.ref('products/${id}').update({status:'${p.status=='out_of_stock'?'instock':'out_of_stock'}'})">
-                            ${p.status=='out_of_stock'?'SOLD OUT':'OPEN'}
-                        </button>
-                        <i class="fas fa-trash-can btn-delete" onclick="event.stopPropagation(); if(confirm('ลบรายการนี้?')) db.ref('products/${id}').remove()"></i>
-                    </div>`;
-                list.appendChild(div);
-                index++;
-            }
-            document.getElementById('count-all').innerText = counts.all;
-            document.getElementById('count-food').innerText = counts.food;
-            document.getElementById('count-noodle').innerText = counts.noodle;
-            document.getElementById('count-drink').innerText = counts.drink;
-            filterMenu();
-        });
+    function toggleStatus(id, current) {
+        const next = current === 'out_of_stock' ? 'instock' : 'out_of_stock';
+        db.ref(`products/${id}`).update({status: next});
     }
-
-    function filterMenu() {
-        const q = document.getElementById('menu-search').value.toLowerCase();
-        document.querySelectorAll('.product-card').forEach(card => {
-            const cat = card.getAttribute('data-category');
-            const matchesSearch = card.innerText.toLowerCase().includes(q);
-            const matchesCategory = (activeCategory === 'all' || cat === activeCategory);
-            card.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
-        });
-    }
+    function deleteProduct(id) { if(confirm('Delete?')) db.ref(`products/${id}`).remove(); }
 
     function openEdit(id, p) { 
-        openMenuEditor(); document.getElementById('edit-id').value = id; document.getElementById('p-name').value = p.name;
-        document.getElementById('p-price').value = p.price; document.getElementById('p-img').value = p.img;
-        document.getElementById('p-img-preview').src = p.img; document.getElementById('p-img-preview').style.display = 'block';
-        document.getElementById('upload-hint').style.display = 'none'; document.getElementById('p-category').value = p.category;
+        openMenuEditor(); 
+        document.getElementById('edit-id').value = id; 
+        document.getElementById('p-name').value = p.name;
+        document.getElementById('p-price').value = p.price; 
+        document.getElementById('p-img').value = p.img;
+        document.getElementById('p-img-preview').src = p.img; 
+        document.getElementById('p-img-preview').style.display = 'block';
+        document.getElementById('upload-hint').style.display = 'none'; 
+        document.getElementById('p-category').value = p.category;
         db.ref('menu_translations/' + p.name).once('value', snap => { document.getElementById('p-name-en').value = snap.val() || ""; });
     }
 
-    function handleFileUpload(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = e => { document.getElementById('p-img').value = e.target.result; const preview = document.getElementById('p-img-preview'); preview.src = e.target.result; preview.style.display = 'block'; document.getElementById('upload-hint').style.display = 'none'; }; reader.readAsDataURL(input.files[0]); } }
-    function resetForm() { document.getElementById('edit-id').value = ""; document.getElementById('p-name').value = ""; document.getElementById('p-name-en').value = ""; document.getElementById('p-price').value = ""; document.getElementById('p-img').value = ""; document.getElementById('p-img-preview').style.display = 'none'; document.getElementById('upload-hint').style.display = 'block'; }
+    function handleFileUpload(input) { 
+        if (input.files && input.files[0]) { 
+            const reader = new FileReader(); 
+            reader.onload = e => { 
+                document.getElementById('p-img').value = e.target.result; 
+                const preview = document.getElementById('p-img-preview'); 
+                preview.src = e.target.result; 
+                preview.style.display = 'block'; 
+                document.getElementById('upload-hint').style.display = 'none'; 
+            }; 
+            reader.readAsDataURL(input.files[0]); 
+        } 
+    }
+
+    function resetForm() { 
+        document.getElementById('edit-id').value = ""; 
+        document.getElementById('p-name').value = ""; 
+        document.getElementById('p-name-en').value = ""; 
+        document.getElementById('p-price').value = ""; 
+        document.getElementById('p-img').value = ""; 
+        document.getElementById('p-img-preview').style.display = 'none'; 
+        document.getElementById('upload-hint').style.display = 'block'; 
+    }
 </script>
 </body>
 </html>

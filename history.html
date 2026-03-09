@@ -30,30 +30,30 @@
             animation: fadeInDown 0.6s ease-out;
         }
         .filter-row { 
-            display: flex; flex-wrap: wrap; gap: 50px; align-items: flex-end; justify-content: center;
+            display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; justify-content: flex-start;
         }
-        .filter-group { flex: 1; min-width: 160px; }
+        .filter-group { flex: 1; min-width: 150px; }
         .filter-group label { 
             font-size: 0.65rem; color: var(--premium-gold); font-weight: 800; 
-            margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.5px;
+            margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
             display: flex; align-items: center; gap: 6px;
         }
         
         .filter-group input {
             background: rgba(128,128,128,0.08); border: 1px solid var(--border);
             border-radius: 15px; color: var(--text); padding: 12px 15px;
-            font-size: 0.9rem; width: 100%; transition: 0.3s;
+            font-size: 0.9rem; width: 100%; box-sizing: border-box; transition: 0.3s;
         }
-        .filter-group input:focus { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); box-shadow: 0 0 15px var(--gold-glow); }
+        .filter-group input:focus { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); outline: none; box-shadow: 0 0 15px var(--gold-glow); }
 
         .btn-search { 
-            background: var(--premium-gold); color: #000; border: none; padding: 12px 30px; 
+            background: var(--premium-gold); color: #000; border: none; padding: 12px 25px; 
             border-radius: 15px; font-weight: 900; cursor: pointer; height: 46px;
             transition: 0.3s; font-size: 0.85rem; letter-spacing: 1px;
-            display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 8px 15px rgba(197, 160, 89, 0.15);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 8px 15px rgba(197, 160, 89, 0.15); width: 100%; white-space: nowrap;
         }
-        .btn-search:hover { transform: scale(1.05); box-shadow: 0 12px 25px var(--gold-glow); }
+        .btn-search:hover { transform: scale(1.02); box-shadow: 0 12px 25px var(--gold-glow); }
 
         /* 📜 Order Cards List */
         .order-card { 
@@ -91,76 +91,28 @@
         /* 🖨️ โค้ดปรับปรุงใหม่: เปลี่ยนเป็นรูปแบบ "ใบเสร็จสลิป" (Receipt Style) */
         /* ========================================================== */
         @media print {
-            /* ซ่อนทุกอย่างยกเว้นบิลที่จะพิมพ์ */
             body * { visibility: hidden; background: white !important; }
             #history-list .order-card.active, 
             #history-list .order-card.active * { visibility: visible; }
 
-            /* ปรับแต่งตำแหน่งและขนาดกระดาษ (ให้เหมือนสลิป 80mm หรือ 58mm) */
             #history-list .order-card.active {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 300px; /* ขนาดหน้ากว้างสลิปโดยประมาณ */
-                border: none !important;
-                box-shadow: none !important;
-                padding: 10px !important;
-                margin: 0 !important;
-                background: white !important;
-                font-family: 'Courier New', Courier, monospace; /* ใช้ฟอนต์แนวเครื่องพิมใบเสร็จ */
+                position: absolute; left: 0; top: 0; width: 300px; 
+                border: none !important; box-shadow: none !important;
+                padding: 10px !important; margin: 0 !important;
+                background: white !important; font-family: 'Courier New', Courier, monospace; 
                 color: black !important;
             }
 
-            /* จัดการหัวข้อสลิป */
-            .card-collapsed-part {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                padding: 10px 0 !important;
-                border-bottom: 2px dashed #000 !important;
-            }
-
-            .station-tag { 
-                background: none !important; 
-                border: none !important; 
-                font-size: 1.2rem !important; 
-                padding: 0 !important; 
-                font-weight: bold !important;
-            }
-            
+            .card-collapsed-part { flex-direction: column !important; align-items: flex-start !important; padding: 10px 0 !important; border-bottom: 2px dashed #000 !important; }
+            .station-tag { background: none !important; border: none !important; font-size: 1.2rem !important; padding: 0 !important; font-weight: bold !important; }
             .order-id-label { margin: 5px 0 !important; display: block; font-size: 0.8rem !important; }
-
-            /* รายการอาหาร */
-            .card-expanded-part { 
-                padding: 10px 0 !important; 
-                opacity: 1 !important; 
-                max-height: none !important; 
-            }
-
+            .card-expanded-part { padding: 10px 0 !important; opacity: 1 !important; max-height: none !important; }
             .item-row { border-bottom: 1px dashed #ccc !important; padding: 5px 0 !important; }
             .food-line span, .food-line b { color: black !important; font-size: 0.9rem !important; }
-
-            /* ยอดรวมท้ายสลิป */
-            .total-brief {
-                display: block !important;
-                text-align: right !important;
-                font-size: 1.5rem !important;
-                border-top: 2px solid #000 !important;
-                margin-top: 10px !important;
-                padding-top: 5px !important;
-            }
-
-            /* ซ่อนสิ่งที่ไม่จำเป็นบนใบเสร็จ */
+            .total-brief { display: block !important; text-align: right !important; font-size: 1.5rem !important; border-top: 2px solid #000 !important; margin-top: 10px !important; padding-top: 5px !important; }
             .btn-group, .filter-section, .stats-grid, .btn-action { display: none !important; }
             
-            /* เพิ่มข้อความขอบคุณท้ายสลิป (ถ้าต้องการ) */
-            #history-list .order-card.active::after {
-                content: "--- THANK YOU ---";
-                display: block;
-                text-align: center;
-                margin-top: 20px;
-                font-size: 0.8rem;
-                letter-spacing: 2px;
-            }
+            #history-list .order-card.active::after { content: "--- THANK YOU ---"; display: block; text-align: center; margin-top: 20px; font-size: 0.8rem; letter-spacing: 2px; }
         }
     </style>
 </head>
@@ -180,8 +132,12 @@
     <section class="filter-section">
         <div class="filter-row">
             <div class="filter-group">
-                <label><i class="far fa-calendar-alt"></i> วันที่ตรวจสอบ</label>
-                <input type="date" id="search-date">
+                <label><i class="far fa-calendar-alt"></i> วันที่เริ่มต้น</label>
+                <input type="date" id="start-date">
+            </div>
+            <div class="filter-group">
+                <label><i class="far fa-calendar-check"></i> วันที่สิ้นสุด</label>
+                <input type="date" id="end-date">
             </div>
             <div class="filter-group">
                 <label><i class="far fa-clock"></i> เวลาเริ่ม</label>
@@ -191,16 +147,20 @@
                 <label><i class="fas fa-history"></i> เวลาสิ้นสุด</label>
                 <input type="time" id="end-time" value="23:59">
             </div>
-            <div class="filter-group" style="flex: 0.5;">
+            <div class="filter-group" style="flex: 0.8; display: flex; align-items: flex-end;">
                 <button onclick="filterHistoryByDateTime()" class="btn-search">
                     <i class="fas fa-search"></i> ค้นหาบิล
+                </button>
+            </div>
+            <div class="filter-group" style="flex: 0.4; display: flex; align-items: flex-end;">
+                <button onclick="resetFilter()" class="btn-search" style="background: rgba(128,128,128,0.2); color: var(--text);">
+                     ล้างค่า
                 </button>
             </div>
         </div>
     </section>
 
-    <div id="history-list">
-        </div>
+    <div id="history-list"></div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -217,7 +177,14 @@
     }
     applySharedTheme();
 
-    function initializeHistory() { loadHistoryRealtime(); }
+    function initializeHistory() { 
+        // เซ็ตค่าเริ่มต้นให้วันที่เป็นวันนี้
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start-date').value = today;
+        document.getElementById('end-date').value = today;
+        
+        loadHistoryRealtime(); 
+    }
 
     function loadHistoryRealtime() {
         db.ref('history').on('value', (snapshot) => {
@@ -225,7 +192,9 @@
             if (snapshot.exists()) {
                 snapshot.forEach((child) => { allHistoryData.push({ id: child.key, ...child.val() }); });
             }
-            renderHistory(allHistoryData);
+            // แสดงผลครั้งแรก ดึงมาทั้งหมด หรือจะให้กรองตามวันนี้เลยก็ได้
+            // ตรงนี้ให้กรองตามฟิลเตอร์เริ่มต้น (วันนี้)
+            filterHistoryByDateTime(); 
         });
     }
 
@@ -240,10 +209,7 @@
         document.querySelectorAll('.order-card').forEach(c => c.classList.remove('active'));
         card.classList.add('active');
         
-        // หน่วงเวลาให้ UI อัปเดตก่อนสั่งพิมพ์
-        setTimeout(() => {
-            window.print();
-        }, 250);
+        setTimeout(() => { window.print(); }, 250);
     }
 
     function renderHistory(data) {
@@ -257,7 +223,6 @@
             totalSum += parseFloat(order.total || 0);
             const shortId = order.id.substring(order.id.length - 6).toUpperCase();
             
-            // 📍 ส่วนที่ปรับปรุง: วนลูปรายการอาหารและท็อปปิ้งพร้อมแสดงจำนวน xN
             let itemsHtml = order.items ? order.items.map(item => {
                 let optionsHtml = '';
                 let optionsPriceTotal = 0;
@@ -265,19 +230,18 @@
                 if (item.optionsArray) {
                     optionsHtml = item.optionsArray.map(opt => {
                         const optPrice = parseFloat(opt.price || 0);
-                        const optQty = parseInt(opt.qty || 1); // ดึงจำนวน x2, x3
+                        const optQty = parseInt(opt.qty || 1); 
                         const totalPerOpt = optPrice * optQty;
                         optionsPriceTotal += totalPerOpt;
 
                         return `
                             <div class="addon-item" style="display: flex; justify-content: space-between; width: 100%;">
-                                <span>+ ${opt.name} <b style="color:var(--premium-gold); margin-left:4px;">x${optQty}</b></span>
+                                <span>- ${opt.name} <b style="color:var(--premium-gold); margin-left:4px;">x${optQty}</b></span>
                                 <span>฿${totalPerOpt.toFixed(2)}</span>
                             </div>`;
                     }).join('');
                 }
 
-                // คำนวณราคาอาหารหลัก (ราคาเต็ม - ราคาท็อปปิ้งรวม)
                 const finalP = parseFloat(item.finalPrice || 0);
                 const baseP = finalP - optionsPriceTotal;
 
@@ -321,23 +285,58 @@
                     </div>
                 </div>`;
         });
-        list.innerHTML = data.length ? html : '<div style="text-align:center; padding:100px; color:var(--sub-text);">ไม่พบข้อมูลประวัติการขาย</div>';
+        list.innerHTML = data.length ? html : '<div style="text-align:center; padding:100px; color:var(--sub-text);">ไม่พบข้อมูลในช่วงเวลาที่เลือก</div>';
         billsEl.textContent = data.length;
         revEl.textContent = totalSum.toLocaleString('th-TH', { minimumFractionDigits: 2 });
     }
 
+    // 📍 ฟังก์ชันกรองประวัติที่ปรับปรุงใหม่ รองรับช่วงวันที่
     function filterHistoryByDateTime() {
-        const searchDate = document.getElementById('search-date').value;
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
         const startTime = document.getElementById('start-time').value;
         const endTime = document.getElementById('end-time').value;
-        if (!searchDate) return alert("กรุณาเลือกวันที่ก่อนครับ!");
+
+        if (!startDate || !endDate) {
+            return alert("กรุณาระบุวันที่เริ่มต้นและสิ้นสุดให้ครบถ้วนครับ");
+        }
+        if (startDate > endDate) {
+            return alert("วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุดครับ");
+        }
+
         const filtered = allHistoryData.filter(order => {
             const d = new Date(order.archivedAt);
-            const dateStr = d.toISOString().split('T')[0];
-            const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-            return dateStr === searchDate && timeStr >= startTime && timeStr <= endTime;
+            const orderDateStr = d.toISOString().split('T')[0];
+            const orderTimeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+
+            // ตรวจสอบว่าวันที่อยู่ในช่วงที่กำหนดหรือไม่
+            const isDateInRange = orderDateStr >= startDate && orderDateStr <= endDate;
+            
+            // กรณีเป็นวันเดียวกัน ให้เช็คเวลาด้วย
+            if (startDate === endDate) {
+                return isDateInRange && orderTimeStr >= startTime && orderTimeStr <= endTime;
+            } else {
+                // กรณีค้นหาคร่อมวัน
+                if (orderDateStr === startDate) {
+                    return orderTimeStr >= startTime; // วันแรก เช็คแค่เวลาเริ่ม
+                } else if (orderDateStr === endDate) {
+                    return orderTimeStr <= endTime; // วันสุดท้าย เช็คแค่เวลาจบ
+                } else {
+                    return isDateInRange; // วันตรงกลาง เอาหมด
+                }
+            }
         });
+        
         renderHistory(filtered);
+    }
+
+    function resetFilter() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('start-date').value = today;
+        document.getElementById('end-date').value = today;
+        document.getElementById('start-time').value = "00:00";
+        document.getElementById('end-time').value = "23:59";
+        filterHistoryByDateTime();
     }
 
     window.deleteEntry = (id) => confirm("ลบรายการนี้ถาวรเลยนะ?") && db.ref(`history/${id}`).remove();

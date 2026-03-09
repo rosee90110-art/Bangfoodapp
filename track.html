@@ -221,7 +221,7 @@
                             const mainQty = parseInt(item.quantity || 1);
                             
                             // ดึงราคาพื้นฐานของเมนูหลัก (Base Price) โดยลองดึงจากหลายฟิลด์ที่อาจเป็นไปได้
-                            const basePrice = parseFloat(item.price || item.unitPrice || item.basePrice || 0); 
+                            const basePrice = parseFloat(item.price || item.unitPrice || item.basePrice || 0);
                             const displayName = (currentLang === 'en') ? (dict[item.name] || item.name) : item.name;
 
                             // คำนวณราคาส่วนเสริมแยกต่างหาก
@@ -249,26 +249,26 @@
                             grandTotal += finalP;
 
                             orderItemsHtml += `
-                                <div class="item-row">
-                                    <div class="item-main">
-                                        <div style="position: relative;">
-                                            <img src="${item.img || ''}" class="item-img" onerror="this.src='https://via.placeholder.com/100'">
-                                            <div style="position: absolute; top: -8px; right: -8px; background: var(--premium-gold); color: #000; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.65rem; border: 2px solid var(--bg-deep);">${mainQty}</div>
-                                        </div>
-                                        <div style="flex:1;">
-                                            <div style="display:flex; justify-content:space-between; align-items: flex-start;">
-                                                <div>
-                                                    <p class="food-name">${displayName}</p>
-                                                    <span style="font-size: 0.7rem; color: #888;">฿${basePrice.toFixed(2)}</span>
-                                                </div>
-                                                <div style="text-align: right;">
-                                                    <span style="font-weight: 600; color: var(--premium-gold);">฿${finalP.toFixed(2)}</span>
-                                                </div>
-                                            </div>
-                                            <div class="addon-area">${optionsHtml}</div>
-                                        </div>
-                                    </div>
-                                </div>`;
+    <div class="item-row">
+        <div class="item-main">
+            <div style="position: relative;">
+                <img src="${item.img || ''}" class="item-img" onerror="this.src='https://via.placeholder.com/100'">
+                <div style="position: absolute; top: -8px; right: -8px; background: var(--premium-gold); color: #000; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.65rem; border: 2px solid var(--bg-deep);">${mainQty}</div>
+            </div>
+            <div style="flex:1;">
+                <div style="display:flex; justify-content:space-between; align-items: flex-start;">
+                    <div>
+                        <p class="food-name">${displayName}</p>
+                        <span style="font-size: 0.7rem; color: #888;">@฿${basePrice.toFixed(2)}</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-weight: 600; color: var(--premium-gold);">฿${finalP.toFixed(2)}</span>
+                    </div>
+                </div>
+                <div class="addon-area">${optionsHtml}</div>
+            </div>
+        </div>
+    </div>`;
                         });
                     }
 
@@ -347,42 +347,63 @@
     }
 
     async function generateReceiptPopup(orderId) {
-        const snapshot = await window.db.ref('orders/' + orderId).once('value');
-        if (!snapshot.exists()) return;
+    const snapshot = await window.db.ref('orders/' + orderId).once('value');
+    if (!snapshot.exists()) return;
 
-        const order = snapshot.val();
-        const content = document.getElementById('receipt-content');
-        const dateEl = document.getElementById('receipt-date');
-        const totalEl = document.getElementById('receipt-total-amount');
+    const order = snapshot.val();
+    const content = document.getElementById('receipt-content');
+    const dateEl = document.getElementById('receipt-date');
+    const totalEl = document.getElementById('receipt-total-amount');
 
-        const now = new Date();
-        dateEl.innerText = `ID: ${orderId.toUpperCase()}\nDate: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+    const now = new Date();
+    dateEl.innerText = `ID: ${orderId.toUpperCase()}\nDate: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
 
-        let statusText = (order.status === 'ชำระเงินแล้ว') ? "ชำระเงินแล้ว / PAID" : "ยังไม่ชำระ / UNPAID";
-        let statusColor = (order.status === 'ชำระเงินแล้ว') ? "#2980b9" : "#e74c3c";
+    let statusText = (order.status === 'ชำระเงินแล้ว') ? "ชำระเงินแล้ว / PAID" : "ยังไม่ชำระ / UNPAID";
+    let statusColor = (order.status === 'ชำระเงินแล้ว') ? "#2980b9" : "#e74c3c";
 
-        let html = `
-            <div style="margin: 10px 0; border-top: 1px solid #eee; padding-top: 10px; font-weight:bold;">STATION: ${order.tableNumber}</div>
-            <div class="receipt-status-stamp" style="border-color: ${statusColor}; color: ${statusColor};">${statusText}</div>
-            <div style="border-bottom: 1px dashed #eee; margin-bottom: 10px; padding-bottom: 5px; font-size: 0.7rem; color: #666;">รายการอาหาร (DETAILS)</div>
+    let html = `
+        <div style="margin: 10px 0; border-top: 1px solid #eee; padding-top: 10px; font-weight:bold;">STATION: ${order.tableNumber}</div>
+        <div class="receipt-status-stamp" style="border-color: ${statusColor}; color: ${statusColor};">${statusText}</div>
+        <div style="border-bottom: 1px dashed #eee; margin-bottom: 10px; padding-bottom: 5px; font-size: 0.7rem; color: #666;">รายการอาหาร (DETAILS)</div>
+    `;
+
+    let grandTotal = 0;
+    order.items.forEach(item => {
+        // ดึงราคาฐานที่เก็บไว้
+        const bPrice = parseFloat(item.price || 0);
+        const fPrice = parseFloat(item.finalPrice || 0);
+        grandTotal += fPrice;
+
+        html += `
+            <div class="receipt-row" style="font-weight: bold; margin-top: 8px;">
+                <span>${item.name} x${item.quantity}</span>
+                <span>฿${fPrice.toFixed(2)}</span>
+            </div>
+            <div class="receipt-row" style="font-size: 0.65rem; color: #888; padding-left: 5px; margin-top: -2px;">
+                <span>(ราคาจานละ: ฿${bPrice.toFixed(2)})</span>
+                <span>-</span> 
+            </div>
         `;
 
-        let grandTotal = 0;
-        order.items.forEach(item => {
-            html += `<div class="receipt-row" style="font-weight: bold; margin-top: 5px;"><span>${item.name} x${item.quantity}</span><span>฿${parseFloat(item.finalPrice).toFixed(2)}</span></div>`;
-            grandTotal += parseFloat(item.finalPrice);
-            if (item.optionsArray) {
-                item.optionsArray.forEach(opt => {
-                    const optPrice = parseFloat(opt.price || 0) * parseInt(opt.qty || 1);
-                    html += `<div class="receipt-row" style="font-size: 0.7rem; color: #555; padding-left: 15px;"><span>- ${opt.name} (x${opt.qty})</span><span>+ ฿${optPrice.toFixed(2)}</span></div>`;
-                });
-            }
-        });
+        if (item.optionsArray) {
+            item.optionsArray.forEach(opt => {
+                const optPrice = parseFloat(opt.price || 0) * parseInt(opt.qty || 1);
+                // หากราคาเป็น 0 ให้แสดงเป็น - ตามคำสั่งของคุณ
+                const displayOptPrice = optPrice > 0 ? `+ ฿${optPrice.toFixed(2)}` : "-";
+                
+                html += `
+                    <div class="receipt-row" style="font-size: 0.7rem; color: #555; padding-left: 15px;">
+                        <span>- ${opt.name} (x${opt.qty})</span>
+                        <span>${displayOptPrice}</span>
+                    </div>`;
+            });
+        }
+    });
 
-        content.innerHTML = html;
-        totalEl.innerText = `฿${grandTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 })}`;
-        document.getElementById('receipt-overlay').style.display = 'flex';
-    }
+    content.innerHTML = html;
+    totalEl.innerText = `฿${grandTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 })}`;
+    document.getElementById('receipt-overlay').style.display = 'flex';
+}
 
     function closeReceipt() { document.getElementById('receipt-overlay').style.display = 'none'; }
     function switchLanguageRealtime() {

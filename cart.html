@@ -179,6 +179,61 @@
             await renderCartItems();
         }
 
+        function renderCart() {
+    const table = localStorage.getItem('selectedTable');
+    const cart = JSON.parse(sessionStorage.getItem(`bangfood_cart_table_${table}`)) || { items: [] };
+    const container = document.getElementById('cart-items-list'); // ชื่อ id ตามที่คุณตั้งไว้
+    
+    container.innerHTML = '';
+    
+    cart.items.forEach((item, index) => {
+        // 1. ดึงค่าราคาฐาน และจำนวน
+        const basePrice = parseFloat(item.price || 0);
+        const quantity = parseInt(item.quantity || 1);
+        const finalPrice = parseFloat(item.finalPrice || 0);
+
+        // 2. สร้างรายการ Options (Size/Add-ons)
+        let optionsHTML = '';
+        if (item.optionsArray && item.optionsArray.length > 0) {
+            item.optionsArray.forEach(opt => {
+                optionsHTML += `
+                    <div style="font-size: 0.75rem; color: #888; display: flex; justify-content: space-between;">
+                        <span>+ ${opt.name} (x${opt.qty})</span>
+                        <span>฿${(parseFloat(opt.price) * opt.qty).toFixed(2)}</span>
+                    </div>`;
+            });
+        }
+
+        // 3. แสดงผลในรูปแบบการ์ด
+        container.innerHTML += `
+            <div class="cart-item-card" style="margin-bottom: 15px; background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <img src="${item.img}" style="width: 70px; height: 70px; border-radius: 15px; object-fit: cover;">
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0; font-size: 0.95rem;">${item.name}</h4>
+                        
+                        <p style="margin: 2px 0; font-size: 0.8rem; color: var(--premium-gold);">
+                            @฿${basePrice.toFixed(2)} x ${quantity}
+                        </p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-weight: 700; color: #fff;">฿${finalPrice.toFixed(2)}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #333;">
+                    ${optionsHTML}
+                </div>
+
+                ${item.notes ? `<p style="font-size: 0.7rem; color: #c5a059; margin-top: 8px;">* ${item.notes}</p>` : ''}
+            </div>
+        `;
+    });
+
+    // อัปเดตราคาสรุปด้านล่าง
+    updateSummary(cart);
+}
+
         async function renderCartItems() {
     const tableNo = getTableNo();
     const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';

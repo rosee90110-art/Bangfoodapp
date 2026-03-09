@@ -410,6 +410,9 @@ function initSliderLogic() {
     
     let opts = [];
     
+    // 1. ดึงราคาฐานจากหน้าจอ (ตัวเลขที่โชว์ตรง "ราคาเริ่มต้น")
+    const basePrice = document.getElementById('modal-base-price').innerText;
+    
     // Size
     const s = document.querySelector('input[name="size"]:checked');
     if (s) opts.push({ name: s.value, price: s.dataset.modifier, qty: 1 });
@@ -426,16 +429,17 @@ function initSliderLogic() {
         }
     });
 
-    // ดึงจำนวนจานหลัก
     const mainQty = parseInt(document.getElementById('main-item-qty').innerText);
 
+    // 2. เพิ่มฟิลด์ price: basePrice ลงไปใน Object ด้านล่างนี้
     cart.items.push({ 
         name: document.getElementById('modal-item-name').getAttribute('data-raw'), 
+        price: basePrice, // <--- เพิ่มบรรทัดนี้เพื่อเก็บราคาตั้งต้น (Base Price)
         finalPrice: document.getElementById('modal-final-price').innerText, 
         optionsArray: opts, 
         notes: document.getElementById('modal-notes').value,
         img: document.getElementById('modal-item-image').src, 
-        quantity: mainQty // บันทึกจำนวนที่ลูกค้าเลือก
+        quantity: mainQty 
     });
     
     sessionStorage.setItem(cartKey, JSON.stringify(cart));

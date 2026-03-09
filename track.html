@@ -163,6 +163,15 @@
         document.getElementById('display-table').innerText = table;
         document.getElementById('drawer-lang-status').innerText = lang.toUpperCase();
 
+        // เพิ่ม Event Listener เพื่อปลดล็อกเสียงเมื่อผู้ใช้สัมผัสหน้าจอครั้งแรก
+        document.body.addEventListener('click', function() {
+            const sound = document.getElementById('notification-sound');
+            sound.play().then(() => {
+                sound.pause(); // เล่นแล้วหยุดทันทีเพื่อ "เบิกทาง" ให้ระบบอนุญาตส่งเสียง
+                sound.currentTime = 0;
+            }).catch(e => {});
+        }, { once: true });
+
         startLiveTracking();
         updatePageText(lang);
     }
@@ -184,6 +193,9 @@
         if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
     }
 
+    // เพิ่มตัวแปรเพื่อเช็คว่าเป็นการโหลดครั้งแรกหรือไม่ (ป้องกันเสียงดังรัวๆ ตอนเปิดหน้าเว็บ)
+    let isFirstLoad = true;
+
     function startLiveTracking() {
         requestNotificationPermission();
         const tableNo = getTableNo();
@@ -202,10 +214,15 @@
                     const order = orderChild.val();
                     const orderId = orderChild.key;
                     
-                    if (lastOrderStatuses[orderId] && lastOrderStatuses[orderId] !== order.status) {
-                        playAlert(orderId, order.status);
+                    // --- ส่วนการจัดการเสียงและแจ้งเตือน ---
+                    if (!isFirstLoad) {
+                        // ถ้าสถานะปัจจุบันไม่เหมือนกับสถานะล่าสุดที่บันทึกไว้
+                        if (lastOrderStatuses[orderId] && lastOrderStatuses[orderId] !== order.status) {
+                            playAlert(orderId, order.status);
+                        }
                     }
                     lastOrderStatuses[orderId] = order.status;
+                    // ----------------------------------
 
                     let orderItemsHtml = '';
                     let statusColor = '#ff9800'; 
@@ -219,56 +236,42 @@
                     if (order.items) {
                         order.items.forEach((item) => {
                             const mainQty = parseInt(item.quantity || 1);
-                            
-                            // ดึงราคาพื้นฐานของเมนูหลัก (Base Price) โดยลองดึงจากหลายฟิลด์ที่อาจเป็นไปได้
-                            const basePrice = parseFloat(item.price || item.unitPrice || item.basePrice || 0);
+                            const basePrice = parseFloat(item.price || item.unitPrice || 0);
                             const displayName = (currentLang === 'en') ? (dict[item.name] || item.name) : item.name;
-
-                            // คำนวณราคาส่วนเสริมแยกต่างหาก
-                            let optionsHtml = '';
-                            if (item.optionsArray) {
-                                optionsHtml = item.optionsArray.map(opt => {
-                                    const optPrice = parseFloat(opt.price || 0);
-                                    const optQty = parseInt(opt.qty || 1);
-                                    const totalOptPrice = optPrice * optQty;
-                                    const optName = (currentLang === 'en') ? (dict[opt.name] || opt.name) : opt.name;
-                                    
-                                    return `
-                                        <div class="addon-line">
-                                            <span>
-                                                <i class="fas fa-plus-circle" style="font-size:0.6rem; color:var(--premium-gold); opacity:0.6;"></i> 
-                                                ${optName} <b>x${optQty}</b>
-                                            </span>
-                                            <span class="addon-price">+฿${totalOptPrice.toFixed(2)}</span>
-                                        </div>`;
-                                }).join('');
-                            }
-
-                            // ราคารวมสุทธิของรายการนี้ (เมนูหลัก + ทุกส่วนเสริม)
                             const finalP = parseFloat(item.finalPrice || 0);
                             grandTotal += finalP;
 
+                            let optionsHtml = '';
+                            if (item.optionsArray) {
+                                optionsHtml = item.optionsArray.map(opt => {
+                                    const optPrice = parseFloat(opt.price || 0) * parseInt(opt.qty || 1);
+                                    const optName = (currentLang === 'en') ? (dict[opt.name] || opt.name) : opt.name;
+                                    return `<div class="addon-line">
+                                                <span><i class="fas fa-plus-circle"></i> ${optName} <b>x${opt.qty}</b></span>
+                                                <span class="addon-price">${optPrice > 0 ? '+฿' + optPrice.toFixed(2) : '-'}</span>
+                                            </div>`;
+                                }).join('');
+                            }
+
                             orderItemsHtml += `
-    <div class="item-row">
-        <div class="item-main">
-            <div style="position: relative;">
-                <img src="${item.img || ''}" class="item-img" onerror="this.src='https://via.placeholder.com/100'">
-                <div style="position: absolute; top: -8px; right: -8px; background: var(--premium-gold); color: #000; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.65rem; border: 2px solid var(--bg-deep);">${mainQty}</div>
-            </div>
-            <div style="flex:1;">
-                <div style="display:flex; justify-content:space-between; align-items: flex-start;">
-                    <div>
-                        <p class="food-name">${displayName}</p>
-                        <span style="font-size: 0.7rem; color: #888;">@฿${basePrice.toFixed(2)}</span>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="font-weight: 600; color: var(--premium-gold);">฿${finalP.toFixed(2)}</span>
-                    </div>
-                </div>
-                <div class="addon-area">${optionsHtml}</div>
-            </div>
-        </div>
-    </div>`;
+                                <div class="item-row">
+                                    <div class="item-main">
+                                        <div style="position: relative;">
+                                            <img src="${item.img || ''}" class="item-img" onerror="this.src='https://via.placeholder.com/100'">
+                                            <div class="qty-badge" style="position: absolute; top: -8px; right: -8px; background: var(--premium-gold); color: #000; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.65rem; border: 2px solid var(--bg-deep);">${mainQty}</div>
+                                        </div>
+                                        <div style="flex:1;">
+                                            <div style="display:flex; justify-content:space-between;">
+                                                <div>
+                                                    <p class="food-name">${displayName}</p>
+                                                    <span style="font-size: 0.7rem; color: #888;">@฿${basePrice.toFixed(2)}</span>
+                                                </div>
+                                                <span style="font-weight: 600; color: var(--premium-gold);">฿${finalP.toFixed(2)}</span>
+                                            </div>
+                                            <div class="addon-area">${optionsHtml}</div>
+                                        </div>
+                                    </div>
+                                </div>`;
                         });
                     }
 
@@ -284,6 +287,9 @@
                 });
                 listContainer.innerHTML = mainHtml;
                 document.getElementById('final-total-amount').textContent = grandTotal.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+                
+                // หลังจากวาด UI ครั้งแรกเสร็จ ให้เปลี่ยน flag เพื่อเริ่มรับฟังการแจ้งเตือนเสียง
+                isFirstLoad = false;
             } else {
                 listContainer.innerHTML = `<div style="text-align:center; padding:100px 0; opacity:0.3;"><i class="fas fa-receipt" style="font-size:3.5rem;"></i><p>ยังไม่มีรายการสั่งครับ</p></div>`;
             }

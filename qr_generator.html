@@ -275,15 +275,19 @@
         }
 
         function generateQR(table, color) {
-            const qrContainer = document.getElementById('qrcode');
-            qrContainer.innerHTML = "";
-            new QRCode(qrContainer, {
-                text: `https://order.menu/t/${table}`,
-                width: 170, height: 170, 
-                colorDark: color,
-                colorLight: "#ffffff"
-            });
-        }
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = "";
+    new QRCode(qrContainer, {
+        
+        // 👇 เปลี่ยน URL ตรงบรรทัดนี้บรรทัดเดียวครับ 👇
+        text: `https://bangfood.vercel.app/start.html?table=${table}`,
+        
+        width: 170, height: 170, 
+        colorDark: color,
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H // แนะนำให้ใส่บรรทัดนี้ไว้เพื่อช่วยให้สแกนง่ายขึ้นแม้โลโก้บัง
+    });
+}
 
         function changeQRColor(color, btn) {
             qrColor = color;

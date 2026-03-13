@@ -110,7 +110,7 @@
             </div>
         </div>
         <div class="top-summary-bar">
-            <div class="summary-label"><span data-lang-en="STATION" data-lang-th="สถานี">สถานี</span> <span id="display-table">1</span> | <span data-lang-en="TOTAL" data-lang-th="ยอดรวมทั้งหมด">TOTAL</span></div>
+            <div class="summary-label"><span data-lang-en="โตัะ" data-lang-th="สถานี">สถานี</span> <span id="display-table">1</span> | <span data-lang-en="TOTAL" data-lang-th="ยอดรวมทั้งหมด">TOTAL</span></div>
             <div class="summary-val">฿<span id="final-total-amount">0.00</span></div>
         </div>
     </div>
@@ -159,7 +159,7 @@
         applyTheme(localStorage.getItem(`theme_table_${table}`) || 'dark');
         const lang = localStorage.getItem(`lang_table_${table}`) || 'th';
         
-        document.getElementById('tracking-table-header').textContent = "STATION " + table;
+        document.getElementById('tracking-table-header').textContent = "โต๊ะ " + table;
         document.getElementById('display-table').innerText = table;
         document.getElementById('drawer-lang-status').innerText = lang.toUpperCase();
 

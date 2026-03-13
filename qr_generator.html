@@ -3,171 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>สร้าง QR Code โต๊ะ | BANGFOOD</title>
+    <title>QR STUDIO ULTIMATE | PRO MAX</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&family=Montserrat:wght@800;900&family=Chakra+Petch:wght@400;700&family=Sarabun:wght@400;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* 📍 Premium Global Config (BANGFOOD Style) */
         :root {
             --premium-gold: #c5a059;
-            --gold-glow: rgba(197, 160, 89, 0.4);
-            --bg-dark: #080809;
-            --bg-card: #141416;
-            --text-main: #ffffff;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --shadow-pos: 0 25px 50px rgba(0,0,0,0.7);
-            --input-bg: rgba(128,128,128,0.08);
+            --bg: #0b0d11;
+            --sidebar-bg: #12141a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #e1e1e6;
+            --accent: #3498db;
+            --stand-bg: #ffffff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
+        body { background: var(--bg); color: var(--text); height: 100vh; display: flex; overflow: hidden; }
+
+        /* Mobile Adjustments */
+        .mobile-nav { display: none; position: fixed; top: 0; width: 100%; background: var(--sidebar-bg); padding: 15px; z-index: 100; border-bottom: 1px solid var(--border); justify-content: space-between; align-items: center; }
+        
+        .sidebar {
+            width: 420px; background: var(--sidebar-bg); border-right: 1px solid var(--border);
+            padding: 25px; display: flex; flex-direction: column; gap: 15px; z-index: 90; overflow-y: auto;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        .section-title { font-size: 0.75rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px;}
+        .section-title i { color: var(--premium-gold); }
+        .grid-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        
+        .opt-btn { 
+            aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--border); 
+            background: var(--card-bg); cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; font-size: 1.1rem; color: var(--text); transition: all 0.2s ease;
+        }
+        .opt-btn:hover:not(:disabled) { border-color: rgba(197, 160, 89, 0.5); background: rgba(255,255,255,0.05); transform: translateY(-2px); }
+        .opt-btn.active { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.1); color: var(--premium-gold); box-shadow: 0 4px 10px rgba(197,160,89,0.15); }
+
+        .input-box {
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            padding: 14px 15px; border-radius: 10px; color: #fff; outline: none; transition: 0.3s;
+            font-size: 0.95rem;
+        }
+        .input-box:focus { border-color: var(--premium-gold); background: rgba(255,255,255,0.05); }
+
+        .btn-generate {
+            background: linear-gradient(135deg, var(--premium-gold), #b38b45);
+            color: #111; border: none; padding: 16px; border-radius: 10px;
+            font-weight: 800; cursor: pointer; font-size: 1rem; letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3); transition: 0.3s;
+            text-transform: uppercase;
         }
 
-        body.light-theme {
-            --bg-dark: #f1f3f6;
-            --bg-card: #ffffff;
-            --text-main: #1a1d23;
-            --glass-border: rgba(0, 0, 0, 0.08);
-            --shadow-pos: 0 15px 40px rgba(0,0,0,0.06);
-            --input-bg: #f9f9f9;
+        .viewport { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 40px; background: radial-gradient(circle at center, #1a1d24 0%, #080a0d 100%); overflow: auto; }
+        
+        /* QR Stand Design */
+        .qr-stand {
+            background: var(--stand-bg); width: 380px; min-height: 520px; padding: 50px 40px; border-radius: 24px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5); text-align: center;
+            position: relative; overflow: hidden; 
+            transition: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); opacity: 0.05; filter: blur(10px); pointer-events: none;
+            flex-shrink: 0; transform: translateY(20px) scale(0.95);
         }
+        .qr-stand.active { opacity: 1; filter: blur(0); pointer-events: auto; transform: translateY(0) scale(1); }
+        .shape-oval { border-radius: 190px 190px 24px 24px; }
+        .shape-sharp { border-radius: 8px; }
 
-        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; outline: none; }
-        body { margin: 0; padding: 40px 20px; min-height: 100vh; background-color: var(--bg-dark); color: var(--text-main); transition: 0.5s ease; display: flex; justify-content: center; align-items: flex-start; }
+        .qr-wrapper { position: relative; display: inline-flex; padding: 20px; margin: 25px 0; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .table-badge { background: #111; color: var(--premium-gold); padding: 8px 35px; border-radius: 8px; font-size: 2rem; font-weight: 900; display: inline-block; letter-spacing: 2px; }
 
-        .generator-container { width: 100%; max-width: 950px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; animation: slideUp 0.8s ease; }
-
-        /* 🎛️ Control Panel */
-        .control-panel { background: var(--bg-card); border: 1px solid var(--glass-border); padding: 40px; border-radius: 45px; box-shadow: var(--shadow-pos); }
-        .header-title h1 { font-size: 2rem; font-weight: 900; margin: 0; color: var(--premium-gold); letter-spacing: -1px; }
-        .header-title p { color: #888; font-size: 0.85rem; margin-top: 5px; font-weight: 600; }
-
-        .input-group { margin: 30px 0; }
-        .input-group label { display: block; font-size: 0.85rem; color: var(--text-main); font-weight: 800; margin-bottom: 12px; letter-spacing: 1px; }
-        .input-group input { width: 100%; padding: 20px 25px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 1.2rem; font-weight: 700; transition: 0.3s; }
-        .input-group input:focus { border-color: var(--premium-gold); box-shadow: 0 0 20px var(--gold-glow); }
-
-        .url-preview { font-size: 0.7rem; color: #555; margin-top: 8px; word-break: break-all; font-family: monospace; }
-
-        .btn-action { width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; font-size: 1.1rem; border: none; margin-top: 15px; }
-        .btn-generate { background: var(--premium-gold); color: #000; box-shadow: 0 10px 30px var(--gold-glow); }
-        .btn-download { background: rgba(128,128,128,0.1); color: var(--text-main); border: 1px solid var(--glass-border); display: none; }
-
-        /* 📱 QR Preview Panel */
-        .preview-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .qr-card-preview { 
-            background: #ffffff; width: 320px; padding: 40px 30px; border-radius: 35px; 
-            text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.5); border: 8px solid var(--premium-gold);
-            transform: scale(0.9); opacity: 0.4; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* Sticker Styles */
+        .sticker-container { position: absolute; cursor: move; user-select: none; z-index: 10; transform-origin: center center; }
+        .sticker-badge { background: #e74c3c; color: white; padding: 5px 15px; border-radius: 20px; font-weight: 800; font-size: 1.2rem; border: 2px solid white; }
+        .sticker-ctrls { 
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 5px; background: rgba(0,0,0,0.85); padding: 6px 10px; border-radius: 30px;
+            opacity: 0; transition: 0.2s; pointer-events: none;
         }
-        .qr-card-preview.active { transform: scale(1); opacity: 1; }
-        .qr-brand { color: #000; font-size: 1.8rem; font-weight: 900; letter-spacing: 3px; }
-        .qr-sub { color: #888; font-size: 0.75rem; font-weight: 700; margin-bottom: 25px; text-transform: uppercase; }
-        .qr-code-box { background: #fff; padding: 15px; border-radius: 20px; display: inline-block; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .qr-table-label { background: var(--premium-gold); color: #000; padding: 12px 25px; border-radius: 50px; font-size: 1.5rem; font-weight: 900; }
+        .sticker-container:hover .sticker-ctrls, .sticker-container.active-sticker .sticker-ctrls { opacity: 1; pointer-events: auto; }
+        .s-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; cursor: pointer; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* Toolbar */
+        .toolbar {
+            position: absolute; bottom: 30px; background: rgba(18, 20, 26, 0.85); backdrop-filter: blur(15px);
+            padding: 12px 25px; border-radius: 20px; display: flex; gap: 20px; border: 1px solid var(--border);
+            opacity: 0; transform: translateY(20px); transition: 0.5s;
+        }
+        .toolbar.show { opacity: 1; transform: translateY(0); }
+        .tool-btn { background: rgba(255,255,255,0.05); border: 1px solid transparent; color: #fff; cursor: pointer; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 
-        @media (max-width: 850px) {
-            .generator-container { grid-template-columns: 1fr; }
+        /* Color Themes */
+        .bg-grad-1 { background: #ffffff; color: #111; }
+        .bg-grad-blue { background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); color: #102a43; }
+        .bg-grad-dark-gold { background: #121212 !important; color: #e1e1e6 !important; }
+        .bg-grad-dark-gold .qr-wrapper { background: #1a1a1a; border: 1px solid #333; }
+        .bg-grad-dark-gold .table-badge { background: #c5a059; color: #111; }
+        .color-dot { width: 18px; height: 18px; border-radius: 50%; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 900px) {
+        .sidebar { 
+            width: 85%; /* กว้างขึ้นเล็กน้อยเพื่อให้กดง่าย */
+            max-width: 320px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+        }
+        .viewport {
+            /* ป้องกันการ Zoom เมื่อกดปุ่มรัวๆ บน iOS */
+            touch-action: manipulation; 
+        }
+        .opt-btn {
+            min-height: 44px; /* ขนาดมาตรฐานที่นิ้วกดง่าย */
+        }
+    }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            body { background: white !important; height: auto; overflow: visible; }
+            .sidebar, .toolbar, .mobile-nav, .placeholder-msg, .sticker-ctrls { display: none !important; }
+            .viewport { padding: 0; background: none; display: block; }
+            .qr-stand { 
+                opacity: 1 !important; filter: none !important; transform: none !important;
+                margin: 0 auto; box-shadow: none !important; border: 1px solid #eee;
+                page-break-inside: avoid;
+            }
+            #sticker-layer { pointer-events: none; }
         }
     </style>
 </head>
 <body>
-
-    <div class="generator-container">
-        <div class="control-panel">
-            <div class="header-title">
-                <h1>QR GENERATOR</h1>
-                <p>สร้างโค้ดสำหรับติดที่โต๊ะอาหาร</p>
-            </div>
-
-            <div class="input-group">
-                <label>หมายเลขโต๊ะ (TABLE NUMBER)</label>
-                <input type="text" id="table-input" placeholder="ใส่เลขโต๊ะ เช่น 99" oninput="updateUrlPreview()">
-                <div class="url-preview" id="url-display">ลิงก์จะปรากฏที่นี่...</div>
-            </div>
-
-            <button class="btn-action btn-generate" onclick="generateNow()">
-                <i class="fas fa-magic"></i> สร้าง QR Code ทันที
-            </button>
-
-            <button class="btn-action btn-download" id="btn-dl" onclick="downloadQR()">
-                <i class="fas fa-download"></i> ดาวน์โหลดรูปภาพ
-            </button>
-        </div>
-
-        <div class="preview-panel">
-            <div class="qr-card-preview" id="preview-card">
-                <div class="qr-brand">BANGFOOD</div>
-                <div class="qr-sub">Scan to Order</div>
-                
-                <div class="qr-code-box" id="qrcode">
-                    </div>
-
-                <div class="qr-table-label" id="label-table">TABLE -</div>
-            </div>
-        </div>
+    <div class="mobile-nav">
+        <h2 style="font-family:'Montserrat'; font-size:1.1rem; font-weight:900; letter-spacing: 1px;"><span style="color:var(--premium-gold)">QR</span> STUDIO</h2>
+        <button class="tool-btn" style="width:40px;height:40px;" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
     </div>
 
+    <aside class="sidebar" id="mainSidebar">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:36px; height:36px; background:linear-gradient(135deg, var(--premium-gold), #b38b45); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#111;"><i class="fas fa-crown"></i></div>
+                <h2 style="font-family:'Montserrat'; font-size:1.1rem; font-weight:900;">PRO MAX</h2>
+            </div>
+            <button class="opt-btn" style="width:40px; height:40px;" onclick="toggleLang()" id="langBtn">EN</button>
+        </div>
+
+        <div class="section-title"><i class="fas fa-sliders-h"></i> <span data-key="step1">Step 1: Setup Details</span></div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <input type="text" id="brand-input" class="input-box" placeholder="Brand / Store Name" value="BANGFOOD" oninput="liveUpdate()">
+            <input type="text" id="table-input" class="input-box" placeholder="Table Number" value="01" oninput="liveUpdate()">
+            <button class="btn-generate" onclick="initDesign()">
+                <i class="fas fa-bolt" style="margin-right: 5px;"></i> <span data-key="genBtn">ACTIVATE DESIGN</span>
+            </button>
+        </div>
+
+        <div id="edit-controls" style="opacity: 0.3; pointer-events: none; transition: 0.5s;">
+            <div class="section-title"><i class="fas fa-font"></i> <span data-key="styling">Typography</span></div>
+            <div class="grid-options">
+                <button class="opt-btn active" onclick="setFont('Montserrat', this)" style="font-family: Montserrat;">M</button>
+                <button class="opt-btn" onclick="setFont('Chakra Petch', this)" style="font-family: Chakra Petch;">C</button>
+                <button class="opt-btn" onclick="setFont('Kanit', this)" style="font-family: Kanit;">K</button>
+                <button class="opt-btn" onclick="setFont('JetBrains Mono', this)" style="font-family: 'JetBrains Mono';">J</button>
+            </div>
+
+            <div class="section-title"><i class="fas fa-vector-square"></i> <span data-key="shape">Shape & Logo</span></div>
+            <div class="grid-options">
+                <button class="opt-btn" onclick="document.getElementById('logo-upload').click()"><i class="fas fa-cloud-upload-alt"></i></button>
+                <button class="opt-btn active" onclick="setStandShape('', this)"><i class="fas fa-square"></i></button>
+                <button class="opt-btn" onclick="setStandShape('shape-oval', this)"><i class="fas fa-archway"></i></button>
+                <button class="opt-btn" onclick="setStandShape('shape-sharp', this)"><i class="fas fa-stop"></i></button>
+            </div>
+            <input type="file" id="logo-upload" hidden accept="image/*" onchange="handleLogo(this)">
+
+            <div class="section-title"><i class="fas fa-swatchbook"></i> <span data-key="theme">Theme</span></div>
+            <div class="grid-options">
+                <button class="opt-btn bg-grad-1 active" onclick="setPattern('bg-grad-1', this)"></button>
+                <button class="opt-btn bg-grad-blue" onclick="setPattern('bg-grad-blue', this)"></button>
+                <button class="opt-btn" style="background:#121212;" onclick="setPattern('bg-grad-dark-gold', this)"></button>
+            </div>
+            
+            <div class="section-title"><i class="fas fa-qrcode"></i> <span data-key="qrcolor">QR Color</span></div>
+            <div class="grid-options">
+                <button class="opt-btn active" onclick="changeQRColor('#000000', this)"><div class="color-dot" style="background:#000;"></div></button>
+                <button class="opt-btn" onclick="changeQRColor('#c5a059', this)"><div class="color-dot" style="background:#c5a059;"></div></button>
+            </div>
+
+            <div class="section-title"><i class="fas fa-icons"></i> <span data-key="decor">Decorations</span></div>
+            <div class="grid-options">
+                <button class="opt-btn" onclick="addSticker('emoji', '🔥')">🔥</button>
+                <button class="opt-btn" onclick="addSticker('emoji', '⭐')">⭐</button>
+                <button class="opt-btn" onclick="addSticker('badge', 'BEST')">BEST</button>
+                <button class="opt-btn" onclick="addSticker('badge', 'NEW')">NEW</button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="viewport" onclick="handleViewportClick(event)">
+        <div id="placeholder-text" class="placeholder-msg" style="text-align:center; opacity:0.3;">
+            <i class="fas fa-qrcode" style="font-size: 3rem; color: var(--premium-gold); margin-bottom: 1rem;"></i>
+            <h3 data-key="welcome">Fill details & Activate to start</h3>
+        </div>
+
+        <div id="printable-area" class="qr-stand bg-grad-1">
+            <div id="sticker-layer" style="position:absolute; inset:0; pointer-events:none; z-index:10; overflow:hidden; border-radius:inherit;"></div>
+            <div id="ribbon" style="position: absolute; left: -30px; top: 25px; background: var(--premium-gold); color: #111; padding: 6px 40px; transform: rotate(-45deg); font-size: 0.65rem; font-weight: 900; z-index:2; letter-spacing: 2px;">PREMIUM</div>
+            
+            <h2 id="display-brand" style="font-weight:900; font-size:2.2rem; text-transform: uppercase; margin-top: 10px;">BANGFOOD</h2>
+            <p style="font-size:0.7rem; letter-spacing:3px; opacity:0.6; font-weight:700; margin-bottom:15px;">ESTABLISHED 2026</p>
+            
+            <div class="qr-wrapper">
+                <div id="qrcode"></div>
+            </div>
+            
+            <div style="margin-top:10px;">
+                <div class="table-badge" id="display-table">01</div>
+            </div>
+            <p id="footer-text" style="margin-top:30px; font-size:0.75rem; font-weight:800; opacity:0.7;">SCAN TO START ORDERING</p>
+        </div>
+
+        <div id="main-toolbar" class="toolbar">
+            <button class="tool-btn" onclick="exportPNG()" title="Download PNG"><i class="fas fa-download"></i></button>
+            <button class="tool-btn" onclick="window.print()" title="Print Now"><i class="fas fa-print"></i></button>
+            <button class="tool-btn" style="color: #e74c3c;" onclick="location.reload()"><i class="fas fa-redo-alt"></i></button>
+        </div>
+    </main>
+
     <script>
-        // 1. ดึง Path ของหน้า start.html อัตโนมัติ
-        function getTargetUrl(table) {
-            const currentPath = window.location.pathname;
-            const directory = currentPath.substring(0, currentPath.lastIndexOf('/'));
-            // สร้าง URL เต็ม: โปรโตคอล + โฮสต์ + โฟลเดอร์เดิม + start.html?table=XX
-            const fullUrl = window.location.origin + directory + "/start.html?table=" + table;
-            return fullUrl;
+        let currentLang = 'EN';
+        let qrColor = "#000000";
+        let zIndexCounter = 100;
+
+        const langData = {
+            TH: { step1: "ขั้นตอนที่ 1: ตั้งค่า", genBtn: "สร้างดีไซน์", styling: "รูปแบบอักษร", shape: "รูปทรง", theme: "ธีม", qrcolor: "สีคิวอาร์", decor: "ของตกแต่ง", welcome: "กรอกข้อมูลและกดสร้างดีไซน์" },
+            EN: { step1: "Step 1: Setup Details", genBtn: "ACTIVATE DESIGN", styling: "Typography", shape: "Shape & Logo", theme: "Theme", qrcolor: "QR Color", decor: "Decorations", welcome: "Fill details & Activate to start" }
+        };
+
+        function toggleLang() {
+            currentLang = currentLang === 'TH' ? 'EN' : 'TH';
+            document.getElementById('langBtn').innerText = currentLang;
+            document.querySelectorAll('[data-key]').forEach(el => {
+                el.innerText = langData[currentLang][el.getAttribute('data-key')];
+            });
         }
 
-        // 2. แสดงตัวอย่าง Link ขณะพิมพ์
-        function updateUrlPreview() {
-            const val = document.getElementById('table-input').value.trim();
-            const display = document.getElementById('url-display');
-            if(val) {
-                display.innerText = "Target: " + getTargetUrl(val);
-            } else {
-                display.innerText = "กรุณาใส่เลขโต๊ะ...";
+        function toggleSidebar() { document.getElementById('mainSidebar').classList.toggle('open'); }
+        
+        function liveUpdate() {
+            if(document.getElementById('printable-area').classList.contains('active')) {
+                document.getElementById('display-brand').innerText = document.getElementById('brand-input').value || "BRAND";
+                document.getElementById('display-table').innerText = document.getElementById('table-input').value || "00";
             }
         }
 
-        // 3. ฟังก์ชันหลัก: สร้าง QR Code
-        function generateNow() {
-            const tableNo = document.getElementById('table-input').value.trim();
-            if(!tableNo) { alert("กรุณาใส่เลขโต๊ะก่อนครับ!"); return; }
+        function initDesign() {
+            const brand = document.getElementById('brand-input').value;
+            const table = document.getElementById('table-input').value;
+            if(!brand || !table) return alert("Please fill all details");
 
-            const finalUrl = getTargetUrl(tableNo);
-            const qrContainer = document.getElementById('qrcode');
+            document.getElementById('printable-area').classList.add('active');
+            document.getElementById('placeholder-text').style.display = 'none';
+            document.getElementById('edit-controls').style.opacity = '1';
+            document.getElementById('edit-controls').style.pointerEvents = 'auto';
+            document.getElementById('main-toolbar').classList.add('show');
             
-            // ล้างอันเก่า
-            qrContainer.innerHTML = '';
-
-            // สร้างใหม่
-            new QRCode(qrContainer, {
-                text: finalUrl,
-                width: 220,
-                height: 220,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-
-            // อัปเดตหน้าตา Preview
-            document.getElementById('label-table').innerText = "TABLE " + tableNo;
-            document.getElementById('preview-card').classList.add('active');
-            document.getElementById('btn-dl').style.display = 'flex';
+            generateQR(table, qrColor);
+            liveUpdate();
+            if(window.innerWidth < 900) toggleSidebar();
         }
 
-        // 4. ฟังก์ชันดาวน์โหลด
-        function downloadQR() {
-            const tableNo = document.getElementById('table-input').value;
-            const img = document.querySelector('#qrcode img');
-            const canvas = document.querySelector('#qrcode canvas');
-            
-            // ใช้ค่าจาก <img> ถ้ามี (qrcode.js จะสร้างทั้งสองอย่าง)
-            const imgUri = img ? img.src : canvas.toDataURL("image/png");
+        function generateQR(table, color) {
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: `https://order.menu/t/${table}`,
+                width: 170, height: 170, 
+                colorDark: color,
+                colorLight: "#ffffff"
+            });
+        }
 
+        function changeQRColor(color, btn) {
+            qrColor = color;
+            generateQR(document.getElementById('table-input').value, color);
+            updateActiveBtn(btn);
+        }
+
+        function setFont(font, btn) { 
+            document.getElementById('display-brand').style.fontFamily = font; 
+            updateActiveBtn(btn);
+        }
+
+        function setStandShape(className, btn) {
+            const stand = document.getElementById('printable-area');
+            stand.classList.remove('shape-oval', 'shape-sharp');
+            if(className) stand.classList.add(className);
+            updateActiveBtn(btn);
+        }
+
+        function setPattern(className, btn) {
+            const stand = document.getElementById('printable-area');
+            stand.classList.remove('bg-grad-1', 'bg-grad-blue', 'bg-grad-dark-gold');
+            stand.classList.add(className);
+            updateActiveBtn(btn);
+        }
+
+        function addSticker(type, content) {
+            const layer = document.getElementById('sticker-layer');
+            const div = document.createElement('div');
+            div.className = 'sticker-container active-sticker';
+            div.style.left = '50%'; div.style.top = '20%';
+            div.style.position = 'absolute';
+            div.style.pointerEvents = 'auto';
+            
+            let innerHTML = type === 'emoji' ? `<span style="font-size:3rem;">${content}</span>` : `<div class="sticker-badge">${content}</div>`;
+            div.innerHTML = `
+                <div class="sticker-ctrls">
+                    <button class="s-btn" onclick="updateStickerTransform(this, 0.1, 0)"><i class="fas fa-plus"></i></button>
+                    <button class="s-btn" onclick="updateStickerTransform(this, -0.1, 0)"><i class="fas fa-minus"></i></button>
+                    <button class="s-btn delete" onclick="this.closest('.sticker-container').remove()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="sticker-transform-wrapper" data-scale="1" data-rot="0">
+                    <div class="sticker-content">${innerHTML}</div>
+                </div>
+            `;
+            makeDraggable(div);
+            layer.appendChild(div);
+        }
+
+        function updateStickerTransform(btn, scaleChange, rotChange) {
+            event.stopPropagation();
+            const wrapper = btn.closest('.sticker-container').querySelector('.sticker-transform-wrapper');
+            let scale = parseFloat(wrapper.getAttribute('data-scale')) + scaleChange;
+            wrapper.setAttribute('data-scale', scale);
+            wrapper.style.transform = `scale(${scale})`;
+        }
+
+        function makeDraggable(el) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        
+        // รองรับทั้ง Mouse และ Touch
+        el.onmousedown = dragStart;
+        el.ontouchstart = dragStart;
+
+        function dragStart(e) {
+            // ป้องกันการเลื่อนหน้าจอขณะลากสติกเกอร์
+            if (e.type === 'touchstart') {
+                pos3 = e.touches[0].clientX;
+                pos4 = e.touches[0].clientY;
+            } else {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+            }
+            
+            document.onmouseup = dragEnd;
+            document.onmousemove = dragMove;
+            document.ontouchend = dragEnd;
+            document.ontouchmove = dragMove;
+            
+            // เพิ่ม Class เพื่อบอกว่ากำลังลากอยู่
+            el.classList.add('active-sticker');
+        }
+
+        function dragMove(e) {
+            let cx, cy;
+            if (e.type === 'touchmove') {
+                cx = e.touches[0].clientX;
+                cy = e.touches[0].clientY;
+            } else {
+                cx = e.clientX;
+                cy = e.clientY;
+            }
+            
+            pos1 = pos3 - cx;
+            pos2 = pos4 - cy;
+            pos3 = cx;
+            pos4 = cy;
+            
+            el.style.top = (el.offsetTop - pos2) + "px";
+            el.style.left = (el.offsetLeft - pos1) + "px";
+        }
+
+        function dragEnd() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+            document.ontouchend = null;
+            document.ontouchmove = null;
+        }
+    }
+
+        function updateActiveBtn(btn) {
+            btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function handleViewportClick(e) {
+            if(!e.target.closest('.sticker-container')) {
+                document.querySelectorAll('.sticker-container').forEach(s => s.classList.remove('active-sticker'));
+            }
+        }
+
+        async function exportPNG() {
+            const area = document.getElementById('printable-area');
+            const canvas = await html2canvas(area, { scale: 3, backgroundColor: null });
             const link = document.createElement('a');
-            link.href = imgUri;
-            link.download = `BANGFOOD_Table_${tableNo}.png`;
+            link.download = 'QR_STAND.png';
+            link.href = canvas.toDataURL();
             link.click();
+        }
+        
+        function handleLogo(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const layer = document.getElementById('sticker-layer');
+                    const div = document.createElement('div');
+                    div.className = 'sticker-container';
+                    div.style.left = '40%'; div.style.top = '10%';
+                    div.innerHTML = `
+                        <div class="sticker-ctrls"><button class="s-btn delete" onclick="this.closest('.sticker-container').remove()">×</button></div>
+                        <div class="sticker-transform-wrapper" data-scale="1"><img src="${e.target.result}" style="width:70px; border-radius:10px;"></div>
+                    `;
+                    makeDraggable(div);
+                    layer.appendChild(div);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
         }
     </script>
 </body>

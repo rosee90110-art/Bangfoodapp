@@ -49,19 +49,91 @@
         .tile-card b { display: block; font-size: 2.6rem; margin: 5px 0; font-weight: 800; letter-spacing: -1.5px; }
         .tile-card span { font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: 700; letter-spacing: 2px; }
 
-        /* 🔍 Control Bar */
-        .top-control-bar { display: flex; gap: 20px; align-items: center; max-width: 1400px; margin: 0 auto 45px; flex-wrap: wrap; }
-        .search-wrapper { flex: 2; position: relative; min-width: 250px; }
-        .search-wrapper input { 
-            width: 100%; padding: 20px 25px 20px 75px; border-radius: 60px; 
-            border: 1.5px solid var(--glass-border); background: var(--bg-card); 
-            color: var(--text-main); font-size: 1.1rem; box-shadow: var(--shadow-pos); transition: 0.3s;
+        /* 🔍 Updated Control Bar - ปรับปรุงใหม่ให้เข้าที่เข้าทาง */
+        .top-control-bar { 
+            display: flex; 
+            gap: 15px; 
+            align-items: center; 
+            max-width: 1400px; 
+            margin: 0 auto 45px; 
+            flex-wrap: nowrap; 
         }
-        .search-wrapper i { position: absolute; left: 30px; top: 50%; transform: translateY(-50%); color: var(--premium-gold); font-size: 1.5rem; }
+        
+        .search-wrapper { 
+            flex: 1; 
+            position: relative; 
+        }
+        
+        .search-wrapper input { 
+            width: 100%; 
+            height: 52px;
+            padding: 0 25px 0 60px; 
+            border-radius: 20px; 
+            border: 1px solid var(--glass-border); 
+            background: var(--bg-card); 
+            color: var(--text-main); 
+            font-size: 1rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            transition: 0.3s;
+        }
+        
+        .search-wrapper input:focus {
+            border-color: var(--premium-gold);
+            background: rgba(255, 255, 255, 0.02);
+        }
 
-        .button-group { display: flex; gap: 10px; flex: 1; min-width: max-content; }
-        .btn-action { padding: 18px 30px; border-radius: 60px; border: 1.5px solid var(--glass-border); font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; font-size: 1rem; box-shadow: var(--shadow-pos); color: var(--text-main); background: var(--bg-card); white-space: nowrap; }
-        .btn-add-menu { background: var(--premium-gold); color: #000; border: none; }
+        .search-wrapper i { 
+            position: absolute; 
+            left: 22px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: var(--premium-gold); 
+            font-size: 1.2rem; 
+            opacity: 0.8;
+        }
+
+        .button-group { 
+            display: flex; 
+            gap: 12px; 
+            min-width: max-content; 
+        }
+        
+        .btn-action { 
+            height: 52px;
+            padding: 0 25px; 
+            border-radius: 18px; 
+            border: 1px solid var(--glass-border); 
+            font-weight: 600; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            font-size: 0.95rem; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
+            color: var(--text-main); 
+            background: var(--bg-card); 
+            white-space: nowrap; 
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            border-color: var(--premium-gold);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-add-menu { 
+            background: var(--premium-gold); 
+            color: #000; 
+            border: none; 
+            font-weight: 800;
+        }
+        
+        .btn-add-menu:hover {
+            background: #d4af37;
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
 
         /* 🍱 Product Cards */
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; max-width: 1400px; margin: 0 auto; }
@@ -92,7 +164,7 @@
         .upload-box { width: 100%; height: 300px; background: var(--input-bg); border: 2px dashed var(--premium-gold); border-radius: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 30px; cursor: pointer; }
         input[type="text"], input[type="number"], select { width: 100%; padding: 18px 25px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); margin-bottom: 15px; font-size: 1rem; }
 
-        /* 📱 Optimized Mobile (Small & Easy) */
+        /* 📱 Optimized Mobile */
         @media (max-width: 768px) {
             body { padding: 12px; }
             .dashboard-tiles { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
@@ -101,29 +173,24 @@
             .tile-card b { font-size: 1.6rem; }
             .tile-card span { font-size: 0.55rem; letter-spacing: 1px; }
 
-            .top-control-bar { gap: 10px; margin-bottom: 20px; flex-direction: column; align-items: stretch; }
-            .search-wrapper { flex: none; min-width: 100%; }
-            .search-wrapper input { padding: 14px 20px 14px 50px; font-size: 0.95rem; border-radius: 30px; }
-            .search-wrapper i { left: 20px; font-size: 1.1rem; }
+            .top-control-bar { flex-direction: column; gap: 12px; margin-bottom: 30px; }
+            .search-wrapper { width: 100%; }
+            .search-wrapper input { height: 48px; padding-left: 50px; border-radius: 15px; }
+            .search-wrapper i { left: 18px; font-size: 1.1rem; }
             
-            .button-group { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 8px; }
-            .btn-action { padding: 12px 10px; font-size: 0.85rem; border-radius: 25px; width: 100%; }
-            .btn-action i { font-size: 0.9rem; }
+            .button-group { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+            .btn-action { height: 48px; font-size: 0.85rem; border-radius: 15px; width: 100%; padding: 0; }
 
             .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .product-card { border-radius: 25px; }
             .p-thumb-wrapper { height: 140px; }
-            .cat-badge { top: 10px; left: 10px; padding: 4px 10px; font-size: 0.5rem; }
             .p-info { padding: 15px; }
-            .p-info b { font-size: 0.95rem; margin-bottom: 4px; }
+            .p-info b { font-size: 0.95rem; }
             .p-info span { font-size: 1.1rem; }
             .card-actions { padding: 0 15px 15px; }
             .btn-status { padding: 6px 12px; font-size: 0.7rem; border-radius: 12px; }
-            .btn-delete { font-size: 1.1rem; }
 
-            #editor-container { padding: 25px 20px; border-radius: 35px; max-height: 95vh; }
-            .upload-box { height: 180px; border-radius: 25px; margin-bottom: 15px; }
-            input[type="text"], input[type="number"], select { padding: 12px 18px; font-size: 0.9rem; border-radius: 15px; margin-bottom: 10px; }
+            #editor-container { padding: 30px 20px; border-radius: 40px; }
         }
 
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -148,7 +215,6 @@
 
 <div class="top-control-bar">
     <div class="search-wrapper">
-        <i class="fas fa-search"></i>
         <input type="text" id="menu-search" placeholder="ค้นหาเมนู..." oninput="filterMenu()">
     </div>
     <div class="button-group">
@@ -156,7 +222,7 @@
             <i class="fas fa-layer-group"></i> <span id="txt-btn-addon">ส่วนเสริม</span>
         </button>
         <button class="btn-action btn-add-menu" onclick="openMenuEditor()">
-            <i class="fas fa-plus-circle"></i> <span id="txt-btn-add">เพิ่มเมนู</span>
+            <i class="fas fa-plus"></i> <span id="txt-btn-add">เพิ่มเมนู</span>
         </button>
     </div>
 </div>
@@ -229,8 +295,8 @@
         document.body.classList.toggle('light-theme', isLight);
         const lang = localStorage.getItem('bf_lang') || 'th';
         const dict = {
-            th: { search: "ค้นหา...", all: "พรีเมียมทั้งหมด", food: "อาหารหลัก", noodle: "ก๋วยเตี๋ยว", drink: "เครื่องดื่ม", addon: "ส่วนเสริม", add: "เพิ่มเมนู", upload: "อัปโหลด", instock: "ขายอยู่", out: "หมด" },
-            en: { search: "Search...", all: "ALL", food: "MAIN", noodle: "NOODLE", drink: "DRINK", addon: "ADDON", add: "ADD", upload: "UPLOAD", instock: "ACTIVE", out: "SOLD OUT" }
+            th: { search: "ค้นหาเมนูที่ต้องการ...", all: "พรีเมียมทั้งหมด", food: "อาหารหลัก", noodle: "ก๋วยเตี๋ยว", drink: "เครื่องดื่ม", addon: "ส่วนเสริม", add: "เพิ่มเมนู", upload: "อัปโหลด", instock: "ขายอยู่", out: "หมด" },
+            en: { search: "Search menu...", all: "ALL", food: "MAIN", noodle: "NOODLE", drink: "DRINK", addon: "ADDON", add: "ADD", upload: "UPLOAD", instock: "ACTIVE", out: "SOLD OUT" }
         };
         const d = dict[lang];
         document.getElementById('menu-search').placeholder = d.search;

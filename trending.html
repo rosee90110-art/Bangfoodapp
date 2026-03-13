@@ -57,28 +57,52 @@
         .minimal-btn.active { background: var(--premium-gold); color: #000; border-color: var(--premium-gold); }
         .minimal-select, .minimal-date { background: transparent; border: none; color: var(--text); font-weight: 800; font-size: 0.85rem; outline: none; cursor: pointer; }
 
-        /* 📱 Mobile UI Logic (Responsive) */
+        /* -----------------------------------------------------------
+           🖨️ PRINT OPTIMIZATION
+        ----------------------------------------------------------- */
+        @media print {
+            @page { size: A4; margin: 10mm; }
+            body { background: white !important; color: black !important; padding: 0 !important; width: 100%; }
+            .grid-container { display: block !important; width: 100% !important; max-width: none !important; }
+            
+            /* ซ่อนกราฟและส่วนควบคุม */
+            .timeline-box, .control-pill, .minimal-btn, .progress-micro, #peak-status { display: none !important; }
+            
+            /* ปรับ Header รายงาน */
+            .analytics-header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 25px; display: flex !important; justify-content: space-between !important; align-items: center !important; }
+            .analytics-header h1 { color: black !important; font-size: 2rem !important; }
+            #report-period { color: black !important; opacity: 1 !important; font-size: 0.9rem !important; letter-spacing: 1px !important; }
+
+            /* สถิติสรุป (แถวบน) */
+            .stat-cluster { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 15px !important; margin-bottom: 30px !important; width: 100%; }
+            .ring-node { border: 1px solid #000 !important; padding: 15px !important; border-radius: 10px !important; background: none !important; grid-column: span 1 !important; }
+            .ring-node b { font-size: 1.5rem !important; color: black !important; }
+            .ring-node span { font-size: 0.7rem !important; color: #555 !important; }
+
+            /* รายการอาหาร (ตารางเรียงลงมาเต็มหน้า) */
+            .leaderboard-masonry { display: block !important; width: 100% !important; }
+            .menu-tile { 
+                display: flex !important; flex-direction: row !important; align-items: center !important; 
+                padding: 12px 10px !important; border: none !important; border-bottom: 1px solid #ccc !important;
+                border-radius: 0 !important; background: none !important; animation: none !important;
+                page-break-inside: avoid;
+            }
+            .tile-rank { position: static !important; font-size: 1.1rem !important; opacity: 1 !important; color: black !important; width: 40px; }
+            .tile-title { font-size: 1.1rem !important; flex-grow: 1 !important; font-weight: bold !important; }
+            .tile-count { font-size: 1.1rem !important; color: black !important; width: 120px; text-align: right; margin: 0 20px; }
+            .menu-tile div[style*="font-size:0.6rem"] { font-size: 0.9rem !important; opacity: 1 !important; color: #444 !important; width: 150px; text-align: right; }
+        }
+
+        /* 📱 Mobile UI Logic */
         @media (max-width: 768px) {
             body { padding: 15px; }
             .grid-container { gap: 15px; }
-
             .analytics-header { flex-direction: column; align-items: flex-start; gap: 10px; }
             .analytics-header h1 { font-size: 1.8rem; }
-
-            .timeline-box { grid-column: span 12; padding: 20px; border-radius: 25px; }
+            .timeline-box { grid-column: span 12; }
             .stat-cluster { grid-column: span 12; }
-            .ring-node { padding: 20px; border-radius: 25px; }
-            .ring-node b { font-size: 1.4rem; }
-
-            .control-pill { 
-                border-radius: 25px; padding: 20px; 
-                flex-direction: column; align-items: stretch; gap: 15px; 
-            }
-            .control-pill > div { justify-content: center; flex-wrap: wrap; }
-            #separator { display: none !important; }
-
+            .control-pill { border-radius: 25px; padding: 20px; flex-direction: column; align-items: stretch; gap: 15px; }
             .leaderboard-masonry { grid-template-columns: 1fr; }
-            .menu-tile { padding: 25px; border-radius: 25px; }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -91,7 +115,7 @@
         
         <header class="analytics-header">
             <div>
-                <span style="font-size: 0.7rem; color: var(--premium-gold); font-weight: 800; letter-spacing: 5px; text-transform: uppercase;">Business Intelligence</span>
+                <span id="report-period" style="font-size: 0.7rem; color: var(--premium-gold); font-weight: 800; letter-spacing: 5px; text-transform: uppercase;">Business Intelligence</span>
                 <h1 data-lang-th="บทวิเคราะห์" data-lang-en="ANALYTICS">บทวิเคราะห์</h1>
             </div>
             <div id="peak-status" style="font-size: 0.8rem; font-weight: 800; opacity: 0.6;"></div>
@@ -122,6 +146,10 @@
                 <button id="btn-monthly" class="minimal-btn active" onclick="switchMode('monthly')">MONTHLY</button>
                 <button id="btn-yearly" class="minimal-btn" onclick="switchMode('yearly')">YEARLY</button>
                 <button id="btn-range" class="minimal-btn" onclick="switchMode('range')">RANGE</button>
+                
+                <button class="minimal-btn" onclick="window.print()" style="border-color: var(--premium-gold); color: var(--premium-gold); font-weight: 900;">
+                    <i class="fas fa-print"></i> PRINT REPORT
+                </button>
             </div>
             <div id="control-inputs" style="display:flex; gap:20px; align-items:center;">
                 <select id="select-month" class="minimal-select" onchange="initializeTrending()"></select>
@@ -188,10 +216,21 @@
         }
 
         async function initializeTrending() {
-            const month = parseInt(document.getElementById('select-month').value);
+            const monthIdx = parseInt(document.getElementById('select-month').value);
             const year = parseInt(document.getElementById('select-year').value);
             const startDate = document.getElementById('start-date').value;
             const endDate = document.getElementById('end-date').value;
+            const monthsNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+            // 🕒 ส่วนสำคัญ: อัปเดต วัน/เดือน/ปี ลงในหัวกระดาษรายงาน
+            const periodLabel = document.getElementById('report-period');
+            if (currentMode === 'monthly') {
+                periodLabel.innerText = `REPORT PERIOD: ${monthsNames[monthIdx]} ${year}`;
+            } else if (currentMode === 'yearly') {
+                periodLabel.innerText = `REPORT PERIOD: YEAR ${year}`;
+            } else if (currentMode === 'range') {
+                periodLabel.innerText = `REPORT PERIOD: ${startDate} TO ${endDate}`;
+            }
 
             const [ordersSnap, historySnap] = await Promise.all([
                 db.ref('orders').once('value'), 
@@ -213,7 +252,7 @@
                         let isMatch = false;
 
                         if (currentMode === 'monthly') {
-                            if (d.getFullYear() === year && d.getMonth() === month) isMatch = true;
+                            if (d.getFullYear() === year && d.getMonth() === monthIdx) isMatch = true;
                         } else if (currentMode === 'yearly') {
                             if (d.getFullYear() === year) isMatch = true;
                         } else if (currentMode === 'range') {
@@ -261,7 +300,7 @@
 
         function renderTrending(stats) {
             const lang = localStorage.getItem(`bf_lang_${currentAdmin}`) || 'th';
-            const sorted = Object.entries(stats).sort((a, b) => b[1].total - a[1].total).slice(0, 12);
+            const sorted = Object.entries(stats).sort((a, b) => b[1].total - a[1].total).slice(0, 20); // เพิ่มเป็น 20 รายการในรายงาน
             const max = sorted.length > 0 ? sorted[0][1].total : 1;
             const container = document.getElementById('trending-container');
             container.innerHTML = '';

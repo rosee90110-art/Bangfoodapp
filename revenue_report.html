@@ -46,6 +46,14 @@
         .mode-btn.active { background: var(--premium-gold); color: #000; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3); }
         .select-input { background: rgba(128,128,128,0.08); border: 1px solid var(--border); color: var(--text); padding: 10px 15px; border-radius: 12px; font-size: 0.85rem; outline: none; font-weight: 600; cursor: pointer; }
 
+        /* 🖨️ Print Button */
+        .btn-print {
+            background: #2d2d30; color: #fff; border: 1px solid var(--border);
+            padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 0.75rem;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-print:hover { background: var(--text); color: var(--bg); }
+
         /* 💰 Main Revenue Display */
         .revenue-hero { 
             background: linear-gradient(145deg, var(--card-bg), rgba(197, 160, 89, 0.03));
@@ -90,6 +98,30 @@
             .chart-container { height: 250px !important; }
         }
 
+        /* -----------------------------------------------------------
+           🖨️ PRINT STYLES (สำหรับพิมรายงาน)
+        ----------------------------------------------------------- */
+        @media print {
+            body { background: white !important; color: black !important; padding: 0; }
+            .filter-hub, .btn-print, .mode-toggle, .select-input { display: none !important; }
+            .page-container { max-width: 100%; gap: 10px; }
+            .revenue-hero { 
+                background: white !important; border: 2px solid #000 !important; 
+                box-shadow: none !important; color: black !important; padding: 20px;
+                border-radius: 10px;
+            }
+            .revenue-hero b, .revenue-hero span, .sub-stat-item b, .sub-stat-item div { color: black !important; }
+            .content-card { 
+                background: white !important; border: 1px solid #ccc !important; 
+                box-shadow: none !important; color: black !important;
+                page-break-inside: avoid; border-radius: 10px;
+            }
+            .card-head, .income-val { color: black !important; }
+            canvas { max-width: 100% !important; height: auto !important; }
+            .income-row { border-bottom: 1px solid #eee !important; }
+            .income-list-container { max-height: none !important; overflow: visible !important; }
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -122,11 +154,15 @@
                     <option value="2024">2567</option><option value="2025">2568</option><option value="2026">2569</option>
                     <option value="2027">2570</option>
                 </select>
+
+                <button class="btn-print" onclick="window.print()">
+                    <i class="fas fa-print"></i> PRINT REPORT
+                </button>
             </div>
         </header>
 
         <section class="revenue-hero">
-            <span>Net Revenue Overview</span>
+            <span id="report-title">Net Revenue Overview</span>
             <b id="main-rev">฿0.00</b>
             <div class="sub-stats">
                 <div class="sub-stat-item">
@@ -196,7 +232,6 @@
             const activeBtn = document.getElementById(`m-${m}`);
             activeBtn.classList.add('active');
             
-            // เลื่อนปุ่มให้มาอยู่ตรงกลางถ้าล้นหน้าจอ (Mobile)
             activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             
             document.getElementById('in-date').style.display = (m === 'daily') ? 'block' : 'none';
@@ -217,6 +252,14 @@
             const selM = parseInt(document.getElementById('in-month').value);
             const selY = parseInt(document.getElementById('in-year').value);
             
+            // ปรับหัวรายงานสำหรับการพิมพ์
+            let reportTitle = "Net Revenue Overview";
+            if(mode === 'daily') reportTitle = `รายงานรายได้ประจำวันที่ ${selD}`;
+            if(mode === 'range') reportTitle = `รายงานรายได้ช่วงวันที่ ${startD} ถึง ${endD}`;
+            if(mode === 'monthly') reportTitle = `รายงานรายได้ประจำเดือน ${document.getElementById('in-month').options[selM].text} ปี ${selY+543}`;
+            if(mode === 'yearly') reportTitle = `รายงานรายได้ประจำปี ${selY+543}`;
+            document.getElementById('report-title').innerText = reportTitle;
+
             let total = 0, count = 0, products = {}; let trendData = {};
 
             history.forEach(order => {
@@ -251,7 +294,6 @@
                 }
             });
 
-            // Update UI
             const up = (id, v) => { 
                 const el = document.getElementById(id); 
                 el.innerText = v; 
@@ -326,7 +368,10 @@
         }
 
         function varColor(name) {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+            const val = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+            // ถ้าอยู่ในโหมดพิมรายงาน ให้คืนค่าสีดำ
+            if (window.matchMedia && window.matchMedia('print').matches) return '#000000';
+            return val;
         }
     </script>
 </body>

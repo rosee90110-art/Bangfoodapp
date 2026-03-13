@@ -87,15 +87,20 @@
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* หัวข้อรายงานสำหรับพิมพ์ (ซ่อนไว้ในหน้าจอปกติ) */
+        #report-header { display: none; }
+
         /* ========================================================== */
-        /* 🖨️ โค้ดปรับปรุงใหม่: เปลี่ยนเป็นรูปแบบ "ใบเสร็จสลิป" (Receipt Style) */
+        /* 🖨️ Media Print Section */
         /* ========================================================== */
         @media print {
-            body * { visibility: hidden; background: white !important; }
-            #history-list .order-card.active, 
-            #history-list .order-card.active * { visibility: visible; }
-
-            #history-list .order-card.active {
+            body { background: white !important; padding: 0 !important; }
+            
+            /* กรณีพิมพ์ใบเสร็จ (รายละเอียดเยอะ) */
+            body:not(.printing-full-report) * { visibility: hidden; }
+            body:not(.printing-full-report) #history-list .order-card.active, 
+            body:not(.printing-full-report) #history-list .order-card.active * { visibility: visible; }
+            body:not(.printing-full-report) #history-list .order-card.active {
                 position: absolute; left: 0; top: 0; width: 300px; 
                 border: none !important; box-shadow: none !important;
                 padding: 10px !important; margin: 0 !important;
@@ -103,20 +108,66 @@
                 color: black !important;
             }
 
-            .card-collapsed-part { flex-direction: column !important; align-items: flex-start !important; padding: 10px 0 !important; border-bottom: 2px dashed #000 !important; }
-            .station-tag { background: none !important; border: none !important; font-size: 1.2rem !important; padding: 0 !important; font-weight: bold !important; }
-            .order-id-label { margin: 5px 0 !important; display: block; font-size: 0.8rem !important; }
-            .card-expanded-part { padding: 10px 0 !important; opacity: 1 !important; max-height: none !important; }
-            .item-row { border-bottom: 1px dashed #ccc !important; padding: 5px 0 !important; }
-            .food-line span, .food-line b { color: black !important; font-size: 0.9rem !important; }
-            .total-brief { display: block !important; text-align: right !important; font-size: 1.5rem !important; border-top: 2px solid #000 !important; margin-top: 10px !important; padding-top: 5px !important; }
-            .btn-group, .filter-section, .stats-grid, .btn-action { display: none !important; }
+            /* --- กรณีพิมพ์รายงานสรุป (บรรทัดเดียว ดูง่าย) --- */
+            body.printing-full-report .filter-section, 
+            body.printing-full-report .btn-group,
+            body.printing-full-report .btn-action,
+            body.printing-full-report .card-expanded-part { display: none !important; } /* ซ่อนรายละเอียดรายการอาหาร */
             
-            #history-list .order-card.active::after { content: "--- THANK YOU ---"; display: block; text-align: center; margin-top: 20px; font-size: 0.8rem; letter-spacing: 2px; }
+            body.printing-full-report #report-header { 
+                display: block !important; 
+                text-align: center; 
+                margin-bottom: 20px; 
+                border-bottom: 2px solid #000;
+                padding-bottom: 10px;
+                color: black;
+            }
+
+            body.printing-full-report .stats-grid { 
+                display: flex !important; 
+                gap: 20px; 
+                margin-bottom: 30px; 
+            }
+            body.printing-full-report .stat-card { 
+                flex: 1; 
+                border: 1px solid #ccc !important; 
+                color: black !important;
+                box-shadow: none !important;
+                border-radius: 10px !important;
+                padding: 10px !important;
+            }
+            body.printing-full-report .stat-value, 
+            body.printing-full-report .stat-label { color: black !important; }
+
+            body.printing-full-report .order-card { 
+                page-break-inside: avoid; 
+                border: none !important;
+                border-bottom: 1px solid #eee !important;
+                margin-bottom: 0 !important;
+                border-radius: 0 !important;
+                width: 100% !important;
+                display: block !important;
+            }
+            
+            body.printing-full-report .card-collapsed-part {
+                padding: 10px 5px !important;
+                color: black !important;
+            }
+            
+            body.printing-full-report .total-brief,
+            body.printing-full-report .station-tag,
+            body.printing-full-report .order-id-label { color: black !important; }
+            body.printing-full-report .station-tag { border: 1px solid #000; background: none !important; }
         }
     </style>
 </head>
 <body onload="initializeHistory()">
+
+    <div id="report-header">
+        <h1 style="margin: 0; font-size: 24px;">BANGFOOD SALES REPORT</h1>
+        <p id="print-date-range" style="margin: 5px 0; font-size: 16px; font-weight: bold;"></p>
+        <p style="font-size: 12px; opacity: 0.7;">พิมพ์เมื่อ: <span id="current-print-time"></span></p>
+    </div>
 
     <div class="stats-grid">
         <div class="stat-card">
@@ -152,6 +203,11 @@
                     <i class="fas fa-search"></i> ค้นหาบิล
                 </button>
             </div>
+            <div class="filter-group" style="flex: 0.5; display: flex; align-items: flex-end;">
+                <button onclick="printFullReport()" class="btn-search" style="background: #3498db; color: white;">
+                    <i class="fas fa-file-invoice"></i> พิมพ์รายงาน
+                </button>
+            </div>
             <div class="filter-group" style="flex: 0.4; display: flex; align-items: flex-end;">
                 <button onclick="resetFilter()" class="btn-search" style="background: rgba(128,128,128,0.2); color: var(--text);">
                      ล้างค่า
@@ -178,11 +234,9 @@
     applySharedTheme();
 
     function initializeHistory() { 
-        // เซ็ตค่าเริ่มต้นให้วันที่เป็นวันนี้
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('start-date').value = today;
         document.getElementById('end-date').value = today;
-        
         loadHistoryRealtime(); 
     }
 
@@ -192,13 +246,12 @@
             if (snapshot.exists()) {
                 snapshot.forEach((child) => { allHistoryData.push({ id: child.key, ...child.val() }); });
             }
-            // แสดงผลครั้งแรก ดึงมาทั้งหมด หรือจะให้กรองตามวันนี้เลยก็ได้
-            // ตรงนี้ให้กรองตามฟิลเตอร์เริ่มต้น (วันนี้)
             filterHistoryByDateTime(); 
         });
     }
 
     function toggleCard(element) {
+        if (document.body.classList.contains('printing-full-report')) return; // ป้องกันการเปลี่ยนสถานะขณะพิมพ์
         const isActive = element.classList.contains('active');
         document.querySelectorAll('.order-card').forEach(c => c.classList.remove('active'));
         if(!isActive) element.classList.add('active');
@@ -208,8 +261,25 @@
         const card = btn.closest('.order-card');
         document.querySelectorAll('.order-card').forEach(c => c.classList.remove('active'));
         card.classList.add('active');
-        
         setTimeout(() => { window.print(); }, 250);
+    }
+
+    function printFullReport() {
+        const start = document.getElementById('start-date').value;
+        const end = document.getElementById('end-date').value;
+        
+        const displayRange = (start === end) ? `วันที่: ${start}` : `ช่วงวันที่: ${start} ถึง ${end}`;
+        document.getElementById('print-date-range').innerText = displayRange;
+        document.getElementById('current-print-time').innerText = new Date().toLocaleString('th-TH');
+
+        // เข้าสู่โหมดพิมพ์รายงาน
+        document.body.classList.add('printing-full-report');
+        
+        setTimeout(() => {
+            window.print();
+            // ออกจากโหมดพิมพ์รายงาน
+            document.body.classList.remove('printing-full-report');
+        }, 500);
     }
 
     function renderHistory(data) {
@@ -265,7 +335,7 @@
                             <span class="order-id-label">#${shortId}</span>
                         </div>
                         <div style="display:flex; align-items:center; gap:20px;">
-                            <span style="font-size:0.85rem; color:var(--sub-text);">🕒 ${new Date(order.archivedAt).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</span>
+                            <span class="time-label" style="font-size:0.85rem; color:var(--sub-text);">🕒 ${new Date(order.archivedAt).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}</span>
                             <b class="total-brief">฿${parseFloat(order.total).toLocaleString()}</b>
                         </div>
                     </div>
@@ -290,43 +360,29 @@
         revEl.textContent = totalSum.toLocaleString('th-TH', { minimumFractionDigits: 2 });
     }
 
-    // 📍 ฟังก์ชันกรองประวัติที่ปรับปรุงใหม่ รองรับช่วงวันที่
     function filterHistoryByDateTime() {
         const startDate = document.getElementById('start-date').value;
         const endDate = document.getElementById('end-date').value;
         const startTime = document.getElementById('start-time').value;
         const endTime = document.getElementById('end-time').value;
 
-        if (!startDate || !endDate) {
-            return alert("กรุณาระบุวันที่เริ่มต้นและสิ้นสุดให้ครบถ้วนครับ");
-        }
-        if (startDate > endDate) {
-            return alert("วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุดครับ");
-        }
+        if (!startDate || !endDate) return alert("กรุณาระบุวันที่เริ่มต้นและสิ้นสุดให้ครบถ้วนครับ");
+        if (startDate > endDate) return alert("วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุดครับ");
 
         const filtered = allHistoryData.filter(order => {
             const d = new Date(order.archivedAt);
             const orderDateStr = d.toISOString().split('T')[0];
             const orderTimeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-
-            // ตรวจสอบว่าวันที่อยู่ในช่วงที่กำหนดหรือไม่
             const isDateInRange = orderDateStr >= startDate && orderDateStr <= endDate;
             
-            // กรณีเป็นวันเดียวกัน ให้เช็คเวลาด้วย
             if (startDate === endDate) {
                 return isDateInRange && orderTimeStr >= startTime && orderTimeStr <= endTime;
             } else {
-                // กรณีค้นหาคร่อมวัน
-                if (orderDateStr === startDate) {
-                    return orderTimeStr >= startTime; // วันแรก เช็คแค่เวลาเริ่ม
-                } else if (orderDateStr === endDate) {
-                    return orderTimeStr <= endTime; // วันสุดท้าย เช็คแค่เวลาจบ
-                } else {
-                    return isDateInRange; // วันตรงกลาง เอาหมด
-                }
+                if (orderDateStr === startDate) return orderTimeStr >= startTime;
+                else if (orderDateStr === endDate) return orderTimeStr <= endTime;
+                else return isDateInRange;
             }
         });
-        
         renderHistory(filtered);
     }
 

@@ -370,61 +370,68 @@
     }
 
     function renderSlider(topSellers, lang, dict, tableNo) {
-        const heroContainer = document.getElementById('hero-best-seller-slider');
-        const indicatorContainer = document.getElementById('indicator-container');
-        let heroHTML = ''; let indHTML = '';
+    const heroContainer = document.getElementById('hero-best-seller-slider');
+    const indicatorContainer = document.getElementById('indicator-container');
+    let heroHTML = ''; let indHTML = '';
 
-        topSellers.forEach((p, idx) => {
-            const isOut = p.status === 'out_of_stock';
-            const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
-            const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
-            
-            heroHTML += `
-                <div class="slide-card ${idx === 0 ? 'is-active' : ''}" data-index="${idx}" 
-                     onclick="${isOut ? '' : `location.href='${link}'`}">
-                    <img src="${p.img}" style="width:100%; height:100%; object-fit:cover; ${isOut ? 'filter:grayscale(1) brightness(0.5);' : ''}">
-                    <div class="slide-info-overlay">
-                        <div style="font-size:0.7rem; color:var(--premium-gold); margin-bottom:2px; font-weight:bold;">
-                            <i class="fas fa-chart-line"></i> ${lang === 'en' ? 'Best Seller #' : 'ขายดีอันดับที่ '}${idx + 1}
-                        </div>
-                        <h3 style="margin:0; font-size:1rem;">${displayName} ${isOut ? (lang === 'en' ? '(Out)' : '(หมด)') : ''}</h3>
-                        <span style="color:var(--premium-gold);">฿${p.price}</span>
+    topSellers.forEach((p, idx) => {
+        const isOut = p.status === 'out_of_stock';
+        
+        // ✨ เพิ่มบรรทัดนี้: ถ้าหมด ให้ข้ามไปเลย ไม่ต้องแสดงใน Slider
+        if (isOut) return; 
+
+        const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
+        const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
+        
+        heroHTML += `
+            <div class="slide-card ${heroHTML === '' ? 'is-active' : ''}" 
+                 onclick="location.href='${link}'">
+                <img src="${p.img}" style="width:100%; height:100%; object-fit:cover;">
+                <div class="slide-info-overlay">
+                    <div style="font-size:0.7rem; color:var(--premium-gold); margin-bottom:2px; font-weight:bold;">
+                        <i class="fas fa-chart-line"></i> ${lang === 'en' ? 'Best Seller' : 'เมนูแนะนำ'}
                     </div>
-                </div>`;
-            indHTML += `<div class="indicator-item ${idx === 0 ? 'active' : ''}"></div>`;
-        });
-        heroContainer.innerHTML = heroHTML;
-        indicatorContainer.innerHTML = indHTML;
-        initSliderLogic();
-    }
+                    <h3 style="margin:0; font-size:1rem;">${displayName}</h3>
+                    <span style="color:var(--premium-gold);">฿${p.price}</span>
+                </div>
+            </div>`;
+        indHTML += `<div class="indicator-item ${indHTML === '' ? 'active' : ''}"></div>`;
+    });
+    heroContainer.innerHTML = heroHTML;
+    indicatorContainer.innerHTML = indHTML;
+    initSliderLogic();
+}
 
     function renderMainMenu(items, lang, dict, tableNo) {
-        const menuContainer = document.getElementById('menu-main-container');
-        let menuHTML = '';
+    const menuContainer = document.getElementById('menu-main-container');
+    let menuHTML = '';
 
-        items.forEach((p) => {
-            const isOut = p.status === 'out_of_stock';
-            const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
-            const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
+    items.forEach((p) => {
+        const isOut = p.status === 'out_of_stock' || p.status === 'หมด';
 
-            menuHTML += `
-                <a href="${isOut ? 'javascript:void(0)' : link}" class="menu-item" data-name="${p.name}" data-category="${p.category}" 
-                   style="${isOut ? 'opacity:0.5; filter:grayscale(1); pointer-events: none;' : ''}">
-                    <div class="item-img-container">
-                        <img src="${p.img}" class="item-img-thumb">
-                        <div class="item-badge" style="display:none;">0</div>
-                    </div>
-                    <div style="flex:1;">
-                        <h3 style="margin:0 0 5px; font-size:0.95rem;">${displayName}</h3>
-                        <div style="color:var(--premium-gold); font-weight:700;">฿${p.price}</div>
-                    </div>
-                    <button class="select-btn" style="${isOut ? 'background:#555; box-shadow:none;' : ''}">
-                        ${isOut ? (lang === 'en' ? 'Sold' : 'หมด') : (lang === 'en' ? 'Select' : 'เลือก')}
-                    </button>
-                </a>`;
-        });
-        menuContainer.innerHTML = menuHTML;
-    }
+        // ✨ แก้ไขตรงนี้: ถ้าหมด ให้ return ออกไปเลย (ไม่ต้องสร้าง HTML)
+        if (isOut) return; 
+
+        const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
+        const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
+
+        menuHTML += `
+            <a href="${link}" class="menu-item" data-name="${p.name}" data-category="${p.category}">
+                <div class="item-img-container">
+                    <img src="${p.img}" class="item-img-thumb">
+                    <div class="item-badge" style="display:none;">0</div>
+                </div>
+                <div style="flex:1;">
+                    <h3 style="margin:0 0 5px; font-size:0.95rem;">${displayName}</h3>
+                    <div style="color:var(--premium-gold); font-weight:700;">฿${p.price}</div>
+                </div>
+                <button class="select-btn">
+                    ${(lang === 'en' ? 'Select' : 'เลือก')}
+                </button>
+            </a>`;
+    });
+    menuContainer.innerHTML = menuHTML;
+}
 
     // --- 🔹 UI Logic 🔹 ---
     function toggleDrawer() {

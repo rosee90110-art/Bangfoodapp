@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>สร้าง QR Code โต๊ะ | BANGFOOD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin_style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        /* 📍 Premium Global Config */
+        :root {
+            --premium-gold: #c5a059;
+            --gold-glow: rgba(197, 160, 89, 0.4);
+            --bg-dark: #080809;
+            --bg-card: #141416;
+            --text-main: #ffffff;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-pos: 0 25px 50px rgba(0,0,0,0.7);
+            --input-bg: rgba(128,128,128,0.08);
+        }
+
+        body.light-theme {
+            --bg-dark: #f1f3f6;
+            --bg-card: #ffffff;
+            --text-main: #1a1d23;
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow-pos: 0 15px 40px rgba(0,0,0,0.06);
+            --gold-glow: rgba(197, 160, 89, 0.15);
+            --input-bg: #f9f9f9;
+        }
+
+        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; outline: none; }
+        body::-webkit-scrollbar { display: none; }
+        body { margin: 0; padding: 40px 25px; min-height: 100vh; background-color: var(--bg-dark); color: var(--text-main); transition: 0.5s ease; display: flex; justify-content: center; align-items: flex-start; }
+
+        .generator-container { width: 100%; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; animation: slideDown 0.8s ease; }
+
+        /* 🎛️ Control Panel */
+        .control-panel { background: var(--bg-card); border: 1px solid var(--glass-border); padding: 40px; border-radius: 45px; box-shadow: var(--shadow-pos); height: fit-content; }
+        .header-title { margin-bottom: 30px; }
+        .header-title h1 { font-size: 2rem; font-weight: 900; margin: 0; color: var(--premium-gold); letter-spacing: -1px; }
+        .header-title p { color: #888; font-size: 0.85rem; margin-top: 5px; font-weight: 600; letter-spacing: 1px; }
+
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; font-size: 0.85rem; color: var(--text-main); font-weight: 800; margin-bottom: 10px; letter-spacing: 1px; }
+        .input-group input { width: 100%; padding: 20px 25px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 1.2rem; font-weight: 700; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--premium-gold); box-shadow: 0 0 20px var(--gold-glow); transform: scale(1.02); }
+
+        .btn-action { width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; font-size: 1.1rem; border: none; }
+        .btn-generate { background: var(--premium-gold); color: #000; box-shadow: 0 10px 30px var(--gold-glow); margin-bottom: 15px; }
+        .btn-generate:hover { transform: translateY(-5px); box-shadow: 0 15px 40px var(--gold-glow); }
+        .btn-download { background: rgba(128,128,128,0.1); color: var(--text-main); border: 1px solid var(--glass-border); display: none; }
+        .btn-download:hover { background: rgba(197, 160, 89, 0.15); color: var(--premium-gold); border-color: var(--premium-gold); }
+
+        /* 📱 QR Preview Panel */
+        .preview-panel { display: flex; align-items: center; justify-content: center; }
+        .qr-card-preview { 
+            background: #ffffff; width: 320px; padding: 40px 30px; border-radius: 35px; 
+            text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.5); position: relative;
+            transform: scale(0.9); opacity: 0.5; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 8px solid var(--premium-gold);
+        }
+        .qr-card-preview.active { transform: scale(1); opacity: 1; }
+
+        .qr-brand { color: #000; font-size: 1.8rem; font-weight: 900; letter-spacing: 3px; margin-bottom: 5px; }
+        .qr-sub { color: #666; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 25px; text-transform: uppercase; }
+        
+        .qr-code-box { background: #fff; padding: 15px; border-radius: 20px; display: inline-block; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 25px; }
+        
+        .qr-table-label { background: var(--premium-gold); color: #000; padding: 12px 20px; border-radius: 50px; font-size: 1.4rem; font-weight: 900; display: inline-block; letter-spacing: 1px; min-width: 150px; }
+
+        /* 📱 Mobile Adjustments */
+        @media (max-width: 850px) {
+            .generator-container { grid-template-columns: 1fr; gap: 30px; }
+            .control-panel { padding: 30px 20px; border-radius: 35px; }
+            .qr-card-preview { width: 100%; max-width: 320px; padding: 30px 20px; }
+        }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body onload="initQRPage()">
+
+    <div class="generator-container">
+        
+        <div class="control-panel">
+            <div class="header-title">
+                <h1>QR GENERATOR</h1>
+                <p>ระบบสร้างคิวอาร์โค้ดประจำโต๊ะ (BANGFOOD)</p>
+            </div>
+
+            <div class="input-group">
+                <label>หมายเลขโต๊ะ (TABLE NUMBER)</label>
+                <input type="text" id="table-number" placeholder="เช่น 1, 2, A1, VIP-1" autocomplete="off">
+            </div>
+
+            <div class="input-group" style="opacity: 0.5;">
+                <label>ลิงก์ปลายทาง (BASE URL)</label>
+                <input type="text" id="base-url" value="https://yourdomain.com/start.html" readonly title="ระบบจะใส่พารามิเตอร์ ?table=X ให้อัตโนมัติ">
+            </div>
+
+            <button class="btn-action btn-generate" onclick="generateQRCode()">
+                <i class="fas fa-qrcode"></i> สร้าง QR Code
+            </button>
+
+            <button class="btn-action btn-download" id="btn-download" onclick="downloadQRCode()">
+                <i class="fas fa-download"></i> ดาวน์โหลดรูปภาพ (PNG)
+            </button>
+        </div>
+
+        <div class="preview-panel">
+            <div class="qr-card-preview" id="qr-preview-card">
+                <div class="qr-brand">BANGFOOD</div>
+                <div class="qr-sub">Scan to Order</div>
+                
+                <div class="qr-code-box" id="qrcode-display">
+                    <div style="width: 200px; height: 200px; border: 2px dashed #ddd; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #aaa; font-weight: bold; font-size: 0.8rem;">
+                        รอการสร้าง...
+                    </div>
+                </div>
+
+                <div class="qr-table-label" id="preview-table-label">TABLE -</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let qrCodeObj = null;
+
+        function initQRPage() {
+            // ดึง Theme จากระบบหลังบ้าน (ถ้ามี)
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.body.classList.toggle('light-theme', theme === 'light');
+
+            // ตรวจจับการกด Enter เพื่อสร้าง QR ทันที
+            document.getElementById('table-number').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') generateQRCode();
+            });
+
+            // พยายามดึง Base URL ของเว็บไซต์ที่กำลังรันอยู่ปัจจุบันให้โดยอัตโนมัติ
+            const currentUrl = window.location.href;
+            const baseUrlPath = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+            // ตั้งค่าให้ชี้ไปที่หน้า start.html (หรือเปลี่ยนเป็น index.html ตามโฟลว์ของคุณ)
+            document.getElementById('base-url').value = baseUrlPath + '/start.html';
+        }
+
+        function generateQRCode() {
+            const tableNo = document.getElementById('table-number').value.trim();
+            if (!tableNo) {
+                alert("กรุณากรอกหมายเลขโต๊ะก่อนครับ!");
+                document.getElementById('table-number').focus();
+                return;
+            }
+
+            const baseUrl = document.getElementById('base-url').value;
+            // สร้าง Link สมบูรณ์แบบ (เช่น https://yourweb.com/start.html?table=1)
+            const finalUrl = `${baseUrl}?table=${encodeURIComponent(tableNo)}`;
+
+            const qrContainer = document.getElementById('qrcode-display');
+            qrContainer.innerHTML = ''; // ล้างของเก่าทิ้ง
+
+            // สร้าง QR Code ใหม่
+            qrCodeObj = new QRCode(qrContainer, {
+                text: finalUrl,
+                width: 220,
+                height: 220,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H // ระดับ High เผื่อการตกแต่ง/อ่านง่าย
+            });
+
+            // อัปเดต UI 
+            document.getElementById('preview-table-label').innerText = "TABLE " + tableNo;
+            document.getElementById('qr-preview-card').classList.add('active');
+            
+            // แสดงปุ่มดาวน์โหลด
+            document.getElementById('btn-download').style.display = 'flex';
+        }
+
+        function downloadQRCode() {
+            const tableNo = document.getElementById('table-number').value.trim();
+            const qrContainer = document.getElementById('qrcode-display');
+            
+            // qrcode.js จะสร้างทั้ง <canvas> และ <img> ซ้อนกัน ให้ดึงรูปจาก <img> หรือ <canvas> มา
+            const imgEl = qrContainer.querySelector('img');
+            const canvasEl = qrContainer.querySelector('canvas');
+            let imageUri = '';
+
+            if (imgEl && imgEl.src && imgEl.src.startsWith('data:image')) {
+                imageUri = imgEl.src;
+            } else if (canvasEl) {
+                imageUri = canvasEl.toDataURL("image/png");
+            }
+
+            if (!imageUri) {
+                alert("เกิดข้อผิดพลาด ไม่พบภาพ QR Code");
+                return;
+            }
+
+            // จำลองการคลิกดาวน์โหลดไฟล์
+            const downloadLink = document.createElement('a');
+            downloadLink.href = imageUri;
+            downloadLink.download = `BANGFOOD_QR_Table_${tableNo}.png`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        // ดักจับ Theme เปลี่ยนแปลงจากไฟล์อื่น (ถ้าใส่ใน iframe เดียวกัน)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                document.body.classList.toggle('light-theme', e.newValue === 'light');
+            }
+        });
+    </script>
+</body>
+</html>

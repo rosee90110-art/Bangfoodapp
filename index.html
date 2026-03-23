@@ -40,7 +40,7 @@
             color: #fff;
             margin: 0;
             overflow-x: hidden;
-            transition: background 0.3s;
+            /* Using global_style.css transitions instead */
         }
 
         body.light-theme { color: #333; }
@@ -60,8 +60,8 @@
 
         .bangfood-logo {
             font-size: 1.4rem; font-weight: 800; letter-spacing: 2px;
-            background: linear-gradient(90deg, #c5a059, #fff, #c5a059);
-            background-size: 200% auto; -webkit-background-clip: text;
+            background: linear-gradient(90deg, var(--premium-gold), #fff, var(--premium-gold));
+            background-size: 200% auto; background-clip: text; -webkit-background-clip: text;
             -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite;
         }
 
@@ -90,6 +90,17 @@
         .top-summary-bar {
             padding: 8px 25px; background: rgba(197, 160, 89, 0.08);
             display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* 📱 Mobile Responsiveness */
+        @media (max-width: 400px) {
+            .bangfood-logo { font-size: 1.1rem; letter-spacing: 1px; }
+            .header-main-row { padding: 0 15px; }
+            .top-summary-bar { padding: 6px 15px; }
+            .food-card { border-radius: 20px; }
+            .food-card .card-content { padding: 12px; }
+            .food-card .food-name { font-size: 0.9rem; }
+            .food-card .price-tag { font-size: 1rem; }
         }
 
         .item-img-container { position: relative; }
@@ -228,9 +239,14 @@
     </div>
 </div>
 
+<!-- 📢 Live Promo Marquee -->
+<div id="promo-banner-container" class="promo-banner-container" style="display:none;">
+    <div class="promo-marquee-text" id="promo-marquee-text"></div>
+</div>
+
 <div id="side-drawer" class="side-drawer">
     <div class="drawer-content">
-        <div class="drawer-item" onclick="switchCustomerTheme(); toggleDrawer();">
+        <div class="drawer-item" onclick="switchCustomerTheme(event); toggleDrawer();">
             <span data-lang-en="THEME" data-lang-th="เปลี่ยนธีม">เปลี่ยนธีม</span>
             <i class="fas fa-adjust" style="color:var(--premium-gold);"></i>
         </div>
@@ -322,6 +338,19 @@
             const dict = transSnap.val() || {};
             const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
 
+            // 📢 Live Promo Listener
+            db.ref('config/promo_text').on('value', snap => {
+                const text = snap.val();
+                const banner = document.getElementById('promo-banner-container');
+                const marquee = document.getElementById('promo-marquee-text');
+                if (text && text.trim() !== "") {
+                    marquee.innerText = text;
+                    banner.style.display = 'block';
+                } else {
+                    banner.style.display = 'none';
+                }
+            });
+
             // 2. Listen for Products (Real-time)
             db.ref('products').on('value', async (prodSnap) => {
                 const products = prodSnap.val();
@@ -365,6 +394,12 @@
                 if (activeTab) switchCategory(activeTab.dataset.cat);
 
                 updateCartUI();
+                
+                // ✨ ตรวจสอบแอนิเมชันหลังจากโหลดข้อมูลสำเร็จ (เรียกครั้งเดียว)
+                if (!window.animationChecked) {
+                    window.animationChecked = true;
+                    checkAnimationParam();
+                }
             });
         });
     }
@@ -385,6 +420,7 @@
         
         heroHTML += `
             <div class="slide-card ${heroHTML === '' ? 'is-active' : ''}" 
+                 data-name="${p.name}"
                  onclick="location.href='${link}'">
                 <img src="${p.img}" style="width:100%; height:100%; object-fit:cover;">
                 <div class="slide-info-overlay">
@@ -446,12 +482,32 @@
         }
     }
 
-    function switchCustomerTheme() {
+    function switchCustomerTheme(event) {
         const table = localStorage.getItem('selectedTable');
         const key = `theme_table_${table}`;
         const next = (localStorage.getItem(key) === 'light') ? 'dark' : 'light';
         localStorage.setItem(key, next);
-        applyTheme(next);
+        
+        // 🌊 Ripple Expansion Effect
+        const overlay = document.createElement('div');
+        overlay.className = 'theme-transition-overlay';
+        const x = event ? event.clientX : window.innerWidth - 30;
+        const y = event ? event.clientY : 30;
+        overlay.style.backgroundColor = next === 'light' ? '#f6f6f7' : '#0a0a0b';
+        overlay.style.left = `${x}px`;
+        overlay.style.top = `${y}px`;
+        const maxDim = Math.max(window.innerWidth, window.innerHeight) * 2.5;
+        overlay.style.width = `${maxDim}px`;
+        overlay.style.height = `${maxDim}px`;
+        document.body.appendChild(overlay);
+        
+        requestAnimationFrame(() => overlay.style.transform = 'translate(-50%, -50%) scale(1)');
+        
+        setTimeout(() => {
+            applyTheme(next);
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 600);
+        }, 350);
     }
 
     function applyTheme(t) { document.body.classList.toggle('light-theme', t === 'light'); }
@@ -461,9 +517,33 @@
         const langKey = `lang_table_${table}`;
         const next = (localStorage.getItem(langKey) === 'en') ? 'th' : 'en';
         localStorage.setItem(langKey, next);
-        document.getElementById('drawer-lang-status').innerText = next.toUpperCase();
-        updateLanguageUI(next);
-        // Translation updates automatically via Firebase .on() listener
+        
+        // 💫 Blur & Fade Main Container
+        const mainEl = document.querySelector('main');
+        if (mainEl) {
+            mainEl.classList.add('lang-transition-container', 'lang-transitioning');
+        }
+        
+        // 💫 Animate Text in Drawer
+        const drawerLang = document.getElementById('drawer-lang-status');
+        if (drawerLang) {
+            drawerLang.style.transition = 'transform 0.2s, opacity 0.2s';
+            drawerLang.style.transform = 'translateY(-5px)';
+            drawerLang.style.opacity = '0';
+            setTimeout(() => {
+                drawerLang.innerText = next.toUpperCase();
+                drawerLang.style.transform = 'translateY(5px)';
+                requestAnimationFrame(() => {
+                    drawerLang.style.transform = 'translateY(0)';
+                    drawerLang.style.opacity = '1';
+                });
+            }, 200);
+        }
+
+        setTimeout(() => {
+            updateLanguageUI(next);
+            if(mainEl) mainEl.classList.remove('lang-transitioning');
+        }, 300);
     }
 
     function updateLanguageUI(lang) {
@@ -519,7 +599,12 @@
 
     function goToPage(page) {
         const table = localStorage.getItem('selectedTable');
-        window.location.href = `${page}?table=${table}`;
+        const url = `${page}?table=${table}`;
+        if (window.navigateTo) {
+            window.navigateTo(url);
+        } else {
+            window.location.href = url;
+        }
     }
 
     function updateCartUI() {
@@ -544,6 +629,58 @@
             }
         });
     }
+
+    function checkAnimationParam() {
+        const params = new URLSearchParams(window.location.search);
+        const animateItem = params.get('animate');
+        if (!animateItem) return;
+
+        if (typeof switchCategory === 'function') switchCategory('ทั้งหมด');
+
+        let attempts = 0;
+        const maxAttempts = 30; // 1.5 วินาที (50ms * 30)
+
+        const tryAnimate = () => {
+            const card = document.querySelector(`.menu-item[data-name="${animateItem}"], .slide-card[data-name="${animateItem}"]`);
+            const cartTarget = document.querySelector('.fa-shopping-cart') || document.querySelector('.fa-shopping-basket');
+            
+            if (card && cartTarget) {
+                const rect = card.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    // Optimized Scroll: ถ้าอยู่ในจออยู่แล้ว ไม่ต้องไถ
+                    const isVisible = (rect.top >= 0 && rect.bottom <= window.innerHeight);
+                    const scrollDelay = isVisible ? 0 : 400;
+                    
+                    if (!isVisible) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    
+                    setTimeout(() => {
+                        const img = card.querySelector('img');
+                        if (window.animateToCart) {
+                            window.animateToCart(img, cartTarget.parentElement);
+                        }
+                    }, scrollDelay); 
+
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('animate');
+                    window.history.replaceState({}, document.title, url.toString());
+                    return;
+                }
+            }
+
+            if (++attempts < maxAttempts) {
+                setTimeout(tryAnimate, 50); // เช็คถี่ขึ้นเพื่อความไว
+            } else {
+                const url = new URL(window.location.href);
+                url.searchParams.delete('animate');
+                window.history.replaceState({}, document.title, url.toString());
+            }
+        };
+
+        tryAnimate();
+    }
 </script>
+<script src="global_script.js"></script>
 </body>
 </html>

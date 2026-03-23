@@ -27,6 +27,38 @@
         input:checked + .slider:before { transform: translateX(24px); }
         
         .btn-save { width: 100%; padding: 16px; background: var(--premium-gold); border: none; border-radius: 18px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.3s; font-size: 0.9rem; color: #000; }
+
+        /* ✨ Segmented Control (Premium Toggles) */
+        .segmented-control {
+            display: flex; background: rgba(128,128,128,0.1); border-radius: 14px; padding: 4px; border: 1px solid var(--border);
+            position: relative; overflow: hidden; height: 38px; align-items: center; user-select: none;
+        }
+        .seg-btn {
+            flex: 1; text-align: center; font-size: 0.8rem; font-weight: 700; cursor: pointer; color: var(--text); z-index: 2; transition: color 0.3s; line-height: 38px; border-radius: 10px;
+        }
+        .seg-btn.active { color: #fff; }
+        body.light-theme .seg-btn.active { color: #000; }
+        .seg-indicator {
+            position: absolute; top: 4px; left: 4px; bottom: 4px; width: calc(50% - 4px);
+            background: var(--premium-gold); border-radius: 10px; z-index: 1; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3);
+        }
+        .seg-container.right-active .seg-indicator { transform: translateX(100%); }
+        
+        /* 🎨 Popup Color Picker */
+        .color-picker-wrapper { position: relative; display: flex; align-items: center; justify-content: flex-end; }
+        .current-color-display { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 6px 12px; border-radius: 20px; background: rgba(128,128,128,0.06); cursor: pointer; transition: 0.3s; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .current-color-display:hover { background: rgba(128,128,128,0.15); transform: scale(1.05); }
+        .color-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: var(--premium-gold); transition: background 0.3s; }
+        
+        .color-palette-popup { position: absolute; right: 0; bottom: -5px; transform-origin: right center; background: var(--card-bg); border: 1px solid var(--border); border-radius: 30px; padding: 10px 15px; display: flex; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); opacity: 0; transform: translateX(10px) scale(0.9); pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 50; backdrop-filter: blur(15px); }
+        .color-palette-popup.show { opacity: 1; transform: translateX(0) scale(1); pointer-events: auto; }
+        body.light-theme .color-palette-popup { background: rgba(255,255,255,0.95); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        
+        .color-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .color-dot:hover { transform: scale(1.2); }
+        .color-dot.active { border-color: #fff; transform: scale(1.15); box-shadow: 0 5px 15px var(--premium-gold); }
+        body.light-theme .color-dot.active { border-color: #333; }
     </style>
 </head>
 <body onload="initializeSettings()">
@@ -76,20 +108,68 @@
                     <b>ภาษาของระบบ</b>
                     <small>เลือกภาษาที่ต้องการใช้งาน</small>
                 </div>
-                <select class="select-mini" id="set-lang" onchange="updateLanguage(this.value)">
-                    <option value="th">ไทย (TH)</option>
-                    <option value="en">English (EN)</option>
-                </select>
+                <div class="segmented-control seg-container" id="lang-control" style="width: 130px;">
+                    <div class="seg-indicator"></div>
+                    <div class="seg-btn active" onclick="updateLanguageUI('th')">TH</div>
+                    <div class="seg-btn" onclick="updateLanguageUI('en')">EN</div>
+                </div>
             </div>
             <div class="control-row">
                 <div class="label-text">
                     <b>ธีมการแสดงผล</b>
                     <small>สลับระหว่างโหมดมืดและโหมดสว่าง</small>
                 </div>
-                <select class="select-mini" id="set-theme" onchange="updateTheme(this.value)">
-                    <option value="dark">Dark Mode</option>
-                    <option value="light">Light Mode</option>
-                </select>
+                <div class="segmented-control seg-container" id="theme-control" style="width: 140px;">
+                    <div class="seg-indicator"></div>
+                    <div class="seg-btn active" onclick="updateThemeUI('dark')"><i class="fas fa-moon"></i></div>
+                    <div class="seg-btn" onclick="updateThemeUI('light')"><i class="fas fa-sun"></i></div>
+                </div>
+            </div>
+            <div class="control-row">
+                <div class="label-text">
+                    <b>สีหลักของแอป (Accent Color)</b>
+                    <small>ปรับแต่งสีสันของ ธีม ปลั๊กอิน และปุ่ม</small>
+                </div>
+                <div class="color-picker-wrapper">
+                    <div class="current-color-display" onclick="document.getElementById('color-palette').classList.toggle('show')">
+                        <div class="color-circle" id="current-color-dot"></div>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--sub-text);"></i>
+                    </div>
+                    <div class="color-palette-popup" id="color-palette">
+                        <div class="color-dot" data-color="#c5a059" style="background:#c5a059;" onclick="updateAccentColor('#c5a059', this)"></div>
+                        <div class="color-dot" data-color="#2ecc71" style="background:#2ecc71;" onclick="updateAccentColor('#2ecc71', this)"></div>
+                        <div class="color-dot" data-color="#3498db" style="background:#3498db;" onclick="updateAccentColor('#3498db', this)"></div>
+                        <div class="color-dot" data-color="#e74c3c" style="background:#e74c3c;" onclick="updateAccentColor('#e74c3c', this)"></div>
+                        <div class="color-dot" data-color="#9b59b6" style="background:#9b59b6;" onclick="updateAccentColor('#9b59b6', this)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="set-box card-box">
+            <div class="set-title"><i class="fas fa-bullhorn"></i> <span>MARKETING</span></div>
+            <div class="control-row" style="flex-direction:column; align-items:flex-start;">
+                <div class="label-text" style="margin-bottom:10px;">
+                    <b data-lang-en="Promo Marquee Banner" data-lang-th="ป้ายโฆษณาเคลื่อนที่ (Marquee)">ป้ายโฆษณาเคลื่อนที่ (Marquee)</b>
+                    <small data-lang-en="Text scrolling across the top of the customer menu" data-lang-th="ข้อความโปรโมชันที่จะวิ่งอยู่ด้านบนสุดของหน้าลูกค้าร้าน">ข้อความโปรโมชันที่จะวิ่งอยู่ด้านบนสุดของหน้าลูกค้าร้าน</small>
+                </div>
+                <div style="display:flex; width:100%; gap:10px;">
+                    <input type="text" id="promo-input" placeholder="เช่น 🔥 ซื้อ 1 แถม 1 โค้กแก้วใหญ่ ฟรี! 💥" class="basic-input" style="flex:1; border:1px solid var(--border); border-radius:12px; padding:10px; background:var(--bg); color:var(--text); font-family:'Kanit';">
+                    <button onclick="savePromo()" class="btn-main" style="padding:10px 20px; border-radius:12px; border:none; color:#fff; font-weight:700; cursor:pointer;" data-lang-en="SAVE" data-lang-th="บันทึก">บันทึก</button>
+                </div>
+            </div>
+            
+            <div class="control-row" style="flex-direction:column; align-items:flex-start; margin-top:15px; border-top: 1px dashed var(--border); padding-top:15px;">
+                <div class="label-text" style="margin-bottom:10px;">
+                    <b data-lang-en="Festive Auto-Themes" data-lang-th="ธีมร้านตามเทศกาล (Festive Themes)">ธีมร้านตามเทศกาล (Festive Themes)</b>
+                    <small data-lang-en="Changes background effects and overall mood globally" data-lang-th="เปลี่ยนบรรยากาศแอปทั้งร้านอัตโนมัติ">เปลี่ยนบรรยากาศแอปทั้งร้านอัตโนมัติ</small>
+                </div>
+                <div class="segmented-control seg-container" id="festive-control" style="width:100%;">
+                    <div class="seg-indicator" style="width: calc(33.33% - 4px);" id="festive-indicator"></div>
+                    <div class="seg-btn active" onclick="setFestiveMode('none')" id="festive-none" style="flex:1; font-size:0.75rem;"><i class="fas fa-ban"></i> ปิด</div>
+                    <div class="seg-btn" onclick="setFestiveMode('valentine')" id="festive-valentine" style="flex:1; font-size:0.75rem;"><i class="fas fa-heart" style="color:#e74c3c;"></i> วาเลนไทน์</div>
+                    <div class="seg-btn" onclick="setFestiveMode('christmas')" id="festive-christmas" style="flex:1; font-size:0.75rem;"><i class="fas fa-snowflake" style="color:#3498db;"></i> คริสต์มาส</div>
+                </div>
             </div>
         </div>
     </div>
@@ -107,10 +187,49 @@
             loadSettings();
             // ดึงค่าธีมและภาษาปัจจุบันจาก LocalStorage
             const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.getElementById('set-theme').value = savedTheme;
-            document.getElementById('set-lang').value = localStorage.getItem(`bf_lang_${currentAdmin}`) || 'th';
+            const savedLang = localStorage.getItem(`bf_lang_${currentAdmin}`) || 'th';
             
+            updateThemeUI(savedTheme, false);
+            updateLanguageUI(savedLang, false);
             applyTheme(savedTheme);
+            
+            // 🎨 Load Accent Color
+            const savedAccent = localStorage.getItem('premium-gold') || '#c5a059';
+            document.documentElement.style.setProperty('--premium-gold', savedAccent);
+            document.querySelectorAll('.color-dot').forEach(dot => {
+                if(dot.getAttribute('data-color') === savedAccent) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+
+            // 📢 Load Marketing & Festive
+            db.ref('config/promo_text').once('value', snap => {
+                if(snap.exists()) document.getElementById('promo-input').value = snap.val();
+            });
+            db.ref('config/festive_mode').once('value', snap => {
+                const mode = snap.val() || 'none';
+                updateFestiveUI(mode);
+            });
+        }
+
+        function savePromo() {
+            const text = document.getElementById('promo-input').value.trim();
+            db.ref('config/promo_text').set(text).then(() => alert("✅ บันทึกโปรโมชันเข้าระบบแล้ว!"));
+        }
+
+        function setFestiveMode(mode) {
+            db.ref('config/festive_mode').set(mode).then(() => {
+                updateFestiveUI(mode);
+                alert("✨ เปิดใช้งานธีมเทศกาลทั่วร้านแล้ว!");
+            });
+        }
+
+        function updateFestiveUI(mode) {
+            const container = document.getElementById('festive-control');
+            const btns = container.querySelectorAll('.seg-btn');
+            const indicator = document.getElementById('festive-indicator');
+            btns.forEach(b => b.classList.remove('active'));
+            document.getElementById(`festive-${mode}`).classList.add('active');
+            indicator.style.transform = `translateX(${mode === 'none' ? 0 : mode === 'valentine' ? 100 : 200}%)`;
         }
 
         function loadSettings() {
@@ -132,9 +251,62 @@
             }).then(() => alert("บันทึกการตั้งค่าการเงินสำเร็จ!"));
         }
 
+        function updateAccentColor(hex, el) {
+            localStorage.setItem('premium-gold', hex);
+            document.documentElement.style.setProperty('--premium-gold', hex);
+            // Update UI
+            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+            if(el) el.classList.add('active');
+            else {
+                document.querySelectorAll('.color-dot').forEach(dot => {
+                    if(dot.getAttribute('data-color') === hex) dot.classList.add('active');
+                });
+            }
+            document.getElementById('color-palette').classList.remove('show');
+            window.parent.postMessage({ type: 'ACCENT_CHANGE', color: hex }, '*');
+        }
+
+        // 🛑 ปิด Popup เวลาคลิกที่อื่น
+        document.addEventListener('click', function(e) {
+            const popup = document.getElementById('color-palette');
+            if (popup && popup.classList.contains('show') && !e.target.closest('.color-picker-wrapper')) {
+                popup.classList.remove('show');
+            }
+        });
+
+        function updateLanguageUI(lang, notify = true) {
+            const container = document.getElementById('lang-control');
+            const btns = container.querySelectorAll('.seg-btn');
+            if (lang === 'en') {
+                container.classList.add('right-active');
+                btns[0].classList.remove('active');
+                btns[1].classList.add('active');
+            } else {
+                container.classList.remove('right-active');
+                btns[0].classList.add('active');
+                btns[1].classList.remove('active');
+            }
+            if (notify) updateLanguage(lang);
+        }
+
         function updateLanguage(lang) {
             localStorage.setItem(`bf_lang_${currentAdmin}`, lang);
             window.parent.postMessage({ type: 'LANG_CHANGE', admin: currentAdmin, lang: lang }, '*');
+        }
+
+        function updateThemeUI(theme, notify = true) {
+            const container = document.getElementById('theme-control');
+            const btns = container.querySelectorAll('.seg-btn');
+            if (theme === 'light') {
+                container.classList.add('right-active');
+                btns[0].classList.remove('active');
+                btns[1].classList.add('active');
+            } else {
+                container.classList.remove('right-active');
+                btns[0].classList.add('active');
+                btns[1].classList.remove('active');
+            }
+            if (notify) updateTheme(theme);
         }
 
         // 🌗 ฟังก์ชันอัปเดตธีม (บันทึกค่ากลาง)
@@ -163,6 +335,9 @@
 
         document.getElementById('store-status').onchange = (e) => db.ref('system_settings').update({ isStoreOpen: e.target.checked });
         document.getElementById('self-order').onchange = (e) => db.ref('system_settings').update({ allowSelfOrder: e.target.checked });
+        
+        // 🚀 Initialize Page
+        window.addEventListener('DOMContentLoaded', initializeSettings);
     </script>
     <script src="admin_script.js"></script>
 </body>

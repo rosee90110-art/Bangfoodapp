@@ -46,7 +46,7 @@ function updateCartSummary() {
         cartCountElement.textContent = totalItems;
         cartTotalElement.textContent = totalPrice.toFixed(2);
     }
-    
+
     const floatingCart = document.querySelector('.floating-cart-summary');
     if (floatingCart) {
         floatingCart.style.display = totalItems > 0 ? 'flex' : 'none';
@@ -59,7 +59,7 @@ function updateCartSummary() {
 
 function calculateFinalPrice() {
     let finalPrice = parseFloat(document.getElementById('modal-base-price').textContent) || 0;
-    
+
     // คำนวณจาก Radio และ Checkbox
     const options = document.querySelectorAll('#item-customization-form input:checked');
     options.forEach(opt => {
@@ -78,7 +78,7 @@ function calculateFinalPrice() {
 if (addToCartConfirmBtn) {
     addToCartConfirmBtn.addEventListener('click', () => {
         const tableNumber = localStorage.getItem('selectedTable') || '1';
-        
+
         // ดึงตัวเลือกที่ติ๊กไว้
         const selectedOptions = [];
         const checkedInputs = document.querySelectorAll('#item-customization-form input:checked');
@@ -104,8 +104,8 @@ if (addToCartConfirmBtn) {
 
 function loadMenuFromFirebase() {
     if (typeof db === 'undefined') return;
-    const productsRef = db.ref('products'); 
-    
+    const productsRef = db.ref('products');
+
     productsRef.on('value', (snapshot) => {
         const products = snapshot.val();
         const containers = ['food-container', 'noodle-container', 'drink-container'];
@@ -128,14 +128,14 @@ function loadMenuFromFirebase() {
                         <h3 class="item-name">${p.name} ${isOut ? '<span style="color:red;">(หมด)</span>' : ''}</h3>
                         <div class="item-price"><span>${p.price}</span> บาท</div>
                     </div>
-                    ${isOut 
-                        ? `<button class="add-to-cart-btn" disabled>หมด</button>` 
-                        : `<a href="${p.category === 'เครื่องดื่ม' ? 'drink.html' : 'menu.html'}?name=${encodeURIComponent(p.name)}&price=${p.price}&img=${p.img}&table=${tableNo}" class="add-to-cart-btn"> + เพิ่ม </a>`
-                    }
+                    ${isOut
+                    ? `<button class="add-to-cart-btn" disabled>หมด</button>`
+                    : `<a href="${p.category === 'เครื่องดื่ม' ? 'drink.html' : 'menu.html'}?name=${encodeURIComponent(p.name)}&price=${p.price}&img=${p.img}&table=${tableNo}" class="add-to-cart-btn"> + เพิ่ม </a>`
+                }
                 </div>`;
 
-            let containerId = p.category === 'อาหาร' ? 'food-container' : 
-                              p.category === 'ก๋วยเตี๋ยว' ? 'noodle-container' : 'drink-container';
+            let containerId = p.category === 'อาหาร' ? 'food-container' :
+                p.category === 'ก๋วยเตี๋ยว' ? 'noodle-container' : 'drink-container';
             const container = document.getElementById(containerId);
             if (container) container.innerHTML += productHTML;
         }
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ฟังก์ชันสลับหมวดหมู่
-window.switchCategory = function(category) {
+window.switchCategory = function (category) {
     const containers = { 'อาหาร': 'food-container', 'ก๋วยเตี๋ยว': 'noodle-container', 'เครื่องดื่ม': 'drink-container' };
     Object.values(containers).forEach(id => {
         const el = document.getElementById(id);
@@ -167,7 +167,7 @@ window.switchCategory = function(category) {
     });
     const activeEl = document.getElementById(containers[category]);
     if (activeEl) activeEl.style.display = 'grid';
-    
+
     document.querySelectorAll('.menu-tab').forEach(tab => tab.classList.remove('active'));
     const targetTab = document.querySelector(`.menu-tab[data-category="${category}"]`);
     if (targetTab) targetTab.classList.add('active');

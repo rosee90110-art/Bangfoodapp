@@ -79,7 +79,27 @@ body.light-theme .menu-item:active {
 /* 🌀 แอนิเมชันพื้นหลัง (Background Subtle Animation) */
 body {
     background-color: var(--bg-deep);
-    transition: background-color 0.5s ease, color 0.5s ease;
+    transition: background-color 0.6s cubic-bezier(0.25, 1, 0.5, 1), color 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* 🌊 Theme Switch Ripple Overlay */
+.theme-transition-overlay {
+    position: fixed;
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease-in-out;
+}
+
+/* 💫 Language Switch Blur & Fade */
+.lang-transitioning {
+    filter: blur(10px);
+    opacity: 0;
+    transform: scale(0.95);
+}
+.lang-transition-container {
+    transition: filter 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* 🌟 เอฟเฟกต์ข้อความทองในธีมมืด (ให้ดูเรืองแสง) */
@@ -152,3 +172,146 @@ body:not(.light-theme) .summary-val {
 /* 🗝️ Animations พื้นฐาน */
 @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }   
+
+/* 🍃 Premium Slide Transitions (iPhone Style) */
+.page-transition-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-deep);
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+.page-transition-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Directional Animations */
+@keyframes slideOutLeft {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(-30%); opacity: 0; }
+}
+@keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(30%); opacity: 0; }
+}
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+@keyframes slideInFromLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.slide-out-left { animation: slideOutLeft 0.4s forwards cubic-bezier(0.4, 0, 0.2, 1); }
+.slide-out-right { animation: slideOutRight 0.4s forwards cubic-bezier(0.4, 0, 0.2, 1); }
+.slide-in-right { animation: slideInFromRight 0.5s forwards cubic-bezier(0.2, 1, 0.3, 1); }
+.slide-in-left { animation: slideInFromLeft 0.5s forwards cubic-bezier(0.2, 1, 0.3, 1); }
+
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.page-content-wrap {
+    width: 100%;
+    min-height: 100vh;
+}
+   
+
+/* ✨ Festive Auto-Themes */
+
+/* Valentine's Theme */
+body.festive-valentine {
+    background: linear-gradient(135deg, #1a0b0b 0%, #2a0815 100%) !important;
+}
+body.festive-valentine.light-theme {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffeef2 100%) !important;
+}
+body.festive-valentine .premium-btn, body.festive-valentine .btn-main {
+    background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+    color: white;
+}
+body.festive-valentine .item-badge { background: #e74c3c !important; }
+body.festive-valentine::after {
+    content: "❤️ 💝 💖 ❤️";
+    position: fixed; top: 10%; left: 0; width: 100%; text-align: center;
+    font-size: 4rem; opacity: 0.05; pointer-events: none; z-index: 0;
+    line-height: 200px; word-spacing: 50vw; overflow:hidden;
+}
+body.festive-valentine.light-theme::after {
+    opacity: 0.1;
+}
+
+/* Christmas Theme */
+body.festive-christmas {
+    background: linear-gradient(135deg, #0b1a0f 0%, #061f10 100%) !important;
+}
+body.festive-christmas.light-theme {
+    background: linear-gradient(135deg, #f5fff8 0%, #eefbf2 100%) !important;
+}
+body.festive-christmas .premium-btn, body.festive-christmas .btn-main {
+    background: linear-gradient(135deg, #e74c3c, #27ae60) !important;
+    color: white;
+}
+body.festive-christmas .summary-val { color: #2ecc71 !important; }
+body.festive-christmas::after {
+    content: "❄️ 🎄 ⛄ ❄️";
+    position: fixed; top: 10%; left: 0; width: 100%; text-align: center;
+    font-size: 4rem; opacity: 0.05; pointer-events: none; z-index: 0;
+    line-height: 200px; word-spacing: 50vw; overflow:hidden;
+}
+body.festive-christmas.light-theme::after {
+    opacity: 0.15;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.1));
+}
+
+/* 📢 Promo Marquee Styles */
+.promo-banner-container {
+    width: 100%; height: 35px; background: rgba(197, 160, 89, 0.15);
+    border-bottom: 1px solid var(--premium-gold); overflow: hidden;
+    position: relative; display: flex; align-items: center;
+    backdrop-filter: blur(10px); z-index: 1000;
+}
+body.light-theme .promo-banner-container {
+    background: rgba(197, 160, 89, 0.1);
+}
+.promo-marquee-text {
+    position: absolute; white-space: nowrap;
+    color: var(--premium-gold); font-weight: 700; font-size: 0.85rem;
+    animation: marquee 25s linear infinite; padding-left: 100%;
+    text-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
+}
+body.light-theme .promo-marquee-text {
+    color: #8c703d;
+    text-shadow: none;
+}
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+/* 📱 Global Mobile Optimization */
+@media (max-width: 400px) {
+    .round-refresh { width: 62px; height: 62px; bottom: 35px; border-width: 5px; }
+    .side-drawer { width: 160px; top: 60px; right: 15px; }
+    .drawer-item { padding: 10px 12px; border-radius: 15px; }
+    .drawer-item span { font-size: 0.65rem; }
+}
+
+/* ✈️ Flying Item Animation Base */
+.flying-item {
+    position: fixed;
+    z-index: 9999;
+    width: 100px;
+    height: 100px;
+    border-radius: 25px;
+    object-fit: cover;
+    pointer-events: none;
+    transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.2);
+}

@@ -1,3 +1,9 @@
+// 🎨 Global Accent Color Loader
+(function applyAccentColor() {
+    const savedAccent = localStorage.getItem('premium-gold') || '#c5a059';
+    document.documentElement.style.setProperty('--premium-gold', savedAccent);
+})();
+
 /* =========================================
    🌓 ระบบจัดการธีมและภาษาแยกตามบัญชี (Personalization)
    ========================================= */
@@ -50,7 +56,7 @@ const bf_global_session = Date.now() + Math.random().toString(36).substring(7);
 
 function syncOnlineStatus() {
     const adminName = sessionStorage.getItem('currentAdminName');
-    
+
     // ตรวจสอบว่า Login หรือยัง และ Firebase โหลดเสร็จหรือยัง
     if (!adminName || typeof firebase === 'undefined') return;
 
@@ -62,7 +68,7 @@ function syncOnlineStatus() {
         if (snap.val() === true) {
             // 🔒 เมื่อปิดเบราว์เซอร์หรือเน็ตหลุด ให้ลบสถานะเครื่องนี้ทิ้งทันที
             myRef.onDisconnect().remove();
-            
+
             // ✅ บันทึกสถานะว่าออนไลน์อยู่
             myRef.set({
                 status: "online",
@@ -79,7 +85,7 @@ function syncOnlineStatus() {
 
 function renderCard(container, id, data, status) {
     let btn = '';
-    
+
     // จัดการปุ่มตามสถานะ (คงเดิม)
     if (['รอดำเนินการ'].includes(status)) {
         btn = `<button onclick="updateStatus('${id}', 'กำลังทำ')" class="btn-main btn-pending" data-lang-en="START COOKING" data-lang-th="เริ่มทำอาหาร">เริ่มทำอาหาร</button>`;
@@ -133,7 +139,7 @@ function renderCard(container, id, data, status) {
             </div>`;
     }).join('');
 
-    const time = data.timestamp ? new Date(data.timestamp).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) : '--:--';
+    const time = data.timestamp ? new Date(data.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '--:--';
     const displayId = id.length > 7 ? id.substring(id.length - 7).toUpperCase() : id.toUpperCase();
 
     container.innerHTML += `
@@ -149,7 +155,7 @@ function renderCard(container, id, data, status) {
             <div class="item-list">${itemsHtml}</div>
             <div class="order-total-block" style="display:flex; justify-content:space-between; align-items:center;">
                 <span data-lang-en="Total" data-lang-th="ยอดรวม" style="font-size:0.8rem; opacity:0.7;">ยอดรวม</span> 
-                <span>฿${parseFloat(data.total).toLocaleString(undefined, {minimumFractionDigits:2})}</span>
+                <span>฿${parseFloat(data.total).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
             </div>
             <div class="order-actions">${btn}<button class="btn-cancel" onclick="cancelOrder('${id}')"><i class="fas fa-trash"></i></button></div>
         </div>`;
@@ -161,3 +167,40 @@ document.addEventListener('DOMContentLoaded', () => {
     applyGlobalLanguage();
     syncOnlineStatus(); // ระบบออนไลน์จะเริ่มทำงานเองทุกหน้าครับน้า
 });
+
+/* =========================================
+   🔔 Kitchen Alert System (เสียงกริ่ง)
+   ========================================= */
+window.playAdminAlert = function() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if(ctx.state === 'suspended') ctx.resume();
+        const playNote = (freq, startTime, duration) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.5, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        };
+        playNote(783.99, ctx.currentTime, 0.4); // G5 
+        playNote(659.25, ctx.currentTime + 0.3, 0.6); // E5 (Ding-dong)
+    } catch(e) {}
+};
+
+window.triggerScreenFlash = function() {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(197, 160, 89, 0.15); box-shadow: inset 0 0 0 8px var(--premium-gold); z-index:9999; pointer-events:none; transition: opacity 1.5s ease-out; opacity: 1; box-sizing:border-box;';
+    document.body.appendChild(overlay);
+    
+    document.title = "🔥 (1) ออเดอร์ใหม่! | BANGFOOD";
+    
+    setTimeout(() => {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 1500);
+        document.title = "จัดการออเดอร์ | BANGFOOD";
+    }, 500);
+};

@@ -142,11 +142,29 @@
         loadOrdersRealtime();
     }
 
+    let previousOrderKeys = [];
+    let isInitialLoad = true;
+
     function loadOrdersRealtime() {
         db.ref('orders').on('value', (snapshot) => {
             const container = document.getElementById('main-orders-container');
             container.innerHTML = '';
             let counts = { t:0, p:0, c:0 };
+            
+            // 🔔 Kitchen Alert Logic
+            let currentOrderKeys = [];
+            if(snapshot.exists()) {
+                snapshot.forEach(child => currentOrderKeys.push(child.key));
+            }
+            if (!isInitialLoad && snapshot.exists()) {
+                const newOrders = currentOrderKeys.filter(k => !previousOrderKeys.includes(k));
+                if (newOrders.length > 0) {
+                    if(typeof playAdminAlert === 'function') playAdminAlert();
+                    if(typeof triggerScreenFlash === 'function') triggerScreenFlash();
+                }
+            }
+            previousOrderKeys = currentOrderKeys;
+            isInitialLoad = false;
 
             if (!snapshot.exists()) {
                 container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:100px; color:var(--sub-text); font-size:0.9rem;">ไม่มีออเดอร์รอการจัดการ</div>';

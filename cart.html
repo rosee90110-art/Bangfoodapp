@@ -26,7 +26,7 @@
         body::-webkit-scrollbar { display: none; }
         body { background-color: var(--bg-deep); color: #f1f1f1; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; overflow-x: hidden; transition: 0.5s; }
 
-        .app-wrapper { width: 100%; max-width: 480px; min-height: 100vh; background: var(--bg-deep); position: relative; padding-bottom: 120px; box-shadow: 0 0 80px rgba(0,0,0,0.8); animation: fadeIn 1s ease; }
+        .app-wrapper { width: 100%; max-width: 480px; min-height: 100vh; background: var(--bg-deep); position: relative; padding-bottom: 120px; box-shadow: 0 0 80px rgba(0,0,0,0.8); }
 
         /* 📍 Compact Header */
         .app-header-sticky { position: sticky; top: 0; z-index: 2000; background: rgba(8, 8, 9, 0.85); backdrop-filter: blur(25px); border-bottom: 1px solid var(--glass-border); }
@@ -97,6 +97,62 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulseOrder { 0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.6); } 70% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 0 20px rgba(197, 160, 89, 0); } 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); } }
 
+        /* 🧾 Interactive Receipt Rollout */
+        .receipt-paper {
+            background: #fdfdfd;
+            color: #111;
+            border-radius: 4px;
+            padding: 20px 20px 30px;
+            margin: 15px 20px 50px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            position: relative;
+            transform-origin: top center;
+            animation: unrollReceipt 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .receipt-paper::before {
+            content: '------- สรุปรายการอาหาร -------';
+            display: block; text-align: center;
+            font-weight: 800; color: #888; font-size: 0.8rem;
+            margin-bottom: 20px; border-bottom: 2px dashed #ccc; padding-bottom: 15px;
+        }
+        .receipt-paper::after {
+            content: '';
+            position: absolute; bottom: -10px; left: 0; width: 100%; height: 10px;
+            background: linear-gradient(-45deg, transparent 33.33%, #fdfdfd 33.33%, #fdfdfd 66.66%, transparent 66.66%),
+                        linear-gradient(45deg, transparent 33.33%, #fdfdfd 33.33%, #fdfdfd 66.66%, transparent 66.66%);
+            background-size: 20px 20px;
+            filter: drop-shadow(0 8px 6px rgba(0,0,0,0.15));
+        }
+        @keyframes unrollReceipt {
+            0% { max-height: 0; opacity: 0; transform: scaleY(0); padding-bottom: 0; overflow: hidden; }
+            40% { max-height: 800px; opacity: 1; transform: scaleY(1.02); overflow: visible; }
+            100% { max-height: 3000px; opacity: 1; transform: scaleY(1); overflow: visible; }
+        }
+
+        /* 📝 Receipt specific UI overrides */
+        .receipt-paper .cart-item {
+            background: transparent !important; border: none !important; box-shadow: none !important;
+            border-bottom: 1px dashed #ccc !important; border-radius: 0 !important;
+            padding: 15px 0 !important; margin: 0 !important; animation: none !important;
+            transform: none !important;
+        }
+        .receipt-paper .cart-item:last-child { border-bottom: none !important; }
+        .receipt-paper .food-name { color: #111 !important; }
+        .receipt-paper .item-footer span { color: #333 !important; text-shadow: none !important; }
+        .receipt-paper .addon-line span { color: #666 !important; }
+
+        /* 📱 Mobile Responsiveness */
+        @media (max-width: 400px) {
+            .receipt-paper { margin: 15px 12px 40px; padding: 20px 15px; }
+            .cart-item { margin: 12px 10px; padding: 15px; border-radius: 24px; }
+            .item-img { width: 65px; height: 65px; border-radius: 18px; }
+            .food-name { font-size: 1rem; }
+            .bangfood-logo { font-size: 0.85rem; letter-spacing: 3px; }
+            .summary-val { font-size: 1.2rem; }
+            .nav-buttons-bar { width: 85%; }
+            .round-btn-center { width: 65px; height: 65px; bottom: 35px; }
+        }
+
         /* Side Drawer */
         .side-drawer { position: fixed; top: 75px; right: 25px; width: 180px; background: var(--bg-card); z-index: 4000; padding: 12px; border-radius: 30px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); transform: scale(0); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: top right; }
         .side-drawer.active { transform: scale(1); opacity: 1; }
@@ -107,7 +163,7 @@
 <body>
     <div id="side-drawer" class="side-drawer">
         <div class="drawer-content">
-            <div class="drawer-item" onclick="switchCustomerTheme(); toggleDrawer();">
+            <div class="drawer-item" onclick="switchCustomerTheme(event); toggleDrawer();">
                 <span style="font-weight:600; font-size:0.85rem;">Theme</span>
                 <i class="fas fa-moon" style="color:var(--premium-gold);"></i>
             </div>
@@ -185,47 +241,46 @@
     const container = document.getElementById('cart-items-list'); // ชื่อ id ตามที่คุณตั้งไว้
     
     container.innerHTML = '';
+    container.classList.add('receipt-paper');
     
-    cart.items.forEach((item, index) => {
-        // 1. ดึงค่าราคาฐาน และจำนวน
+    cartData.items.forEach((item, index) => {
         const basePrice = parseFloat(item.price || 0);
         const quantity = parseInt(item.quantity || 1);
         const finalPrice = parseFloat(item.finalPrice || 0);
 
-        // 2. สร้างรายการ Options (Size/Add-ons)
         let optionsHTML = '';
         if (item.optionsArray && item.optionsArray.length > 0) {
             item.optionsArray.forEach(opt => {
                 optionsHTML += `
-                    <div style="font-size: 0.75rem; color: #888; display: flex; justify-content: space-between;">
+                    <div style="font-size: 0.75rem; color: #666; display: flex; justify-content: space-between;">
                         <span>+ ${opt.name} (x${opt.qty})</span>
                         <span>฿${(parseFloat(opt.price) * opt.qty).toFixed(2)}</span>
                     </div>`;
             });
         }
 
-        // 3. แสดงผลในรูปแบบการ์ด
         container.innerHTML += `
-            <div class="cart-item-card" style="margin-bottom: 15px; background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border);">
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <img src="${item.img}" style="width: 70px; height: 70px; border-radius: 15px; object-fit: cover;">
+            <div class="cart-item-card" style="margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 15px;">
+                <div style="display: flex; gap: 15px; align-items: flex-start;">
+                    <img src="${item.img}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid #eee;">
                     <div style="flex: 1;">
-                        <h4 style="margin: 0; font-size: 0.95rem;">${item.name}</h4>
-                        
-                        <p style="margin: 2px 0; font-size: 0.8rem; color: var(--premium-gold);">
-                            @฿${basePrice.toFixed(2)} x ${quantity}
-                        </p>
+                        <h4 style="margin: 0 0 4px 0; font-size: 0.95rem; color:#111; font-weight:700;">${item.name}</h4>
+                        <p style="margin: 0; font-size: 0.8rem; color: #555;">@฿${basePrice.toFixed(2)} x ${quantity}</p>
                     </div>
                     <div style="text-align: right;">
-                        <span style="font-weight: 700; color: #fff;">฿${finalPrice.toFixed(2)}</span>
+                        <span style="font-weight: 800; color: #000; font-size: 1.1rem;">฿${finalPrice.toFixed(2)}</span>
                     </div>
                 </div>
                 
-                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #333;">
+                <div style="margin-top: 5px;">
                     ${optionsHTML}
                 </div>
 
-                ${item.notes ? `<p style="font-size: 0.7rem; color: #c5a059; margin-top: 8px;">* ${item.notes}</p>` : ''}
+                ${item.notes ? `<p style="font-size: 0.75rem; color: #e74c3c; margin-top: 8px; font-weight:600;">* ${item.notes}</p>` : ''}
+                
+                <div style="text-align:right; margin-top:8px;">
+                    <button onclick="removeCartItem(${index})" style="background:none; border:none; color:#e74c3c; font-size:0.75rem; font-weight:700; cursor:pointer;"><i class="fas fa-trash"></i> เอาออก</button>
+                </div>
             </div>
         `;
     });
@@ -245,6 +300,7 @@
 
     const listContainer = document.getElementById('cart-items-list');
     listContainer.innerHTML = '';
+    listContainer.classList.remove('receipt-paper');
     let grandTotal = 0;
 
     if (cartData.items.length === 0) {
@@ -253,9 +309,11 @@
         return;
     }
 
+    listContainer.classList.add('receipt-paper');
+
     cartData.items.forEach((item, index) => {
         const finalP = parseFloat(item.finalPrice || 0);
-        const mainQty = parseInt(item.quantity || 1); // 🔢 ดึงจำนวนจานหลักที่สั่ง (เช่น สั่ง 2 จาน)
+        const mainQty = parseInt(item.quantity || 1);
         grandTotal += finalP;
         
         const displayName = (lang === 'en') ? (dict[item.name] || item.name) : item.name;
@@ -336,6 +394,8 @@ listContainer.innerHTML += `
             if (!cartData || cartData.items.length === 0) return;
             if (!confirm("ยืนยันการส่งรายการเข้าครัวครับ?")) return;
 
+            if(typeof bfAudio !== 'undefined') { bfAudio.play('tear'); navigator.vibrate && navigator.vibrate([30, 50, 30]); }
+
             const orderData = {
                 tableNumber: tableNo,
                 items: cartData.items,
@@ -346,12 +406,28 @@ listContainer.innerHTML += `
 
             window.db.ref('orders').push(orderData).then(() => {
                 sessionStorage.setItem(cartKey, JSON.stringify({ items: [] }));
-                window.location.href = `track.html?table=${tableNo}`;
+                // เพิ่มการหน่วงเวลาเล็กน้อยเพื่อให้เสียง 'ฉีกกระดาษ' และแอนิเมชันทำงานได้เต็มที่
+                setTimeout(() => {
+                    const url = `track.html?table=${tableNo}`;
+                    if (window.navigateTo) {
+                        window.navigateTo(url);
+                    } else {
+                        window.location.href = url;
+                    }
+                }, 800);
             });
         };
 
-        function goBackToIndex() { window.location.href = `index.html?table=${getTableNo()}`; }
-        function goToTracking() { window.location.href = `track.html?table=${getTableNo()}`; }
+        function goBackToIndex() { 
+            const url = `index.html?table=${getTableNo()}`;
+            if (window.navigateTo) window.navigateTo(url);
+            else window.location.href = url;
+        }
+        function goToTracking() { 
+            const url = `track.html?table=${getTableNo()}`;
+            if (window.navigateTo) window.navigateTo(url);
+            else window.location.href = url;
+        }
         function applyTheme(t) { document.body.classList.toggle('light-theme', t === 'light'); }
 
         window.addEventListener('DOMContentLoaded', initializeCartPage);

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bangfood - Store Info</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Kanit:wght@300;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="global_style.css">
+    <style>
+        :root {
+            --premium-gold: #c5a059;
+            --bg-deep: #0a0a0b;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        body.light-theme {
+            --bg-deep: #f8f9fa;
+            --glass: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+            overflow-x: hidden;
+            transition: background 0.5s;
+        }
+
+        body.light-theme {
+            color: #1a1a1b;
+        }
+
+        .app-wrapper {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding-bottom: 120px;
+            position: relative;
+        }
+
+        /* ✨ Header Styling */
+        .page-header {
+            padding: 50px 25px 20px;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(197, 160, 89, 0.1), transparent);
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--premium-gold);
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* 🔮 Glass Cards */
+        .info-section {
+            padding: 0 20px;
+            margin-bottom: 25px;
+            animation: slideUpFade 0.6s ease-out both;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .glass-card:hover {
+            border-color: var(--premium-gold);
+            transform: translateY(-5px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(197, 160, 89, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--premium-gold);
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* 📶 WiFi Special Styling */
+        .wifi-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .wifi-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wifi-label {
+            font-size: 0.7rem;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .wifi-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--premium-gold);
+        }
+
+        .copy-btn {
+            background: var(--premium-gold);
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* 📱 Social Grid */
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .social-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s;
+        }
+
+        .social-item:active {
+            transform: scale(0.9);
+        }
+
+        .social-icon-wrapper {
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            border: 1px solid var(--glass-border);
+            background: var(--glass);
+            transition: 0.3s;
+        }
+
+        .fb-ico {
+            color: #1877f2;
+        }
+
+        .ig-ico {
+            color: #e1306c;
+        }
+
+        .line-ico {
+            color: #06c755;
+        }
+
+        .tt-ico {
+            color: #000;
+        }
+
+        body.light-theme .tt-ico {
+            color: #000;
+        }
+
+        body:not(.light-theme) .tt-ico {
+            color: #fff;
+        }
+
+        .social-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        /* 📍 Location Button */
+        .maps-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 20px;
+            background: var(--premium-gold);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2);
+            transition: 0.3s;
+        }
+
+        .maps-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 💳 Payment Row */
+        .payment-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .payment-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .payment-item i {
+            font-size: 1.8rem;
+            color: var(--premium-gold);
+        }
+
+        .payment-item span {
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.7;
+        }
+
+        /* 🎬 Keyframes */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Toast Styling */
+        #toast {
+            position: fixed;
+            bottom: 130px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--premium-gold);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: 0.4s;
+            pointer-events: none;
+            z-index: 5000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+
+<body onload="initializeInfoPage()">
+    <div class="app-wrapper">
+        <header class="page-header">
+            <h1 class="page-title" data-lang-en="STORE INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</h1>
+            <p style="opacity: 0.6; font-size: 0.8rem; margin-top: 10px;">Bangfood Premium Experience</p>
+        </header>
+
+        <!-- 1. Quick Info Section -->
+        <div class="info-section" style="animation-delay: 0.1s;">
+            <div class="glass-card">
+                <div class="section-header">
+                    <div class="section-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="section-title" data-lang-en="QUICK INFO" data-lang-th="ข้อมูลสำคัญ">ข้อมูลสำคัญ</div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="wifi-grid">
+                        <div class="wifi-details">
+                            <span class="wifi-label">WI-FI SSID</span>
+                            <span class="wifi-value">Bangfood_Guest_5G</span>
+                        </div>
+                        <div class="copy-btn" onclick="copyToClipboard('Bangfood_Guest_5G', 'SSID Copied!')">
+                            <i class="fas fa-wifi"></i>
+                        </div>
+                    </div>
+
+                    <div class="wifi-grid">
+                        <div class="wifi-details">
+                            <span class="wifi-label">WI-FI PASSWORD</span>
+                            <span class="wifi-value">BF2024PREMIUM</span>
+                        </div>
+                        <div class="copy-btn" onclick="copyToClipboard('BF2024PREMIUM', 'Password Copied!')">
+                            <i class="fas fa-copy"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 5px;">
+                        <div
+                            style="background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center;">
+                            <span class="wifi-label" data-lang-en="STATION"
+                                data-lang-th="หมายเลขโต๊ะ">หมายเลขโต๊ะ</span>
+                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--premium-gold);"
+                                id="display-table">-</div>
+                        </div>
+                        <div
+                            style="background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center;">
+                            <span class="wifi-label" data-lang-en="HOURS"
+                                data-lang-th="เวลาเปิด-ปิด">เวลาเปิด-ปิด</span>
+                            <div style="font-size: 0.9rem; font-weight: 700;" data-lang-en="10:00 - 22:00"
+                                data-lang-th="10:00 - 22:00">10:00 - 22:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Connect Section -->
+        <div class="info-section" style="animation-delay: 0.2s;">
+            <div class="glass-card">
+                <div class="section-header">
+                    <div class="section-icon"><i class="fas fa-share-alt"></i></div>
+                    <div class="section-title" data-lang-en="CONNECT WITH US" data-lang-th="ช่องทางติดต่อ">ช่องทางติดต่อ
+                    </div>
+                </div>
+
+                <div class="social-grid">
+                    <a href="#" class="social-item">
+                        <div class="social-icon-wrapper fb-ico"><i class="fab fa-facebook-f"></i></div>
+                        <span class="social-label">Facebook</span>
+                    </a>
+                    <a href="#" class="social-item">
+                        <div class="social-icon-wrapper ig-ico"><i class="fab fa-instagram"></i></div>
+                        <span class="social-label">Instagram</span>
+                    </a>
+                    <a href="#" class="social-item">
+                        <div class="social-icon-wrapper line-ico"><i class="fab fa-line"></i></div>
+                        <span class="social-label">Line ID</span>
+                    </a>
+                    <a href="#" class="social-item">
+                        <div class="social-icon-wrapper tt-ico"><i class="fab fa-tiktok"></i></div>
+                        <span class="social-label">TikTok</span>
+                    </a>
+                </div>
+
+                <a href="tel:0936135911" class="maps-btn"
+                    style="background: rgba(128,128,128,0.1); width: 90%; color: inherit; border: 1px solid var(--glass-border); margin-top: 20px; box-shadow: none;">
+                    <i class="fas fa-phone-alt" style="color: var(--premium-gold);"></i>
+                    <span data-lang-en="CALL NOW" data-lang-th="โทรหาเราทันที">โทรหาเราทันที</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. Our Story -->
+        <div class="info-section" style="animation-delay: 0.3s;">
+            <div class="glass-card">
+                <div class="section-header">
+                    <div class="section-icon"><i class="fas fa-heart"></i></div>
+                    <div class="section-title" data-lang-en="OUR STORY" data-lang-th="เรื่องราวของเรา">เรื่องราวของเรา
+                    </div>
+                </div>
+                <p style="font-size: 0.85rem; line-height: 1.6; opacity: 0.8;"
+                    data-lang-en="At Bangfood, we believe that dining is an art. Every dish is crafted with passion using only the finest ingredients sourced from local artisans. Our goal is to provide a premium culinary journey that delights all your senses."
+                    data-lang-th="ที่ Bangfood เราเชื่อว่าการทานอาหารคือศิลปะ ทุกจานของเราถูกรังสรรค์ด้วยความหลงใหล โดยใช้เพียงวัตถุดิบที่ดีที่สุดที่เราคัดสรรจากแหล่งท้องถิ่น เป้าหมายของเราคือการมอบการเดินทางด้านรสชาติระดับพรีเมียมที่สร้างความสุขให้กับทุกประสาทสัมผัสของคุณ">
+                    ที่ Bangfood เราเชื่อว่าการทานอาหารคือศิลปะ ทุกจานของเราถูกรังสรรค์ด้วยความหลงใหล
+                    โดยใช้เพียงวัตถุดิบที่ดีที่สุดที่เราคัดสรรจากแหล่งท้องถิ่น
+                    เป้าหมายของเราคือการมอบการเดินทางด้านรสชาติระดับพรีเมียมที่สร้างความสุขให้กับทุกประสาทสัมผัสของคุณ
+                </p>
+            </div>
+        </div>
+
+        <!-- 4. Location Section -->
+        <div class="info-section" style="animation-delay: 0.4s;">
+            <div class="glass-card">
+                <div class="section-header">
+                    <div class="section-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <div class="section-title" data-lang-en="LOCATION" data-lang-th="ที่อยู่และการเดินทาง">
+                        ที่อยู่และการเดินทาง</div>
+                </div>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px;">
+                    6°58'44.5"N 100°15'43.7"E, Hatyai, Songkhla
+                </p>
+                <button class="maps-btn"
+                    onclick="window.open('https://www.google.com/maps?q=6.979028,100.262139', '_blank')">
+                    <i class="fas fa-directions"></i>
+                    <span data-lang-en="OPEN IN GOOGLE MAPS" data-lang-th="นำทางบน Google Maps">นำทางบน Google
+                        Maps</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 5. Payment Section -->
+        <div class="info-section" style="animation-delay: 0.5s;">
+            <div class="glass-card" style="text-align: center;">
+                <div class="section-header" style="justify-content: center;">
+                    <div class="section-icon"><i class="fas fa-credit-card"></i></div>
+                    <div class="section-title" data-lang-en="PAYMENT METHODS" data-lang-th="วิธีชำระเงิน">วิธีชำระเงิน
+                    </div>
+                </div>
+                <div class="payment-row">
+                    <div class="payment-item">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span data-lang-en="Cash" data-lang-th="เงินสด">เงินสด</span>
+                    </div>
+                    <div class="payment-item">
+                        <i class="fas fa-qrcode"></i>
+                        <span data-lang-en="PromptPay" data-lang-th="พร้อมเพย์">พร้อมเพย์</span>
+                    </div>
+                    <div class="payment-item">
+                        <i class="fab fa-cc-visa"></i>
+                        <span data-lang-en="Credit Card" data-lang-th="บัตรเครดิต">บัตรเครดิต</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast">Message Copied!</div>
+
+        <!-- Unified Navigation Bar -->
+        <div class="bottom-nav-fixed">
+            <div class="nav-bar">
+                <div class="nav-item"
+                    onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-home"></i>
+                    <span data-lang-en="HOME" data-lang-th="หน้าแรก">หน้าแรก</span>
+                </div>
+                <!-- Slot 2: INFO (Active) -->
+                <div class="nav-item active" onclick="initializeInfoPage()">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</span>
+                </div>
+                <div style="width: 70px;"></div> <!-- Middle Gap -->
+                <div class="nav-item"
+                    onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-list-ul"></i>
+                    <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">รายการสั่ง</span>
+                </div>
+                <div class="nav-item"
+                    onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-shopping-basket"></i>
+                    <span data-lang-en="CART" data-lang-th="ตะกร้า">ตะกร้า</span>
+                </div>
+            </div>
+
+            <div class="round-btn-center" onclick="callStaff()">
+                <i class="fas fa-concierge-bell" style="font-size: 1.8rem;"></i>
+            </div>
+        </div>
+    </div>
+
+    <script src="global_script.js"></script>
+    <script>
+        function initializeInfoPage() {
+            const tableNo = localStorage.getItem('selectedTable') || '1';
+            document.getElementById('display-table').innerText = tableNo;
+
+            // Sync theme
+            const currentTheme = localStorage.getItem(`theme_table_${tableNo}`) || 'dark';
+            document.body.classList.toggle('light-theme', currentTheme === 'light');
+
+            // Sync Language
+            const currentLang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
+            translatePage(currentLang);
+        }
+
+        function copyToClipboard(text, message) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(message);
+                if (navigator.vibrate) navigator.vibrate(50);
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function callStaff() {
+            const table = localStorage.getItem('selectedTable');
+            alert(localStorage.getItem(`lang_table_${table}`) === 'en' ? 'Calling staff to table ' + table + '...' : 'กำลังเรียกพนักงานมายังโต๊ะ ' + table + '...');
+        }
+    </script>
+</body>
+
+</html>

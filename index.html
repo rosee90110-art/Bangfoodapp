@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,6 +9,9 @@
     <link rel="stylesheet" href="admin_style.css">
     <link rel="stylesheet" href="global_style.css">
 
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Kanit:wght@300;500;700&family=Orbitron:wght@400;700;900&display=swap"
+        rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
 
@@ -43,382 +47,525 @@
             /* Using global_style.css transitions instead */
         }
 
-        body.light-theme { color: #333; }
+        body.light-theme {
+            color: #333;
+        }
 
         /* ✨ HEADER */
         .app-header-sticky {
-            position: sticky; top: 0; z-index: 2000;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
             background: rgba(10, 10, 11, 0.85);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
         }
-        body.light-theme .app-header-sticky { background: rgba(255, 253, 245, 0.9); }
+
+        body.light-theme .app-header-sticky {
+            background: rgba(255, 253, 245, 0.9);
+        }
 
         .header-main-row {
-            padding: 1px 20px; display: flex; align-items: center; justify-content: space-between;
+            padding: 1px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .bangfood-logo {
-            font-size: 1.4rem; font-weight: 800; letter-spacing: 2px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 2px;
             background: linear-gradient(90deg, var(--premium-gold), #fff, var(--premium-gold));
-            background-size: 200% auto; background-clip: text; -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; animation: shineText 4s linear infinite;
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 4s linear infinite;
         }
 
-        @keyframes shineText { to { background-position: 200% center; } }
+        @keyframes shineText {
+            to {
+                background-position: 200% center;
+            }
+        }
 
         /* 🍔 Hamburger Menu */
-        .hamburger-menu { cursor: pointer; z-index: 4600; }
+        .hamburger-menu {
+            cursor: pointer;
+            z-index: 4600;
+        }
 
         /* 📁 Side Drawer */
-        .side-drawer { 
-            position: fixed; top: 70px; right: 20px; width: 180px; 
-            background: var(--drawer-bg); z-index: 4500; padding: 10px; 
-            border-radius: 24px; border: 1px solid var(--glass-border); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            transform-origin: top right; transform: scale(0); 
-            opacity: 0; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            pointer-events: none; 
+        .side-drawer {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 180px;
+            background: var(--drawer-bg);
+            z-index: 4500;
+            padding: 10px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform-origin: top right;
+            transform: scale(0);
+            opacity: 0;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
         }
-        .side-drawer.active { transform: scale(1); opacity: 1; pointer-events: auto; }
-        .drawer-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px 15px; background: rgba(128,128,128,0.06); 
-            border-radius: 18px; margin-bottom: 5px; cursor: pointer; 
+
+        .side-drawer.active {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .drawer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(128, 128, 128, 0.06);
+            border-radius: 18px;
+            margin-bottom: 5px;
+            cursor: pointer;
         }
 
         .top-summary-bar {
-            padding: 8px 25px; background: rgba(197, 160, 89, 0.08);
-            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 25px;
+            background: rgba(197, 160, 89, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         /* 📱 Mobile Responsiveness */
         @media (max-width: 400px) {
-            .bangfood-logo { font-size: 1.1rem; letter-spacing: 1px; }
-            .header-main-row { padding: 0 15px; }
-            .top-summary-bar { padding: 6px 15px; }
-            .food-card { border-radius: 20px; }
-            .food-card .card-content { padding: 12px; }
-            .food-card .food-name { font-size: 0.9rem; }
-            .food-card .price-tag { font-size: 1rem; }
+            .bangfood-logo {
+                font-size: 1.1rem;
+                letter-spacing: 1px;
+            }
+
+            .header-main-row {
+                padding: 0 15px;
+            }
+
+            .top-summary-bar {
+                padding: 6px 15px;
+            }
+
+            .food-card {
+                border-radius: 20px;
+            }
+
+            .food-card .card-content {
+                padding: 12px;
+            }
+
+            .food-card .food-name {
+                font-size: 0.9rem;
+            }
+
+            .food-card .price-tag {
+                font-size: 1rem;
+            }
         }
 
-        .item-img-container { position: relative; }
+        .item-img-container {
+            position: relative;
+        }
+
         .item-badge {
-            position: absolute; top: -8px; right: -8px;
-            background: #ff4b2b; color: #fff; font-size: 0.7rem;
-            min-width: 22px; height: 22px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; border: 2px solid var(--bg-deep);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3); z-index: 10;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4b2b;
+            color: #fff;
+            font-size: 0.7rem;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid var(--bg-deep);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 10;
         }
 
-        .summary-label { font-size: 0.65rem; font-weight: 700; color: #888; letter-spacing: 1px; }
-        .summary-val { color: var(--premium-gold); font-weight: 700; font-size: 1.2rem; }
+        .summary-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #888;
+            letter-spacing: 1px;
+        }
+
+        .summary-val {
+            color: var(--premium-gold);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
 
         /* 🖼️ SLIDER */
-        .slider-container { width: 100%; margin-top: 15px; }
+        .slider-container {
+            width: 100%;
+            margin-top: 15px;
+        }
+
         .image-slider {
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-            gap: 15px; padding: 10px 40px 25px; scrollbar-width: none;
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 15px;
+            padding: 10px 40px 25px;
+            scrollbar-width: none;
             scroll-padding: 0 40px;
         }
-        .image-slider::after { content: ''; flex: 0 0 7.5%; }
+
+        .image-slider::after {
+            content: '';
+            flex: 0 0 7.5%;
+        }
 
         .slide-card {
-            flex: 0 0 85%; scroll-snap-align: center; border-radius: 30px;
-            height: 200px; position: relative; overflow: hidden;
-            transform: scale(0.92); transition: transform 0.4s;
-            box-shadow: var(--card-shadow); border: 2px solid transparent;
+            flex: 0 0 85%;
+            scroll-snap-align: center;
+            border-radius: 30px;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.92);
+            transition: transform 0.4s;
+            box-shadow: var(--card-shadow);
+            border: 2px solid transparent;
         }
 
-        .slide-card.is-active { transform: scale(1); border-color: var(--premium-gold); }
+        .slide-card.is-active {
+            transform: scale(1);
+            border-color: var(--premium-gold);
+        }
 
         .slide-info-overlay {
-            position: absolute; bottom: 0; width: 100%; padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            color: #fff; transform: translateY(10px); opacity: 0; transition: 0.5s;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            color: #fff;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: 0.5s;
         }
-        .slide-card.is-active .slide-info-overlay { transform: translateY(0); opacity: 1; }
+
+        .slide-card.is-active .slide-info-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
 
         .indicator-item {
-            width: 8px; height: 8px; background: #444; border-radius: 50%; transition: 0.3s;
+            width: 8px;
+            height: 8px;
+            background: #444;
+            border-radius: 50%;
+            transition: 0.3s;
         }
+
         .indicator-item.active {
-            width: 25px; height: 10px; border-radius: 10px; background: var(--premium-gold);
+            width: 25px;
+            height: 10px;
+            border-radius: 10px;
+            background: var(--premium-gold);
         }
 
         /* 🍛 MENU CATEGORY & ITEMS */
-        .menu-tabs { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; scrollbar-width: none; }
-        .menu-tab {
-            padding: 10px 22px; background: var(--glass-white); border-radius: 25px;
-            color: #888; font-size: 0.85rem; border: 1px solid var(--glass-border);
-            white-space: nowrap; transition: var(--transition);
+        .menu-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
+
+        .menu-tab {
+            padding: 10px 22px;
+            background: var(--glass-white);
+            border-radius: 25px;
+            color: #888;
+            font-size: 0.85rem;
+            border: 1px solid var(--glass-border);
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
         .menu-tab.active {
-            background: var(--premium-gold); color: #fff; font-weight: 600;
+            background: var(--premium-gold);
+            color: #fff;
+            font-weight: 600;
             box-shadow: 0 8px 15px rgba(197, 160, 89, 0.3);
         }
 
         .menu-item {
-            background: var(--glass-white); border: 1px solid var(--glass-border);
-            margin: 0 20px 15px; padding: 12px; border-radius: 25px;
-            display: flex; align-items: center; gap: 15px; text-decoration: none;
-            color: inherit; transition: var(--transition);
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            margin: 0 20px 15px;
+            padding: 12px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
         }
-        .menu-item:active { transform: scale(0.96); }
-        .item-img-thumb { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; }
+
+        .menu-item:active {
+            transform: scale(0.96);
+        }
+
+        .item-img-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            object-fit: cover;
+        }
 
         .select-btn {
-            padding: 8px 18px; background: var(--premium-gold); border-radius: 15px;
-            color: #fff; font-size: 0.75rem; font-weight: 700; border: none;
+            padding: 8px 18px;
+            background: var(--premium-gold);
+            border-radius: 15px;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: none;
             box-shadow: 0 4px 0 #8e7340;
         }
-        .select-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #8e7340; }
 
-        /* 🔍 SEARCH */
-        .round-search-parent {
-            position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%);
-            z-index: 4000; display: flex; align-items: center;
-            width: 70px; height: 70px; background: var(--btn-bg);
-            border-radius: 35px; border: 6px solid var(--bg-deep);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            transition: var(--transition); overflow: hidden;
-        }
-        .round-search-parent.active { width: 90%; max-width: 400px; padding: 0 5px; }
-        .search-main-btn {
-            width: 70px; height: 58px; flex-shrink: 0; display: flex;
-            justify-content: center; align-items: center; cursor: pointer;
-            color: var(--btn-text); font-size: 1.4rem;
-        }
-        #bottomSearchInput {
-            flex: 1; border: none; outline: none; background: transparent;
-            font-family: 'Kanit', sans-serif; font-size: 1rem; color: var(--btn-text);
-            width: 0; opacity: 0; transition: 0.3s; padding-left: 10px;
-        }
-        .round-search-parent.active #bottomSearchInput { width: 100%; opacity: 1; }
-
-        /* 📱 BOTTOM NAV */
-        .bottom-nav-fixed {
-            position: fixed; bottom: 0; left: 10px; width: 95%; height: 90px;
-            display: flex; justify-content: center; align-items: flex-end;
-            pointer-events: none; z-index: 3000;
-        }
-        .nav-bar {
-            width: 92%; height: 65px; background: #121214; border-radius: 35px;
-            border: 1px solid var(--glass-border); display: flex;
-            justify-content: space-between; align-items: center;
-            padding: 0 30px; pointer-events: auto; margin-bottom: 15px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        }
-        body.light-theme .nav-bar { background: #fff; }
-
-        .nav-item { text-align: center; color: #666; cursor: pointer; position: relative; }
-        .nav-item i { font-size: 1.2rem; }
-        .nav-item span { display: block; font-size: 0.6rem; font-weight: 700; margin-top: 4px; }
-        #cart-count-badge {
-            position: absolute; top: -8px; right: -10px;
-            background: #ff4b2b; color: #fff; font-size: 0.6rem;
-            min-width: 18px; height: 18px; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
+        .select-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #8e7340;
         }
     </style>
 </head>
+
 <body onload="initializeApp()">
 
-<div class="app-header-sticky">
-    <div class="header-main-row">
-        <h1 class="bangfood-logo">BANGFOOD</h1>
-        <div class="hamburger-menu" onclick="toggleDrawer()">
-            <i class="fas fa-bars" style="color:var(--premium-gold); font-size:1.5rem;"></i>
+    <div class="app-header-sticky">
+        <div class="header-main-row">
+            <h1 class="bangfood-logo">BANGFOOD</h1>
+            <div class="hamburger-menu" onclick="toggleDrawer()">
+                <i class="fas fa-bars" style="color:var(--premium-gold); font-size:1.5rem;"></i>
+            </div>
+        </div>
+        <div class="top-summary-bar">
+            <div class="summary-label">STATION <span id="display-table" style="color:var(--premium-gold);">1</span> |
+                <span data-lang-en="TOTAL" data-lang-th="ราคารวม">TOTAL</span>
+            </div>
+            <div class="summary-val">฿<span id="floating-total">0.00</span></div>
         </div>
     </div>
-    <div class="top-summary-bar">
-        <div class="summary-label">STATION <span id="display-table" style="color:var(--premium-gold);">1</span> | <span data-lang-en="TOTAL" data-lang-th="ราคารวม">TOTAL</span></div>
-        <div class="summary-val">฿<span id="floating-total">0.00</span></div>
+
+    <!-- 📢 Live Promo Marquee -->
+    <div id="promo-banner-container" class="promo-banner-container" style="display:none;">
+        <div class="promo-marquee-text" id="promo-marquee-text"></div>
     </div>
-</div>
 
-<!-- 📢 Live Promo Marquee -->
-<div id="promo-banner-container" class="promo-banner-container" style="display:none;">
-    <div class="promo-marquee-text" id="promo-marquee-text"></div>
-</div>
-
-<div id="side-drawer" class="side-drawer">
-    <div class="drawer-content">
-        <div class="drawer-item" onclick="switchCustomerTheme(event); toggleDrawer();">
-            <span data-lang-en="THEME" data-lang-th="เปลี่ยนธีม">เปลี่ยนธีม</span>
-            <i class="fas fa-adjust" style="color:var(--premium-gold);"></i>
-        </div>
-        <div class="drawer-item" onclick="switchCustomerLanguage(); toggleDrawer();">
-            <span data-lang-en="LANGUAGE" data-lang-th="เปลี่ยนภาษา">เปลี่ยนภาษา</span>
-            <b id="drawer-lang-status" style="font-size: 0.7rem; color: var(--premium-gold);">TH</b>
+    <div id="side-drawer" class="side-drawer">
+        <div class="drawer-content">
+            <div class="drawer-item" onclick="switchCustomerTheme(event); toggleDrawer();">
+                <span data-lang-en="THEME" data-lang-th="เปลี่ยนธีม">เปลี่ยนธีม</span>
+                <i class="fas fa-adjust" style="color:var(--premium-gold);"></i>
+            </div>
+            <div class="drawer-item" onclick="switchCustomerLanguage(); toggleDrawer();">
+                <span data-lang-en="LANGUAGE" data-lang-th="เปลี่ยนภาษา">เปลี่ยนภาษา</span>
+                <b id="drawer-lang-status" style="font-size: 0.7rem; color: var(--premium-gold);">TH</b>
+            </div>
         </div>
     </div>
-</div>
-<div id="drawer-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:transparent; z-index:4200; display:none;" onclick="toggleDrawer()"></div>
+    <div id="drawer-overlay"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:transparent; z-index:4200; display:none;"
+        onclick="toggleDrawer()"></div>
 
-<main style="padding-bottom: 120px;">
-    <div style="padding: 25px 20px 10px;">
-        <h2 style="font-size: 1.1rem; color: var(--premium-gold); margin: 0; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-star"></i> <span data-lang-en="Recommended" data-lang-th="เมนูแนะนำ">เมนูแนะนำ</span>
-        </h2>
-    </div>
-
-    <div class="slider-container">
-        <div class="image-slider" id="hero-best-seller-slider"></div>
-    </div>
-    <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;" id="indicator-container"></div>
-
-    <div class="menu-tabs" id="category-tabs">
-        <div class="menu-tab active" data-cat="ทั้งหมด" onclick="switchCategory('ทั้งหมด')">🏠 <span data-lang-en="ALL" data-lang-th="ทั้งหมด">ทั้งหมด</span></div>
-        <div class="menu-tab" data-cat="อาหาร" onclick="switchCategory('อาหาร')">🍛 <span data-lang-en="MAIN" data-lang-th="จานหลัก">จานหลัก</span></div>
-        <div class="menu-tab" data-cat="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว')">🍜 <span data-lang-en="NOODLES" data-lang-th="เส้น">เส้น</span></div>
-        <div class="menu-tab" data-cat="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม')">🥤 <span data-lang-en="DRINKS" data-lang-th="เครื่องดื่ม">เครื่องดื่ม</span></div>
-    </div>
-
-    <div id="menu-main-container"></div>
-</main>
-
-<div class="round-search-parent" id="searchParent">
-    <div class="search-main-btn" onclick="toggleBottomSearch()">
-        <i class="fas fa-search" id="searchIcon"></i>
-    </div>
-    <input type="text" id="bottomSearchInput" placeholder="ค้นหาเมนูอร่อย..." oninput="handleSearchBottom()">
-</div>
-
-<div class="bottom-nav-fixed">
-    <div class="nav-bar">
-        <div class="nav-item" onclick="goToPage('cart.html')">
-            <i class="fas fa-shopping-cart"></i>
-            <div id="cart-count-badge" style="display:none;">0</div>
-            <span data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
+    <main style="padding-bottom: 120px;">
+        <div style="padding: 25px 20px 10px;">
+            <h2
+                style="font-size: 1.1rem; color: var(--premium-gold); margin: 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-star"></i> <span data-lang-en="Recommended" data-lang-th="เมนูแนะนำ">เมนูแนะนำ</span>
+            </h2>
         </div>
-        <div style="width: 60px;"></div>
-        <div class="nav-item" onclick="goToPage('track.html')">
-            <i class="fas fa-list-ul"></i>
-            <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">ORDERS</span>
+
+        <div class="slider-container">
+            <div class="image-slider" id="hero-best-seller-slider"></div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 20px;" id="indicator-container">
+        </div>
+
+        <div class="menu-tabs" id="category-tabs">
+            <div class="menu-tab active" data-cat="ทั้งหมด" onclick="switchCategory('ทั้งหมด')">🏠 <span
+                    data-lang-en="ALL" data-lang-th="ทั้งหมด">ทั้งหมด</span></div>
+            <div class="menu-tab" data-cat="อาหาร" onclick="switchCategory('อาหาร')">🍛 <span data-lang-en="MAIN"
+                    data-lang-th="จานหลัก">จานหลัก</span></div>
+            <div class="menu-tab" data-cat="ก๋วยเตี๋ยว" onclick="switchCategory('ก๋วยเตี๋ยว')">🍜 <span
+                    data-lang-en="NOODLES" data-lang-th="เส้น">เส้น</span></div>
+            <div class="menu-tab" data-cat="เครื่องดื่ม" onclick="switchCategory('เครื่องดื่ม')">🥤 <span
+                    data-lang-en="DRINKS" data-lang-th="เครื่องดื่ม">เครื่องดื่ม</span></div>
+        </div>
+
+        <div id="menu-main-container"></div>
+    </main>
+
+    <div class="bottom-nav-fixed">
+        <div class="nav-bar">
+            <div class="nav-item active" onclick="goToPage('index.html')">
+                <i class="fas fa-home"></i>
+                <span data-lang-en="HOME" data-lang-th="หน้าแรก">HOME</span>
+            </div>
+                <div class="nav-item" onclick="goToPage('info.html')">
+                <i class="fas fa-info-circle"></i>
+                <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">INFO</span>
+            </div>
+            <div style="width: 70px;"></div>
+            <div class="nav-item" onclick="goToPage('cart.html')">
+                <i class="fas fa-shopping-basket"></i>
+                <div id="cart-count-badge" style="display:none;">0</div>
+                <span data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
+            </div>
+            <div class="nav-item" onclick="goToPage('track.html')">
+                <i class="fas fa-list-ul"></i>
+                <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">ORDERS</span>
+            </div>
+
+        </div>
+
+        <div class="round-btn-center" id="searchParent" style="transition:0.4s; overflow:hidden;">
+            <div class="search-main-btn" onclick="toggleBottomSearch()"
+                style="width:70px; height:70px; display:flex; justify-content:center; align-items:center;">
+                <i class="fas fa-search" id="searchIcon" style="font-size:1.5rem;"></i>
+            </div>
+            <input type="text" id="bottomSearchInput"
+                style="flex:1; border:none; outline:none; background:transparent; font-size:1rem; color:inherit; width:0; opacity:0; transition:0.3s; padding-left:10px;"
+                placeholder="ค้นหาเมนู..." oninput="handleSearchBottom()">
         </div>
     </div>
-</div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-<script>
-    const firebaseConfig = { 
-        apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", 
-        authDomain: "bangfood-cb30f.firebaseapp.com", 
-        databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", 
-        projectId: "bangfood-cb30f", 
-        storageBucket: "bangfood-cb30f.appspot.com", 
-        messagingSenderId: "390955623784", 
-        appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" 
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ",
+            authDomain: "bangfood-cb30f.firebaseapp.com",
+            databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "bangfood-cb30f",
+            storageBucket: "bangfood-cb30f.appspot.com",
+            messagingSenderId: "390955623784",
+            appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd"
+        };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-    async function initializeApp() {
-        const tableNo = new URLSearchParams(window.location.search).get('table') || localStorage.getItem('selectedTable') || '1';
-        localStorage.setItem('selectedTable', tableNo);
-        document.getElementById('display-table').innerText = tableNo;
-        
-        applyTheme(localStorage.getItem(`theme_table_${tableNo}`) || 'dark');
-        const currentLang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
-        updateLanguageUI(currentLang);
+        async function initializeApp() {
+            const tableNo = new URLSearchParams(window.location.search).get('table') || localStorage.getItem('selectedTable') || '1';
+            localStorage.setItem('selectedTable', tableNo);
+            document.getElementById('display-table').innerText = tableNo;
 
-        loadMenuFromFirebase();
-    }
+            applyTheme(localStorage.getItem(`theme_table_${tableNo}`) || 'dark');
+            const currentLang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
+            updateLanguageUI(currentLang);
 
-    // --- 🔹 Load Data (Real-time Version) 🔹 ---
-    function loadMenuFromFirebase() {
-        const tableNo = localStorage.getItem('selectedTable');
-        
-        // 1. Listen for Translations
-        db.ref('menu_translations').on('value', (transSnap) => {
-            const dict = transSnap.val() || {};
-            const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
+            loadMenuFromFirebase();
+        }
 
-            // 📢 Live Promo Listener
-            db.ref('config/promo_text').on('value', snap => {
-                const text = snap.val();
-                const banner = document.getElementById('promo-banner-container');
-                const marquee = document.getElementById('promo-marquee-text');
-                if (text && text.trim() !== "") {
-                    marquee.innerText = text;
-                    banner.style.display = 'block';
-                } else {
-                    banner.style.display = 'none';
-                }
-            });
+        // --- 🔹 Load Data (Real-time Version) 🔹 ---
+        function loadMenuFromFirebase() {
+            const tableNo = localStorage.getItem('selectedTable');
 
-            // 2. Listen for Products (Real-time)
-            db.ref('products').on('value', async (prodSnap) => {
-                const products = prodSnap.val();
-                if (!products) return;
+            // 1. Listen for Translations
+            db.ref('menu_translations').on('value', (transSnap) => {
+                const dict = transSnap.val() || {};
+                const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
 
-                // 3. Get Stats for Ranking
-                const [ordersSnap, historySnap] = await Promise.all([
-                    db.ref('orders').once('value'),
-                    db.ref('history').once('value')
-                ]);
-
-                const stats = {};
-                const processItems = (snap) => {
-                    if (snap.exists()) {
-                        snap.forEach(child => {
-                            const order = child.val();
-                            if (order.items) {
-                                order.items.forEach(item => {
-                                    const qty = parseInt(item.quantity || 1);
-                                    stats[item.name] = (stats[item.name] || 0) + qty;
-                                });
-                            }
-                        });
+                // 📢 Live Promo Listener
+                db.ref('config/promo_text').on('value', snap => {
+                    const text = snap.val();
+                    const banner = document.getElementById('promo-banner-container');
+                    const marquee = document.getElementById('promo-marquee-text');
+                    if (text && text.trim() !== "") {
+                        marquee.innerText = text;
+                        banner.style.display = 'block';
+                    } else {
+                        banner.style.display = 'none';
                     }
-                };
-                processItems(ordersSnap);
-                processItems(historySnap);
+                });
 
-                let items = Object.values(products).map(p => ({
-                    ...p,
-                    realSold: stats[p.name] || 0 
-                }));
+                // 2. Listen for Products (Real-time)
+                db.ref('products').on('value', async (prodSnap) => {
+                    const products = prodSnap.val();
+                    if (!products) return;
 
-                // 4. Render Components
-                const topSellers = [...items].sort((a, b) => b.realSold - a.realSold).slice(0, 5);
-                renderSlider(topSellers, lang, dict, tableNo);
-                renderMainMenu(items, lang, dict, tableNo);
-                
-                // Re-apply current category filter
-                const activeTab = document.querySelector('.menu-tab.active');
-                if (activeTab) switchCategory(activeTab.dataset.cat);
+                    // 3. Get Stats for Ranking
+                    const [ordersSnap, historySnap] = await Promise.all([
+                        db.ref('orders').once('value'),
+                        db.ref('history').once('value')
+                    ]);
 
-                updateCartUI();
-                
-                // ✨ ตรวจสอบแอนิเมชันหลังจากโหลดข้อมูลสำเร็จ (เรียกครั้งเดียว)
-                if (!window.animationChecked) {
-                    window.animationChecked = true;
-                    checkAnimationParam();
-                }
+                    const stats = {};
+                    const processItems = (snap) => {
+                        if (snap.exists()) {
+                            snap.forEach(child => {
+                                const order = child.val();
+                                if (order.items) {
+                                    order.items.forEach(item => {
+                                        const qty = parseInt(item.quantity || 1);
+                                        stats[item.name] = (stats[item.name] || 0) + qty;
+                                    });
+                                }
+                            });
+                        }
+                    };
+                    processItems(ordersSnap);
+                    processItems(historySnap);
+
+                    let items = Object.values(products).map(p => ({
+                        ...p,
+                        realSold: stats[p.name] || 0
+                    }));
+
+                    // 4. Render Components
+                    const topSellers = [...items].sort((a, b) => b.realSold - a.realSold).slice(0, 5);
+                    renderSlider(topSellers, lang, dict, tableNo);
+                    renderMainMenu(items, lang, dict, tableNo);
+
+                    // Re-apply current category filter
+                    const activeTab = document.querySelector('.menu-tab.active');
+                    if (activeTab) switchCategory(activeTab.dataset.cat);
+
+                    updateCartUI();
+
+                    // ✨ ตรวจสอบแอนิเมชันหลังจากโหลดข้อมูลสำเร็จ (เรียกครั้งเดียว)
+                    if (!window.animationChecked) {
+                        window.animationChecked = true;
+                        checkAnimationParam();
+                    }
+                });
             });
-        });
-    }
+        }
 
-    function renderSlider(topSellers, lang, dict, tableNo) {
-    const heroContainer = document.getElementById('hero-best-seller-slider');
-    const indicatorContainer = document.getElementById('indicator-container');
-    let heroHTML = ''; let indHTML = '';
+        function renderSlider(topSellers, lang, dict, tableNo) {
+            const heroContainer = document.getElementById('hero-best-seller-slider');
+            const indicatorContainer = document.getElementById('indicator-container');
+            let heroHTML = ''; let indHTML = '';
 
-    topSellers.forEach((p, idx) => {
-        const isOut = p.status === 'out_of_stock';
-        
-        // ✨ เพิ่มบรรทัดนี้: ถ้าหมด ให้ข้ามไปเลย ไม่ต้องแสดงใน Slider
-        if (isOut) return; 
+            topSellers.forEach((p, idx) => {
+                const isOut = p.status === 'out_of_stock';
 
-        const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
-        const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
-        
-        heroHTML += `
+                // ✨ เพิ่มบรรทัดนี้: ถ้าหมด ให้ข้ามไปเลย ไม่ต้องแสดงใน Slider
+                if (isOut) return;
+
+                const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
+                const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
+
+                heroHTML += `
             <div class="slide-card ${heroHTML === '' ? 'is-active' : ''}" 
                  data-name="${p.name}"
                  onclick="location.href='${link}'">
@@ -431,27 +578,27 @@
                     <span style="color:var(--premium-gold);">฿${p.price}</span>
                 </div>
             </div>`;
-        indHTML += `<div class="indicator-item ${indHTML === '' ? 'active' : ''}"></div>`;
-    });
-    heroContainer.innerHTML = heroHTML;
-    indicatorContainer.innerHTML = indHTML;
-    initSliderLogic();
-}
+                indHTML += `<div class="indicator-item ${indHTML === '' ? 'active' : ''}"></div>`;
+            });
+            heroContainer.innerHTML = heroHTML;
+            indicatorContainer.innerHTML = indHTML;
+            initSliderLogic();
+        }
 
-    function renderMainMenu(items, lang, dict, tableNo) {
-    const menuContainer = document.getElementById('menu-main-container');
-    let menuHTML = '';
+        function renderMainMenu(items, lang, dict, tableNo) {
+            const menuContainer = document.getElementById('menu-main-container');
+            let menuHTML = '';
 
-    items.forEach((p) => {
-        const isOut = p.status === 'out_of_stock' || p.status === 'หมด';
+            items.forEach((p) => {
+                const isOut = p.status === 'out_of_stock' || p.status === 'หมด';
 
-        // ✨ แก้ไขตรงนี้: ถ้าหมด ให้ return ออกไปเลย (ไม่ต้องสร้าง HTML)
-        if (isOut) return; 
+                // ✨ แก้ไขตรงนี้: ถ้าหมด ให้ return ออกไปเลย (ไม่ต้องสร้าง HTML)
+                if (isOut) return;
 
-        const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
-        const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
+                const displayName = (lang === 'en') ? (dict[p.name] || p.name) : p.name;
+                const link = `menu.html?name=${encodeURIComponent(p.name)}&table=${tableNo}`;
 
-        menuHTML += `
+                menuHTML += `
             <a href="${link}" class="menu-item" data-name="${p.name}" data-category="${p.category}">
                 <div class="item-img-container">
                     <img src="${p.img}" class="item-img-thumb">
@@ -465,222 +612,223 @@
                     ${(lang === 'en' ? 'Select' : 'เลือก')}
                 </button>
             </a>`;
-    });
-    menuContainer.innerHTML = menuHTML;
-}
-
-    // --- 🔹 UI Logic 🔹 ---
-    function toggleDrawer() {
-        const d = document.getElementById('side-drawer');
-        const o = document.getElementById('drawer-overlay');
-        const active = d.classList.toggle('active');
-        o.style.display = active ? 'block' : 'none';
-        if(active) {
-            const table = localStorage.getItem('selectedTable');
-            const lang = localStorage.getItem(`lang_table_${table}`) || 'th';
-            document.getElementById('drawer-lang-status').innerText = lang.toUpperCase();
-        }
-    }
-
-    function switchCustomerTheme(event) {
-        const table = localStorage.getItem('selectedTable');
-        const key = `theme_table_${table}`;
-        const next = (localStorage.getItem(key) === 'light') ? 'dark' : 'light';
-        localStorage.setItem(key, next);
-        
-        // 🌊 Ripple Expansion Effect
-        const overlay = document.createElement('div');
-        overlay.className = 'theme-transition-overlay';
-        const x = event ? event.clientX : window.innerWidth - 30;
-        const y = event ? event.clientY : 30;
-        overlay.style.backgroundColor = next === 'light' ? '#f6f6f7' : '#0a0a0b';
-        overlay.style.left = `${x}px`;
-        overlay.style.top = `${y}px`;
-        const maxDim = Math.max(window.innerWidth, window.innerHeight) * 2.5;
-        overlay.style.width = `${maxDim}px`;
-        overlay.style.height = `${maxDim}px`;
-        document.body.appendChild(overlay);
-        
-        requestAnimationFrame(() => overlay.style.transform = 'translate(-50%, -50%) scale(1)');
-        
-        setTimeout(() => {
-            applyTheme(next);
-            overlay.style.opacity = '0';
-            setTimeout(() => overlay.remove(), 600);
-        }, 350);
-    }
-
-    function applyTheme(t) { document.body.classList.toggle('light-theme', t === 'light'); }
-
-    function switchCustomerLanguage() {
-        const table = localStorage.getItem('selectedTable');
-        const langKey = `lang_table_${table}`;
-        const next = (localStorage.getItem(langKey) === 'en') ? 'th' : 'en';
-        localStorage.setItem(langKey, next);
-        
-        // 💫 Blur & Fade Main Container
-        const mainEl = document.querySelector('main');
-        if (mainEl) {
-            mainEl.classList.add('lang-transition-container', 'lang-transitioning');
-        }
-        
-        // 💫 Animate Text in Drawer
-        const drawerLang = document.getElementById('drawer-lang-status');
-        if (drawerLang) {
-            drawerLang.style.transition = 'transform 0.2s, opacity 0.2s';
-            drawerLang.style.transform = 'translateY(-5px)';
-            drawerLang.style.opacity = '0';
-            setTimeout(() => {
-                drawerLang.innerText = next.toUpperCase();
-                drawerLang.style.transform = 'translateY(5px)';
-                requestAnimationFrame(() => {
-                    drawerLang.style.transform = 'translateY(0)';
-                    drawerLang.style.opacity = '1';
-                });
-            }, 200);
-        }
-
-        setTimeout(() => {
-            updateLanguageUI(next);
-            if(mainEl) mainEl.classList.remove('lang-transitioning');
-        }, 300);
-    }
-
-    function updateLanguageUI(lang) {
-        document.querySelectorAll('[data-lang-en]').forEach(el => {
-            el.innerText = (lang === 'en') ? el.getAttribute('data-lang-en') : el.getAttribute('data-lang-th');
-        });
-    }
-
-    function initSliderLogic() {
-        const slider = document.getElementById('hero-best-seller-slider');
-        if (!slider) return;
-        slider.addEventListener('scroll', () => {
-            const cards = document.querySelectorAll('.slide-card');
-            const indicators = document.querySelectorAll('.indicator-item');
-            let index = Math.round(slider.scrollLeft / (slider.offsetWidth * 0.8));
-            cards.forEach((c, i) => {
-                c.classList.toggle('is-active', i === index);
-                if(indicators[i]) indicators[i].classList.toggle('active', i === index);
             });
-        });
-    }
-
-    function toggleBottomSearch() {
-        const parent = document.getElementById('searchParent');
-        const input = document.getElementById('bottomSearchInput');
-        const icon = document.getElementById('searchIcon');
-        parent.classList.toggle('active');
-        if (parent.classList.contains('active')) {
-            setTimeout(() => input.focus(), 300);
-            icon.className = 'fas fa-times';
-        } else {
-            input.value = '';
-            handleSearchBottom();
-            icon.className = 'fas fa-search';
+            menuContainer.innerHTML = menuHTML;
         }
-    }
 
-    function handleSearchBottom() {
-        const val = document.getElementById('bottomSearchInput').value.toLowerCase();
-        document.querySelectorAll('.menu-item').forEach(item => {
-            const name = item.querySelector('h3').innerText.toLowerCase();
-            item.style.display = name.includes(val) ? 'flex' : 'none';
-        });
-    }
-
-    function switchCategory(cat) {
-        document.querySelectorAll('.menu-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
-        document.querySelectorAll('.menu-item').forEach(item => {
-            const isMatch = (cat === 'ทั้งหมด' || item.dataset.category === cat);
-            item.style.display = isMatch ? 'flex' : 'none';
-        });
-    }
-
-    function goToPage(page) {
-        const table = localStorage.getItem('selectedTable');
-        const url = `${page}?table=${table}`;
-        if (window.navigateTo) {
-            window.navigateTo(url);
-        } else {
-            window.location.href = url;
-        }
-    }
-
-    function updateCartUI() {
-        const table = localStorage.getItem('selectedTable');
-        const cart = JSON.parse(sessionStorage.getItem('bangfood_cart_table_' + table)) || {items: []};
-        const badge = document.getElementById('cart-count-badge');
-        if (badge) {
-            badge.innerText = cart.items.length;
-            badge.style.display = cart.items.length > 0 ? 'flex' : 'none';
-        }
-        const total = cart.items.reduce((sum, item) => sum + (parseFloat(item.finalPrice) || 0), 0);
-        const totalDisplay = document.getElementById('floating-total');
-        if (totalDisplay) totalDisplay.innerText = total.toLocaleString();
-
-        document.querySelectorAll('.menu-item').forEach(itemCard => {
-            const itemName = itemCard.getAttribute('data-name');
-            const itemBadge = itemCard.querySelector('.item-badge');
-            if (itemBadge) {
-                const itemCount = cart.items.filter(i => i.name === itemName).length;
-                itemBadge.innerText = itemCount;
-                itemBadge.style.display = itemCount > 0 ? 'flex' : 'none';
+        // --- 🔹 UI Logic 🔹 ---
+        function toggleDrawer() {
+            const d = document.getElementById('side-drawer');
+            const o = document.getElementById('drawer-overlay');
+            const active = d.classList.toggle('active');
+            o.style.display = active ? 'block' : 'none';
+            if (active) {
+                const table = localStorage.getItem('selectedTable');
+                const lang = localStorage.getItem(`lang_table_${table}`) || 'th';
+                document.getElementById('drawer-lang-status').innerText = lang.toUpperCase();
             }
-        });
-    }
+        }
 
-    function checkAnimationParam() {
-        const params = new URLSearchParams(window.location.search);
-        const animateItem = params.get('animate');
-        if (!animateItem) return;
+        function switchCustomerTheme(event) {
+            const table = localStorage.getItem('selectedTable');
+            const key = `theme_table_${table}`;
+            const next = (localStorage.getItem(key) === 'light') ? 'dark' : 'light';
+            localStorage.setItem(key, next);
 
-        if (typeof switchCategory === 'function') switchCategory('ทั้งหมด');
+            // 🌊 Ripple Expansion Effect
+            const overlay = document.createElement('div');
+            overlay.className = 'theme-transition-overlay';
+            const x = event ? event.clientX : window.innerWidth - 30;
+            const y = event ? event.clientY : 30;
+            overlay.style.backgroundColor = next === 'light' ? '#f6f6f7' : '#0a0a0b';
+            overlay.style.left = `${x}px`;
+            overlay.style.top = `${y}px`;
+            const maxDim = Math.max(window.innerWidth, window.innerHeight) * 2.5;
+            overlay.style.width = `${maxDim}px`;
+            overlay.style.height = `${maxDim}px`;
+            document.body.appendChild(overlay);
 
-        let attempts = 0;
-        const maxAttempts = 30; // 1.5 วินาที (50ms * 30)
+            requestAnimationFrame(() => overlay.style.transform = 'translate(-50%, -50%) scale(1)');
 
-        const tryAnimate = () => {
-            const card = document.querySelector(`.menu-item[data-name="${animateItem}"], .slide-card[data-name="${animateItem}"]`);
-            const cartTarget = document.querySelector('.fa-shopping-cart') || document.querySelector('.fa-shopping-basket');
-            
-            if (card && cartTarget) {
-                const rect = card.getBoundingClientRect();
-                if (rect.width > 0 && rect.height > 0) {
-                    // Optimized Scroll: ถ้าอยู่ในจออยู่แล้ว ไม่ต้องไถ
-                    const isVisible = (rect.top >= 0 && rect.bottom <= window.innerHeight);
-                    const scrollDelay = isVisible ? 0 : 400;
-                    
-                    if (!isVisible) {
-                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                    
-                    setTimeout(() => {
-                        const img = card.querySelector('img');
-                        if (window.animateToCart) {
-                            window.animateToCart(img, cartTarget.parentElement);
+            setTimeout(() => {
+                applyTheme(next);
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.remove(), 600);
+            }, 350);
+        }
+
+        function applyTheme(t) { document.body.classList.toggle('light-theme', t === 'light'); }
+
+        function switchCustomerLanguage() {
+            const table = localStorage.getItem('selectedTable');
+            const langKey = `lang_table_${table}`;
+            const next = (localStorage.getItem(langKey) === 'en') ? 'th' : 'en';
+            localStorage.setItem(langKey, next);
+
+            // 💫 Blur & Fade Main Container
+            const mainEl = document.querySelector('main');
+            if (mainEl) {
+                mainEl.classList.add('lang-transition-container', 'lang-transitioning');
+            }
+
+            // 💫 Animate Text in Drawer
+            const drawerLang = document.getElementById('drawer-lang-status');
+            if (drawerLang) {
+                drawerLang.style.transition = 'transform 0.2s, opacity 0.2s';
+                drawerLang.style.transform = 'translateY(-5px)';
+                drawerLang.style.opacity = '0';
+                setTimeout(() => {
+                    drawerLang.innerText = next.toUpperCase();
+                    drawerLang.style.transform = 'translateY(5px)';
+                    requestAnimationFrame(() => {
+                        drawerLang.style.transform = 'translateY(0)';
+                        drawerLang.style.opacity = '1';
+                    });
+                }, 200);
+            }
+
+            setTimeout(() => {
+                updateLanguageUI(next);
+                if (mainEl) mainEl.classList.remove('lang-transitioning');
+            }, 300);
+        }
+
+        function updateLanguageUI(lang) {
+            document.querySelectorAll('[data-lang-en]').forEach(el => {
+                el.innerText = (lang === 'en') ? el.getAttribute('data-lang-en') : el.getAttribute('data-lang-th');
+            });
+        }
+
+        function initSliderLogic() {
+            const slider = document.getElementById('hero-best-seller-slider');
+            if (!slider) return;
+            slider.addEventListener('scroll', () => {
+                const cards = document.querySelectorAll('.slide-card');
+                const indicators = document.querySelectorAll('.indicator-item');
+                let index = Math.round(slider.scrollLeft / (slider.offsetWidth * 0.8));
+                cards.forEach((c, i) => {
+                    c.classList.toggle('is-active', i === index);
+                    if (indicators[i]) indicators[i].classList.toggle('active', i === index);
+                });
+            });
+        }
+
+        function toggleBottomSearch() {
+            const parent = document.getElementById('searchParent');
+            const input = document.getElementById('bottomSearchInput');
+            const icon = document.getElementById('searchIcon');
+            parent.classList.toggle('active');
+            if (parent.classList.contains('active')) {
+                setTimeout(() => input.focus(), 300);
+                icon.className = 'fas fa-times';
+            } else {
+                input.value = '';
+                handleSearchBottom();
+                icon.className = 'fas fa-search';
+            }
+        }
+
+        function handleSearchBottom() {
+            const val = document.getElementById('bottomSearchInput').value.toLowerCase();
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const name = item.querySelector('h3').innerText.toLowerCase();
+                item.style.display = name.includes(val) ? 'flex' : 'none';
+            });
+        }
+
+        function switchCategory(cat) {
+            document.querySelectorAll('.menu-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const isMatch = (cat === 'ทั้งหมด' || item.dataset.category === cat);
+                item.style.display = isMatch ? 'flex' : 'none';
+            });
+        }
+
+        function goToPage(page) {
+            const table = localStorage.getItem('selectedTable');
+            const url = `${page}?table=${table}`;
+            if (window.navigateTo) {
+                window.navigateTo(url);
+            } else {
+                window.location.href = url;
+            }
+        }
+
+        function updateCartUI() {
+            const table = localStorage.getItem('selectedTable');
+            const cart = JSON.parse(sessionStorage.getItem('bangfood_cart_table_' + table)) || { items: [] };
+            const badge = document.getElementById('cart-count-badge');
+            if (badge) {
+                badge.innerText = cart.items.length;
+                badge.style.display = cart.items.length > 0 ? 'flex' : 'none';
+            }
+            const total = cart.items.reduce((sum, item) => sum + (parseFloat(item.finalPrice) || 0), 0);
+            const totalDisplay = document.getElementById('floating-total');
+            if (totalDisplay) totalDisplay.innerText = total.toLocaleString();
+
+            document.querySelectorAll('.menu-item').forEach(itemCard => {
+                const itemName = itemCard.getAttribute('data-name');
+                const itemBadge = itemCard.querySelector('.item-badge');
+                if (itemBadge) {
+                    const itemCount = cart.items.filter(i => i.name === itemName).length;
+                    itemBadge.innerText = itemCount;
+                    itemBadge.style.display = itemCount > 0 ? 'flex' : 'none';
+                }
+            });
+        }
+
+        function checkAnimationParam() {
+            const params = new URLSearchParams(window.location.search);
+            const animateItem = params.get('animate');
+            if (!animateItem) return;
+
+            if (typeof switchCategory === 'function') switchCategory('ทั้งหมด');
+
+            let attempts = 0;
+            const maxAttempts = 30; // 1.5 วินาที (50ms * 30)
+
+            const tryAnimate = () => {
+                const card = document.querySelector(`.menu-item[data-name="${animateItem}"], .slide-card[data-name="${animateItem}"]`);
+                const cartTarget = document.querySelector('.fa-shopping-cart') || document.querySelector('.fa-shopping-basket');
+
+                if (card && cartTarget) {
+                    const rect = card.getBoundingClientRect();
+                    if (rect.width > 0 && rect.height > 0) {
+                        // Optimized Scroll: ถ้าอยู่ในจออยู่แล้ว ไม่ต้องไถ
+                        const isVisible = (rect.top >= 0 && rect.bottom <= window.innerHeight);
+                        const scrollDelay = isVisible ? 0 : 400;
+
+                        if (!isVisible) {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
-                    }, scrollDelay); 
 
+                        setTimeout(() => {
+                            const img = card.querySelector('img');
+                            if (window.animateToCart) {
+                                window.animateToCart(img, cartTarget.parentElement);
+                            }
+                        }, scrollDelay);
+
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('animate');
+                        window.history.replaceState({}, document.title, url.toString());
+                        return;
+                    }
+                }
+
+                if (++attempts < maxAttempts) {
+                    setTimeout(tryAnimate, 50); // เช็คถี่ขึ้นเพื่อความไว
+                } else {
                     const url = new URL(window.location.href);
                     url.searchParams.delete('animate');
                     window.history.replaceState({}, document.title, url.toString());
-                    return;
                 }
-            }
+            };
 
-            if (++attempts < maxAttempts) {
-                setTimeout(tryAnimate, 50); // เช็คถี่ขึ้นเพื่อความไว
-            } else {
-                const url = new URL(window.location.href);
-                url.searchParams.delete('animate');
-                window.history.replaceState({}, document.title, url.toString());
-            }
-        };
-
-        tryAnimate();
-    }
-</script>
-<script src="global_script.js"></script>
+            tryAnimate();
+        }
+    </script>
+    <script src="global_script.js"></script>
 </body>
+
 </html>

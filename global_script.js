@@ -249,6 +249,10 @@ async function translatePage(lang) {
             el.innerText = (lang === 'en') ? (dict[raw] || raw) : raw;
         });
     }
+
+    // 🏷️ Update Unified Nav Lang Status
+    const el = document.getElementById('nav-lang-text');
+    if (el) el.innerText = (lang === 'en') ? 'EN' : 'TH';
 }
 
 // 🔄 ฟังก์ชันสลับภาษาทันที

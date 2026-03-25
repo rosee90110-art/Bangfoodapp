@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตัวเลือกอาหาร | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="global_style.css">
     <link rel="stylesheet" href="admin_style.css">
     <style>
         :root {
@@ -150,8 +151,8 @@
         .summary-val {
             color: var(--premium-gold);
             font-weight: 700;
-            font-size: 1.4rem;
-            text-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+            font-size: 1.25rem;
+            text-shadow: 0 0 12px rgba(181, 142, 73, 0.2);
         }
 
         /* 📸 Hero Image Animation */
@@ -161,23 +162,23 @@
         }
 
         .modal-image {
-            width: 180px;
-            height: 180px;
-            border-radius: 40px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+            width: 150px;
+            height: 150px;
+            border-radius: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
             border: 1px solid var(--glass-border);
             object-fit: cover;
-            animation: imagePop 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: imagePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         /* 📋 Option List Animation */
         .option-item {
             display: flex;
             align-items: center;
-            padding: 15px 22px;
+            padding: 12px 18px;
             background: var(--glass);
-            border-radius: 20px;
-            margin: 0 25px 12px;
+            border-radius: 18px;
+            margin: 0 20px 10px;
             cursor: pointer;
             border: 1px solid var(--glass-border);
             transition: 0.4s;
@@ -207,73 +208,10 @@
             box-sizing: border-box;
         }
 
-        .bottom-nav-fixed {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            height: 100px;
-            background: linear-gradient(to top, var(--bg-deep) 80%, transparent);
-            z-index: 3000;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            pointer-events: none;
-        }
-
-        .round-btn-center {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 75px;
-            height: 75px;
-            background: #fff;
-            border-radius: 50%;
-            border: 7px solid var(--bg-deep);
-            color: #000;
-            font-size: 1.8rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            z-index: 3100;
-            pointer-events: auto;
-            transition: 0.3s;
-        }
-
-        .nav-buttons-bar {
-            width: 92%;
-            height: 60px;
-            background: #121214;
-            border-radius: 30px;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            pointer-events: auto;
-            margin-bottom: 15px;
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        body.light-theme .nav-buttons-bar {
-            background: #fff;
-        }
-
-        .nav-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #444;
-            cursor: pointer;
-        }
-
         @keyframes imagePop {
             from {
                 transform: scale(0.5);
+
                 opacity: 0;
             }
 
@@ -356,8 +294,8 @@
 
         /* ปุ่มบวกลบแบบมีเงาและ Animation */
         .qty-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -411,7 +349,30 @@
             object-fit: cover;
             pointer-events: none;
             transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 🫨 Shake Animation for Error */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+                border-color: #ff4757;
+            }
+
+            75% {
+                transform: translateX(5px);
+                border-color: #ff4757;
+            }
+        }
+
+        .error-shake {
+            animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
         }
     </style>
 </head>
@@ -483,23 +444,33 @@
         </form>
 
         <div class="bottom-nav-fixed">
+            <div class="nav-bar">
+                <div class="nav-item"
+                    onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-home"></i>
+                    <span data-lang-en="HOME" data-lang-th="หน้าแรก">หน้าแรก</span>
+                </div>
+                <div class="nav-item"
+                    onclick="window.location.href='info.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</span>
+                </div>
+                <div style="width: 70px;"></div>
+                <div class="nav-item"
+                    onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-shopping-basket"></i>
+                    <span data-lang-en="CART" data-lang-th="ตะกร้า">ตะกร้า</span>
+                </div>
+                <div class="nav-item"
+                    onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-list-ul"></i>
+                    <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">รายการสั่ง</span>
+                </div>
+
+            </div>
+
             <div class="round-btn-center" onclick="confirmOrder()">
                 <i class="fas fa-check"></i>
-            </div>
-            <div class="nav-buttons-bar">
-                <div class="nav-icon"
-                    style="display:flex; flex-direction:column; align-items:center; color:#444; cursor:pointer;"
-                    onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-home"></i><span style="font-size:0.6rem; font-weight:700;" data-lang-en="HOME"
-                        data-lang-th="หน้าแรก">HOME</span>
-                </div>
-                <div style="width: 90px;"></div>
-                <div class="nav-icon"
-                    style="display:flex; flex-direction:column; align-items:center; color:#444; cursor:pointer;"
-                    onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-shopping-basket"></i><span style="font-size:0.6rem; font-weight:700;"
-                        data-lang-en="CART" data-lang-th="ตะกร้า">CART</span>
-                </div>
             </div>
         </div>
     </div>
@@ -632,28 +603,29 @@
         function renderOptions(config, lang, dict) {
             const sc = document.getElementById('dynamic-sizes-container');
             sc.innerHTML = '';
-            if (config.sizes) {
+            if (config.sizes && config.sizes.length > 0) {
                 const title = (lang === 'en') ? "Select Size" : "เลือกขนาด";
-                sc.innerHTML = `<h3 style="color:#444; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;">${title}</h3>`;
+                const reqBadge = (config.sizeRequired !== false) ? `<span style="color:#ff4757; font-size:0.6rem; margin-left:5px;">(REQUIRED)</span>` : '';
+                sc.innerHTML = `<h3 style="color:#666; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;">${title}${reqBadge}</h3>`;
                 config.sizes.forEach((s, i) => {
                     const sName = (lang === 'en') ? (dict[s.name] || s.name) : s.name;
-                    sc.innerHTML += `<label class="option-item" style="animation-delay: ${i * 0.1}s"><input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" ${i === 0 ? 'checked' : ''} onchange="updatePrice()"><span style="font-size: 0.95rem;">${sName}</span><span style="margin-left:auto; color:var(--premium-gold); font-weight:500;">+${s.price}</span></label>`;
+                    sc.innerHTML += `<label class="option-item" style="animation-delay: ${i * 0.1}s"><input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" ${i === 0 && config.sizeRequired !== false ? 'checked' : ''} onchange="updatePrice()"><span style="font-size: 0.95rem;">${sName}</span><span style="margin-left:auto; color:var(--premium-gold); font-weight:500;">+${s.price}</span></label>`;
                 });
             }
+
             const ac = document.getElementById('dynamic-addons-container');
             ac.innerHTML = '';
-            if (config.addons) {
+            if (config.addons && config.addons.length > 0) {
                 const title = (lang === 'en') ? "Extra Add-ons" : "ท็อปปิ้งเสริม";
-                ac.innerHTML = `<h3 style="color:#444; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;">${title}</h3>`;
+                const maxText = (config.addonMax > 0) ? `<span style="color:var(--premium-gold); font-size:0.6rem; margin-left:5px; opacity:0.6;">(MAX ${config.addonMax})</span>` : '';
+                ac.innerHTML = `<h3 style="color:#666; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;">${title}${maxText}</h3>`;
 
                 config.addons.forEach((a, i) => {
                     const aName = (lang === 'en') ? (dict[a.name] || a.name) : a.name;
                     ac.innerHTML += `
                 <div class="option-item addon-row" style="animation-delay: ${(i + 3) * 0.1}s">
                     <span style="font-size: 0.95rem;">${aName}</span>
-                    
                     <span class="addon-price-center">+${a.price}</span>
-                    
                     <div style="display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.03); padding: 5px 8px; border-radius: 30px; border: 1px solid var(--glass-border);">
                         <button type="button" class="qty-btn minus" onclick="changeAddonQty('${a.name}', -1, ${a.price})">-</button>
                         <span id="qty-${a.name}" class="addon-qty" data-name="${a.name}" data-price="${a.price}">0</span>
@@ -661,29 +633,36 @@
                     </div>
                 </div>`;
                 });
+                ac.setAttribute('data-max', config.addonMax || 0);
             }
         }
 
         function changeAddonQty(name, delta, price) {
             const qtyEl = document.getElementById(`qty-${name}`);
+            const container = document.getElementById('dynamic-addons-container');
+            const max = parseInt(container.getAttribute('data-max') || 0);
+
             let currentQty = parseInt(qtyEl.innerText);
 
-            // คำนวณค่าใหม่
-            const nextQty = Math.max(0, currentQty + delta);
+            // Check Max if adding
+            if (delta > 0 && max > 0) {
+                let total = 0;
+                document.querySelectorAll('.addon-qty').forEach(el => total += parseInt(el.innerText));
+                if (total >= max) {
+                    navigator.vibrate ? navigator.vibrate(50) : null;
+                    return; // Max reached
+                }
+            }
 
+            const nextQty = Math.max(0, currentQty + delta);
             if (nextQty !== currentQty) {
                 qtyEl.innerText = nextQty;
-
-                // เพิ่ม Animation Bump
                 qtyEl.classList.remove('bump');
-                void qtyEl.offsetWidth; // Force Reflow เพื่อให้ Animation เล่นใหม่ได้
+                void qtyEl.offsetWidth;
                 qtyEl.classList.add('bump');
                 setTimeout(() => qtyEl.classList.remove('bump'), 200);
-
-                // เปลี่ยนสีปุ่มลบถ้าจำนวนเป็น 0 เพื่อให้ดูจางลง
                 const minusBtn = qtyEl.previousElementSibling;
                 minusBtn.style.opacity = (nextQty === 0) ? "0.3" : "1";
-
                 updatePrice();
             }
         }
@@ -691,43 +670,31 @@
         function changeMainQty(delta) {
             const qtyEl = document.getElementById('main-item-qty');
             let currentQty = parseInt(qtyEl.innerText);
-            const nextQty = Math.max(1, currentQty + delta); // ขั้นต่ำคือ 1 จาน
-
+            const nextQty = Math.max(1, currentQty + delta);
             if (nextQty !== currentQty) {
                 qtyEl.innerText = nextQty;
-
-                // เพิ่ม Animation
                 qtyEl.classList.remove('bump');
                 void qtyEl.offsetWidth;
                 qtyEl.classList.add('bump');
-
-                updatePrice(); // คำนวณราคาทุกครั้งที่เปลี่ยนจำนวน
+                updatePrice();
             }
         }
 
-        // 2. ปรับปรุงฟังก์ชัน updatePrice ให้รองรับจำนวนจาน
         function updatePrice() {
             const base = parseFloat(document.getElementById('modal-base-price').innerText);
             let extraPerItem = 0;
-
-            // คำนวณจาก Size (Radio)
             const s = document.querySelector('input[name="size"]:checked');
             if (s) extraPerItem += parseFloat(s.dataset.modifier);
-
-            // คำนวณจาก Add-ons
             document.querySelectorAll('.addon-qty').forEach(el => {
                 const qty = parseInt(el.innerText);
                 const price = parseFloat(el.dataset.price);
                 extraPerItem += (qty * price);
             });
-
-            // นำ (ราคาต่อจาน) คูณกับ (จำนวนจานหลัก)
             const mainQty = parseInt(document.getElementById('main-item-qty').innerText);
             const finalTotal = (base + extraPerItem) * mainQty;
-
             document.getElementById('modal-final-price').innerText = finalTotal.toFixed(2);
         }
-        // แก้ไขฟังก์ชัน initSliderLogic ใน <script>
+
         function initSliderLogic() {
             const slider = document.getElementById('hero-best-seller-slider');
             const indicators = document.querySelectorAll('.indicator-item');
@@ -739,7 +706,6 @@
                 let closestIndex = 0;
                 let minDistance = Infinity;
 
-                // หาว่าการ์ดใบไหนอยู่ใกล้กึ่งกลางของ Slider มากที่สุด
                 const centerX = slider.scrollLeft + (slider.offsetWidth / 2);
 
                 cards.forEach((card, i) => {
@@ -752,7 +718,6 @@
                     }
                 });
 
-                // อัปเดต Class Active
                 cards.forEach((c, i) => {
                     c.classList.toggle('is-active', i === closestIndex);
                     if (indicators[i]) indicators[i].classList.toggle('active', i === closestIndex);
@@ -762,19 +727,29 @@
 
         function confirmOrder() {
             const table = localStorage.getItem('selectedTable');
+            const lang = localStorage.getItem(`lang_table_${table}`) || 'th';
             const cartKey = `bangfood_cart_table_${table}`;
+
+            // 🛑 Validation: Size Required
+            const titleEl = document.querySelector('#dynamic-sizes-container h3');
+            if (titleEl && titleEl.innerHTML.includes('REQUIRED')) {
+                const s = document.querySelector('input[name="size"]:checked');
+                if (!s) {
+                    const sc = document.getElementById('dynamic-sizes-container');
+                    sc.classList.add('error-shake');
+                    setTimeout(() => sc.classList.remove('error-shake'), 500);
+                    alert(lang === 'en' ? "Please select a size!" : "กรุณาเลือกขนาดอาหาร!");
+                    return;
+                }
+            }
+
             let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-
             let opts = [];
-
-            // 1. ดึงราคาฐานจากหน้าจอ (ตัวเลขที่โชว์ตรง "ราคาเริ่มต้น")
             const basePrice = document.getElementById('modal-base-price').innerText;
 
-            // Size
             const s = document.querySelector('input[name="size"]:checked');
             if (s) opts.push({ name: s.value, price: s.dataset.modifier, qty: 1 });
 
-            // Add-ons
             document.querySelectorAll('.addon-qty').forEach(el => {
                 const qty = parseInt(el.innerText);
                 if (qty > 0) {
@@ -788,10 +763,9 @@
 
             const mainQty = parseInt(document.getElementById('main-item-qty').innerText);
 
-            // 2. เพิ่มฟิลด์ price: basePrice ลงไปใน Object ด้านล่างนี้
             cart.items.push({
                 name: document.getElementById('modal-item-name').getAttribute('data-raw'),
-                price: basePrice, // <--- เพิ่มบรรทัดนี้เพื่อเก็บราคาตั้งต้น (Base Price)
+                price: basePrice,
                 finalPrice: document.getElementById('modal-final-price').innerText,
                 optionsArray: opts,
                 notes: document.getElementById('modal-notes').value,
@@ -800,78 +774,18 @@
             });
 
             sessionStorage.setItem(cartKey, JSON.stringify(cart));
-            
-            const alreadyUpselled = sessionStorage.getItem('bf_upselled');
-            pendingAnimateItem = document.getElementById('modal-item-name').getAttribute('data-raw');
 
-            if(!alreadyUpselled && Math.random() > 0.15) { // 85% chance to show upsell
-                setTimeout(() => {
-                    document.getElementById('upsell-modal').style.display = 'flex';
-                }, 100);
-            } else {
-                const url = `index.html?table=${table}&animate=${encodeURIComponent(pendingAnimateItem)}`;
-                if (window.navigateTo) {
-                    window.navigateTo(url);
-                } else {
-                    window.location.href = url;
-                }
-            }
-        }
-
-        function skipUpsell() {
-            sessionStorage.setItem('bf_upselled', 'true');
-            const table = localStorage.getItem('selectedTable') || '1';
-            let url = `index.html?table=${table}`;
-            if (pendingAnimateItem) url += `&animate=${encodeURIComponent(pendingAnimateItem)}`;
+            const pendingAnimateItem = document.getElementById('modal-item-name').getAttribute('data-raw');
+            const url = `index.html?table=${table}&animate=${encodeURIComponent(pendingAnimateItem)}`;
             if (window.navigateTo) {
                 window.navigateTo(url);
             } else {
                 window.location.href = url;
             }
         }
-        
-        function acceptUpsell(btn) {
-            const table = localStorage.getItem('selectedTable') || '1';
-            const cartKey = `bangfood_cart_table_${table}`; // Fixed cart key
-            let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-            cart.items.push({
-                name: "เฟรนช์ฟรายส์กรอบ",
-                price: 29, finalPrice: 29, quantity: 1, 
-                img: "https://images.unsplash.com/photo-1576107232684-1279f39085ec?q=80&w=200&auto=format&fit=crop",
-                optionsArray: []
-            });
-            sessionStorage.setItem(cartKey, JSON.stringify(cart));
-            sessionStorage.setItem('bf_upselled', 'true');
-            if(typeof bfAudio !== 'undefined') { bfAudio.play('success'); bfAudio.vibrate([20,50,20]); }
-            btn.innerHTML = '<i class="fas fa-check"></i> เพิ่มแล้ว';
-            btn.style.background = '#27ae60';
-            
-            let url = `index.html?table=${table}`;
-            if (pendingAnimateItem) url += `&animate=${encodeURIComponent(pendingAnimateItem)}`;
-            setTimeout(() => {
-                if (window.navigateTo) {
-                    window.navigateTo(url);
-                } else {
-                    window.location.href = url;
-                }
-            }, 600);
-        }
     </script>
     <script src="global_script.js"></script>
     <script src="guard.js"></script>
-
-<!-- Smart Upsell Modal -->
-<div id="upsell-modal" class="modal-overlay" style="display:none; z-index:1100;">
-    <div class="modal-content" style="text-align:center; padding: 30px 20px; max-width: 320px;">
-        <i class="fas fa-hamburger" style="font-size:3.5rem; color:var(--premium-gold); margin-bottom:15px; animation: badgePop 0.8s ease infinite;"></i>
-        <h3 data-lang-en="Want to add French Fries?" data-lang-th="รับเฟรนช์ฟรายส์เพิ่มไหมครับ?">รับเฟรนช์ฟรายส์เพิ่มไหมครับ?</h3>
-        <p style="color:var(--sub-text); font-size:0.85rem; margin-bottom:20px;">ทานคู่กันอร่อยฟินขึ้น คุ้มสุดๆ เพียง +฿29</p>
-        <div style="display:flex; gap:10px;">
-            <button type="button" onclick="skipUpsell()" class="btn-cancel" style="flex:1; padding:12px; border-radius:12px; font-weight:700;">ไม่รับ</button>
-            <button type="button" onclick="acceptUpsell(this)" class="btn-main" style="flex:1; padding:12px; border-radius:12px; font-weight:700;">เพิ่มเลย (+฿29)</button>
-        </div>
-    </div>
-</div>
 
 </body>
 

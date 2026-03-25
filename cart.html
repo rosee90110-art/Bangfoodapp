@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,93 +10,247 @@
     <link rel="stylesheet" href="global_style.css">
     <style>
         /* 📍 Luxury Brand Config */
-        :root { 
-            --premium-gold: #c5a059; 
+        :root {
+            --premium-gold: #c5a059;
             --gold-glow: rgba(197, 160, 89, 0.4);
-            --bg-deep: #080809; 
-            --glass: rgba(255, 255, 255, 0.03); 
-            --glass-border: rgba(255, 255, 255, 0.08); 
+            --bg-deep: #080809;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        body.light-theme { 
-            --bg-deep: #f0f2f5; 
+
+        body.light-theme {
+            --bg-deep: #f0f2f5;
             --glass: rgba(0, 0, 0, 0.02);
             --glass-border: rgba(0, 0, 0, 0.06);
         }
 
-        body::-webkit-scrollbar { display: none; }
-        body { background-color: var(--bg-deep); color: #f1f1f1; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; overflow-x: hidden; transition: 0.5s; }
+        body::-webkit-scrollbar {
+            display: none;
+        }
 
-        .app-wrapper { width: 100%; max-width: 480px; min-height: 100vh; background: var(--bg-deep); position: relative; padding-bottom: 120px; box-shadow: 0 0 80px rgba(0,0,0,0.8); }
+        body {
+            background-color: var(--bg-deep);
+            color: #f1f1f1;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+            transition: 0.5s;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background: var(--bg-deep);
+            position: relative;
+            padding-bottom: 120px;
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.8);
+        }
 
         /* 📍 Compact Header */
-        .app-header-sticky { position: sticky; top: 0; z-index: 2000; background: rgba(8, 8, 9, 0.85); backdrop-filter: blur(25px); border-bottom: 1px solid var(--glass-border); }
-        body.light-theme .app-header-sticky { background: rgba(240, 242, 245, 0.85); }
+        .app-header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            background: rgba(8, 8, 9, 0.85);
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--glass-border);
+        }
 
-        .header-main-row { padding: 15px 25px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .back-btn { position: absolute; left: 25px; width: 35px; height: 35px; border-radius: 50%; background: var(--glass); display: flex; align-items: center; justify-content: center; color: var(--premium-gold); border: 1px solid var(--glass-border); font-size: 0.9rem; cursor: pointer; transition: 0.3s; }
-        .back-btn:active { transform: scale(0.85); }
-        .bangfood-logo { font-size: 1rem; font-weight: 800; letter-spacing: 5px; color: var(--premium-gold); margin: 0; text-transform: uppercase; text-shadow: 0 0 10px var(--gold-glow); }
+        body.light-theme .app-header-sticky {
+            background: rgba(240, 242, 245, 0.85);
+        }
 
-        .top-summary-bar { padding: 12px 30px; background: linear-gradient(to bottom, rgba(197, 160, 89, 0.06), transparent); display: flex; justify-content: space-between; align-items: center; }
-        .summary-label { font-size: 0.65rem; color: #888; font-weight: 800; letter-spacing: 1px; }
-        .summary-val { color: var(--premium-gold); font-weight: 900; font-size: 1.4rem; text-shadow: 0 0 15px var(--gold-glow); }
+        .header-main-row {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 25px;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--premium-gold);
+            border: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .back-btn:active {
+            transform: scale(0.85);
+        }
+
+        .bangfood-logo {
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 5px;
+            color: var(--premium-gold);
+            margin: 0;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        .top-summary-bar {
+            padding: 12px 30px;
+            background: linear-gradient(to bottom, rgba(197, 160, 89, 0.06), transparent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-label {
+            font-size: 0.65rem;
+            color: #888;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .summary-val {
+            color: var(--premium-gold);
+            font-weight: 900;
+            font-size: 1.4rem;
+            text-shadow: 0 0 15px var(--gold-glow);
+        }
 
         /* 🛒 Glassmorphism Cart Items */
         .cart-item {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            margin: 15px 20px; border-radius: 30px; padding: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            margin: 15px 20px;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             animation: slideUpFade 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) both;
             transition: 0.4s;
         }
-        .cart-item:hover { border-color: var(--premium-gold); transform: translateY(-5px); }
-        body.light-theme .cart-item { background: #ffffff; color: #1d1d1f; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
 
-        .item-main-row { display: flex; gap: 18px; align-items: flex-start; }
-        .item-img { width: 75px; height: 75px; border-radius: 22px; object-fit: cover; border: 2px solid var(--glass-border); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-        .food-name { font-size: 1.1rem; color: #fff; font-weight: 600; margin-bottom: 4px; }
-        body.light-theme .food-name { color: #000; }
-        .addon-line { display: flex; justify-content: space-between; color: #777; font-size: 0.75rem; margin-top: 4px; font-weight: 500; }
-
-        .item-footer { 
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--glass-border);
+        .cart-item:hover {
+            border-color: var(--premium-gold);
+            transform: translateY(-5px);
         }
-        .remove-btn { 
-            background: rgba(255, 71, 87, 0.08); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.2); 
-            padding: 8px 18px; border-radius: 15px; font-size: 0.7rem; font-weight: 800; cursor: pointer; transition: 0.3s;
-        }
-        .remove-btn:hover { background: #ff4757; color: #fff; transform: scale(1.05); }
 
-        /* 📍 Compact Floating Nav */
-        .bottom-nav-fixed { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; height: 110px; background: linear-gradient(to top, var(--bg-deep) 75%, transparent); z-index: 2500; display: flex; justify-content: center; align-items: flex-end; }
-        
-        .nav-buttons-bar {
-            width: 90%; height: 60px; background: #141416; border-radius: 35px;
-            border: 1px solid var(--glass-border); display: flex;
-            justify-content: space-around; align-items: center; pointer-events: auto;
-            margin-bottom: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        body.light-theme .cart-item {
+            background: #ffffff;
+            color: #1d1d1f;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
-        body.light-theme .nav-buttons-bar { background: #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
 
-        .round-btn-center {
-            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            width: 75px; height: 75px; background: var(--premium-gold); border-radius: 50%;
-            border: 7px solid var(--bg-deep); color: #000; font-size: 1.8rem;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 15px 35px var(--gold-glow); cursor: pointer; z-index: 2600; 
-            pointer-events: auto; animation: pulseOrder 2s infinite; transition: 0.4s;
+        .item-main-row {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
         }
-        .round-btn-center:active { transform: translateX(-50%) scale(0.9); }
 
-        .nav-icon { display: flex; flex-direction: column; align-items: center; color: #666; transition: 0.3s; }
-        .nav-icon:active { color: var(--premium-gold); }
+        .item-img {
+            width: 75px;
+            height: 75px;
+            border-radius: 22px;
+            object-fit: cover;
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .food-name {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        body.light-theme .food-name {
+            color: #000;
+        }
+
+        .addon-line {
+            display: flex;
+            justify-content: space-between;
+            color: #777;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            padding-top: 15px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .remove-btn {
+            background: rgba(255, 71, 87, 0.08);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.2);
+            padding: 8px 18px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #ff4757;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
 
         /* 🎬 Keyframes */
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pulseOrder { 0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.6); } 70% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 0 20px rgba(197, 160, 89, 0); } 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); } }
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulseOrder {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.6);
+            }
+
+            70% {
+                transform: translateX(-50%) scale(1.05);
+                box-shadow: 0 0 0 20px rgba(197, 160, 89, 0);
+            }
+
+            100% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 0 0 rgba(197, 160, 89, 0);
+            }
+        }
 
         /* 🧾 Interactive Receipt Rollout */
         .receipt-paper {
@@ -104,59 +259,168 @@
             border-radius: 4px;
             padding: 20px 20px 30px;
             margin: 15px 20px 50px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
             position: relative;
             transform-origin: top center;
             animation: unrollReceipt 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+
         .receipt-paper::before {
             content: '------- สรุปรายการอาหาร -------';
-            display: block; text-align: center;
-            font-weight: 800; color: #888; font-size: 0.8rem;
-            margin-bottom: 20px; border-bottom: 2px dashed #ccc; padding-bottom: 15px;
+            display: block;
+            text-align: center;
+            font-weight: 800;
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #ccc;
+            padding-bottom: 15px;
         }
+
         .receipt-paper::after {
             content: '';
-            position: absolute; bottom: -10px; left: 0; width: 100%; height: 10px;
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
             background: linear-gradient(-45deg, transparent 33.33%, #fdfdfd 33.33%, #fdfdfd 66.66%, transparent 66.66%),
-                        linear-gradient(45deg, transparent 33.33%, #fdfdfd 33.33%, #fdfdfd 66.66%, transparent 66.66%);
+                linear-gradient(45deg, transparent 33.33%, #fdfdfd 33.33%, #fdfdfd 66.66%, transparent 66.66%);
             background-size: 20px 20px;
-            filter: drop-shadow(0 8px 6px rgba(0,0,0,0.15));
+            filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.15));
         }
+
         @keyframes unrollReceipt {
-            0% { max-height: 0; opacity: 0; transform: scaleY(0); padding-bottom: 0; overflow: hidden; }
-            40% { max-height: 800px; opacity: 1; transform: scaleY(1.02); overflow: visible; }
-            100% { max-height: 3000px; opacity: 1; transform: scaleY(1); overflow: visible; }
+            0% {
+                max-height: 0;
+                opacity: 0;
+                transform: scaleY(0);
+                padding-bottom: 0;
+                overflow: hidden;
+            }
+
+            40% {
+                max-height: 800px;
+                opacity: 1;
+                transform: scaleY(1.02);
+                overflow: visible;
+            }
+
+            100% {
+                max-height: 3000px;
+                opacity: 1;
+                transform: scaleY(1);
+                overflow: visible;
+            }
         }
 
         /* 📝 Receipt specific UI overrides */
         .receipt-paper .cart-item {
-            background: transparent !important; border: none !important; box-shadow: none !important;
-            border-bottom: 1px dashed #ccc !important; border-radius: 0 !important;
-            padding: 15px 0 !important; margin: 0 !important; animation: none !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-bottom: 1px dashed #ccc !important;
+            border-radius: 0 !important;
+            padding: 15px 0 !important;
+            margin: 0 !important;
+            animation: none !important;
             transform: none !important;
         }
-        .receipt-paper .cart-item:last-child { border-bottom: none !important; }
-        .receipt-paper .food-name { color: #111 !important; }
-        .receipt-paper .item-footer span { color: #333 !important; text-shadow: none !important; }
-        .receipt-paper .addon-line span { color: #666 !important; }
+
+        .receipt-paper .cart-item:last-child {
+            border-bottom: none !important;
+        }
+
+        .receipt-paper .food-name {
+            color: #111 !important;
+        }
+
+        .receipt-paper .item-footer span {
+            color: #333 !important;
+            text-shadow: none !important;
+        }
+
+        .receipt-paper .addon-line span {
+            color: #666 !important;
+        }
 
         /* 📱 Mobile Responsiveness */
         @media (max-width: 400px) {
-            .receipt-paper { margin: 15px 12px 40px; padding: 20px 15px; }
-            .cart-item { margin: 12px 10px; padding: 15px; border-radius: 24px; }
-            .item-img { width: 65px; height: 65px; border-radius: 18px; }
-            .food-name { font-size: 1rem; }
-            .bangfood-logo { font-size: 0.85rem; letter-spacing: 3px; }
-            .summary-val { font-size: 1.2rem; }
-            .nav-buttons-bar { width: 85%; }
-            .round-btn-center { width: 65px; height: 65px; bottom: 35px; }
+            .receipt-paper {
+                margin: 15px 12px 40px;
+                padding: 20px 15px;
+            }
+
+            .cart-item {
+                margin: 12px 10px;
+                padding: 15px;
+                border-radius: 24px;
+            }
+
+            .item-img {
+                width: 65px;
+                height: 65px;
+                border-radius: 18px;
+            }
+
+            .food-name {
+                font-size: 1rem;
+            }
+
+            .bangfood-logo {
+                font-size: 0.85rem;
+                letter-spacing: 3px;
+            }
+
+            .summary-val {
+                font-size: 1.2rem;
+            }
+
+            .nav-buttons-bar {
+                width: 85%;
+            }
+
+            .round-btn-center {
+                width: 65px;
+                height: 65px;
+                bottom: 35px;
+            }
         }
 
         /* Side Drawer */
-        .side-drawer { position: fixed; top: 75px; right: 25px; width: 180px; background: var(--bg-card); z-index: 4000; padding: 12px; border-radius: 30px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); transform: scale(0); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: top right; }
-        .side-drawer.active { transform: scale(1); opacity: 1; }
-        .drawer-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 18px; background: rgba(128,128,128,0.06); border-radius: 20px; margin-bottom: 6px; cursor: pointer; transition: 0.3s; }
+        .side-drawer {
+            position: fixed;
+            top: 75px;
+            right: 25px;
+            width: 180px;
+            background: var(--bg-card);
+            z-index: 4000;
+            padding: 12px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            transform: scale(0);
+            opacity: 0;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: top right;
+        }
+
+        .side-drawer.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .drawer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 18px;
+            background: rgba(128, 128, 128, 0.06);
+            border-radius: 20px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
     </style>
 </head>
 
@@ -173,7 +437,8 @@
             </div>
         </div>
     </div>
-    <div id="drawer-overlay" onclick="toggleDrawer()" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:3500; display:none;"></div>
+    <div id="drawer-overlay" onclick="toggleDrawer()"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:3500; display:none;"></div>
 
     <div class="app-wrapper">
         <div class="app-header-sticky">
@@ -195,19 +460,30 @@
         </div>
 
         <div class="bottom-nav-fixed">
+            <div class="nav-bar">
+                <div class="nav-item" onclick="goBackToIndex()">
+                    <i class="fas fa-home"></i>
+                    <span data-lang-en="HOME" data-lang-th="หน้าแรก">หน้าแรก</span>
+                </div>
+                <div class="nav-item"
+                    onclick="window.location.href='info.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</span>
+                </div>
+                <div style="width: 70px;"></div>
+                <div class="nav-item active" onclick="initializeCartPage()">
+                    <i class="fas fa-shopping-basket"></i>
+                    <span data-lang-en="BASKET" data-lang-th="ตะกร้า">ตะกร้า</span>
+                </div>
+                <div class="nav-item" onclick="goToTracking()">
+                    <i class="fas fa-list-ul"></i>
+                    <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">รายการสั่ง</span>
+                </div>
+
+            </div>
+
             <div class="round-btn-center" onclick="placeOrder()">
                 <i class="fas fa-paper-plane" style="font-size:1.4rem; margin-left:-3px;"></i>
-            </div>
-            <div class="nav-buttons-bar">
-                <div class="nav-icon" onclick="goBackToIndex()">
-                    <i class="fas fa-plus-circle" style="font-size:1.2rem; margin-bottom:4px;"></i>
-                    <span style="font-size:0.5rem; font-weight:800;">ADD MORE</span>
-                </div>
-                <div style="width: 90px;"></div> 
-                <div class="nav-icon" onclick="goToTracking()">
-                    <i class="fas fa-file-invoice-dollar" style="font-size:1.2rem; margin-bottom:4px;"></i>
-                    <span style="font-size:0.5rem; font-weight:800;">TRACKING</span>
-                </div>
             </div>
         </div>
     </div>
@@ -219,7 +495,7 @@
     <script>
         const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        window.db = firebase.database(); 
+        window.db = firebase.database();
 
         function toggleDrawer() {
             const d = document.getElementById('side-drawer');
@@ -236,30 +512,30 @@
         }
 
         function renderCart() {
-    const table = localStorage.getItem('selectedTable');
-    const cart = JSON.parse(sessionStorage.getItem(`bangfood_cart_table_${table}`)) || { items: [] };
-    const container = document.getElementById('cart-items-list'); // ชื่อ id ตามที่คุณตั้งไว้
-    
-    container.innerHTML = '';
-    container.classList.add('receipt-paper');
-    
-    cartData.items.forEach((item, index) => {
-        const basePrice = parseFloat(item.price || 0);
-        const quantity = parseInt(item.quantity || 1);
-        const finalPrice = parseFloat(item.finalPrice || 0);
+            const table = localStorage.getItem('selectedTable');
+            const cart = JSON.parse(sessionStorage.getItem(`bangfood_cart_table_${table}`)) || { items: [] };
+            const container = document.getElementById('cart-items-list'); // ชื่อ id ตามที่คุณตั้งไว้
 
-        let optionsHTML = '';
-        if (item.optionsArray && item.optionsArray.length > 0) {
-            item.optionsArray.forEach(opt => {
-                optionsHTML += `
+            container.innerHTML = '';
+            container.classList.add('receipt-paper');
+
+            cartData.items.forEach((item, index) => {
+                const basePrice = parseFloat(item.price || 0);
+                const quantity = parseInt(item.quantity || 1);
+                const finalPrice = parseFloat(item.finalPrice || 0);
+
+                let optionsHTML = '';
+                if (item.optionsArray && item.optionsArray.length > 0) {
+                    item.optionsArray.forEach(opt => {
+                        optionsHTML += `
                     <div style="font-size: 0.75rem; color: #666; display: flex; justify-content: space-between;">
                         <span>+ ${opt.name} (x${opt.qty})</span>
                         <span>฿${(parseFloat(opt.price) * opt.qty).toFixed(2)}</span>
                     </div>`;
-            });
-        }
+                    });
+                }
 
-        container.innerHTML += `
+                container.innerHTML += `
             <div class="cart-item-card" style="margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 15px;">
                 <div style="display: flex; gap: 15px; align-items: flex-start;">
                     <img src="${item.img}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid #eee;">
@@ -283,53 +559,53 @@
                 </div>
             </div>
         `;
-    });
+            });
 
-    // อัปเดตราคาสรุปด้านล่าง
-    updateSummary(cart);
-}
+            // อัปเดตราคาสรุปด้านล่าง
+            updateSummary(cart);
+        }
 
         async function renderCartItems() {
-    const tableNo = getTableNo();
-    const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
-    const cartKey = `bangfood_cart_table_${tableNo}`;
-    const cartData = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
-    
-    const transSnap = await window.db.ref('menu_translations').once('value');
-    const dict = transSnap.val() || {};
+            const tableNo = getTableNo();
+            const lang = localStorage.getItem(`lang_table_${tableNo}`) || 'th';
+            const cartKey = `bangfood_cart_table_${tableNo}`;
+            const cartData = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
 
-    const listContainer = document.getElementById('cart-items-list');
-    listContainer.innerHTML = '';
-    listContainer.classList.remove('receipt-paper');
-    let grandTotal = 0;
+            const transSnap = await window.db.ref('menu_translations').once('value');
+            const dict = transSnap.val() || {};
 
-    if (cartData.items.length === 0) {
-        listContainer.innerHTML = `<div style="text-align:center; padding:120px 0; opacity:0.2;"><i class="fas fa-shopping-basket" style="font-size:4rem; margin-bottom:20px;"></i><p>ตะกร้ายังไม่มีรายการครับ</p></div>`;
-        document.getElementById('final-total-amount').textContent = '0.00';
-        return;
-    }
+            const listContainer = document.getElementById('cart-items-list');
+            listContainer.innerHTML = '';
+            listContainer.classList.remove('receipt-paper');
+            let grandTotal = 0;
 
-    listContainer.classList.add('receipt-paper');
+            if (cartData.items.length === 0) {
+                listContainer.innerHTML = `<div style="text-align:center; padding:120px 0; opacity:0.2;"><i class="fas fa-shopping-basket" style="font-size:4rem; margin-bottom:20px;"></i><p>ตะกร้ายังไม่มีรายการครับ</p></div>`;
+                document.getElementById('final-total-amount').textContent = '0.00';
+                return;
+            }
 
-    cartData.items.forEach((item, index) => {
-        const finalP = parseFloat(item.finalPrice || 0);
-        const mainQty = parseInt(item.quantity || 1);
-        grandTotal += finalP;
-        
-        const displayName = (lang === 'en') ? (dict[item.name] || item.name) : item.name;
-        
-        // --- ส่วนการสร้าง HTML สำหรับ Options/Addons ---
-        let optionsHtml = '';
-        if (item.optionsArray && item.optionsArray.length > 0) {
-            optionsHtml = item.optionsArray.map(opt => {
-                const op = parseFloat(opt.price || 0);
-                const oQty = parseInt(opt.qty || 1); 
-                const optName = (lang === 'en') ? (dict[opt.name] || opt.name) : opt.name;
-                
-                // ราคาของท็อปปิ้ง (ยังไม่คูณจำนวนจานหลัก เพื่อให้ลูกค้าเห็นราคาต่อหน่วยชัดเจน)
-                const linePrice = op * oQty;
+            listContainer.classList.add('receipt-paper');
 
-                return `
+            cartData.items.forEach((item, index) => {
+                const finalP = parseFloat(item.finalPrice || 0);
+                const mainQty = parseInt(item.quantity || 1);
+                grandTotal += finalP;
+
+                const displayName = (lang === 'en') ? (dict[item.name] || item.name) : item.name;
+
+                // --- ส่วนการสร้าง HTML สำหรับ Options/Addons ---
+                let optionsHtml = '';
+                if (item.optionsArray && item.optionsArray.length > 0) {
+                    optionsHtml = item.optionsArray.map(opt => {
+                        const op = parseFloat(opt.price || 0);
+                        const oQty = parseInt(opt.qty || 1);
+                        const optName = (lang === 'en') ? (dict[opt.name] || opt.name) : opt.name;
+
+                        // ราคาของท็อปปิ้ง (ยังไม่คูณจำนวนจานหลัก เพื่อให้ลูกค้าเห็นราคาต่อหน่วยชัดเจน)
+                        const linePrice = op * oQty;
+
+                        return `
                     <div class="addon-line" style="margin-bottom: 2px;">
                         <span style="color: rgba(255,255,255,0.6);">
                             <i class="fas fa-plus-circle" style="font-size: 0.6rem; color: var(--premium-gold); margin-right: 5px;"></i>
@@ -338,14 +614,14 @@
                         </span>
                         <span style="font-weight: 600;">฿${linePrice.toFixed(2)}</span>
                     </div>`;
-            }).join('');
-        }
+                    }).join('');
+                }
 
-        // คำนวณหาค่าอาหารต่อหน่วย (Price per Unit) เพื่อแสดงให้ลูกค้าดู
-        // เปลี่ยนจากการคำนวณราคารวม (finalP) มาใช้ราคาพื้นฐาน (item.price) แทน
-const basePricePerUnit = parseFloat(item.price || 0);
+                // คำนวณหาค่าอาหารต่อหน่วย (Price per Unit) เพื่อแสดงให้ลูกค้าดู
+                // เปลี่ยนจากการคำนวณราคารวม (finalP) มาใช้ราคาพื้นฐาน (item.price) แทน
+                const basePricePerUnit = parseFloat(item.price || 0);
 
-listContainer.innerHTML += `
+                listContainer.innerHTML += `
     <div class="cart-item" style="animation-delay: ${index * 0.1}s">
         <div class="item-main-row">
             <div style="position: relative;">
@@ -373,28 +649,28 @@ listContainer.innerHTML += `
             </div>
         </div>
     </div>`;
-    });
-    
-    document.getElementById('final-total-amount').textContent = grandTotal.toFixed(2);
-    document.getElementById('display-table').innerText = tableNo;
-}
-        window.removeItem = function(index) {
+            });
+
+            document.getElementById('final-total-amount').textContent = grandTotal.toFixed(2);
+            document.getElementById('display-table').innerText = tableNo;
+        }
+        window.removeItem = function (index) {
             const tableNo = getTableNo();
             const cartKey = `bangfood_cart_table_${tableNo}`;
             let cartData = JSON.parse(sessionStorage.getItem(cartKey));
             cartData.items.splice(index, 1);
             sessionStorage.setItem(cartKey, JSON.stringify(cartData));
-            renderCartItems(); 
+            renderCartItems();
         }
 
-        window.placeOrder = function() {
+        window.placeOrder = function () {
             const tableNo = getTableNo();
             const cartKey = `bangfood_cart_table_${tableNo}`;
             const cartData = JSON.parse(sessionStorage.getItem(cartKey));
             if (!cartData || cartData.items.length === 0) return;
             if (!confirm("ยืนยันการส่งรายการเข้าครัวครับ?")) return;
 
-            if(typeof bfAudio !== 'undefined') { bfAudio.play('tear'); navigator.vibrate && navigator.vibrate([30, 50, 30]); }
+            if (typeof bfAudio !== 'undefined') { bfAudio.play('tear'); navigator.vibrate && navigator.vibrate([30, 50, 30]); }
 
             const orderData = {
                 tableNumber: tableNo,
@@ -418,12 +694,12 @@ listContainer.innerHTML += `
             });
         };
 
-        function goBackToIndex() { 
+        function goBackToIndex() {
             const url = `index.html?table=${getTableNo()}`;
             if (window.navigateTo) window.navigateTo(url);
             else window.location.href = url;
         }
-        function goToTracking() { 
+        function goToTracking() {
             const url = `track.html?table=${getTableNo()}`;
             if (window.navigateTo) window.navigateTo(url);
             else window.location.href = url;
@@ -433,4 +709,5 @@ listContainer.innerHTML += `
         window.addEventListener('DOMContentLoaded', initializeCartPage);
     </script>
 </body>
+
 </html>

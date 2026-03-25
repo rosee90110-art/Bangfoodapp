@@ -1,483 +1,985 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Premium Manage Menu | BANGFOOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <style>
-        /* 📍 Premium Global Config */
+        /* 📍 Premium Compact OLED Config */
         :root {
-            --premium-gold: #c5a059;
-            --gold-glow: rgba(197, 160, 89, 0.4);
-            --bg-dark: #080809;
-            --bg-card: #141416;
-            --text-main: #ffffff;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --shadow-pos: 0 25px 50px rgba(0,0,0,0.7);
-            --transition-spring: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            --input-bg: rgba(128,128,128,0.08);
+            --premium-gold: #b58e49;
+            --gold-glow: rgba(181, 142, 73, 0.3);
+            --bg-dark: #050505;
+            --bg-card: rgba(255, 255, 255, 0.02);
+            --text-main: #e0e0e0;
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --shadow-lux: 0 20px 40px rgba(0, 0, 0, 0.9);
+            --transition-spring: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            --input-bg: rgba(255, 255, 255, 0.02);
+            --modal-bg: linear-gradient(165deg, rgba(20,20,22,0.9), rgba(5,5,7,0.95));
+            --input-text: #ffffff;
+            --toast-bg: rgba(181, 142, 73, 0.95);
+            --row-bg: rgba(255, 255, 255, 0.03);
         }
 
-        /* ☀️ Light Theme Overrides */
         body.light-theme {
-            --bg-dark: #f1f3f6;
+            --bg-dark: #f8f8fa;
             --bg-card: #ffffff;
-            --text-main: #1a1d23;
-            --glass-border: rgba(0, 0, 0, 0.08);
-            --shadow-pos: 0 15px 40px rgba(0,0,0,0.06);
-            --gold-glow: rgba(197, 160, 89, 0.15);
-            --input-bg: #f9f9f9;
+            --text-main: #1a1a1e;
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --shadow-lux: 0 10px 30px rgba(0, 0, 0, 0.04);
+            --input-bg: #ffffff;
+            --modal-bg: rgba(255, 255, 255, 0.95);
+            --input-text: #1a1a1e;
+            --toast-bg: #b58e49;
+            --row-bg: rgba(0, 0, 0, 0.03);
         }
 
-        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; outline: none; }
+        * {
+            box-sizing: border-box;
+            font-family: 'Kanit', 'Outfit', sans-serif;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body::-webkit-scrollbar { display: none; }
-        body { margin: 0; padding: 25px; min-height: 100vh; background-color: var(--bg-dark); color: var(--text-main); transition: 0.5s ease; position: relative; overflow-x: hidden; }
+        
+        /* 📜 Minimalist Scrollbar for Modals */
+        #editor-container::-webkit-scrollbar { width: 4px; }
+        #editor-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        #editor-container::-webkit-scrollbar-thumb { 
+            background: var(--premium-gold); 
+            border-radius: 10px;
+        }
 
-        /* 📊 Premium Tiles Layout */
-        .dashboard-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1400px; margin: 0 auto 40px; animation: slideDown 0.8s ease; }
-        .tile-card { 
-            background: var(--bg-card); border: 1px solid var(--glass-border); 
-            padding: 30px; border-radius: 45px; text-align: center; 
-            transition: var(--transition-spring); cursor: pointer; box-shadow: var(--shadow-pos);
-            backdrop-filter: blur(15px);
+        body {
+            margin: 0;
+            padding: 25px;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            background-attachment: fixed;
+            color: var(--text-main);
+            transition: background 0.5s ease;
+            overflow-x: hidden;
         }
-        .tile-card:hover { transform: translateY(-10px); border-color: var(--premium-gold); }
-        .tile-card.active { border-color: var(--premium-gold); background: linear-gradient(145deg, var(--bg-card), var(--gold-glow)); transform: scale(1.05); }
-        .tile-card i { font-size: 2.2rem; color: var(--premium-gold); margin-bottom: 15px; }
-        .tile-card b { display: block; font-size: 2.6rem; margin: 5px 0; font-weight: 800; letter-spacing: -1.5px; }
-        .tile-card span { font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: 700; letter-spacing: 2px; }
 
-        /* 🔍 Updated Control Bar - ปรับปรุงใหม่ให้เข้าที่เข้าทาง */
-        .top-control-bar { 
-            display: flex; 
-            gap: 15px; 
-            align-items: center; 
-            max-width: 1400px; 
-            margin: 0 auto 45px; 
-            flex-wrap: nowrap; 
+        body.light-theme { background: #f8f8fa; }
+
+        /* 📊 Compact Tiles Layout */
+        .dashboard-tiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto 35px;
+            animation: slideDown 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
-        
-        .search-wrapper { 
-            flex: 1; 
-            position: relative; 
+
+        .tile-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            padding: 22px 18px;
+            border-radius: 30px;
+            text-align: center;
+            transition: var(--transition-spring);
+            cursor: pointer;
+            box-shadow: var(--shadow-lux);
+            position: relative;
+            overflow: hidden;
         }
-        
-        .search-wrapper input { 
-            width: 100%; 
-            height: 52px;
-            padding: 0 25px 0 60px; 
-            border-radius: 20px; 
-            border: 1px solid var(--glass-border); 
-            background: var(--bg-card); 
-            color: var(--text-main); 
-            font-size: 1rem; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
-            transition: 0.3s;
+
+        .tile-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(181, 142, 73, 0.3);
         }
-        
+
+        .tile-card.active {
+            background: rgba(181, 142, 73, 0.08);
+            border-color: var(--premium-gold);
+            box-shadow: 0 15px 30px rgba(181, 142, 73, 0.1);
+        }
+
+        .tile-card i {
+            display: block;
+            font-size: 1.6rem;
+            color: var(--premium-gold);
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 8px var(--gold-glow));
+        }
+
+        .tile-card b {
+            display: block;
+            font-size: 2rem;
+            margin: 2px 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--premium-gold);
+        }
+
+        .tile-card span {
+            font-size: 0.6rem;
+            color: #777;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        /* 🔍 Compact Control Bar */
+        .top-control-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto 35px;
+            animation: slideDown 1s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .search-wrapper { flex: 1; position: relative; }
+
+        .search-wrapper input {
+            width: 100%;
+            height: 50px;
+            padding: 0 20px 0 55px;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-lux);
+            transition: all 0.3s;
+        }
+
         .search-wrapper input:focus {
             border-color: var(--premium-gold);
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.03);
         }
 
-        .search-wrapper i { 
-            position: absolute; 
-            left: 22px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: var(--premium-gold); 
-            font-size: 1.2rem; 
-            opacity: 0.8;
+        .search-wrapper i {
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--premium-gold);
+            font-size: 1.2rem;
         }
 
-        .button-group { 
-            display: flex; 
-            gap: 12px; 
-            min-width: max-content; 
+        .button-group { display: flex; gap: 10px; }
+
+        .btn-action {
+            height: 50px;
+            padding: 0 20px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            white-space: nowrap;
         }
-        
-        .btn-action { 
-            height: 52px;
-            padding: 0 25px; 
-            border-radius: 18px; 
-            border: 1px solid var(--glass-border); 
-            font-weight: 600; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            font-size: 0.95rem; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
-            color: var(--text-main); 
-            background: var(--bg-card); 
-            white-space: nowrap; 
-        }
-        
+
         .btn-action:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             border-color: var(--premium-gold);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            color: var(--premium-gold);
         }
 
-        .btn-add-menu { 
-            background: var(--premium-gold); 
-            color: #000; 
-            border: none; 
-            font-weight: 800;
+        .btn-add-menu {
+            background: var(--premium-gold);
+            color: #000;
+            border: none;
+            box-shadow: 0 10px 20px var(--gold-glow);
         }
-        
+
         .btn-add-menu:hover {
             background: #d4af37;
-            box-shadow: 0 0 20px var(--gold-glow);
+            box-shadow: 0 15px 30px var(--gold-glow);
+            color: #000;
         }
 
-        /* 🍱 Product Cards */
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 35px; max-width: 1400px; margin: 0 auto; }
-        .product-card { 
-            background: var(--bg-card); border-radius: 55px; border: 1px solid var(--glass-border); 
-            overflow: hidden; transition: var(--transition-spring); cursor: pointer; position: relative; 
-            box-shadow: var(--shadow-pos);
-        }
-        .product-card:hover { transform: translateY(-15px); border-color: var(--premium-gold); }
-        .p-thumb-wrapper { height: 260px; overflow: hidden; position: relative; }
-        .p-thumb { width: 100%; height: 100%; object-fit: cover; }
-        .cat-badge { position: absolute; top: 25px; left: 25px; background: rgba(0,0,0,0.7); color: var(--premium-gold); padding: 8px 18px; border-radius: 20px; font-size: 0.65rem; font-weight: 900; z-index: 5; }
-
-        .p-info { padding: 35px; }
-        .p-info b { display: block; font-size: 1.4rem; margin-bottom: 10px; font-weight: 800; }
-        .p-info span { color: var(--premium-gold); font-weight: 900; font-size: 1.7rem; }
-
-        .card-actions { padding: 0 35px 35px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-status { padding: 12px 25px; border-radius: 22px; border: none; font-size: 0.8rem; font-weight: 900; cursor: pointer; }
-        .status-open { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
-        .status-soldout { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
-        .btn-delete { color: #888; font-size: 1.5rem; cursor: pointer; }
-
-        /* 📍 Modal */
-        #editor-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; }
-        #editor-container { width: 100%; max-width: 900px; max-height: 90vh; background: var(--bg-card); border: 2px solid var(--premium-gold); border-radius: 60px; overflow-y: auto; padding: 50px; color: var(--text-main); }
-
-        .upload-box { width: 100%; height: 300px; background: var(--input-bg); border: 2px dashed var(--premium-gold); border-radius: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 30px; cursor: pointer; }
-        input[type="text"], input[type="number"], select { width: 100%; padding: 18px 25px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); margin-bottom: 15px; font-size: 1rem; }
-
-        /* 📱 Optimized Mobile */
-        @media (max-width: 768px) {
-            body { padding: 12px; }
-            .dashboard-tiles { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-            .tile-card { padding: 15px 10px; border-radius: 25px; }
-            .tile-card i { font-size: 1.4rem; margin-bottom: 5px; }
-            .tile-card b { font-size: 1.6rem; }
-            .tile-card span { font-size: 0.55rem; letter-spacing: 1px; }
-
-            .top-control-bar { flex-direction: column; gap: 12px; margin-bottom: 30px; }
-            .search-wrapper { width: 100%; }
-            .search-wrapper input { height: 48px; padding-left: 50px; border-radius: 15px; }
-            .search-wrapper i { left: 18px; font-size: 1.1rem; }
-            
-            .button-group { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-            .btn-action { height: 48px; font-size: 0.85rem; border-radius: 15px; width: 100%; padding: 0; }
-
-            .menu-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .product-card { border-radius: 25px; }
-            .p-thumb-wrapper { height: 140px; }
-            .p-info { padding: 15px; }
-            .p-info b { font-size: 0.95rem; }
-            .p-info span { font-size: 1.1rem; }
-            .card-actions { padding: 0 15px 15px; }
-            .btn-status { padding: 6px 12px; font-size: 0.7rem; border-radius: 12px; }
-
-            #editor-container { padding: 30px 20px; border-radius: 40px; }
+        /* 🍱 Compact Product Cards */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .product-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-radius: 35px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            transition: var(--transition-spring);
+            position: relative;
+            box-shadow: var(--shadow-lux);
+            animation: cardReveal 0.6s backwards;
+        }
+
+        @keyframes cardReveal {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--premium-gold);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 1);
+        }
+
+        .p-thumb-wrapper {
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .p-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .product-card:hover .p-thumb { transform: scale(1.1); }
+
+        .cat-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--premium-gold);
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 0.55rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            z-index: 5;
+            border: 1px solid rgba(181, 142, 73, 0.2);
+        }
+
+        .p-info {
+            padding: 22px 18px 12px;
+            text-align: center;
+        }
+
+        .p-info b {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-weight: 800;
+            letter-spacing: -0.2px;
+        }
+
+        .p-info span {
+            color: var(--premium-gold);
+            font-weight: 800;
+            font-size: 1.45rem;
+        }
+
+        .card-actions {
+            padding: 0 22px 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-status {
+            flex: 1;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .status-open {
+            background: rgba(46, 213, 115, 0.08);
+            color: #2ed573;
+            border-color: rgba(46, 213, 115, 0.2);
+        }
+        .status-open:hover { background: #2ed573; color: #000; }
+
+        .status-soldout {
+            background: rgba(255, 71, 87, 0.08);
+            color: #ff4757;
+            border-color: rgba(255, 71, 87, 0.2);
+        }
+        .status-soldout:hover { background: #ff4757; color: #fff; }
+
+        .btn-delete {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #888;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-delete:hover {
+            background: #ff4757;
+            border-color: #ff4757;
+            color: #fff;
+        }
+
+        /* 📍 Compact Modal Refinement */
+        #editor-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(25px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.5s ease;
+        }
+
+        #editor-container {
+            width: 100%;
+            max-width: 680px;
+            max-height: 94vh;
+            background: var(--modal-bg);
+            border: 1px solid rgba(181, 142, 73, 0.3);
+            border-radius: 40px;
+            overflow-y: auto;
+            padding: 35px;
+            color: var(--text-main);
+            box-shadow: 0 0 80px rgba(0,0,0,1);
+            position: relative;
+        }
+
+        #editor-container::-webkit-scrollbar { width: 4px; }
+        #editor-container::-webkit-scrollbar-thumb { background: var(--premium-gold); border-radius: 10px; }
+
+        .upload-box {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 25px;
+            background: rgba(255,255,255,0.02);
+            border: 2px dashed var(--premium-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.4s;
+            position: relative;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            height: 48px;
+            padding: 0 18px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: var(--input-bg);
+            color: var(--input-text);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        /* 📍 Compact Addon Row Styles */
+        .option-config-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 40px;
+            gap: 10px;
+            margin-bottom: 10px;
+            background: var(--row-bg);
+            padding: 12px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            align-items: center;
+        }
+
+        /* 🍞 Compact Toast System */
+        #bf-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--toast-bg);
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            z-index: 100000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #bf-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* 🎚️ Luxury Toggle Switch */
+        .premium-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .premium-switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--premium-gold); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* ✨ Professional Blur Effect */
+        #main-content {
+            transition: filter 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s ease;
+            will-change: filter, transform;
+        }
+
+        body.modal-active #main-content {
+            filter: blur(12px) brightness(0.7);
+            transform: scale(0.99);
+            pointer-events: none;
+        }
     </style>
 </head>
+
 <body onload="initializeMenu()">
 
-<div class="dashboard-tiles">
-    <div class="tile-card active" id="tile-all" onclick="filterByCategory('all', 'tile-all')">
-        <i class="fas fa-boxes"></i><b id="count-all">0</b><span id="txt-tile-all">พรีเมียมทั้งหมด</span>
-    </div>
-    <div class="tile-card" id="tile-food" onclick="filterByCategory('อาหาร', 'tile-food')">
-        <i>🍜</i><b id="count-food">0</b><span id="txt-tile-food">อาหารหลัก</span>
-    </div>
-    <div class="tile-card" id="tile-noodle" onclick="filterByCategory('ก๋วยเตี๋ยว', 'tile-noodle')">
-        <i>🥣</i><b id="count-noodle">0</b><span id="txt-tile-noodle">ก๋วยเตี๋ยว</span>
-    </div>
-    <div class="tile-card" id="tile-drink" onclick="filterByCategory('เครื่องดื่ม', 'tile-drink')">
-        <i>🍹</i><b id="count-drink">0</b><span id="txt-tile-drink">เครื่องดื่ม</span>
-    </div>
-</div>
+    <div id="main-content">
+        <div class="dashboard-tiles">
+            <div class="tile-card active" id="tile-all" onclick="filterByCategory('all', 'tile-all')">
+                <i class="fas fa-th-large"></i><b id="count-all">0</b><span id="txt-tile-all">Total Items</span>
+            </div>
+            <div class="tile-card" id="tile-food" onclick="filterByCategory('อาหาร', 'tile-food')">
+                <i class="fas fa-utensils"></i><b id="count-food">0</b><span id="txt-tile-food">Main Dishes</span>
+            </div>
+            <div class="tile-card" id="tile-noodle" onclick="filterByCategory('ก๋วยเตี๋ยว', 'tile-noodle')">
+                <i class="fas fa-bowl-rice"></i><b id="count-noodle">0</b><span id="txt-tile-noodle">Noodles</span>
+            </div>
+            <div class="tile-card" id="tile-drink" onclick="filterByCategory('เครื่องดื่ม', 'tile-drink')">
+                <i class="fas fa-glass-martini-alt"></i><b id="count-drink">0</b><span id="txt-tile-drink">Beverages</span>
+            </div>
+        </div>
 
-<div class="top-control-bar">
-    <div class="search-wrapper">
-        <input type="text" id="menu-search" placeholder="ค้นหาเมนู..." oninput="filterMenu()">
-    </div>
-    <div class="button-group">
-        <button class="btn-action" onclick="openGlobalAddons()">
-            <i class="fas fa-layer-group"></i> <span id="txt-btn-addon">ส่วนเสริม</span>
-        </button>
-        <button class="btn-action btn-add-menu" onclick="openMenuEditor()">
-            <i class="fas fa-plus"></i> <span id="txt-btn-add">เพิ่มเมนู</span>
-        </button>
-    </div>
-</div>
+        <div class="top-control-bar">
+            <div class="search-wrapper">
+                <input type="text" id="menu-search" placeholder="ค้นหาเมนู..." oninput="filterMenu()">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="button-group">
+                <button class="btn-action" onclick="openGlobalAddons()">
+                    <i class="fas fa-layer-group"></i> <span id="txt-btn-addon">ส่วนเสริม</span>
+                </button>
+                <button class="btn-action btn-add-menu" onclick="openMenuEditor()">
+                    <i class="fas fa-plus"></i> <span id="txt-btn-add">เพิ่มเมนู</span>
+                </button>
+            </div>
+        </div>
 
-<div id="editor-overlay" onclick="if(event.target.id==='editor-overlay') closeEditor()">
-    <div id="editor-container">
-        <div id="view-menu-editor">
-            <div class="upload-box" onclick="document.getElementById('file-input').click()">
-                <img id="p-img-preview" src="" style="display:none; width: 100%; height: 100%; object-fit: cover;">
-                <div id="upload-hint" style="text-align:center;">
-                    <i class="fas fa-camera-retro" style="font-size:2rem; color:var(--premium-gold); margin-bottom:10px;"></i><br>
-                    <b id="txt-upload" style="font-size: 0.8rem;">อัปโหลดรูปภาพ</b>
+        <div id="product-list" class="menu-grid"></div>
+    </div> <!-- end #main-content -->
+
+    <div id="editor-overlay" onclick="if(event.target.id==='editor-overlay') closeEditor()">
+        <div id="editor-container">
+            <div id="view-menu-editor">
+                <!-- 🏆 Modal Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;">
+                    <h2 id="modal-title" style="margin:0; font-weight:800; color:var(--premium-gold); font-size:1.4rem;">EDIT PRODUCT</h2>
+                    <i class="fas fa-times" style="font-size: 1.2rem; cursor:pointer; color:#888;" onclick="closeEditor()"></i>
                 </div>
-                <input type="file" id="file-input" hidden accept="image/*" onchange="handleFileUpload(this)">
-                <input type="hidden" id="p-img">
-            </div>
-            
-            <input type="text" id="p-name" placeholder="ชื่อภาษาไทย">
-            <input type="text" id="p-name-en" placeholder="English Label">
-            <div style="display: flex; gap: 10px;">
-                <input type="number" id="p-price" placeholder="ราคา (฿)">
-                <select id="p-category">
-                    <option value="อาหาร">จานหลัก / Main</option>
-                    <option value="ก๋วยเตี๋ยว">ก๋วยเตี๋ยว / Noodle</option>
-                    <option value="เครื่องดื่ม">เครื่องดื่ม / Drink</option>
-                </select>
-            </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-action btn-add-menu" style="flex:2;" onclick="saveMenuData()">SAVE</button>
-                <button class="btn-action" style="flex:1;" onclick="closeEditor()">CANCEL</button>
-            </div>
-        </div>
 
-        <div id="view-global-addons" style="display: none;">
-            <b style="font-size: 1.2rem; color: var(--premium-gold);">ADDONS CONFIG</b>
-            <select id="addon-category-filter" style="margin-top: 10px;" onchange="loadAddonsByCategory(this.value)">
-                <option value="อาหาร">หมวด: อาหาร</option>
-                <option value="ก๋วยเตี๋ยว">หมวด: ก๋วยเตี๋ยว</option>
-                <option value="เครื่องดื่ม">หมวด: เครื่องดื่ม</option>
-            </select>
-            <div id="global-sizes-container" style="margin-top: 15px;"></div>
-            <button class="btn-action" style="width:100%; border:1px dashed var(--premium-gold); margin-bottom:15px; padding: 10px;" onclick="addOptionRow('global-sizes-container')">+ Size</button>
-            <div id="global-addons-container"></div>
-            <button class="btn-action" style="width:100%; border:1px dashed var(--premium-gold); padding: 10px;" onclick="addOptionRow('global-addons-container')">+ Topping</button>
-            
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
-                <button class="btn-action btn-add-menu" style="flex:2;" onclick="saveGlobalAddons()">UPDATE</button>
-                <button class="btn-action" style="flex:1;" onclick="closeEditor()">CLOSE</button>
+                <div class="upload-box" onclick="document.getElementById('file-input').click()">
+                    <img id="p-img-preview" src="" style="display:none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    <div id="upload-hint" style="text-align:center;">
+                        <i class="fas fa-camera-retro"
+                            style="font-size:2.4rem; color:var(--premium-gold); margin-bottom:12px;"></i><br>
+                        <b id="txt-upload" style="font-size: 0.85rem; letter-spacing: 1px;">UPLOAD IMAGE</b>
+                    </div>
+                    <input type="file" id="file-input" hidden accept="image/*" onchange="handleFileUpload(this)">
+                    <input type="hidden" id="p-img">
+                </div>
+
+                <input type="text" id="p-name" placeholder="ชื่อภาษาไทย">
+                <input type="text" id="p-name-en" placeholder="English Label">
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="p-price" placeholder="ราคา (฿)">
+                    <select id="p-category">
+                        <option value="อาหาร">จานหลัก / Main</option>
+                        <option value="ก๋วยเตี๋ยว">ก๋วยเตี๋ยว / Noodle</option>
+                        <option value="เครื่องดื่ม">เครื่องดื่ม / Drink</option>
+                    </select>
+                </div>
+
+                <!-- 🔥 New: Per-Product Addon Selector -->
+                <div id="product-specific-config" style="margin-top:25px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                    <div class="addon-section-header" style="margin-top:0;">
+                        <h4 style="font-size: 0.9rem;"><i class="fas fa-sliders-h"></i> OPTIONS FOR THIS ITEM</h4>
+                        <button class="btn-action" style="height:30px; font-size:0.7rem; padding:0 10px;" onclick="refreshOptionsFromGlobal()">
+                            <i class="fas fa-sync"></i> REFRESH FROM GLOBAL
+                        </button>
+                    </div>
+                    
+                    <div id="product-sizes-selector" style="margin-bottom: 20px;"></div>
+                    <div id="product-extras-selector"></div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 30px;">
+                    <button class="btn-action btn-add-menu" style="flex:2;" onclick="saveMenuData()">SAVE CHANGES</button>
+                    <button class="btn-action" style="flex:1;" onclick="closeEditor()">CANCEL</button>
+                </div>
             </div>
+
+            <div id="view-global-addons" style="display: none;">
+                <div class="addon-section-header" style="border:none;">
+                    <h3 style="color: var(--premium-gold); margin:0;">GLOBAL ADDONS</h3>
+                    <select id="addon-category-filter" style="width:160px; margin:0; padding:8px 15px; border-radius:15px;"
+                        onchange="loadAddonsByCategory(this.value)">
+                        <option value="อาหาร">หมวด: อาหาร</option>
+                        <option value="ก๋วยเตี๋ยว">หมวด: ก๋วยเตี๋ยว</option>
+                        <option value="เครื่องดื่ม">หมวด: เครื่องดื่ม</option>
+                    </select>
+                </div>
+
+                <!-- Sizes Section -->
+                <div class="addon-section-header">
+                    <h4><i class="fas fa-expand-arrows-alt"></i> SIZES / OPTIONS</h4>
+                    <div class="group-config" style="padding: 2px 10px;">
+                        <label style="margin-right:8px;">Required</label>
+                        <label class="premium-switch">
+                            <input type="checkbox" id="size-required" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div id="global-sizes-container"></div>
+                <button class="btn-action" style="width:100%; border:1px dashed var(--premium-gold); margin-top:10px; height:45px;"
+                    onclick="addOptionRow('global-sizes-container')">+ Add Size Option</button>
+
+                <!-- Extras Section -->
+                <div class="addon-section-header">
+                    <h4><i class="fas fa-plus-circle"></i> EXTRA TOPPINGS</h4>
+                    <div class="group-config">
+                        <label>Max Select:</label>
+                        <input type="number" id="addon-max" value="0" placeholder="0=∞">
+                    </div>
+                </div>
+                <div id="global-addons-container"></div>
+                <button class="btn-action" style="width:100%; border:1px dashed var(--premium-gold); margin-top:10px; height:45px;"
+                    onclick="addOptionRow('global-addons-container')">+ Add Extra Topping</button>
+
+                <!-- 🔄 Sync Toggle -->
+                <div style="margin-top: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; background: rgba(197, 160, 89, 0.08); padding: 15px; border-radius: 25px; border: 1px solid rgba(197, 160, 89, 0.2);">
+                    <label class="premium-switch">
+                        <input type="checkbox" id="sync-all-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <label for="sync-all-toggle" style="color:var(--premium-gold); font-size:0.9rem; cursor:pointer; font-weight:700;">
+                         INSTANT SYNC: Update all items in this category
+                    </label>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 25px;">
+                    <button class="btn-action btn-add-menu" style="flex:2; height:55px;" onclick="saveGlobalAddons()">SAVE & SYNC ALL</button>
+                    <button class="btn-action" style="flex:1; height:55px;" onclick="closeEditor()">CLOSE</button>
+                </div>
+            </div>
+            <input type="hidden" id="edit-id">
         </div>
-        <input type="hidden" id="edit-id">
     </div>
-</div>
 
-<div id="product-list" class="menu-grid"></div>
+    <div id="bf-toast"></div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<script>
-    const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyCYIFwwhW7LeM92FqZykqAsDnte09iU9QQ", authDomain: "bangfood-cb30f.firebaseapp.com", databaseURL: "https://bangfood-cb30f-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "bangfood-cb30f", storageBucket: "bangfood-cb30f.appspot.com", messagingSenderId: "390955623784", appId: "1:390955623784:web:aed47e64d2e9dd9e7be2dd" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-    let activeCategory = 'all';
+        let activeCategory = 'all';
 
-    function applySettings() {
-        const isLight = localStorage.getItem('theme') === 'light';
-        document.body.classList.toggle('light-theme', isLight);
-        const lang = localStorage.getItem('bf_lang') || 'th';
-        const dict = {
-            th: { search: "ค้นหาเมนูที่ต้องการ...", all: "พรีเมียมทั้งหมด", food: "อาหารหลัก", noodle: "ก๋วยเตี๋ยว", drink: "เครื่องดื่ม", addon: "ส่วนเสริม", add: "เพิ่มเมนู", upload: "อัปโหลด", instock: "ขายอยู่", out: "หมด" },
-            en: { search: "Search menu...", all: "ALL", food: "MAIN", noodle: "NOODLE", drink: "DRINK", addon: "ADDON", add: "ADD", upload: "UPLOAD", instock: "ACTIVE", out: "SOLD OUT" }
-        };
-        const d = dict[lang];
-        document.getElementById('menu-search').placeholder = d.search;
-        document.getElementById('txt-tile-all').innerText = d.all;
-        document.getElementById('txt-tile-food').innerText = d.food;
-        document.getElementById('txt-tile-noodle').innerText = d.noodle;
-        document.getElementById('txt-tile-drink').innerText = d.drink;
-        document.getElementById('txt-btn-addon').innerText = d.addon;
-        document.getElementById('txt-btn-add').innerText = d.add;
-        document.getElementById('txt-upload').innerText = d.upload;
-        return d;
-    }
+        // 🍞 Modern Toast Logic
+        function showToast(msg, icon = 'check-circle') {
+            const t = document.getElementById('bf-toast');
+            if(!t) return;
+            t.innerHTML = `<i class="fas fa-${icon}"></i> ${msg}`;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+        window.showToast = showToast;
 
-    window.addEventListener('storage', () => { applySettings(); loadProducts(); });
-    function initializeMenu() { applySettings(); loadProducts(); }
+        function applySettings() {
+            const isLight = localStorage.getItem('theme') === 'light';
+            document.body.classList.toggle('light-theme', isLight);
+            const lang = localStorage.getItem('bf_lang') || 'th';
+            const dict = {
+                th: { search: "ค้นหาเมนูที่ต้องการ...", all: "พรีเมียมทั้งหมด", food: "อาหารหลัก", noodle: "ก๋วยเตี๋ยว", drink: "เครื่องดื่ม", addon: "ส่วนเสริม", add: "เพิ่มเมนู", upload: "อัปโหลด", instock: "ขายอยู่", out: "หมด" },
+                en: { search: "Search menu...", all: "ALL", food: "MAIN", noodle: "NOODLE", drink: "DRINK", addon: "ADDON", add: "ADD", upload: "UPLOAD", instock: "ACTIVE", out: "SOLD OUT" }
+            };
+            const d = dict[lang];
+            document.getElementById('menu-search').placeholder = d.search;
+            document.getElementById('txt-tile-all').innerText = d.all;
+            document.getElementById('txt-tile-food').innerText = d.food;
+            document.getElementById('txt-tile-noodle').innerText = d.noodle;
+            document.getElementById('txt-tile-drink').innerText = d.drink;
+            document.getElementById('txt-btn-addon').innerText = d.addon;
+            document.getElementById('txt-btn-add').innerText = d.add;
+            document.getElementById('txt-upload').innerText = d.upload;
+            return d;
+        }
 
-    function loadProducts() {
-        db.ref('products').on('value', snap => {
-            const list = document.getElementById('product-list');
-            const data = snap.val(); list.innerHTML = '';
-            const d = applySettings();
-            let counts = { all: 0, food: 0, noodle: 0, drink: 0 };
-            for (let id in data) {
-                const p = data[id];
-                counts.all++;
-                if(p.category === 'อาหาร') counts.food++;
-                if(p.category === 'ก๋วยเตี๋ยว') counts.noodle++;
-                if(p.category === 'เครื่องดื่ม') counts.drink++;
-                const div = document.createElement('div');
-                div.className = 'product-card';
-                div.setAttribute('data-category', p.category);
-                div.onclick = () => openEdit(id, p);
-                div.innerHTML = `
+        window.addEventListener('storage', () => { applySettings(); loadProducts(); });
+        function initializeMenu() { applySettings(); loadProducts(); }
+
+        function loadProducts() {
+            db.ref('products').on('value', snap => {
+                const list = document.getElementById('product-list');
+                const data = snap.val(); list.innerHTML = '';
+                const d = applySettings();
+                let counts = { all: 0, food: 0, noodle: 0, drink: 0 };
+                let index = 0;
+                for (let id in data) {
+                    const p = data[id];
+                    counts.all++;
+                    if (p.category === 'อาหาร') counts.food++;
+                    if (p.category === 'ก๋วยเตี๋ยว') counts.noodle++;
+                    if (p.category === 'เครื่องดื่ม') counts.drink++;
+                    const div = document.createElement('div');
+                    div.className = 'product-card';
+                    div.style.animationDelay = `${index * 0.08}s`;
+                    div.setAttribute('data-category', p.category);
+                    div.onclick = () => openEdit(id, p);
+                    div.innerHTML = `
                     <div class="cat-badge">${p.category}</div>
                     <div class="p-thumb-wrapper"><img src="${p.img}" class="p-thumb"></div>
                     <div class="p-info"><b>${p.name}</b><span>฿${p.price}</span></div>
                     <div class="card-actions">
-                        <button class="btn-status ${p.status=='out_of_stock'?'status-soldout':'status-open'}" onclick="event.stopPropagation(); toggleStatus('${id}', '${p.status}')">
-                            ${p.status=='out_of_stock' ? d.out : d.instock}
+                        <button class="btn-status ${p.status == 'out_of_stock' ? 'status-soldout' : 'status-open'}" onclick="event.stopPropagation(); toggleStatus('${id}', '${p.status}')">
+                            ${p.status == 'out_of_stock' ? d.out : d.instock}
                         </button>
                         <i class="fas fa-trash-can btn-delete" onclick="event.stopPropagation(); deleteProduct('${id}')"></i>
                     </div>`;
-                list.appendChild(div);
-            }
-            document.getElementById('count-all').innerText = counts.all;
-            document.getElementById('count-food').innerText = counts.food;
-            document.getElementById('count-noodle').innerText = counts.noodle;
-            document.getElementById('count-drink').innerText = counts.drink;
+                    list.appendChild(div);
+                    index++;
+                }
+                document.getElementById('count-all').innerText = counts.all;
+                document.getElementById('count-food').innerText = counts.food;
+                document.getElementById('count-noodle').innerText = counts.noodle;
+                document.getElementById('count-drink').innerText = counts.drink;
+                filterMenu();
+            });
+        }
+
+        function filterByCategory(cat, tileId) {
+            activeCategory = cat;
+            document.querySelectorAll('.tile-card').forEach(t => t.classList.remove('active'));
+            document.getElementById(tileId).classList.add('active');
             filterMenu();
-        });
-    }
+        }
 
-    function filterByCategory(cat, tileId) {
-        activeCategory = cat;
-        document.querySelectorAll('.tile-card').forEach(t => t.classList.remove('active'));
-        document.getElementById(tileId).classList.add('active');
-        filterMenu();
-    }
+        function filterMenu() {
+            const q = document.getElementById('menu-search').value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(card => {
+                const cat = card.getAttribute('data-category');
+                const matchesSearch = card.innerText.toLowerCase().includes(q);
+                const matchesCategory = (activeCategory === 'all' || cat === activeCategory);
+                card.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
+            });
+        }
 
-    function filterMenu() {
-        const q = document.getElementById('menu-search').value.toLowerCase();
-        document.querySelectorAll('.product-card').forEach(card => {
-            const cat = card.getAttribute('data-category');
-            const matchesSearch = card.innerText.toLowerCase().includes(q);
-            const matchesCategory = (activeCategory === 'all' || cat === activeCategory);
-            card.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
-        });
-    }
+        function openMenuEditor() {
+            document.getElementById('modal-title').innerText = localStorage.getItem('bf_lang') === 'en' ? "ADD NEW PRODUCT" : "เพิ่มเมนูใหม่";
+            document.getElementById('view-menu-editor').style.display = 'block';
+            document.getElementById('view-global-addons').style.display = 'none';
+            document.getElementById('editor-overlay').style.display = 'flex';
+            document.body.classList.add('modal-active');
+        }
 
-    function openMenuEditor() { 
-        document.getElementById('view-menu-editor').style.display = 'block'; 
-        document.getElementById('view-global-addons').style.display = 'none'; 
-        document.getElementById('editor-overlay').style.display = 'flex'; 
-    }
+        function openEdit(id, p) {
+            document.getElementById('modal-title').innerText = localStorage.getItem('bf_lang') === 'en' ? "EDIT PRODUCT" : "แก้ไขเมนู";
+            document.getElementById('edit-id').value = id;
+            document.getElementById('p-name').value = p.name || '';
+            document.getElementById('p-name-en').value = p.name_en || '';
+            document.getElementById('p-price').value = p.price || '';
+            document.getElementById('p-category').value = p.category || 'อาหาร';
+            document.getElementById('p-img').value = p.img || '';
+            if (p.img) {
+                document.getElementById('p-img-preview').src = p.img;
+                document.getElementById('p-img-preview').style.display = 'block';
+                document.getElementById('upload-hint').style.display = 'none';
+            }
+            
+            // โหลดตัวเลือกสำหรับสินค้านี้
+            loadProductOptions(p.config || { sizes: [], addons: [] }, p.category);
+            
+            openMenuEditor();
+        }
 
-    function openGlobalAddons() { 
-        document.getElementById('view-menu-editor').style.display = 'none'; 
-        document.getElementById('view-global-addons').style.display = 'block'; 
-        loadAddonsByCategory(document.getElementById('addon-category-filter').value); 
-        document.getElementById('editor-overlay').style.display = 'flex'; 
-    }
+        function openGlobalAddons() {
+            document.getElementById('view-menu-editor').style.display = 'none';
+            document.getElementById('view-global-addons').style.display = 'block';
+            loadAddonsByCategory(document.getElementById('addon-category-filter').value);
+            document.getElementById('editor-overlay').style.display = 'flex';
+            document.body.classList.add('modal-active');
+        }
 
-    function closeEditor() { document.getElementById('editor-overlay').style.display = 'none'; resetForm(); }
+        function closeEditor() { 
+            document.getElementById('editor-overlay').style.display = 'none'; 
+            document.body.classList.remove('modal-active');
+            resetForm(); 
+        }
 
-    function addOptionRow(containerId, name = "", price = "0") {
-        const container = document.getElementById(containerId);
-        const div = document.createElement('div');
-        div.style = "display:flex; gap:8px; margin-bottom:8px; background:var(--input-bg); padding:8px; border-radius:12px;";
-        div.innerHTML = `
-            <input type="text" placeholder="Name" value="${name}" style="flex:2; margin:0; padding:8px 12px; font-size:0.85rem;"> 
-            <input type="number" placeholder="฿" value="${price}" style="flex:1; margin:0; padding:8px 12px; font-size:0.85rem;"> 
-            <i class="fas fa-times-circle" style="color:#ff4757; align-self:center; cursor:pointer;" onclick="this.parentElement.remove()"></i>`;
-        container.appendChild(div);
-    }
+        function addOptionRow(containerId, name = "", price = "0") {
+            const container = document.getElementById(containerId);
+            const count = container.children.length;
+            const div = document.createElement('div');
+            div.className = "option-config-row stagger-item";
+            div.style.animationDelay = `${count * 0.05}s`;
+            div.innerHTML = `
+            <input type="text" placeholder="Option Name (e.g. XL / Extra Cheese)" value="${name}"> 
+            <input type="number" placeholder="Price" value="${price}">
+            <div style="font-size: 0.65rem; color: #666; text-align: center; line-height: 1;">+ ADD-ON<br>PRICE</div>
+            <i class="fas fa-times-circle" style="color:#ff4757; font-size: 1.2rem; cursor:pointer;" onclick="this.parentElement.remove()"></i>`;
+            container.appendChild(div);
+        }
 
-    function loadAddonsByCategory(category) {
-        db.ref('category_addons/' + category).once('value', snap => {
-            const data = snap.val() || { sizes: [], extras: [] };
-            document.getElementById('global-sizes-container').innerHTML = '';
-            document.getElementById('global-addons-container').innerHTML = '';
-            if(data.sizes) data.sizes.forEach(s => addOptionRow('global-sizes-container', s.name, s.price));
-            if(data.extras) data.extras.forEach(e => addOptionRow('global-addons-container', e.name, e.price));
-        });
-    }
+        function loadAddonsByCategory(category) {
+            db.ref('category_addons/' + category).once('value', snap => {
+                const data = snap.val() || { sizes: [], extras: [], config: {} };
+                document.getElementById('global-sizes-container').innerHTML = '';
+                document.getElementById('global-addons-container').innerHTML = '';
+                
+                // Load Group Configs
+                const cfg = data.config || {};
+                document.getElementById('size-required').checked = cfg.sizeRequired !== false;
+                document.getElementById('addon-max').value = cfg.addonMax || 0;
 
-    async function saveGlobalAddons() {
-        const category = document.getElementById('addon-category-filter').value;
-        const addonData = { sizes: [], extras: [] };
-        document.querySelectorAll('#global-sizes-container > div').forEach(row => {
-            const i = row.querySelectorAll('input');
-            if(i[0].value) addonData.sizes.push({ name: i[0].value, price: parseFloat(i[1].value)||0 });
-        });
-        document.querySelectorAll('#global-addons-container > div').forEach(row => {
-            const i = row.querySelectorAll('input');
-            if(i[0].value) addonData.extras.push({ name: i[0].value, price: parseFloat(i[1].value)||0 });
-        });
-        await db.ref('category_addons/' + category).set(addonData);
-        alert("Updated!");
-    }
+                if (data.sizes) data.sizes.forEach(s => addOptionRow('global-sizes-container', s.name, s.price));
+                if (data.extras) data.extras.forEach(e => addOptionRow('global-addons-container', e.name, e.price));
+            });
+        }
 
-    function saveMenuData() {
-        const id = document.getElementById('edit-id').value;
-        const nameTH = document.getElementById('p-name').value.trim();
-        const price = parseFloat(document.getElementById('p-price').value);
-        const img = document.getElementById('p-img').value;
-        const category = document.getElementById('p-category').value;
-        if(!nameTH || isNaN(price) || !img) return alert("Fill all fields!");
-        db.ref('category_addons/' + category).once('value', snap => {
-            const addons = snap.val() || { sizes: [], extras: [] };
-            const data = { name: nameTH, price: price, img: img, category: category, status: 'instock', config: { sizes: addons.sizes || [], addons: addons.extras || [] } };
-            const ref = id ? db.ref('products/'+id) : db.ref('products').push();
+        async function saveGlobalAddons() {
+            const category = document.getElementById('addon-category-filter').value;
+            const addonData = { 
+                sizes: [], 
+                extras: [],
+                config: {
+                    sizeRequired: document.getElementById('size-required').checked,
+                    addonMax: parseInt(document.getElementById('addon-max').value) || 0
+                }
+            };
+            
+            document.querySelectorAll('#global-sizes-container > .option-config-row').forEach(row => {
+                const i = row.querySelectorAll('input');
+                if (i[0].value) addonData.sizes.push({ name: i[0].value, price: parseFloat(i[1].value) || 0 });
+            });
+            
+            document.querySelectorAll('#global-addons-container > .option-config-row').forEach(row => {
+                const i = row.querySelectorAll('input');
+                if (i[0].value) addonData.extras.push({ name: i[0].value, price: parseFloat(i[1].value) || 0 });
+            });
+            
+            // 1. Save Master Config
+            await db.ref('category_addons/' + category).set(addonData);
+
+            // 2. 🔄 Instant Sync to All Products (Mass Update)
+            if (document.getElementById('sync-all-toggle').checked) {
+                const productsSnap = await db.ref('products').orderByChild('category').equalTo(category).once('value');
+                const products = productsSnap.val();
+                if (products) {
+                    const updates = {};
+                    Object.keys(products).forEach(id => {
+                        updates[`products/${id}/config/sizes`] = addonData.sizes;
+                        updates[`products/${id}/config/addons`] = addonData.extras;
+                        updates[`products/${id}/config/sizeRequired`] = addonData.config.sizeRequired;
+                        updates[`products/${id}/config/addonMax`] = addonData.config.addonMax;
+                    });
+                    await db.ref().update(updates);
+                    showToast("Synced Successfully! All items updated!", "sync");
+                }
+            } else {
+                showToast("Global Config Saved.", "save");
+            }
+        }
+
+        async function saveMenuData() {
+            const id = document.getElementById('edit-id').value;
+            const category = document.getElementById('p-category').value;
+            if (!nameTH || isNaN(price) || !img) return showToast("Please fill all fields!", "exclamation-triangle");
+            
+            // 🔥 ดึงเฉพาะรายการที่ถูกติ๊กเลือก (Selected Options)
+            const selectedSizes = [];
+            document.querySelectorAll('#product-sizes-selector .option-checkbox:checked').forEach(cb => {
+                selectedSizes.push({ name: cb.dataset.name, price: parseFloat(cb.dataset.price) || 0 });
+            });
+            const selectedExtras = [];
+            document.querySelectorAll('#product-extras-selector .option-checkbox:checked').forEach(cb => {
+                selectedExtras.push({ name: cb.dataset.name, price: parseFloat(cb.dataset.price) || 0 });
+            });
+
+            // ดึง Config ของหมวดหมู่มาด้วย
+            const catSnap = await db.ref('category_addons/' + category).once('value');
+            const catData = catSnap.val() || { config: {} };
+            const cfg = catData.config || {};
+
+            const data = { 
+                name: nameTH, 
+                price: price, 
+                img: img, 
+                category: category, 
+                status: 'instock', 
+                config: { 
+                    sizes: selectedSizes, 
+                    addons: selectedExtras,
+                    sizeRequired: cfg.sizeRequired ?? true,
+                    addonMax: cfg.addonMax ?? 0
+                } 
+            };
+            
+            const ref = id ? db.ref('products/' + id) : db.ref('products').push();
             ref.set(data).then(() => {
                 const nameEN = document.getElementById('p-name-en').value.trim();
                 if (nameEN) db.ref('menu_translations').update({ [nameTH]: nameEN });
+                showToast("Product Saved Successfully!", "check-circle");
                 closeEditor();
             });
-        });
-    }
+        }
 
-    function toggleStatus(id, current) {
-        const next = current === 'out_of_stock' ? 'instock' : 'out_of_stock';
-        db.ref(`products/${id}`).update({status: next});
-    }
-    function deleteProduct(id) { if(confirm('Delete?')) db.ref(`products/${id}`).remove(); }
+        function openEdit(id, p) {
+            openMenuEditor();
+            document.getElementById('edit-id').value = id;
+            document.getElementById('p-name').value = p.name;
+            document.getElementById('p-price').value = p.price;
+            document.getElementById('p-img').value = p.img;
+            document.getElementById('p-img-preview').src = p.img;
+            document.getElementById('p-img-preview').style.display = 'block';
+            document.getElementById('upload-hint').style.display = 'none';
+            document.getElementById('p-category').value = p.category;
+            
+            // 🔥 Load Addon Checklist
+            loadProductOptions(p.config || {}, p.category);
 
-    function openEdit(id, p) { 
-        openMenuEditor(); 
-        document.getElementById('edit-id').value = id; 
-        document.getElementById('p-name').value = p.name;
-        document.getElementById('p-price').value = p.price; 
-        document.getElementById('p-img').value = p.img;
-        document.getElementById('p-img-preview').src = p.img; 
-        document.getElementById('p-img-preview').style.display = 'block';
-        document.getElementById('upload-hint').style.display = 'none'; 
-        document.getElementById('p-category').value = p.category;
-        db.ref('menu_translations/' + p.name).once('value', snap => { document.getElementById('p-name-en').value = snap.val() || ""; });
-    }
+            db.ref('menu_translations/' + p.name).once('value', snap => { document.getElementById('p-name-en').value = snap.val() || ""; });
+        }
 
-    function handleFileUpload(input) { 
-        if (input.files && input.files[0]) { 
-            const reader = new FileReader(); 
-            reader.onload = e => { 
-                document.getElementById('p-img').value = e.target.result; 
-                const preview = document.getElementById('p-img-preview'); 
-                preview.src = e.target.result; 
-                preview.style.display = 'block'; 
-                document.getElementById('upload-hint').style.display = 'none'; 
-            }; 
-            reader.readAsDataURL(input.files[0]); 
-        } 
-    }
+        async function loadProductOptions(config, category) {
+            const snap = await db.ref('category_addons/' + category).once('value');
+            const globalData = snap.val() || { sizes: [], extras: [] };
+            
+            // Sizes Selector
+            const sCont = document.getElementById('product-sizes-selector');
+            sCont.innerHTML = `<b style="font-size:0.7rem; color:#666;">SIZES:</b><br>`;
+            globalData.sizes.forEach(s => {
+                const isChecked = config.sizes?.some(ps => ps.name === s.name) ? 'checked' : '';
+                sCont.innerHTML += `
+                <label style="display:inline-flex; align-items:center; gap:8px; margin:5px 10px 5px 0; background:var(--row-bg); padding:8px 15px; border-radius:15px; font-size:0.85rem; cursor:pointer; border:1px solid var(--glass-border);">
+                    <input type="checkbox" class="option-checkbox" data-name="${s.name}" data-price="${s.price}" ${isChecked} style="width:18px; height:18px; cursor:pointer;"> ${s.name} (+${s.price})
+                </label>`;
+            });
 
-    function resetForm() { 
-        document.getElementById('edit-id').value = ""; 
-        document.getElementById('p-name').value = ""; 
-        document.getElementById('p-name-en').value = ""; 
-        document.getElementById('p-price').value = ""; 
-        document.getElementById('p-img').value = ""; 
-        document.getElementById('p-img-preview').style.display = 'none'; 
-        document.getElementById('upload-hint').style.display = 'block'; 
-    }
-</script>
+            // Extras Selector
+            const eCont = document.getElementById('product-extras-selector');
+            eCont.innerHTML = `<b style="font-size:0.7rem; color:#666;">TOPPINGS:</b><br>`;
+            globalData.extras.forEach(e => {
+                const isChecked = config.addons?.some(pe => pe.name === e.name) ? 'checked' : '';
+                eCont.innerHTML += `
+                <label style="display:inline-flex; align-items:center; gap:8px; margin:5px 10px 5px 0; background:var(--row-bg); padding:8px 15px; border-radius:15px; font-size:0.85rem; cursor:pointer; border:1px solid var(--glass-border);">
+                    <input type="checkbox" class="option-checkbox" data-name="${e.name}" data-price="${e.price}" ${isChecked} style="width:18px; height:18px; cursor:pointer;"> ${e.name} (+${e.price})
+                </label>`;
+            });
+        }
+
+        function refreshOptionsFromGlobal() {
+            const category = document.getElementById('p-category').value;
+            // โหลดใหม่โดยให้เลือกทั้งหมดเป็น Default
+            db.ref('category_addons/' + category).once('value', snap => {
+                const data = snap.val() || { sizes: [], extras: [] };
+                loadProductOptions({ sizes: data.sizes, addons: data.extras }, category);
+            });
+        }
+
+        function toggleStatus(id, current) {
+            const next = current === 'out_of_stock' ? 'instock' : 'out_of_stock';
+            db.ref(`products/${id}`).update({ status: next });
+        }
+        function deleteProduct(id) { if (confirm('Delete?')) db.ref(`products/${id}`).remove(); }
+
+        function handleFileUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    document.getElementById('p-img').value = e.target.result;
+                    const preview = document.getElementById('p-img-preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById('upload-hint').style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('edit-id').value = "";
+            document.getElementById('p-name').value = "";
+            document.getElementById('p-name-en').value = "";
+            document.getElementById('p-price').value = "";
+            document.getElementById('p-img').value = "";
+            document.getElementById('p-img-preview').style.display = 'none';
+            document.getElementById('upload-hint').style.display = 'block';
+        }
+    </script>
 </body>
+
 </html>

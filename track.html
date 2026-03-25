@@ -239,64 +239,6 @@
         }
 
         /* --- Nav Style --- */
-        .bottom-nav-fixed {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            pointer-events: none;
-            z-index: 5000;
-        }
-
-        .nav-bar {
-            width: 75%;
-            height: 65px;
-            background: #121214;
-            border-radius: 35px;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 35px;
-            pointer-events: auto;
-            margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-
-        body.light-theme .nav-bar {
-            background: #fff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .nav-item {
-            text-align: center;
-            color: #666;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .nav-item.active {
-            color: var(--premium-gold);
-        }
-
-        .nav-item i {
-            font-size: 1.2rem;
-        }
-
-        .nav-item span {
-            display: block;
-            font-size: 0.55rem;
-            font-weight: 700;
-            margin-top: 4px;
-            text-transform: uppercase;
-        }
 
         .round-refresh {
             position: absolute;
@@ -620,17 +562,28 @@
 
         <div class="bottom-nav-fixed">
             <div class="nav-bar">
+                <div class="nav-item" onclick="goBackToIndex()">
+                    <i class="fas fa-home"></i>
+                    <span data-lang-en="HOME" data-lang-th="หน้าแรก">หน้าแรก</span>
+                </div>
+                <div class="nav-item"
+                    onclick="window.location.href='info.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-info-circle"></i>
+                    <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</span>
+                </div>
+                <div style="width: 70px;"></div> <!-- Middle Gap for Round Button -->
                 <div class="nav-item" onclick="goToCart()">
                     <i class="fas fa-shopping-basket"></i>
                     <span data-lang-en="BASKET" data-lang-th="ตะกร้า">ตะกร้า</span>
                 </div>
-                <div style="flex: 0.5;"></div>
-                <div class="nav-item" onclick="goBackToIndex()">
-                    <i class="fas fa-plus"></i>
-                    <span data-lang-en="ADD MENU" data-lang-th="สั่งเพิ่ม">สั่งเพิ่ม</span>
+                <div class="nav-item active" onclick="initializeTrackPage()">
+                    <i class="fas fa-list-ul"></i>
+                    <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">รายการสั่ง</span>
                 </div>
+
             </div>
-            <div class="round-refresh" id="center-action-btn" onclick="handleCenterAction()">
+
+            <div class="round-btn-center" id="center-action-btn" onclick="handleCenterAction()">
                 <i id="center-icon" class="fas fa-sync-alt" style="font-size: 1.8rem;"></i>
             </div>
         </div>
@@ -791,18 +744,19 @@
         function updateCenterButtonUI() {
             const btn = document.getElementById('center-action-btn');
             const icon = document.getElementById('center-icon');
+            if (!btn || !icon) return;
 
             if (currentSelectedOrderId) {
                 if (currentSelectedStatus === 'เสร็จสมบูรณ์') {
-                    btn.style.background = "#e74c3c";
+                    btn.style.background = "#e74c3c"; // Red for action
                     btn.style.borderColor = "#c0392b";
                     btn.style.color = "#fff";
-                    icon.className = "fas fa-hand-holding-usd";
+                    icon.className = "fas fa-cash-register";
                 } else if (currentSelectedStatus === 'ชำระเงินแล้ว') {
-                    btn.style.background = "#2980b9";
-                    btn.style.borderColor = "#2980b9";
+                    btn.style.background = "#27ae60"; // Green for paid
+                    btn.style.borderColor = "#219150";
                     btn.style.color = "#fff";
-                    icon.className = "fas fa-file-invoice";
+                    icon.className = "fas fa-file-invoice-dollar";
                 } else {
                     resetCenterButton();
                 }

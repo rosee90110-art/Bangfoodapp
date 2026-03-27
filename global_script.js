@@ -73,30 +73,24 @@ const bfAudio = {
     }
 };
 
+// 🎯 Always track last click/tap position for use in transition
+window._bfLastX = window.innerWidth / 2;
+window._bfLastY = window.innerHeight / 2;
+document.addEventListener('mousedown', (e) => { window._bfLastX = e.clientX; window._bfLastY = e.clientY; });
+document.addEventListener('touchstart', (e) => {
+    if (e.touches[0]) { window._bfLastX = e.touches[0].clientX; window._bfLastY = e.touches[0].clientY; }
+}, { passive: true });
+
 // Global click tactile feedback
 document.addEventListener('click', (e) => {
-    if (e.target.closest('.btn-main, .add-btn, .qty-btn, .cart-icon, .action-btn, .category-card, .product-card, .seg-btn')) {
+    if (e.target.closest('.btn-main, .add-btn, .qty-btn, .cart-icon, .action-btn, .category-card, .product-card, .seg-btn, .nav-item, .round-btn-center, .select-btn, .back-btn')) {
         bfAudio.vibrate(15);
     }
 });
 
-// 🌀 Smooth Page Transition logic
-window.goPage = function (url) {
-    document.body.classList.add('page-exit');
-    setTimeout(() => {
-        window.location.href = url;
-    }, 400);
-};
+// 🌀 goPage — alias for navigateTo (kept for backward compat)
+window.goPage = function(url) { window.navigateTo(url); };
 
-// 🔗 Intercept all regular <a> clicks
-document.addEventListener('click', (e) => {
-    const link = e.target.closest('a');
-    // Only intercept local links without target attributes (like iframe target or new window)
-    if (link && link.href && !link.href.includes('#') && !link.target && link.hostname === window.location.hostname) {
-        e.preventDefault();
-        window.goPage(link.href);
-    }
-});
 
 // 📜 Global Scroll Reveal Observer (IntersectionObserver)
 document.addEventListener("DOMContentLoaded", () => {
@@ -178,44 +172,71 @@ function switchCustomerTheme(event) {
     }, 350);
 }
 
-// ✈️ Global Flying Item Engine
+// ✈️ Global Flying Item Engine (Arc Trajectory & Basket Bounce)
 window.animateToCart = function(startEl, targetEl, imgSrc) {
     if (!startEl || !targetEl) return;
     
-    const fly = document.createElement('img');
-    fly.src = imgSrc || (startEl.tagName === 'IMG' ? startEl.src : startEl.querySelector('img').src);
-    fly.className = 'flying-item';
+    // We create a wrapper for X-axis (linear/ease-out) and an inner image for Y-axis (ease-in)
+    // This creates a perfect parabolic arc trajectory!
+    const flyWrapper = document.createElement('div');
+    flyWrapper.className = 'flying-wrapper';
+    
+    const flyImg = document.createElement('img');
+    flyImg.src = imgSrc || (startEl.tagName === 'IMG' ? startEl.src : startEl.querySelector('img').src);
+    flyImg.className = 'flying-item-arc';
+    
+    flyWrapper.appendChild(flyImg);
+    document.body.appendChild(flyWrapper);
     
     const startRect = startEl.getBoundingClientRect();
     const targetRect = targetEl.getBoundingClientRect();
     
-    fly.style.left = `${startRect.left}px`;
-    fly.style.top = `${startRect.top}px`;
-    fly.style.width = `${startRect.width}px`;
-    fly.style.height = `${startRect.height}px`;
+    // Center coords
+    const startX = startRect.left + (startRect.width / 2);
+    const startY = startRect.top + (startRect.height / 2);
+    const targetX = targetRect.left + (targetRect.width / 2);
+    const targetY = targetRect.top + (targetRect.height / 2);
     
-    document.body.appendChild(fly);
+    // Init position
+    flyWrapper.style.left = `${startX}px`;
+    flyWrapper.style.top = `${startY}px`;
     
-    // Play Whish sound
+    // Default size to make it look like it's popping out of the card
+    flyImg.style.width = '80px';
+    flyImg.style.height = '80px';
+    flyImg.style.borderRadius = '50%';
+    flyImg.style.objectFit = 'cover';
+    // Offset by half width/height so it centers exactly on the coords
+    flyImg.style.transform = 'translate(-50%, -50%) scale(1)';
+    
     if (typeof bfAudio !== 'undefined') bfAudio.play('whish');
     
     // Force reflow
-    requestAnimationFrame(() => {
-        fly.style.left = `${targetRect.left + (targetRect.width / 2) - 10}px`;
-        fly.style.top = `${targetRect.top + (targetRect.height / 2) - 10}px`;
-        fly.style.width = '20px';
-        fly.style.height = '20px';
-        fly.style.opacity = '0';
-        fly.style.transform = 'scale(0.2) rotate(45deg)';
-    });
+    void flyWrapper.offsetWidth;
     
+    // Launch! 
+    // Wrapper moves horizontally
+    flyWrapper.style.transform = `translateX(${targetX - startX}px)`;
+    
+    // Inner img moves vertically + shrinks + rotates
+    flyImg.style.transform = `translate(-50%, calc(-50% + ${targetY - startY}px)) scale(0.15) rotate(180deg)`;
+    flyImg.style.opacity = '0.5';
+    
+    // When landing...
     setTimeout(() => {
-        fly.remove();
+        flyWrapper.remove();
+        
+        // Basket bounce!
+        targetEl.classList.remove('cart-bump');
+        void targetEl.offsetWidth;
+        targetEl.classList.add('cart-bump');
+        setTimeout(() => targetEl.classList.remove('cart-bump'), 400);
+
         if (typeof bfAudio !== 'undefined') {
             bfAudio.play('pop');
-            bfAudio.vibrate(30);
+            bfAudio.vibrate([40, 30, 40]);
         }
-    }, 900);
+    }, 750);
 };
 
 function applyTheme(theme) {
@@ -292,38 +313,14 @@ function switchCustomerLanguage() {
     }, 300);
 }
 
-// 🍃 Smooth Page Transitions Logic (iPhone Style)
+// ✨ Smooth Crossfade Page Transition
 window.navigateTo = function(url) {
     if (!url || url.startsWith('#') || url.includes('javascript:') || url === window.location.href) return;
-    
-    // 🔥 Direction Detection Logic
-    let direction = 'forward';
-    const currentPath = window.location.pathname;
-    
-    // ถ้าปลายทางเป็น index.html ให้เป็น Backward เสมอ (ยกเว้นจากหน้าเข้าสู่ระบบถ้ามี)
-    if (url.includes('index.html')) direction = 'backward';
-    // ถ้ากำลังไปหน้า Track จากหน้า Cart ให้เป็น Forward
-    if (currentPath.includes('cart.html') && url.includes('track.html')) direction = 'forward';
-    // ถ้ากำลังไปหน้า Cart จากหน้า Menu ให้เป็น Forward
-    if (currentPath.includes('menu.html') && url.includes('cart.html')) direction = 'forward';
-    
-    sessionStorage.setItem('nav_direction', direction);
-
-    const overlay = document.getElementById('global-page-transition');
-    if (overlay) {
-        overlay.classList.add('active');
-        // เพิ่มอนิเมชันตอนออก
-        document.body.classList.add(direction === 'forward' ? 'slide-out-left' : 'slide-out-right');
-        
-        setTimeout(() => {
-            window.location.href = url;
-        }, 400); 
-    } else {
-        window.location.href = url;
-    }
+    document.body.classList.add('bf-page-exit');
+    setTimeout(() => { window.location.href = url; }, 230);
 };
 
-// Auto-intercept internal links
+// 🔗 Auto-intercept all internal <a> links
 document.addEventListener('click', (e) => {
     const link = e.target.closest('a');
     if (link && link.href && link.href.includes(window.location.origin) && !link.href.includes('#')) {
@@ -332,35 +329,4 @@ document.addEventListener('click', (e) => {
             window.navigateTo(link.href);
         }
     }
-});
-
-// Auto-inject overlay on load
-(function() {
-    const injectOverlay = () => {
-        const direction = sessionStorage.getItem('nav_direction') || 'forward';
-        sessionStorage.removeItem('nav_direction'); // ใช้แล้วลบเลย
-
-        if (!document.getElementById('global-page-transition')) {
-            const div = document.createElement('div');
-            div.id = 'global-page-transition';
-            div.className = 'page-transition-overlay active';
-            document.body.appendChild(div);
-            
-            // 🔥 สั่งไถเข้า (Slide In)
-            document.body.classList.add(direction === 'forward' ? 'slide-in-right' : 'slide-in-left');
-            
-            setTimeout(() => {
-                div.classList.remove('active');
-                // ล้างคลาสแอนิเมชันทิ้งหลังจบงาน
-                setTimeout(() => {
-                    document.body.classList.remove('slide-in-right', 'slide-in-left');
-                }, 500);
-            }, 50);
-        }
-    };
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', injectOverlay);
-    } else {
-        injectOverlay();
-    }
-})();
+});

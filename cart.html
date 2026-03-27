@@ -393,7 +393,7 @@
             top: 75px;
             right: 25px;
             width: 180px;
-            background: var(--bg-card);
+            background: var(--bg-deep);
             z-index: 4000;
             padding: 12px;
             border-radius: 30px;
@@ -459,7 +459,9 @@
             <div id="cart-items-list"></div>
         </div>
 
-        <div class="bottom-nav-fixed">
+    </div> <!-- End app-wrapper -->
+
+    <div class="bottom-nav-fixed">
             <div class="nav-bar">
                 <div class="nav-item" onclick="goBackToIndex()">
                     <i class="fas fa-home"></i>
@@ -486,7 +488,7 @@
                 <i class="fas fa-paper-plane" style="font-size:1.4rem; margin-left:-3px;"></i>
             </div>
         </div>
-    </div>
+        </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -511,59 +513,7 @@
             await renderCartItems();
         }
 
-        function renderCart() {
-            const table = localStorage.getItem('selectedTable');
-            const cart = JSON.parse(sessionStorage.getItem(`bangfood_cart_table_${table}`)) || { items: [] };
-            const container = document.getElementById('cart-items-list'); // ชื่อ id ตามที่คุณตั้งไว้
-
-            container.innerHTML = '';
-            container.classList.add('receipt-paper');
-
-            cartData.items.forEach((item, index) => {
-                const basePrice = parseFloat(item.price || 0);
-                const quantity = parseInt(item.quantity || 1);
-                const finalPrice = parseFloat(item.finalPrice || 0);
-
-                let optionsHTML = '';
-                if (item.optionsArray && item.optionsArray.length > 0) {
-                    item.optionsArray.forEach(opt => {
-                        optionsHTML += `
-                    <div style="font-size: 0.75rem; color: #666; display: flex; justify-content: space-between;">
-                        <span>+ ${opt.name} (x${opt.qty})</span>
-                        <span>฿${(parseFloat(opt.price) * opt.qty).toFixed(2)}</span>
-                    </div>`;
-                    });
-                }
-
-                container.innerHTML += `
-            <div class="cart-item-card" style="margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 15px;">
-                <div style="display: flex; gap: 15px; align-items: flex-start;">
-                    <img src="${item.img}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid #eee;">
-                    <div style="flex: 1;">
-                        <h4 style="margin: 0 0 4px 0; font-size: 0.95rem; color:#111; font-weight:700;">${item.name}</h4>
-                        <p style="margin: 0; font-size: 0.8rem; color: #555;">@฿${basePrice.toFixed(2)} x ${quantity}</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="font-weight: 800; color: #000; font-size: 1.1rem;">฿${finalPrice.toFixed(2)}</span>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 5px;">
-                    ${optionsHTML}
-                </div>
-
-                ${item.notes ? `<p style="font-size: 0.75rem; color: #e74c3c; margin-top: 8px; font-weight:600;">* ${item.notes}</p>` : ''}
-                
-                <div style="text-align:right; margin-top:8px;">
-                    <button onclick="removeCartItem(${index})" style="background:none; border:none; color:#e74c3c; font-size:0.75rem; font-weight:700; cursor:pointer;"><i class="fas fa-trash"></i> เอาออก</button>
-                </div>
-            </div>
-        `;
-            });
-
-            // อัปเดตราคาสรุปด้านล่าง
-            updateSummary(cart);
-        }
+        // renderCart() removed — was dead code using undeclared `cartData` (use renderCartItems() instead)
 
         async function renderCartItems() {
             const tableNo = getTableNo();

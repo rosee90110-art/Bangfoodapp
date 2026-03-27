@@ -20,9 +20,9 @@
         }
 
         body.light-theme {
-            --bg-deep: #f8f9fa;
-            --glass: rgba(0, 0, 0, 0.02);
-            --glass-border: rgba(0, 0, 0, 0.06);
+            --bg-deep: #f5f5f7;
+            --glass: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.07);
         }
 
         body {
@@ -32,7 +32,7 @@
             padding: 0;
             font-family: 'Kanit', sans-serif;
             overflow-x: hidden;
-            transition: background 0.5s;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
         body.light-theme {
@@ -47,21 +47,56 @@
             position: relative;
         }
 
-        /* ✨ Header Styling */
-        .page-header {
-            padding: 50px 25px 20px;
-            text-align: center;
-            background: linear-gradient(to bottom, rgba(197, 160, 89, 0.1), transparent);
+        /* ✨ HEADER (Copied from index.html) */
+        .app-header-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            background: rgba(10, 10, 11, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        .page-title {
-            font-size: 1.8rem;
+        body.light-theme .app-header-sticky {
+            background: rgba(255, 253, 245, 0.9);
+        }
+
+        .header-main-row {
+            padding: 5px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bangfood-logo {
+            font-size: 1.4rem;
             font-weight: 800;
             letter-spacing: 2px;
-            color: var(--premium-gold);
+            background: linear-gradient(90deg, var(--premium-gold), #fff, var(--premium-gold));
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 4s linear infinite;
             margin: 0;
-            text-transform: uppercase;
         }
+
+        @keyframes shineText {
+            to { background-position: 200% center; }
+        }
+
+        .top-summary-bar {
+            padding: 8px 25px;
+            background: rgba(197, 160, 89, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* 🔮 Glass Cards */
+
 
         /* 🔮 Glass Cards */
         .info-section {
@@ -73,11 +108,18 @@
         .glass-card {
             background: var(--glass);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 30px;
             padding: 25px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            transition: var(--transition);
+            transition: var(--transition), background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        body.light-theme .glass-card {
+            background: #ffffff;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            border-color: rgba(0, 0, 0, 0.06);
         }
 
         .glass-card:hover {
@@ -120,6 +162,11 @@
             padding: 15px 20px;
             border-radius: 20px;
             border: 1px solid var(--glass-border);
+            transition: background 0.4s;
+        }
+
+        body.light-theme .wifi-grid {
+            background: rgba(0, 0, 0, 0.04);
         }
 
         .wifi-details {
@@ -189,7 +236,12 @@
             font-size: 1.4rem;
             border: 1px solid var(--glass-border);
             background: var(--glass);
-            transition: 0.3s;
+            transition: 0.3s, background 0.4s, border-color 0.4s;
+        }
+
+        body.light-theme .social-icon-wrapper {
+            background: #f0f0f5;
+            border-color: rgba(0,0,0,0.08);
         }
 
         .fb-ico {
@@ -312,11 +364,35 @@
 </head>
 
 <body onload="initializeInfoPage()">
+    <!-- Side Drawer -->
+    <div id="side-drawer" class="side-drawer">
+        <div class="drawer-item" onclick="switchCustomerTheme(event); toggleDrawer();">
+            <span data-lang-en="THEME" data-lang-th="เปลี่ยนธีม">เปลี่ยนธีม</span>
+            <i class="fas fa-adjust" style="color:var(--premium-gold);"></i>
+        </div>
+        <div class="drawer-item" onclick="switchCustomerLanguage(); toggleDrawer();">
+            <span data-lang-en="LANGUAGE" data-lang-th="เปลี่ยนภาษา">เปลี่ยนภาษา</span>
+            <b id="drawer-lang-status" style="font-size: 0.7rem; color: var(--premium-gold);">TH</b>
+        </div>
+    </div>
+    <div id="drawer-overlay" onclick="toggleDrawer()"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:transparent; z-index:4200; display:none;">
+    </div>
     <div class="app-wrapper">
-        <header class="page-header">
-            <h1 class="page-title" data-lang-en="STORE INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</h1>
-            <p style="opacity: 0.6; font-size: 0.8rem; margin-top: 10px;">Bangfood Premium Experience</p>
-        </header>
+        <div class="app-header-sticky">
+            <div class="header-main-row">
+                <h1 class="bangfood-logo" data-lang-en="STORE INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</h1>
+                <div class="hamburger-menu" onclick="toggleDrawer()" style="cursor:pointer; padding:5px;">
+                    <i class="fas fa-bars" style="color:var(--premium-gold); font-size:1.5rem;"></i>
+                </div>
+            </div>
+            <div class="top-summary-bar">
+                <div class="summary-label">STATION <span id="display-table" style="color:var(--premium-gold);">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding-top: 20px;"></div>
 
         <!-- 1. Quick Info Section -->
         <div class="info-section" style="animation-delay: 0.1s;">
@@ -348,13 +424,6 @@
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 5px;">
-                        <div
-                            style="background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center;">
-                            <span class="wifi-label" data-lang-en="STATION"
-                                data-lang-th="หมายเลขโต๊ะ">หมายเลขโต๊ะ</span>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--premium-gold);"
-                                id="display-table">-</div>
-                        </div>
                         <div
                             style="background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center;">
                             <span class="wifi-label" data-lang-en="HOURS"
@@ -466,10 +535,12 @@
             </div>
         </div>
 
-        <div id="toast">Message Copied!</div>
+    </div> <!-- End app-wrapper -->
 
-        <!-- Unified Navigation Bar -->
-        <div class="bottom-nav-fixed">
+    <div id="toast">Message Copied!</div>
+
+    <!-- Unified Navigation Bar -->
+    <div class="bottom-nav-fixed">
             <div class="nav-bar">
                 <div class="nav-item"
                     onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
@@ -483,14 +554,14 @@
                 </div>
                 <div style="width: 70px;"></div> <!-- Middle Gap -->
                 <div class="nav-item"
+                    onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+                    <i class="fas fa-shopping-basket"></i>
+                    <span data-lang-en="BASKET" data-lang-th="ตะกร้า">ตะกร้า</span>
+                </div>
+                <div class="nav-item"
                     onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
                     <i class="fas fa-list-ul"></i>
                     <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">รายการสั่ง</span>
-                </div>
-                <div class="nav-item"
-                    onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span data-lang-en="CART" data-lang-th="ตะกร้า">ตะกร้า</span>
                 </div>
             </div>
 
@@ -498,12 +569,11 @@
                 <i class="fas fa-concierge-bell" style="font-size: 1.8rem;"></i>
             </div>
         </div>
-    </div>
 
     <script src="global_script.js"></script>
     <script>
         function initializeInfoPage() {
-            const tableNo = localStorage.getItem('selectedTable') || '1';
+            const tableNo = getTableNo();
             document.getElementById('display-table').innerText = tableNo;
 
             // Sync theme
@@ -530,8 +600,13 @@
         }
 
         function callStaff() {
-            const table = localStorage.getItem('selectedTable');
-            alert(localStorage.getItem(`lang_table_${table}`) === 'en' ? 'Calling staff to table ' + table + '...' : 'กำลังเรียกพนักงานมายังโต๊ะ ' + table + '...');
+            const table = getTableNo();
+            const lang = localStorage.getItem(`lang_table_${table}`) || 'th';
+            const msg = lang === 'en'
+                ? `Calling staff to table ${table}...`
+                : `กำลังเรียกพนักงานมายังโต๊ะ ${table}...`;
+            showToast(msg);
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
         }
     </script>
 </body>

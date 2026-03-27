@@ -106,7 +106,6 @@
             .stat-info span { font-size: 0.6rem; }
         }
     </style>
-    </style>
 </head>
 <body onload="initializeDashboard()">
 
@@ -216,11 +215,26 @@
 
         function loadData() {
             const today = new Date().toDateString();
-            
-            db.ref().on('value', snap => {
-                const data = snap.val() || {};
+
+            // Listen for orders (pending) + history (paid revenue)
+            db.ref('orders').on('value', ordersSnap => {
                 let totalRevenue = 0;
                 let pendingCount = 0;
+
+                if (ordersSnap.exists()) {
+                    ordersSnap.forEach(child => {
+                        const order = child.val();
+                        const orderDate = order.timestamp ? new Date(order.timestamp).toDateString() : '';
+
+                        // นับ Orders ที่ยังรอดำเนินการ
+                        if (order.status === 'รอดำเนินการ') pendingCount++;
+
+                        // รวมรายได้จากออเดอร์ที่ชำระเงินแล้ววันนี้
+                        if (order.status === 'ชำระเงินแล้ว' && orderDate === today) {
+                            totalRevenue += parseFloat(order.total || 0);
+                        }
+                    });
+                }
 
                 if (totalRevenue !== prevRev) {
                     CountUp.animate('dash-revenue', prevRev, totalRevenue, 1200, true);
@@ -233,9 +247,9 @@
             });
 
             // ดึงคนออนไลน์
-            db.ref('presence').on('value', s => {
+            db.ref('online_admins').on('value', s => {
                 let online = 0;
-                if(s.exists()) Object.values(s.val()).forEach(ss => online += Object.keys(ss).length);
+                if (s.exists()) online = Object.keys(s.val()).length;
                 if (online !== prevOnl) {
                     CountUp.animate('dash-online-count', prevOnl, online, 800, false);
                     prevOnl = online;

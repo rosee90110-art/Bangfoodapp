@@ -560,7 +560,9 @@
             <div id="items-list-container"></div>
         </div>
 
-        <div class="bottom-nav-fixed">
+    </div> <!-- End app-wrapper -->
+
+    <div class="bottom-nav-fixed">
             <div class="nav-bar">
                 <div class="nav-item" onclick="goBackToIndex()">
                     <i class="fas fa-home"></i>
@@ -587,7 +589,7 @@
                 <i id="center-icon" class="fas fa-sync-alt" style="font-size: 1.8rem;"></i>
             </div>
         </div>
-    </div>
+        </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -733,7 +735,7 @@
                 currentSelectedOrderId = orderId;
                 currentSelectedStatus = status;
             }
-            document.querySelectorAll('.order-card').forEach(card => card.classList.remove('selected-order'));
+            document.querySelectorAll('.order-card-receipt').forEach(card => card.classList.remove('selected-order'));
             if (currentSelectedOrderId) {
                 const card = document.getElementById('order-card-' + currentSelectedOrderId);
                 if (card) card.classList.add('selected-order');

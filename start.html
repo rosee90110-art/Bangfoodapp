@@ -142,13 +142,20 @@
         .landing-button:hover {
             background: white;
             color: black;
-            transform: translateY(-3px);
             box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            position: fixed;
         }
     </style>
 </head>
@@ -185,11 +192,6 @@
     </div>
 
     <script>
-        // 📍 ตั้งค่าพิกัดร้าน
-        const SHOP_LAT = 7.177514632908223; 
-        const SHOP_LNG = 100.59852021108036;
-        const MAX_DIST = 10000000; // รัศมี 100 เมตร (ปรับตามความกว้างร้าน)
-
         // 🌐 คลังคำแปล
         const translations = {
             th: {
@@ -223,41 +225,18 @@
             }
         }
 
-        // --- 2. ฟังก์ชันไปหน้าสั่งอาหาร (พร้อมเช็คพิกัด) ---
+        // --- 2. ฟังก์ชันไปหน้าสั่งอาหาร ---
         function goToOrder() {
-            const lang = localStorage.getItem('appLang') || 'th';
             const tableNo = localStorage.getItem('selectedTable');
+            const lang = localStorage.getItem('appLang') || 'th';
 
             if (!tableNo) {
                 alert(lang === 'th' ? "กรุณาสแกน QR Code ที่โต๊ะครับ" : "Please scan QR Code at your table");
                 return;
             }
 
-            if (!navigator.geolocation) {
-                alert("GPS not supported");
-                return;
-            }
-
-            // แสดงสถานะระหว่างรอ GPS
-            const btn = document.getElementById('customer-btn');
-            const originalText = btn.innerText;
-            btn.innerText = translations[lang].checking;
-
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const dist = calculateDistance(pos.coords.latitude, pos.coords.longitude, SHOP_LAT, SHOP_LNG);
-
-                if (dist <= MAX_DIST) {
-                    // ✅ ผ่านเงื่อนไข: ไปหน้าเมนูพร้อมส่งเลขโต๊ะ
-                    window.location.href = `index.html?table=${tableNo}`;
-                } else {
-                    // ❌ ไกลเกินไป
-                    btn.innerText = originalText;
-                    alert(lang === 'th' ? `คุณอยู่ห่างจากร้านเกินไป (${dist.toFixed(0)} ม.)` : `Too far from shop (${dist.toFixed(0)} m.)`);
-                }
-            }, (err) => {
-                btn.innerText = originalText;
-                alert("กรุณาเปิดตำแหน่ง (GPS) เพื่อสั่งอาหารครับ");
-            }, { enableHighAccuracy: true });
+            // ✅ ไปหน้าเมนูพร้อมส่งเลขโต๊ะทันที (ไม่ต้องเช็ค GPS)
+            window.location.href = `index.html?table=${tableNo}`;
         }
 
         // --- 3. ระบบสลับภาษา ---
@@ -278,15 +257,6 @@
         function switchLanguage() {
             let currentLang = localStorage.getItem('appLang') || 'th';
             updatePageLanguage(currentLang === 'th' ? 'en' : 'th');
-        }
-
-        // --- 4. ฟังก์ชันเสริมอื่นๆ ---
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3;
-            const p1 = lat1 * Math.PI/180;
-            const p2 = lat2 * Math.PI/180;
-            const a = Math.sin((p2-p1)/2) ** 2 + Math.cos(p1) * Math.cos(p2) * Math.sin(((lon2-lon1)*Math.PI/180)/2) ** 2;
-            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
 
         function toggleAdminMenu() {

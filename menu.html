@@ -649,7 +649,8 @@
                 sc.innerHTML = `<h3 style="color:#666; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;">${title}${reqBadge}</h3>`;
                 config.sizes.forEach((s, i) => {
                     const sName = (lang === 'en') ? (dict[s.name] || s.name) : s.name;
-                    sc.innerHTML += `<label class="option-item" style="animation-delay: ${i * 0.1}s"><input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" ${i === 0 && config.sizeRequired !== false ? 'checked' : ''} onchange="updatePrice()"><span style="font-size: 0.95rem;">${sName}</span><span style="margin-left:auto; color:var(--premium-gold); font-weight:500;">+${s.price}</span></label>`;
+                    const noodleLimit = i + 1; // ธรรมดา=1, พิเศษ=2, โครตพิเศษ=3
+                    sc.innerHTML += `<label class="option-item" style="animation-delay: ${i * 0.1}s"><input type="radio" name="size" value="${s.name}" data-modifier="${s.price}" data-noodle-limit="${noodleLimit}" ${i === 0 && config.sizeRequired !== false ? 'checked' : ''} onchange="updatePrice(); updateNoodleLimit();"><span style="font-size: 0.95rem;">${sName}</span><span style="margin-left:auto; color:var(--premium-gold); font-weight:500;">+${s.price}</span></label>`;
                 });
             }
 
@@ -660,12 +661,11 @@
             const noodleTypes = config.noodleTypes || (isNoodle ? DEFAULT_NOODLE_TYPES : []);
             if (noodleTypes.length > 0) {
                 const title = (lang === 'en') ? "Noodle Type" : "ประเภทเส้น";
-                const sub = (lang === 'en') ? 'Multi-select allowed' : 'เลือกได้หลายประเภท';
                 ntc.innerHTML = `
                     <h3 style="color:#666; font-size:0.65rem; margin:30px 30px 6px; text-transform:uppercase; font-weight:700;">
                         ${title}<span style="color:#ff4757; font-size:0.6rem; margin-left:5px;">(REQUIRED)</span>
                     </h3>
-                    <p style="color:#888; font-size:0.7rem; margin:0 30px 15px; opacity:0.8;">🍜 ${sub}</p>
+                    <p id="noodle-limit-hint" style="color:#888; font-size:0.7rem; margin:0 30px 15px; transition:color 0.3s;">🍜 เลือกได้สูงสุด 1 ประเภท</p>
                     <div id="noodle-pills-wrap" style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px 10px;"></div>`;
                 const wrap = document.getElementById('noodle-pills-wrap');
                 noodleTypes.forEach(nt => {
@@ -679,6 +679,8 @@
                     pill.onclick = () => toggleNoodlePill(pill);
                     wrap.appendChild(pill);
                 });
+                // อัปเดต hint ทันทีหลัง render
+                setTimeout(updateNoodleLimit, 0);
             }
 
             // --- Addons ---
@@ -705,8 +707,53 @@
             }
         }
 
+        function getNoodleLimit() {
+            const selectedSize = document.querySelector('input[name="size"]:checked');
+            return selectedSize ? parseInt(selectedSize.getAttribute('data-noodle-limit') || 1) : 1;
+        }
+
+        function updateNoodleLimit() {
+            const limit = getNoodleLimit();
+            const lang = localStorage.getItem(`lang_table_${localStorage.getItem('selectedTable')}`) || 'th';
+            const hintEl = document.getElementById('noodle-limit-hint');
+            if (hintEl) {
+                hintEl.textContent = lang === 'en'
+                    ? `🍜 Select up to ${limit} type${limit > 1 ? 's' : ''}`
+                    : `🍜 เลือกได้สูงสุด ${limit} ประเภท`;
+            }
+            // ถ้าเลือกไว้เกิน limit ใหม่ ให้ยกเลิกส่วนเกิน
+            const selectedPills = [...document.querySelectorAll('.noodle-type-pill[data-selected="true"]')];
+            if (selectedPills.length > limit) {
+                selectedPills.slice(limit).forEach(p => {
+                    p.setAttribute('data-selected', 'false');
+                    p.classList.remove('selected');
+                });
+                updatePrice();
+            }
+        }
+
         function toggleNoodlePill(pill) {
             const isSelected = pill.getAttribute('data-selected') === 'true';
+            if (!isSelected) {
+                const limit = getNoodleLimit();
+                const currentCount = document.querySelectorAll('.noodle-type-pill[data-selected="true"]').length;
+                if (currentCount >= limit) {
+                    // แจ้งเตือนว่าเกิน limit
+                    navigator.vibrate && navigator.vibrate([30, 50, 30]);
+                    const hintEl = document.getElementById('noodle-limit-hint');
+                    if (hintEl) {
+                        hintEl.style.color = '#ff4757';
+                        hintEl.style.fontWeight = '700';
+                        setTimeout(() => { hintEl.style.color = ''; hintEl.style.fontWeight = ''; }, 1000);
+                    }
+                    // Shake ทุก pill ที่ selected เพื่อบอกว่า full แล้ว
+                    document.querySelectorAll('.noodle-type-pill.selected').forEach(p => {
+                        p.classList.add('error-shake');
+                        setTimeout(() => p.classList.remove('error-shake'), 400);
+                    });
+                    return;
+                }
+            }
             pill.setAttribute('data-selected', String(!isSelected));
             pill.classList.toggle('selected', !isSelected);
             updatePrice();

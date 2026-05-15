@@ -374,6 +374,33 @@
         .error-shake {
             animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
         }
+
+        /* 🍜 Noodle Type Pills */
+        .noodle-type-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 50px;
+            border: 1.5px solid var(--glass-border);
+            background: var(--glass);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.85rem;
+            font-weight: 600;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .noodle-type-pill.selected {
+            background: rgba(197, 160, 89, 0.15);
+            border-color: var(--premium-gold);
+            color: var(--premium-gold);
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+            transform: scale(1.04);
+        }
+        .noodle-type-pill:active { transform: scale(0.92); }
+        body.light-theme .noodle-type-pill { background: #fff; color: #333; }
+        body.light-theme .noodle-type-pill.selected { background: rgba(197,160,89,0.1); }
     </style>
 </head>
 
@@ -422,6 +449,7 @@
 
         <form id="custom-order-form">
             <div id="dynamic-sizes-container"></div>
+            <div id="dynamic-noodle-types-container"></div>
             <div id="dynamic-addons-container"></div>
             <div id="main-quantity-container">
                 <h3 style="color:#444; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;"
@@ -602,7 +630,17 @@
             updatePrice();
         }
 
+        // ประเภทเส้นเริ่มต้น (ใช้เมื่อสินค้าเป็นหมวดก๋วยเตี๋ยว)
+        const DEFAULT_NOODLE_TYPES = [
+            { name: 'เส้นใหญ่', name_en: 'Wide Noodle', price: 0 },
+            { name: 'เส้นเล็ก', name_en: 'Thin Noodle', price: 0 },
+            { name: 'เส้นหมี่', name_en: 'Rice Vermicelli', price: 0 },
+            { name: 'เส้นเหลือง', name_en: 'Egg Noodle', price: 0 },
+            { name: 'วุ้นเส้น', name_en: 'Glass Noodle', price: 0 },
+        ];
+
         function renderOptions(config, lang, dict) {
+            // --- Sizes ---
             const sc = document.getElementById('dynamic-sizes-container');
             sc.innerHTML = '';
             if (config.sizes && config.sizes.length > 0) {
@@ -615,13 +653,41 @@
                 });
             }
 
+            // --- Noodle Types (เฉพาะหมวดก๋วยเตี๋ยว) ---
+            const ntc = document.getElementById('dynamic-noodle-types-container');
+            ntc.innerHTML = '';
+            const isNoodle = rawProductData && rawProductData.category === 'ก๋วยเตี๋ยว';
+            const noodleTypes = config.noodleTypes || (isNoodle ? DEFAULT_NOODLE_TYPES : []);
+            if (noodleTypes.length > 0) {
+                const title = (lang === 'en') ? "Noodle Type" : "ประเภทเส้น";
+                const sub = (lang === 'en') ? 'Multi-select allowed' : 'เลือกได้หลายประเภท';
+                ntc.innerHTML = `
+                    <h3 style="color:#666; font-size:0.65rem; margin:30px 30px 6px; text-transform:uppercase; font-weight:700;">
+                        ${title}<span style="color:#ff4757; font-size:0.6rem; margin-left:5px;">(REQUIRED)</span>
+                    </h3>
+                    <p style="color:#888; font-size:0.7rem; margin:0 30px 15px; opacity:0.8;">🍜 ${sub}</p>
+                    <div id="noodle-pills-wrap" style="display:flex; flex-wrap:wrap; gap:10px; padding:0 20px 10px;"></div>`;
+                const wrap = document.getElementById('noodle-pills-wrap');
+                noodleTypes.forEach(nt => {
+                    const ntName = (lang === 'en') ? (nt.name_en || dict[nt.name] || nt.name) : nt.name;
+                    const pill = document.createElement('div');
+                    pill.className = 'noodle-type-pill';
+                    pill.setAttribute('data-name', nt.name);
+                    pill.setAttribute('data-price', nt.price || 0);
+                    pill.setAttribute('data-selected', 'false');
+                    pill.innerHTML = `<i class="fas fa-bowl-rice" style="font-size:0.75rem;"></i> ${ntName}${nt.price > 0 ? ` <span style="color:var(--premium-gold); font-size:0.75rem;">+${nt.price}</span>` : ''}`;
+                    pill.onclick = () => toggleNoodlePill(pill);
+                    wrap.appendChild(pill);
+                });
+            }
+
+            // --- Addons ---
             const ac = document.getElementById('dynamic-addons-container');
             ac.innerHTML = '';
             if (config.addons && config.addons.length > 0) {
                 const title = (lang === 'en') ? "Extra Add-ons" : "ท็อปปิ้งเสริม";
                 const maxText = (config.addonMax > 0) ? `<span style="color:var(--premium-gold); font-size:0.6rem; margin-left:5px; opacity:0.6;">(MAX ${config.addonMax})</span>` : '';
                 ac.innerHTML = `<h3 style="color:#666; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;">${title}${maxText}</h3>`;
-
                 config.addons.forEach((a, i) => {
                     const aName = (lang === 'en') ? (dict[a.name] || a.name) : a.name;
                     ac.innerHTML += `
@@ -637,6 +703,14 @@
                 });
                 ac.setAttribute('data-max', config.addonMax || 0);
             }
+        }
+
+        function toggleNoodlePill(pill) {
+            const isSelected = pill.getAttribute('data-selected') === 'true';
+            pill.setAttribute('data-selected', String(!isSelected));
+            pill.classList.toggle('selected', !isSelected);
+            updatePrice();
+            if (!isSelected && navigator.vibrate) navigator.vibrate(15);
         }
 
         function changeAddonQty(name, delta, price) {
@@ -692,6 +766,10 @@
                 const price = parseFloat(el.dataset.price);
                 extraPerItem += (qty * price);
             });
+            // รวมราคาประเภทเส้นที่เลือก
+            document.querySelectorAll('.noodle-type-pill[data-selected="true"]').forEach(pill => {
+                extraPerItem += parseFloat(pill.getAttribute('data-price') || 0);
+            });
             const mainQty = parseInt(document.getElementById('main-item-qty').innerText);
             const finalTotal = (base + extraPerItem) * mainQty;
             document.getElementById('modal-final-price').innerText = finalTotal.toFixed(2);
@@ -745,21 +823,40 @@
                 }
             }
 
+            // 🛑 Validation: Noodle Type Required
+            const ntc = document.getElementById('dynamic-noodle-types-container');
+            if (ntc && ntc.children.length > 0) {
+                const selectedNoodles = ntc.querySelectorAll('.noodle-type-pill[data-selected="true"]');
+                if (selectedNoodles.length === 0) {
+                    ntc.classList.add('error-shake');
+                    setTimeout(() => ntc.classList.remove('error-shake'), 500);
+                    alert(lang === 'en' ? 'Please select at least one noodle type!' : 'กรุณาเลือกประเภทเส้นอย่างน้อย 1 ชนิด!');
+                    return;
+                }
+            }
+
             let cart = JSON.parse(sessionStorage.getItem(cartKey)) || { items: [] };
             let opts = [];
             const basePrice = document.getElementById('modal-base-price').innerText;
 
+            // Size
             const s = document.querySelector('input[name="size"]:checked');
             if (s) opts.push({ name: s.value, price: s.dataset.modifier, qty: 1 });
 
+            // Noodle Types (multi-select)
+            document.querySelectorAll('.noodle-type-pill[data-selected="true"]').forEach(pill => {
+                opts.push({
+                    name: pill.getAttribute('data-name'),
+                    price: pill.getAttribute('data-price') || 0,
+                    qty: 1
+                });
+            });
+
+            // Add-ons
             document.querySelectorAll('.addon-qty').forEach(el => {
                 const qty = parseInt(el.innerText);
                 if (qty > 0) {
-                    opts.push({
-                        name: el.dataset.name,
-                        price: el.dataset.price,
-                        qty: qty
-                    });
+                    opts.push({ name: el.dataset.name, price: el.dataset.price, qty: qty });
                 }
             });
 

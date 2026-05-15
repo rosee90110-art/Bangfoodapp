@@ -1,8 +1,19 @@
 // 🎨 Global Accent Color Loader
 (function applyAccentColor() {
     const savedAccent = localStorage.getItem('premium-gold') || '#c5a059';
+    const savedRgb = localStorage.getItem('premium-gold-rgb') || '197, 160, 89';
     document.documentElement.style.setProperty('--premium-gold', savedAccent);
+    document.documentElement.style.setProperty('--premium-gold-rgb', savedRgb);
 })();
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'premium-gold') {
+        document.documentElement.style.setProperty('--premium-gold', e.newValue);
+    }
+    if (e.key === 'premium-gold-rgb') {
+        document.documentElement.style.setProperty('--premium-gold-rgb', e.newValue);
+    }
+});
 
 /* =========================================
    🌓 ระบบจัดการธีมและภาษาแยกตามบัญชี (Personalization)
@@ -112,7 +123,7 @@ function renderCard(container, id, data, status) {
 
                 return `
                     <div class="addon-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <span>• ${opt.name} <b style="color:var(--premium-gold); margin-left:4px; font-size:0.75rem; background:rgba(197,160,89,0.1); padding:0 6px; border-radius:4px;">x${optQty}</b></span>
+                        <span>• ${opt.name} <b style="color:var(--premium-gold); margin-left:4px; font-size:0.75rem; background:rgba(var(--premium-gold-rgb),0.1); padding:0 6px; border-radius:4px;">x${optQty}</b></span>
                         <span style="color:var(--premium-gold); font-size:0.75rem;">+฿${totalPerOpt.toFixed(2)}</span>
                     </div>`;
             }).join('');
@@ -125,7 +136,7 @@ function renderCard(container, id, data, status) {
             <div class="item-block" style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
                 <div class="main-food-row" style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="background: var(--premium-gold); color: #000; min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 800; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3);">
+                        <span style="background: var(--premium-gold); color: #000; min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 800; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(var(--premium-gold-rgb), 0.3);">
                             ${item.quantity || 1}
                         </span>
                         <span style="font-size: 1.05rem; font-weight: 600;">${item.name}</span>
@@ -193,7 +204,7 @@ window.playAdminAlert = function() {
 
 window.triggerScreenFlash = function() {
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(197, 160, 89, 0.15); box-shadow: inset 0 0 0 8px var(--premium-gold); z-index:9999; pointer-events:none; transition: opacity 1.5s ease-out; opacity: 1; box-sizing:border-box;';
+    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(var(--premium-gold-rgb), 0.15); box-shadow: inset 0 0 0 8px var(--premium-gold); z-index:9999; pointer-events:none; transition: opacity 1.5s ease-out; opacity: 1; box-sizing:border-box;';
     document.body.appendChild(overlay);
     
     document.title = "🔥 (1) ออเดอร์ใหม่! | BANGFOOD";

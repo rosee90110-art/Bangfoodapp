@@ -46,7 +46,7 @@
             font-size: 2.8rem;
             color: var(--primary-gold);
             margin-bottom: 15px;
-            filter: drop-shadow(0 0 15px rgba(197, 160, 89, 0.2));
+            filter: drop-shadow(0 0 15px rgba(var(--premium-gold-rgb), 0.2));
         }
 
         h2 { 
@@ -80,7 +80,7 @@
         input:focus {
             border-color: var(--primary-gold);
             background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 20px rgba(197, 160, 89, 0.15);
+            box-shadow: 0 0 20px rgba(var(--premium-gold-rgb), 0.15);
         }
 
         button {
@@ -96,7 +96,7 @@
             transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             margin-top: 15px;
             /* เพิ่มเงาปุ่มให้กดง่ายบนมือถือ */
-            box-shadow: 0 8px 15px rgba(197, 160, 89, 0.2);
+            box-shadow: 0 8px 15px rgba(var(--premium-gold-rgb), 0.2);
         }
 
         button:active { transform: scale(0.96); }

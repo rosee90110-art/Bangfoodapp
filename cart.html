@@ -12,7 +12,7 @@
         /* 📍 Luxury Brand Config */
         :root {
             --premium-gold: #c5a059;
-            --gold-glow: rgba(197, 160, 89, 0.4);
+            --gold-glow: rgba(var(--premium-gold-rgb), 0.4);
             --bg-deep: #080809;
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
@@ -106,7 +106,7 @@
 
         .top-summary-bar {
             padding: 12px 30px;
-            background: linear-gradient(to bottom, rgba(197, 160, 89, 0.06), transparent);
+            background: linear-gradient(to bottom, rgba(var(--premium-gold-rgb), 0.06), transparent);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -238,17 +238,17 @@
         @keyframes pulseOrder {
             0% {
                 transform: translateX(-50%) scale(1);
-                box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.6);
+                box-shadow: 0 0 0 0 rgba(var(--premium-gold-rgb), 0.6);
             }
 
             70% {
                 transform: translateX(-50%) scale(1.05);
-                box-shadow: 0 0 0 20px rgba(197, 160, 89, 0);
+                box-shadow: 0 0 0 20px rgba(var(--premium-gold-rgb), 0);
             }
 
             100% {
                 transform: translateX(-50%) scale(1);
-                box-shadow: 0 0 0 0 rgba(197, 160, 89, 0);
+                box-shadow: 0 0 0 0 rgba(var(--premium-gold-rgb), 0);
             }
         }
 
@@ -376,15 +376,7 @@
                 font-size: 1.2rem;
             }
 
-            .nav-buttons-bar {
-                width: 85%;
-            }
 
-            .round-btn-center {
-                width: 65px;
-                height: 65px;
-                bottom: 35px;
-            }
         }
 
         /* Side Drawer */
@@ -462,27 +454,29 @@
     </div> <!-- End app-wrapper -->
 
     <div class="bottom-nav-fixed">
-            <div class="nav-bar">
-                <div class="nav-item" onclick="goBackToIndex()">
-                    <i class="fas fa-home"></i>
-                    <span data-lang-en="HOME" data-lang-th="หน้าแรก">หน้าแรก</span>
-                </div>
-                <div class="nav-item"
-                    onclick="window.location.href='info.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-info-circle"></i>
-                    <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</span>
-                </div>
-                <div style="width: 70px;"></div>
-                <div class="nav-item active" onclick="initializeCartPage()">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span data-lang-en="BASKET" data-lang-th="ตะกร้า">ตะกร้า</span>
-                </div>
-                <div class="nav-item" onclick="goToTracking()">
-                    <i class="fas fa-list-ul"></i>
-                    <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">รายการสั่ง</span>
-                </div>
-
+        <div class="nav-bar">
+            <div class="nav-item"
+                onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-home"></i>
+                <span data-lang-en="HOME" data-lang-th="หน้าแรก">HOME</span>
             </div>
+            <div class="nav-item"
+                onclick="window.location.href='info.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-info-circle"></i>
+                <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">INFO</span>
+            </div>
+            <div style="width: 70px;"></div>
+            <div class="nav-item active" onclick="initializeCartPage()">
+                <i class="fas fa-shopping-basket"></i>
+                <div id="cart-count-badge" style="display:none;">0</div>
+                <span data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
+            </div>
+            <div class="nav-item"
+                onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-list-ul"></i>
+                <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">ORDERS</span>
+            </div>
+        </div>
 
             <div class="round-btn-center" onclick="placeOrder()">
                 <i class="fas fa-paper-plane" style="font-size:1.4rem; margin-left:-3px;"></i>
@@ -588,7 +582,7 @@
                     </div>
                 </div>
                 <div class="addon-area" style="margin-top: 8px;">${optionsHtml}</div>
-                ${item.notes ? `<div style="font-size:0.7rem; color:var(--premium-gold); margin-top:10px; font-weight:700; background: rgba(197, 160, 89, 0.05); padding: 5px 10px; border-radius: 10px;">📝 ${item.notes}</div>` : ''}
+                ${item.notes ? `<div style="font-size:0.7rem; color:var(--premium-gold); margin-top:10px; font-weight:700; background: rgba(var(--premium-gold-rgb), 0.05); padding: 5px 10px; border-radius: 10px;">📝 ${item.notes}</div>` : ''}
             </div>
         </div>
         <div class="item-footer">

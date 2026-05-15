@@ -82,12 +82,14 @@
         }
 
         @keyframes shineText {
-            to { background-position: 200% center; }
+            to {
+                background-position: 200% center;
+            }
         }
 
         .top-summary-bar {
             padding: 8px 25px;
-            background: rgba(197, 160, 89, 0.08);
+            background: rgba(var(--premium-gold-rgb), 0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -138,7 +140,7 @@
             width: 40px;
             height: 40px;
             border-radius: 12px;
-            background: rgba(197, 160, 89, 0.15);
+            background: rgba(var(--premium-gold-rgb), 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -241,7 +243,7 @@
 
         body.light-theme .social-icon-wrapper {
             background: #f0f0f5;
-            border-color: rgba(0,0,0,0.08);
+            border-color: rgba(0, 0, 0, 0.08);
         }
 
         .fb-ico {
@@ -290,7 +292,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2);
+            box-shadow: 0 10px 20px rgba(var(--premium-gold-rgb), 0.2);
             transition: 0.3s;
         }
 
@@ -337,7 +339,269 @@
             }
         }
 
-        /* Toast Styling */
+        /* === DEVELOPER MODAL === */
+        #dev-modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 8000;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .35s cubic-bezier(.23, 1, .32, 1),
+                visibility .35s;
+        }
+
+        #dev-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .dev-modal {
+            width: 100%;
+            max-width: 480px;
+            background: #0f0f12;
+            border: 1px solid rgba(197, 160, 89, .25);
+            border-radius: 32px 32px 0 0;
+            padding: 32px 28px 48px;
+            transform: translateY(100%);
+            transition: transform .45s cubic-bezier(.23, 1, .32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.light-theme .dev-modal {
+            background: #ffffff;
+            border-color: rgba(197, 160, 89, .2);
+        }
+
+        #dev-modal-overlay.show .dev-modal {
+            transform: translateY(0);
+        }
+
+        .dev-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--premium-gold), transparent);
+        }
+
+        .dev-drag-handle {
+            width: 40px;
+            height: 4px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, .15);
+            margin: 0 auto 24px;
+        }
+
+        body.light-theme .dev-drag-handle {
+            background: rgba(0, 0, 0, .12);
+        }
+
+        .dev-avatar-ring {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, var(--premium-gold), #7c5c1f, var(--premium-gold));
+            animation: ringRotate 6s linear infinite;
+        }
+
+        @keyframes ringRotate {
+            to {
+                filter: hue-rotate(30deg);
+            }
+        }
+
+        .dev-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #1a1a20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            overflow: hidden;
+        }
+
+        .dev-avatar-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        body.light-theme .dev-avatar-inner {
+            background: #f0f0f5;
+        }
+
+        .dev-name {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: var(--premium-gold);
+            margin-bottom: 4px;
+        }
+
+        .dev-role {
+            text-align: center;
+            font-size: .65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: .5;
+            margin-bottom: 24px;
+        }
+
+        .dev-info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .dev-info-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: rgba(197, 160, 89, .06);
+            border: 1px solid rgba(197, 160, 89, .12);
+        }
+
+        body.light-theme .dev-info-row {
+            background: rgba(0, 0, 0, .04);
+            border-color: rgba(0, 0, 0, .08);
+        }
+
+        .dev-info-row i {
+            color: var(--premium-gold);
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dev-info-row span {
+            font-size: .85rem;
+            font-weight: 600;
+        }
+
+        .dev-close-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--premium-gold), #8c6a30);
+            color: #111;
+            border: none;
+            border-radius: 18px;
+            font-weight: 900;
+            font-size: .95rem;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: .3s;
+        }
+
+        .dev-close-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+
+        .dev-close-btn:active {
+            transform: scale(.97);
+        }
+
+        /* === CARD SWIPER === */
+        .dev-cards-outer {
+            width: 100%;
+            overflow: hidden;
+            /* clips the sliding cards */
+        }
+
+        .dev-cards-wrapper {
+            display: flex;
+            width: 100%;
+            /* transform applied via JS to slide between cards */
+        }
+
+        .dev-person-card {
+            min-width: 100%;
+            /* each card = full width */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 4px;
+        }
+
+        /* Dots */
+        .dev-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 14px 0 16px;
+        }
+
+        .dev-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(197, 160, 89, .2);
+            cursor: pointer;
+            transition: .3s;
+            border: 1px solid rgba(197, 160, 89, .3);
+        }
+
+        .dev-dot.active {
+            background: var(--premium-gold);
+            width: 22px;
+            border-radius: 4px;
+        }
+
+        /* Nav row */
+        .dev-nav-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dev-nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            border: 1px solid rgba(197, 160, 89, .2);
+            background: rgba(197, 160, 89, .07);
+            color: var(--premium-gold);
+            cursor: pointer;
+            font-size: .9rem;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .dev-nav-btn:hover {
+            background: rgba(197, 160, 89, .15);
+            border-color: rgba(197, 160, 89, .4);
+        }
+
+        .dev-nav-btn:active {
+            transform: scale(.9);
+        }
+
+        .dev-close-btn {
+            flex: 1;
+        }
+
         #toast {
             position: fixed;
             bottom: 130px;
@@ -541,34 +805,130 @@
 
     <!-- Unified Navigation Bar -->
     <div class="bottom-nav-fixed">
-            <div class="nav-bar">
-                <div class="nav-item"
-                    onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-home"></i>
-                    <span data-lang-en="HOME" data-lang-th="หน้าแรก">หน้าแรก</span>
-                </div>
-                <!-- Slot 2: INFO (Active) -->
-                <div class="nav-item active" onclick="initializeInfoPage()">
-                    <i class="fas fa-info-circle"></i>
-                    <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</span>
-                </div>
-                <div style="width: 70px;"></div> <!-- Middle Gap -->
-                <div class="nav-item"
-                    onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span data-lang-en="BASKET" data-lang-th="ตะกร้า">ตะกร้า</span>
-                </div>
-                <div class="nav-item"
-                    onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-list-ul"></i>
-                    <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">รายการสั่ง</span>
-                </div>
+        <div class="nav-bar">
+            <div class="nav-item"
+                onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-home"></i>
+                <span data-lang-en="HOME" data-lang-th="หน้าแรก">HOME</span>
             </div>
-
-            <div class="round-btn-center" onclick="callStaff()">
-                <i class="fas fa-concierge-bell" style="font-size: 1.8rem;"></i>
+            <div class="nav-item active" onclick="initializeInfoPage()">
+                <i class="fas fa-info-circle"></i>
+                <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">INFO</span>
+            </div>
+            <div style="width: 70px;"></div>
+            <div class="nav-item"
+                onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-shopping-basket"></i>
+                <div id="cart-count-badge" style="display:none;">0</div>
+                <span data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
+            </div>
+            <div class="nav-item"
+                onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-list-ul"></i>
+                <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">ORDERS</span>
             </div>
         </div>
+
+        <div class="round-btn-center" onclick="openDevModal()" title="จัดทำโดย">
+            <i class="fas fa-code" style="font-size: 1.5rem;"></i>
+        </div>
+    </div>
+
+    <!-- Developer Modal -->
+    <div id="dev-modal-overlay" onclick="handleModalOverlayClick(event)">
+        <div class="dev-modal" id="dev-modal">
+            <div class="dev-drag-handle"></div>
+
+            <!-- Header -->
+            <div style="text-align:center; margin-bottom:20px;">
+                <div
+                    style="font-size:.6rem; font-weight:800; text-transform:uppercase; letter-spacing:3px; color:var(--premium-gold); opacity:.7; margin-bottom:4px;">
+                    BANGFOOD SYSTEM v2.0</div>
+                <div style="font-size:1.1rem; font-weight:900; letter-spacing:1px;">จัดทำโดย</div>
+            </div>
+
+            <!-- Swipe Cards -->
+            <div class="dev-cards-outer">
+                <div class="dev-cards-wrapper" id="devCardsWrapper">
+                    <!-- Card 1 -->
+                    <div class="dev-person-card">
+                        <div class="dev-avatar-ring">
+                            <div class="dev-avatar-inner">
+                                <img src="D:\โปรเจ็ค 23.3\bangfood\images\1.png" alt="รอซี"
+                                    onerror="this.outerHTML='👨‍💻'">
+                            </div>
+                        </div>
+                        <div class="dev-name">นายรอซี หลับจันทร์</div>
+                        <div class="dev-role">นักศึกษา</div>
+                        <div class="dev-info-grid">
+                            <div class="dev-info-row"><i
+                                    class="fas fa-university"></i><span>มหาวิทยาลัยเทคโนโลยีราชมงคลศรีวิชัย สงขลา</span>
+                            </div>
+                            <div class="dev-info-row"><i class="fas fa-building"></i><span>คณะบริหารธุรกิจ</span></div>
+                            <div class="dev-info-row"><i
+                                    class="fas fa-laptop-code"></i><span>สาขาระบบสารสนเทศทางธุรกิจ</span></div>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="dev-person-card">
+                        <div class="dev-avatar-ring"
+                            style="background:linear-gradient(135deg,#00d4ff,#0077b6,#00d4ff);">
+                            <div class="dev-avatar-inner">
+                                <img src="D:\โปรเจ็ค 23.3\bangfood\images\3.png" alt="สุทธิรัก"
+                                    onerror="this.outerHTML='👨‍🎓'">
+                            </div>
+                        </div>
+                        <div class="dev-name">นายสุทธิรัก อ่อนเกลี้ยง</div>
+                        <div class="dev-role">นักศึกษา</div>
+                        <div class="dev-info-grid">
+                            <div class="dev-info-row"><i
+                                    class="fas fa-university"></i><span>มหาวิทยาลัยเทคโนโลยีราชมงคลศรีวิชัย สงขลา</span>
+                            </div>
+                            <div class="dev-info-row"><i class="fas fa-building"></i><span>คณะบริหารธุรกิจ</span></div>
+                            <div class="dev-info-row"><i
+                                    class="fas fa-laptop-code"></i><span>สาขาระบบสารสนเทศทางธุรกิจ</span></div>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="dev-person-card">
+                        <div class="dev-avatar-ring"
+                            style="background:linear-gradient(135deg,#2ecc71,#1a7a45,#2ecc71);">
+                            <div class="dev-avatar-inner">
+                                <img src="D:\โปรเจ็ค 23.3\bangfood\images\2.png" alt="ธนากร"
+                                    onerror="this.outerHTML='🧑‍💻'">
+                            </div>
+                        </div>
+                        <div class="dev-name">นายธนากร ขำละออง</div>
+                        <div class="dev-role">นักศึกษา</div>
+                        <div class="dev-info-grid">
+                            <div class="dev-info-row"><i
+                                    class="fas fa-university"></i><span>มหาวิทยาลัยเทคโนโลยีราชมงคลศรีวิชัย สงขลา</span>
+                            </div>
+                            <div class="dev-info-row"><i class="fas fa-building"></i><span>คณะบริหารธุรกิจ</span></div>
+                            <div class="dev-info-row"><i
+                                    class="fas fa-laptop-code"></i><span>สาขาระบบสารสนเทศทางธุรกิจ</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end dev-cards-outer -->
+
+            <!-- Dot Indicators -->
+            <div class="dev-dots" id="devDots">
+                <div class="dev-dot active" onclick="goToCard(0)"></div>
+                <div class="dev-dot" onclick="goToCard(1)"></div>
+                <div class="dev-dot" onclick="goToCard(2)"></div>
+            </div>
+
+            <!-- Nav Arrows -->
+            <div class="dev-nav-row">
+                <button class="dev-nav-btn" id="devPrev" onclick="prevCard()"><i
+                        class="fas fa-chevron-left"></i></button>
+                <button class="dev-close-btn" onclick="closeDevModal()">✕ &nbsp;ปิด</button>
+                <button class="dev-nav-btn" id="devNext" onclick="nextCard()"><i
+                        class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
 
     <script src="global_script.js"></script>
     <script>
@@ -608,6 +968,47 @@
             showToast(msg);
             if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
         }
+
+        function openDevModal() {
+            document.getElementById('dev-modal-overlay').classList.add('show');
+            goToCard(0);
+            // Attach touch swipe once
+            const wrapper = document.getElementById('devCardsWrapper');
+            if (!wrapper._swipeReady) {
+                let startX = 0;
+                wrapper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+                wrapper.addEventListener('touchend', e => {
+                    const dx = e.changedTouches[0].clientX - startX;
+                    if (dx < -50) nextCard();
+                    else if (dx > 50) prevCard();
+                }, { passive: true });
+                wrapper._swipeReady = true;
+            }
+        }
+
+        function closeDevModal() {
+            document.getElementById('dev-modal-overlay').classList.remove('show');
+        }
+
+        function handleModalOverlayClick(e) {
+            if (e.target === document.getElementById('dev-modal-overlay')) closeDevModal();
+        }
+
+        /* === CARD NAVIGATION === */
+        let currentCard = 0;
+        const totalCards = 3;
+
+        function goToCard(idx) {
+            currentCard = idx;
+            const wrapper = document.getElementById('devCardsWrapper');
+            wrapper.style.transition = 'transform .4s cubic-bezier(.23,1,.32,1)';
+            wrapper.style.transform = `translateX(-${idx * 100}%)`;
+            document.querySelectorAll('.dev-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+
+        function nextCard() { if (currentCard < totalCards - 1) goToCard(currentCard + 1); }
+        function prevCard() { if (currentCard > 0) goToCard(currentCard - 1); }
+
     </script>
 </body>
 

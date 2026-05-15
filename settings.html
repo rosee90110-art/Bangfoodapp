@@ -41,7 +41,7 @@
         .seg-indicator {
             position: absolute; top: 4px; left: 4px; bottom: 4px; width: calc(50% - 4px);
             background: var(--premium-gold); border-radius: 10px; z-index: 1; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3);
+            box-shadow: 0 4px 10px rgba(var(--premium-gold-rgb), 0.3);
         }
         .seg-container.right-active .seg-indicator { transform: translateX(100%); }
         
@@ -195,7 +195,9 @@
             
             // 🎨 Load Accent Color
             const savedAccent = localStorage.getItem('premium-gold') || '#c5a059';
+            const savedRgb = localStorage.getItem('premium-gold-rgb') || 'var(--premium-gold-rgb)';
             document.documentElement.style.setProperty('--premium-gold', savedAccent);
+            document.documentElement.style.setProperty('--premium-gold-rgb', savedRgb);
             document.querySelectorAll('.color-dot').forEach(dot => {
                 if(dot.getAttribute('data-color') === savedAccent) dot.classList.add('active');
                 else dot.classList.remove('active');
@@ -251,9 +253,19 @@
             }).then(() => alert("บันทึกการตั้งค่าการเงินสำเร็จ!"));
         }
 
+        function hexToRgb(hex) {
+            let bigint = parseInt(hex.replace('#', ''), 16);
+            return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255].join(', ');
+        }
+
         function updateAccentColor(hex, el) {
             localStorage.setItem('premium-gold', hex);
             document.documentElement.style.setProperty('--premium-gold', hex);
+            
+            const rgbStr = hexToRgb(hex);
+            localStorage.setItem('premium-gold-rgb', rgbStr);
+            document.documentElement.style.setProperty('--premium-gold-rgb', rgbStr);
+            
             // Update UI
             document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
             if(el) el.classList.add('active');
@@ -263,7 +275,7 @@
                 });
             }
             document.getElementById('color-palette').classList.remove('show');
-            window.parent.postMessage({ type: 'ACCENT_CHANGE', color: hex }, '*');
+            window.parent.postMessage({ type: 'ACCENT_CHANGE', color: hex, rgb: rgbStr }, '*');
         }
 
         // 🛑 ปิด Popup เวลาคลิกที่อื่น

@@ -134,7 +134,7 @@
         /* 📍 แถบราคารวมแบบที่ต้องการ */
         .top-summary-bar {
             padding: 12px 25px;
-            background: rgba(197, 160, 89, 0.04);
+            background: rgba(var(--premium-gold-rgb), 0.04);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -427,7 +427,7 @@
                 <h3 style="color:#444; font-size:0.65rem; margin:30px 30px 10px; text-transform:uppercase; font-weight:700;"
                     data-lang-en="Quantity" data-lang-th="จำนวนรายการ">Quantity</h3>
                 <div class="option-item"
-                    style="justify-content: center; gap: 30px; background: rgba(197, 160, 89, 0.08); border: 1px dashed var(--premium-gold);">
+                    style="justify-content: center; gap: 30px; background: rgba(var(--premium-gold-rgb), 0.08); border: 1px dashed var(--premium-gold);">
                     <button type="button" class="qty-btn minus" onclick="changeMainQty(-1)"
                         style="width: 45px; height: 45px;">-</button>
                     <span id="main-item-qty"
@@ -446,30 +446,30 @@
     </div> <!-- End app-wrapper -->
 
     <div class="bottom-nav-fixed">
-            <div class="nav-bar">
-                <div class="nav-item"
-                    onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-home"></i>
-                    <span data-lang-en="HOME" data-lang-th="หน้าแรก">หน้าแรก</span>
-                </div>
-                <div class="nav-item"
-                    onclick="window.location.href='info.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-info-circle"></i>
-                    <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">ข้อมูลร้าน</span>
-                </div>
-                <div style="width: 70px;"></div>
-                <div class="nav-item"
-                    onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span data-lang-en="CART" data-lang-th="ตะกร้า">ตะกร้า</span>
-                </div>
-                <div class="nav-item"
-                    onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
-                    <i class="fas fa-list-ul"></i>
-                    <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">รายการสั่ง</span>
-                </div>
-
+        <div class="nav-bar">
+            <div class="nav-item"
+                onclick="window.location.href='index.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-home"></i>
+                <span data-lang-en="HOME" data-lang-th="หน้าแรก">HOME</span>
             </div>
+            <div class="nav-item"
+                onclick="window.location.href='info.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-info-circle"></i>
+                <span data-lang-en="INFO" data-lang-th="ข้อมูลร้าน">INFO</span>
+            </div>
+            <div style="width: 70px;"></div>
+            <div class="nav-item"
+                onclick="window.location.href='cart.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-shopping-basket"></i>
+                <div id="cart-count-badge" style="display:none;">0</div>
+                <span data-lang-en="BASKET" data-lang-th="ตะกร้า">BASKET</span>
+            </div>
+            <div class="nav-item"
+                onclick="window.location.href='track.html?table=' + localStorage.getItem('selectedTable')">
+                <i class="fas fa-list-ul"></i>
+                <span data-lang-en="ORDERS" data-lang-th="รายการสั่ง">ORDERS</span>
+            </div>
+        </div>
 
             <div class="round-btn-center" onclick="confirmOrder()">
                 <i class="fas fa-check"></i>

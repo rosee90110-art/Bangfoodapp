@@ -19,18 +19,32 @@
 
         .top-bar {
             height: var(--top-bar-height);
-            background: var(--top-bar-bg); backdrop-filter: blur(20px);
+            background: var(--card-bg); 
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 25px; position: relative; z-index: 2500;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
 
         .top-left { display: flex; align-items: center; gap: 20px; }
         .mobile-toggle {
-            display: none; background: var(--border); color: var(--text);
-            width: 40px; height: 40px; border-radius: 10px;
+            display: none;
+            background: rgba(var(--premium-gold-rgb), 0.08);
+            color: var(--premium-gold);
+            width: 40px; height: 40px; border-radius: 12px;
             justify-content: center; align-items: center; cursor: pointer;
+            border: 1px solid rgba(var(--premium-gold-rgb), 0.2);
+            transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative; overflow: hidden;
         }
+        .mobile-toggle:hover {
+            background: rgba(var(--premium-gold-rgb), 0.18);
+            box-shadow: 0 0 14px rgba(var(--premium-gold-rgb), 0.3);
+            transform: scale(1.08);
+        }
+        .mobile-toggle:active { transform: scale(0.94); }
         /* 📍 ชื่อแบรนด์ที่จะเปลี่ยนตามหน้าเมนูครับน้า */
         .system-logo { font-size: 1.1rem; letter-spacing: 3px; color: var(--premium-gold); font-weight: 700; text-transform: uppercase; transition: 0.3s; }
 
@@ -39,50 +53,175 @@
         .profile-container { position: relative; }
         .user-profile-header {
             display: flex; align-items: center; gap: 12px; cursor: pointer;
-            padding: 5px 10px; border-radius: 15px;
+            padding: 6px 12px; border-radius: 16px;
+            border: 1px solid transparent;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
         }
+        .user-profile-header:hover {
+            background: rgba(var(--premium-gold-rgb), 0.07);
+            border-color: rgba(var(--premium-gold-rgb), 0.2);
+        }
+        .user-profile-header:active { transform: scale(0.97); }
 
         .user-info-text { text-align: right; }
         .user-info-text b { display: block; font-size: 0.8rem; color: var(--text); }
         .user-info-text span { font-size: 0.6rem; color: var(--premium-gold); text-transform: uppercase; }
-        
+
+        /* 🌀 Spinning ring around avatar on hover */
+        @keyframes ringRotate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
         .user-avatar-circle {
             width: 42px; height: 42px; border-radius: 50%;
             border: 2px solid var(--premium-gold); overflow: hidden;
             background: #222;
+            transition: box-shadow 0.35s, border-color 0.35s;
+        }
+        .user-profile-header:hover .user-avatar-circle {
+            box-shadow: 0 0 0 3px rgba(var(--premium-gold-rgb), 0.25),
+                        0 0 20px rgba(var(--premium-gold-rgb), 0.3);
+            animation: ringRotate 4s linear infinite;
         }
         .user-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
 
         .profile-dropdown {
             position: absolute; top: calc(100% + 15px); right: 0;
-            width: 220px; background: var(--card-bg); border: 1px solid var(--border);
+            width: 230px;
+            background: rgba(15,15,15,0.7);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(var(--premium-gold-rgb), 0.15);
             border-radius: 20px; padding: 10px; opacity: 0; visibility: hidden;
-            transform: translateY(-10px); transition: var(--transition); z-index: 3000;
+            transform: translateY(-12px) scale(0.97);
+            transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1); z-index: 3000;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35), 0 0 0 1px rgba(var(--premium-gold-rgb), 0.06),
+                        inset 0 1px 0 rgba(255,255,255,0.06);
         }
-        .profile-dropdown.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        body.light-theme .profile-dropdown {
+            background: rgba(255,255,255,0.88);
+            border-color: rgba(var(--premium-gold-rgb), 0.25);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+        }
+        .profile-dropdown.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 
         .dropdown-item {
             display: flex; align-items: center; gap: 12px;
             padding: 12px 15px; border-radius: 12px; color: var(--sub-text);
             font-size: 0.85rem; cursor: pointer;
+            position: relative; overflow: hidden;
+            transition: all 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid transparent;
+        }
+        .dropdown-item i {
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; background: rgba(var(--premium-gold-rgb), 0.07);
+            color: var(--premium-gold); font-size: 0.85rem;
+            transition: all 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+            flex-shrink: 0;
+        }
+        .dropdown-item:hover {
+            background: rgba(var(--premium-gold-rgb), 0.08);
+            border-color: rgba(var(--premium-gold-rgb), 0.2);
+            color: var(--premium-gold);
+            transform: translateX(4px);
+        }
+        .dropdown-item:hover i {
+            background: rgba(var(--premium-gold-rgb), 0.18);
+            box-shadow: 0 0 10px rgba(var(--premium-gold-rgb), 0.25);
+        }
+        /* logout item stays red */
+        .dropdown-item[style*='ff4444']:hover {
+            background: rgba(231,76,60,0.1) !important;
+            border-color: rgba(231,76,60,0.3) !important;
+            color: #e74c3c !important;
+            transform: translateX(4px);
+        }
+        .dropdown-item[style*='ff4444'] i {
+            color: #e74c3c !important;
+            background: rgba(231,76,60,0.08) !important;
+        }
+        .dropdown-item[style*='ff4444']:hover i {
+            background: rgba(231,76,60,0.18) !important;
+            box-shadow: 0 0 10px rgba(231,76,60,0.25) !important;
         }
 
         .layout-body { display: flex; flex: 1; overflow: hidden; }
         .sidebar {
-            width: var(--sidebar-narrow); background: var(--top-bar-bg); border-right: 1px solid var(--border);
+            width: var(--sidebar-narrow); background: var(--card-bg); border-right: 1px solid var(--border);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             display: flex; flex-direction: column; transition: var(--transition); overflow: hidden;
+            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.05);
         }
         @media (min-width: 901px) { .sidebar:hover { width: var(--sidebar-wide); } }
 
-        .nav-list { flex: 1; padding: 20px 10px; display: flex; flex-direction: column; gap: 6px; }
+        .nav-list { flex: 1; padding: 20px 10px; display: flex; flex-direction: column; gap: 4px; }
+
+        /* ✨ Nav items entrance stagger */
+        @keyframes navSlideIn {
+            from { opacity: 0; transform: translateX(-12px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
         .nav-item {
             display: flex; align-items: center; height: 50px; border-radius: 14px;
-            cursor: pointer; transition: var(--transition); color: var(--sub-text);
+            cursor: pointer; color: var(--sub-text);
+            position: relative; overflow: hidden;
+            border: 1px solid transparent;
+            animation: navSlideIn 0.45s cubic-bezier(0.23, 1, 0.32, 1) both;
+            transition: background 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+                        border-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s;
         }
-        .nav-item i { min-width: 60px; font-size: 1.2rem; display: flex; justify-content: center; }
+        /* stagger each nav-item's entrance */
+        .nav-item:nth-child(1) { animation-delay: 0.05s; }
+        .nav-item:nth-child(2) { animation-delay: 0.10s; }
+        .nav-item:nth-child(3) { animation-delay: 0.15s; }
+        .nav-item:nth-child(4) { animation-delay: 0.20s; }
+        .nav-item:nth-child(5) { animation-delay: 0.25s; }
+        .nav-item:nth-child(6) { animation-delay: 0.30s; }
+        .nav-item:nth-child(7) { animation-delay: 0.35s; }
+        .nav-item:nth-child(8) { animation-delay: 0.40s; }
+
+        /* Ripple pseudo-element */
+        .nav-item::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(var(--premium-gold-rgb), 0.18) 0%, transparent 70%);
+            opacity: 0; transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .nav-item:hover::after { opacity: 1; }
+
+        .nav-item:hover {
+            background: rgba(var(--premium-gold-rgb), 0.07);
+            border-color: rgba(var(--premium-gold-rgb), 0.15);
+            color: var(--premium-gold);
+            box-shadow: 0 0 18px rgba(var(--premium-gold-rgb), 0.08), inset 0 0 0 1px rgba(var(--premium-gold-rgb), 0.08);
+        }
+        .nav-item:active { transform: scale(0.97); }
+
+        .nav-item i {
+            min-width: 60px; font-size: 1.15rem; display: flex; justify-content: center;
+            transition: text-shadow 0.3s, transform 0.3s;
+        }
+        .nav-item:hover i {
+            text-shadow: 0 0 12px rgba(var(--premium-gold-rgb), 0.6);
+            transform: scale(1.1);
+        }
+
         .nav-item span { font-size: 0.85rem; white-space: nowrap; opacity: 0; transform: translateX(-10px); transition: 0.3s; }
         .sidebar:hover .nav-item span { opacity: 1; transform: translateX(0); margin-left: 10px; }
-        .nav-item.active { background: linear-gradient(90deg, rgba(197, 160, 89, 0.15), transparent); border: 1px solid rgba(197, 160, 89, 0.3); color: var(--premium-gold); }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(var(--premium-gold-rgb), 0.14), rgba(var(--premium-gold-rgb), 0.04));
+            border-left: 3px solid var(--premium-gold);
+            border-top-left-radius: 0; border-bottom-left-radius: 0;
+            border-radius: 0 14px 14px 0;
+            color: var(--premium-gold); font-weight: 700;
+            box-shadow: inset 0 0 20px rgba(var(--premium-gold-rgb), 0.06),
+                        0 4px 20px rgba(var(--premium-gold-rgb), 0.1);
+        }
+        .nav-item.active i {
+            text-shadow: 0 0 14px rgba(var(--premium-gold-rgb), 0.7);
+        }
 
         .sidebar-footer {
             padding: 20px 10px;
@@ -220,28 +359,25 @@
         }
     });
 
+    window.addEventListener('message', (e) => {
+        if (e.data && e.data.type === 'ACCENT_CHANGE') {
+            document.documentElement.style.setProperty('--premium-gold', e.data.color);
+            if (e.data.rgb) {
+                document.documentElement.style.setProperty('--premium-gold-rgb', e.data.rgb);
+            }
+        }
+    });
+
     setInterval(() => { 
         const clockEl = document.getElementById('top-clock');
         if(clockEl) clockEl.innerText = new Date().toLocaleTimeString('en-GB'); 
     }, 1000);
 
-    function startGlobalPresence() {
-        const currentAdmin = sessionStorage.getItem('currentAdminName');
-        if (!currentAdmin) return;
-        const myPresenceRef = db.ref('online_admins/' + currentAdmin);
-        db.ref('.info/connected').on('value', snap => {
-            if (snap.val() === true) {
-                myPresenceRef.onDisconnect().remove();
-                myPresenceRef.set({ status: "online", last_seen: firebase.database.ServerValue.TIMESTAMP });
-            }
-        });
-    }
-
     function initializeCommandCenter() {
         checkLoginStatus();
         const currentName = sessionStorage.getItem('currentAdminName') || "Admin User";
         document.getElementById('admin-name-display').innerText = currentName;
-        startGlobalPresence(); 
+        
         db.ref('admins').orderByChild('username').equalTo(currentName).on('value', snap => {
             if(snap.exists()) {
                 const data = Object.values(snap.val())[0];
@@ -303,6 +439,6 @@
         }
     }
 </script>
-
+<script src="admin_script.js"></script>
 </body>
 </html>

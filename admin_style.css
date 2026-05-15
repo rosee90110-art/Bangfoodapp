@@ -163,4 +163,117 @@ body:not(.light-theme) .btn-cancel {
 }
 .order-card, .menu-item, .history-card, .table-row, .card-box {
     animation: slideUpFade 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* =========================================
+   3. PREMIUM GLOBAL DECORATION SYSTEM
+   ========================================= */
+
+/* 🌌 Ambient Background Mesh — applied to all admin pages */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 80% 60% at 10% 10%, rgba(var(--premium-gold-rgb), 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 80%, rgba(var(--premium-gold-rgb), 0.03) 0%, transparent 60%);
+    transition: background 0.6s ease;
+}
+
+body.light-theme::before {
+    background:
+        radial-gradient(ellipse 80% 60% at 10% 10%, rgba(var(--premium-gold-rgb), 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 80%, rgba(var(--premium-gold-rgb), 0.04) 0%, transparent 60%);
+}
+
+/* ✨ Glassmorphism Card — universal premium glass effect */
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(var(--premium-gold-rgb), 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+body.light-theme .glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(var(--premium-gold-rgb), 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.glass-card:hover {
+    border-color: rgba(var(--premium-gold-rgb), 0.3);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(var(--premium-gold-rgb), 0.1);
+    transform: translateY(-2px);
+}
+
+/* 🔥 Gold Gradient Accent Line — top border glow */
+.accent-top {
+    border-top: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+}
+.accent-top::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 20px; right: 20px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--premium-gold), transparent);
+    border-radius: 2px;
+    opacity: 0.6;
+}
+
+/* 🏷️ Premium Gold Badge Chip */
+.gold-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(var(--premium-gold-rgb), 0.1);
+    border: 1px solid rgba(var(--premium-gold-rgb), 0.25);
+    color: var(--premium-gold);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.65rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 1.5px;
+}
+
+/* 📊 Premium Stat Card Glow Hover */
+.stat-card:hover, .stat-capsule:hover, .ring-node:hover {
+    border-color: rgba(var(--premium-gold-rgb), 0.3) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 20px rgba(var(--premium-gold-rgb), 0.05) !important;
+    transform: translateY(-5px);
+}
+
+/* 🌟 Shimmer Pulse on Gold Elements */
+@keyframes goldPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+.glow-pulse { animation: goldPulse 2.5s ease-in-out infinite; }
+
+/* 🎯 Section Heading Style */
+.section-heading {
+    font-size: 0.65rem; font-weight: 900;
+    color: var(--premium-gold);
+    text-transform: uppercase; letter-spacing: 3px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+}
+.section-heading::after {
+    content: ''; flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(var(--premium-gold-rgb), 0.3), transparent);
+}
+
+/* ⬆️ Hover Lift Effect */
+.hover-lift { transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s; }
+.hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+
+/* 🔵 Action Button Gold Hover */
+.action-btn:hover {
+    background: rgba(var(--premium-gold-rgb), 0.1) !important;
+    border-color: rgba(var(--premium-gold-rgb), 0.4) !important;
+    color: var(--premium-gold) !important;
+}
+
+/* 📱 Mobile safe zone */
+@media (max-width: 768px) {
+    body::before { display: none; }
 }

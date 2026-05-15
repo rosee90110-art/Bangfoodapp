@@ -39,32 +39,67 @@
             .profile-card { position: sticky; top: 20px; padding: 45px 30px; }
         }
 
-        .profile-card { border-radius: 40px; padding: 35px 20px; text-align: center; backdrop-filter: blur(20px); }
+        .profile-card { 
+            border-radius: 40px; padding: 35px 20px; text-align: center;
+            backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(var(--premium-gold-rgb), 0.12);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+            position: relative; overflow: hidden;
+        }
+        .profile-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--premium-gold), transparent);
+            opacity: 0.5;
+        }
+        body.light-theme .profile-card {
+            background: rgba(255,255,255,0.8);
+            border-color: rgba(var(--premium-gold-rgb), 0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+        }
         .avatar-section { position: relative; display: inline-block; margin-bottom: 20px; cursor: pointer; }
-        .avatar-frame { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--premium-gold); padding: 5px; object-fit: cover; transition: 0.3s; box-shadow: 0 0 30px rgba(197, 160, 89, 0.2); }
+        .avatar-frame { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--premium-gold); padding: 5px; object-fit: cover; transition: 0.3s; box-shadow: 0 0 30px rgba(var(--premium-gold-rgb), 0.2); }
         .avatar-section:hover .avatar-frame { filter: brightness(0.6); transform: scale(1.02); }
         .edit-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: #fff; opacity: 0; transition: 0.3s; }
         .avatar-section:hover .edit-overlay { opacity: 1; }
 
         .profile-username { font-size: 1.5rem; font-weight: 600; margin-bottom: 5px; display: block; color: var(--text); }
         .profile-realname { font-size: 0.85rem; color: var(--sub-text); margin-bottom: 15px; display: block; }
-        .badge-admin { background: rgba(197, 160, 89, 0.1); color: var(--premium-gold); padding: 4px 15px; border-radius: 20px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(197, 160, 89, 0.2); font-weight: 700; }
+        .badge-admin { background: rgba(var(--premium-gold-rgb), 0.1); color: var(--premium-gold); padding: 4px 15px; border-radius: 20px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(var(--premium-gold-rgb), 0.2); font-weight: 700; }
 
         .content-section { display: flex; flex-direction: column; gap: 20px; }
-        .form-card { border-radius: 35px; padding: 25px; }
+        .form-card { 
+            border-radius: 35px; padding: 30px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(var(--premium-gold-rgb), 0.08);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            position: relative; overflow: hidden;
+        }
+        .form-card::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 40%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(var(--premium-gold-rgb), 0.4), transparent);
+        }
+        body.light-theme .form-card {
+            background: rgba(255,255,255,0.8);
+            border-color: rgba(var(--premium-gold-rgb), 0.15);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+        }
         .input-group { margin-bottom: 18px; text-align: left; }
         label { font-size: 0.75rem; color: var(--sub-text); margin-left: 12px; display: block; margin-bottom: 8px; font-weight: 600; }
         .input-box { position: relative; }
         .input-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--sub-text); font-size: 0.9rem; }
         
         input { width: 100%; padding: 16px 15px 16px 52px; background: rgba(128,128,128,0.05); border: 1px solid var(--border); border-radius: 18px; color: var(--text); outline: none; transition: 0.3s; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
-        input:focus { border-color: var(--premium-gold); background: rgba(197, 160, 89, 0.05); }
+        input:focus { border-color: var(--premium-gold); background: rgba(var(--premium-gold-rgb), 0.05); box-shadow: 0 0 0 3px rgba(var(--premium-gold-rgb), 0.08); }
 
-        .save-button { width: 100%; padding: 18px; background: var(--premium-gold); border: none; border-radius: 20px; color: #000; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.3s; font-size: 1rem; letter-spacing: 1px; }
-        .save-button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2); }
+        .save-button { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--premium-gold), #b38b45); border: none; border-radius: 20px; color: #000; font-weight: 800; cursor: pointer; margin-top: 10px; transition: 0.3s; font-size: 1rem; letter-spacing: 1px; }
+        .save-button:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(var(--premium-gold-rgb), 0.3); filter: brightness(1.05); }
 
         .nav-footer { display: flex; justify-content: center; align-items: center; gap: 20px; padding: 10px 0 40px; }
         .nav-link { color: var(--sub-text); font-size: 0.75rem; cursor: pointer; transition: 0.3s; text-decoration: none; font-weight: 600; }
+        .nav-link:hover { color: var(--premium-gold); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>

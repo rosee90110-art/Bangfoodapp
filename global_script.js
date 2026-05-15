@@ -320,6 +320,13 @@ window.navigateTo = function(url) {
     setTimeout(() => { window.location.href = url; }, 230);
 };
 
+// ♻️ แก้ปัญหากดปุ่ม Back (bfcache) แล้วหน้าหาย/หน้าขาว
+window.addEventListener('pageshow', function (event) {
+    if (event.persisted || document.body.classList.contains('bf-page-exit')) {
+        document.body.classList.remove('bf-page-exit');
+    }
+});
+
 // 🔗 Auto-intercept all internal <a> links
 document.addEventListener('click', (e) => {
     const link = e.target.closest('a');

@@ -617,6 +617,17 @@
                 <button class="btn-action" style="width:100%; border:1px dashed var(--premium-gold); margin-top:10px; height:45px;"
                     onclick="addOptionRow('global-addons-container')">+ Add Extra Topping</button>
 
+                <!-- 🍜 Noodle Types Section (ก๋วยเตี๋ยว only) -->
+                <div id="noodle-types-section" style="display:none; margin-top:20px; border-top:1px solid var(--glass-border); padding-top:20px;">
+                    <div class="addon-section-header">
+                        <h4><i class="fas fa-bowl-rice"></i> NOODLE TYPES <span style="font-size:0.6rem; color:var(--premium-gold); font-weight:600; letter-spacing:1px;">เฉพาะก๋วยเตี๋ยว</span></h4>
+                    </div>
+                    <p style="font-size:0.7rem; color:#666; margin:0 0 12px;">🍜 เปิด/ปิด เพื่อให้ลูกค้าเลือกได้หรือไม่ได้ | จำนวนที่เลือกได้ขึ้นอยู่กับขนาด (ธรรมดา=1, พิเศษ=2, โครตพิเศษ=3)</p>
+                    <div id="global-noodle-types-container"></div>
+                    <button class="btn-action" style="width:100%; border:1px dashed var(--premium-gold); margin-top:10px; height:45px;"
+                        onclick="addNoodleTypeRow('global-noodle-types-container')">+ เพิ่มประเภทเส้น</button>
+                </div>
+
                 <!-- 🔄 Sync Toggle -->
                 <div style="margin-top: 25px; display: flex; align-items: center; justify-content: center; gap: 15px; background: rgba(var(--premium-gold-rgb), 0.08); padding: 15px; border-radius: 25px; border: 1px solid rgba(var(--premium-gold-rgb), 0.2);">
                     <label class="premium-switch">
@@ -794,47 +805,94 @@
             container.appendChild(div);
         }
 
+        const DEFAULT_NOODLE_TYPES = [
+            { name: 'เส้นใหญ่', price: 0, enabled: true },
+            { name: 'เส้นเล็ก', price: 0, enabled: true },
+            { name: 'เส้นหมี่', price: 0, enabled: true },
+            { name: 'เส้นเหลือง', price: 0, enabled: true },
+            { name: 'วุ้นเส้น', price: 0, enabled: true },
+        ];
+
+        function addNoodleTypeRow(containerId, name = '', price = '0', enabled = true) {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = 'option-config-row stagger-item';
+            div.style.cssText = `grid-template-columns:2fr 1fr 44px 36px; animation-delay:${container.children.length * 0.05}s;`;
+            div.innerHTML = `
+                <input type="text" placeholder="ชื่อเส้น เช่น เส้นใหญ่" value="${name}">
+                <input type="number" placeholder="ราคา" value="${price}">
+                <label class="premium-switch" style="margin:auto;" title="เปิด/ปิด">
+                    <input type="checkbox" class="noodle-enabled-toggle" ${enabled ? 'checked' : ''}>
+                    <span class="slider"></span>
+                </label>
+                <i class="fas fa-times-circle" style="color:#ff4757;font-size:1.2rem;cursor:pointer;margin:auto;" onclick="this.parentElement.remove()"></i>`;
+            container.appendChild(div);
+        }
+
         function loadAddonsByCategory(category) {
             db.ref('category_addons/' + category).once('value', snap => {
                 const data = snap.val() || { sizes: [], extras: [], config: {} };
                 document.getElementById('global-sizes-container').innerHTML = '';
                 document.getElementById('global-addons-container').innerHTML = '';
-                
-                // Load Group Configs
+                document.getElementById('global-noodle-types-container').innerHTML = '';
+
                 const cfg = data.config || {};
                 document.getElementById('size-required').checked = cfg.sizeRequired !== false;
                 document.getElementById('addon-max').value = cfg.addonMax || 0;
 
                 if (data.sizes) data.sizes.forEach(s => addOptionRow('global-sizes-container', s.name, s.price));
                 if (data.extras) data.extras.forEach(e => addOptionRow('global-addons-container', e.name, e.price));
+
+                // แสดง/ซ่อน Noodle Types Section
+                const ntSection = document.getElementById('noodle-types-section');
+                if (category === 'ก๋วยเตี๋ยว') {
+                    ntSection.style.display = 'block';
+                    const noodleTypes = data.noodleTypes || DEFAULT_NOODLE_TYPES;
+                    noodleTypes.forEach(nt => addNoodleTypeRow('global-noodle-types-container', nt.name, nt.price || 0, nt.enabled !== false));
+                } else {
+                    ntSection.style.display = 'none';
+                }
             });
         }
 
         async function saveGlobalAddons() {
             const category = document.getElementById('addon-category-filter').value;
-            const addonData = { 
-                sizes: [], 
+            const addonData = {
+                sizes: [],
                 extras: [],
                 config: {
                     sizeRequired: document.getElementById('size-required').checked,
                     addonMax: parseInt(document.getElementById('addon-max').value) || 0
                 }
             };
-            
+
             document.querySelectorAll('#global-sizes-container > .option-config-row').forEach(row => {
                 const i = row.querySelectorAll('input');
                 if (i[0].value) addonData.sizes.push({ name: i[0].value, price: parseFloat(i[1].value) || 0 });
             });
-            
             document.querySelectorAll('#global-addons-container > .option-config-row').forEach(row => {
                 const i = row.querySelectorAll('input');
                 if (i[0].value) addonData.extras.push({ name: i[0].value, price: parseFloat(i[1].value) || 0 });
             });
-            
-            // 1. Save Master Config
+
+            // Noodle Types (เฉพาะก๋วยเตี๋ยว)
+            if (category === 'ก๋วยเตี๋ยว') {
+                addonData.noodleTypes = [];
+                document.querySelectorAll('#global-noodle-types-container > .option-config-row').forEach(row => {
+                    const inputs = row.querySelectorAll('input[type="text"], input[type="number"]');
+                    const toggle = row.querySelector('.noodle-enabled-toggle');
+                    if (inputs[0] && inputs[0].value.trim()) {
+                        addonData.noodleTypes.push({
+                            name: inputs[0].value.trim(),
+                            price: parseFloat(inputs[1]?.value) || 0,
+                            enabled: toggle ? toggle.checked : true
+                        });
+                    }
+                });
+            }
+
             await db.ref('category_addons/' + category).set(addonData);
 
-            // 2. 🔄 Instant Sync to All Products (Mass Update)
             if (document.getElementById('sync-all-toggle').checked) {
                 const productsSnap = await db.ref('products').orderByChild('category').equalTo(category).once('value');
                 const products = productsSnap.val();
@@ -845,12 +903,16 @@
                         updates[`products/${id}/config/addons`] = addonData.extras;
                         updates[`products/${id}/config/sizeRequired`] = addonData.config.sizeRequired;
                         updates[`products/${id}/config/addonMax`] = addonData.config.addonMax;
+                        if (category === 'ก๋วยเตี๋ยว' && addonData.noodleTypes) {
+                            // sync เฉพาะที่ enabled:true ไปหน้า menu
+                            updates[`products/${id}/config/noodleTypes`] = addonData.noodleTypes.filter(nt => nt.enabled);
+                        }
                     });
                     await db.ref().update(updates);
-                    showToast("Synced Successfully! All items updated!", "sync");
+                    showToast('Synced! รวมประเภทเส้นด้วย ✓', 'sync');
                 }
             } else {
-                showToast("Global Config Saved.", "save");
+                showToast('บันทึก Global Config แล้ว', 'save');
             }
         }
 

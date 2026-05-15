@@ -658,7 +658,7 @@
             const ntc = document.getElementById('dynamic-noodle-types-container');
             ntc.innerHTML = '';
             const isNoodle = rawProductData && rawProductData.category === 'ก๋วยเตี๋ยว';
-            const noodleTypes = config.noodleTypes || (isNoodle ? DEFAULT_NOODLE_TYPES : []);
+            const noodleTypes = (config.noodleTypes || (isNoodle ? DEFAULT_NOODLE_TYPES : [])).filter(nt => nt.enabled !== false);
             if (noodleTypes.length > 0) {
                 const title = (lang === 'en') ? "Noodle Type" : "ประเภทเส้น";
                 ntc.innerHTML = `

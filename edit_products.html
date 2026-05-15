@@ -570,6 +570,7 @@
                     </div>
                     
                     <div id="product-sizes-selector" style="margin-bottom: 20px;"></div>
+                    <div id="product-noodle-types-selector" style="margin-bottom: 20px;"></div>
                     <div id="product-extras-selector"></div>
                 </div>
 
@@ -930,6 +931,12 @@
             document.querySelectorAll('#product-extras-selector .option-checkbox:checked').forEach(cb => {
                 selectedExtras.push({ name: cb.dataset.name, price: parseFloat(cb.dataset.price) || 0 });
             });
+            const selectedNoodleTypes = [];
+            if (category === 'ก๋วยเตี๋ยว') {
+                document.querySelectorAll('#product-noodle-types-selector .option-checkbox:checked').forEach(cb => {
+                    selectedNoodleTypes.push({ name: cb.dataset.name, price: parseFloat(cb.dataset.price) || 0, enabled: true });
+                });
+            }
 
             // ดึง Config ของหมวดหมู่มาด้วย
             const catSnap = await db.ref('category_addons/' + category).once('value');
@@ -949,6 +956,10 @@
                     addonMax: cfg.addonMax ?? 0
                 } 
             };
+
+            if (category === 'ก๋วยเตี๋ยว') {
+                data.config.noodleTypes = selectedNoodleTypes;
+            }
             
             const ref = id ? db.ref('products/' + id) : db.ref('products').push();
             ref.set(data).then(() => {
@@ -1001,6 +1012,27 @@
                     <input type="checkbox" class="option-checkbox" data-name="${e.name}" data-price="${e.price}" ${isChecked} style="width:18px; height:18px; cursor:pointer;"> ${e.name} (+${e.price})
                 </label>`;
             });
+
+            // Noodle Types Selector
+            const nCont = document.getElementById('product-noodle-types-selector');
+            if (category === 'ก๋วยเตี๋ยว') {
+                nCont.style.display = 'block';
+                nCont.innerHTML = `<b style="font-size:0.7rem; color:#666;">NOODLE TYPES:</b><br>`;
+                const globalNoodles = globalData.noodleTypes || DEFAULT_NOODLE_TYPES;
+                globalNoodles.forEach(nt => {
+                    // แสดงเฉพาะตัวที่เปิด enabled ใน Global
+                    if (nt.enabled !== false) {
+                        const isChecked = config.noodleTypes?.some(pnt => pnt.name === nt.name) ? 'checked' : '';
+                        nCont.innerHTML += `
+                        <label style="display:inline-flex; align-items:center; gap:8px; margin:5px 10px 5px 0; background:var(--row-bg); padding:8px 15px; border-radius:15px; font-size:0.85rem; cursor:pointer; border:1px solid var(--glass-border);">
+                            <input type="checkbox" class="option-checkbox" data-name="${nt.name}" data-price="${nt.price || 0}" ${isChecked} style="width:18px; height:18px; cursor:pointer;"> ${nt.name} (+${nt.price || 0})
+                        </label>`;
+                    }
+                });
+            } else {
+                nCont.style.display = 'none';
+                nCont.innerHTML = '';
+            }
         }
 
         function refreshOptionsFromGlobal() {
@@ -1008,7 +1040,11 @@
             // โหลดใหม่โดยให้เลือกทั้งหมดเป็น Default
             db.ref('category_addons/' + category).once('value', snap => {
                 const data = snap.val() || { sizes: [], extras: [] };
-                loadProductOptions({ sizes: data.sizes, addons: data.extras }, category);
+                loadProductOptions({ 
+                    sizes: data.sizes, 
+                    addons: data.extras,
+                    noodleTypes: data.noodleTypes ? data.noodleTypes.filter(nt => nt.enabled !== false) : DEFAULT_NOODLE_TYPES
+                }, category);
             });
         }
 
